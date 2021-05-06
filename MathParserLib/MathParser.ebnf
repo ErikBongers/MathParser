@@ -1,0 +1,25 @@
+﻿EBNF of C++ : http://www.externsoft.ch/download/cpp-iso.html
+left or right associativity: https://stackoverflow.com/questions/41784524/preferred-way-of-removing-left-recursion-of-ebnf
+
+//top line has lowest precedence:
+//these are not function calls but structs:
+statements = statement {'; statement [';']}
+statement = addExpr |
+            assignment
+assignment = id '=' addExpr
+addExpr = multExpr |  
+          addExpr ("+" | "-") multExpr 
+multExpr = powerExpr |
+           multExpr ("*" | "/") powerExpr |
+           impliedMultExpr
+impliedMultExpr = const id |
+                  multExpr '(' |
+                  '(' addExpr ')' (id | const)
+powerExpr = primaryExpr |
+           powerExpr "^" primaryExpr
+primaryExpr = const | 
+              id | 
+              "(", addExpr, ")"
+              callExpr
+const= {-} [0..9]
+callExpr = funcId '(' exprList ')'

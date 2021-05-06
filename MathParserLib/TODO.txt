@@ -1,0 +1,28 @@
+﻿* Use graffel parser to create c++ parser version.
+* put MathParser in a c++ library (in prep of webasm)
+  - API:
+    - input is txt
+    - output is json:
+      > api call to getResultLenght()
+      > api call with a buffer of the necessary lenght to get the output.
+      - API:
+        - bool parse(char* text) -> always returns true for now?
+          > int parse() returns number of tokens.
+        - int getResultLenght()
+        - void getResult(char* buffer, int buflen)
+  > output in json?
+    > for the time being: just keep the Result-list.
+  > use lib in UWP project?
+
+* implicit mult with power: precedence changes depending on order?
+  > 2^3b  =  2^(3b) >> mult has prio
+  > 2b^3  =  2(b^3) >> power has prio
+
+Nice to have
+---------------
+* custom functions
+* resolve equations
+* units : nest them with operators
+* simplify
+* plotting
+* Latex visualisation

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include <iostream>
 
 enum class TokenType
     {
@@ -35,6 +36,7 @@ class Token
         TokenType type;
         std::string stringValue;
         double numberValue;
+        Token() : Token(TokenType::NULLPTR) {}
         Token(TokenType type, char c)
             {
             this->type = type;
@@ -51,16 +53,10 @@ class Token
             this->stringValue = str;
             }
         Token(TokenType type) : Token(type, ' ') { }
-        const std::string toString()
-            {
-            if (type == TokenType::NUMBER)
-                return std::to_string(numberValue);
-            else if (type == TokenType::ID)
-                return stringValue;
-            else
-                return to_string(type);
-            }
+        const std::string to_string() const;
+        friend std::ostream& operator<<(std::ostream& os, const Token& t);
     };
+
 
 class Tokenizer
     {

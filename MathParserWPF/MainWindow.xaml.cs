@@ -65,10 +65,10 @@ namespace MathParserWPF
                 else
                     wnd.Output += result.ToString("0.#######");
                 wnd.Output += "\n";
-                wnd.Output += DllInterface.GetString() + "\n";
-                string code = "2+3=a;";
-                wnd.Output += "Tokens in \""+code+"\": " + DllInterface.Parse(code) + "\n";
             });
+            int x = DllInterface.GetResultLen();
+            DllInterface.Parse(formula);
+            wnd.Output += DllInterface.GetResult();
             }
 
         public MainWindow()

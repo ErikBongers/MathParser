@@ -7,5 +7,9 @@
 #ifndef PCH_H
 #define PCH_H
 
-
+#include <limits>
+#include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <cstdarg>
 #endif //PCH_H

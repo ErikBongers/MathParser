@@ -2,6 +2,11 @@
 #include "Tokenizer.h"
 #include <algorithm>
 
+std::ostream& operator<<(std::ostream& os, const Token& t) 
+    { 
+    os << t.to_string(); return os; 
+    }
+
 const char* to_string(TokenType tt)
     {
     const std::map<TokenType, const char*> TokenTypeStringMap{
@@ -170,4 +175,14 @@ Token Tokenizer::parseNumber(char c)
         }
 
     return Token(TokenType::NUMBER, d);
+    }
+
+const std::string Token::to_string() const
+    {
+    if (type == TokenType::NUMBER)
+        return std::to_string(numberValue);
+    else if (type == TokenType::ID)
+        return stringValue;
+    else
+        return ::to_string(type);
     }

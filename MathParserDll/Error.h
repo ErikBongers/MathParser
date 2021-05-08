@@ -31,6 +31,7 @@ class Error
         int line;
         int pos;
 
-        Error(ErrorId id, va_list args);
+        Error() {}
+        Error(ErrorId id, va_list args=nullptr);
     };
 

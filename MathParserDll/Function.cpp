@@ -2,8 +2,10 @@
 #include "Function.h"
 #include "Tokenizer.h"
 
-std::map<std::string, Function*> Function::functions = [] {
-    std::map<std::string, Function*> fs;
+std::map<std::string, Function*> Function::functions;
+
+void Function::init()
+    {
     Function::AddFunction(new Sin());
     Function::AddFunction(new Cos());
     //Function::AddFunction(new Tan());
@@ -14,9 +16,7 @@ std::map<std::string, Function*> Function::functions = [] {
     //Function::AddFunction(new Acos());
     //Function::AddFunction(new Atan());
     Function::AddFunction(new Sqrt());
-
-    return fs;
-    }();
+    };
 
 Value Sin::execute()
     {
@@ -46,7 +46,9 @@ Value Sqrt::execute()
     }
 
 Function* Function::get(const std::string& name) 
-    { 
+    {
+    if (functions.size() == 0)
+        Function::init();
     if (functions.count(name) == 0)
         return nullptr;
     return functions[name]; 

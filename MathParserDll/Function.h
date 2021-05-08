@@ -9,6 +9,7 @@ class Function
     protected:
         std::vector<Value> args;
         static std::map<std::string, Function*> functions;
+        static void init();
 
     public:
         virtual std::string getName() = 0;

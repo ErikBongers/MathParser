@@ -67,7 +67,7 @@ namespace MathParserWPF
                 wnd.Output += "\n";
             });
             int x = DllInterface.GetResultLen();
-            DllInterface.Parse(formula);
+            //DllInterface.Parse(formula);
             wnd.Output += DllInterface.GetResult();
             }
 

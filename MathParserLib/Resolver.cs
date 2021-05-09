@@ -246,11 +246,12 @@ namespace MathParserLib
                 }
             else if (prim.callExpr != null)
                 {
-                var f = Function.get(((CallExpr)prim.callExpr).functionName.StringValue);
+                var callExpr = (CallExpr)prim.callExpr;
+                var f = Function.get(callExpr.functionName.StringValue);
                 if (f == null)
-                    return new Value(ErrorId.FUNC_NOT_DEF, prim.Id);
+                    return new Value(ErrorId.FUNC_NOT_DEF, callExpr.functionName);
                 if (((CallExpr)prim.callExpr).argument == null)
-                    return new Value(ErrorId.FUNC_ARG_MIS, prim.Id);
+                    return new Value(ErrorId.FUNC_ARG_MIS, callExpr.functionName);
                 f.clearArgs();
                 f.addArg(resolveNode(((CallExpr)prim.callExpr).argument));
                 return f.execute();

@@ -12,4 +12,5 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <cstdarg>
+#include <string>
 #endif //PCH_H

@@ -18,10 +18,8 @@ Statement* Parser::parseStatement()
     {
     Statement* stmt = new Statement();
     stmt->assignExpr = parseAssignExpr();
-    if (stmt->assignExpr->isNull())
-        {
+    if (stmt->assignExpr == nullptr)
         stmt->addExpr = parseAddExpr();
-        }
     return stmt;
     }
 
@@ -124,17 +122,10 @@ Node* Parser::parsePowerExpr()
         newPowerExpr->p1 = powerExpr;
         newPowerExpr->p2 = parseImplicitMult();
         powerExpr = newPowerExpr;
-        if (powerExpr->p1->is(NodeType::MULTEXPR))
+        if ((powerExpr->p1->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p1)->implicitMult)
+            || (powerExpr->p2->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p2)->implicitMult))
             {
-            MultExpr* m1 = static_cast<MultExpr*>(powerExpr->p1);
-            if (m1->implicitMult || (powerExpr->p2->is(NodeType::MULTEXPR)))
-                {
-                MultExpr* m2 = static_cast<MultExpr*>(powerExpr->p2);
-                if (m2->implicitMult)
-                    {
-                    powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT);
-                    }
-                }
+            powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT);
             }
         t = nextToken();
         }

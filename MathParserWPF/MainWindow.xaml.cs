@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,9 +67,24 @@ namespace MathParserWPF
                     wnd.Output += result.ToString("0.#######");
                 wnd.Output += "\n";
             });
-            int x = DllInterface.GetResultLen();
-            //DllInterface.Parse(formula);
-            wnd.Output += DllInterface.GetResult();
+            DllInterface.Parse(formula);
+            var strJson = DllInterface.GetResult();
+            //wnd.Output += strJson;
+            var jsonResult = JsonSerializer.Deserialize<JsonResults>(strJson);
+            wnd.Output += "\n";
+            foreach(var result in jsonResult.result)
+                {
+                double number;
+                bool isNum = double.TryParse(result.value, out number);
+                wnd.Output += (result.id == "#result#" ? "" : result.id + "=")  + (isNum ? number.ToString("0.#######") : result.value) + result.unit;
+                if(result.errors.Length > 0)
+                    {
+                    wnd.Output += " <<< ";
+                    foreach (var err in result.errors)
+                        wnd.Output += err.message + "  ";
+                    }
+                wnd.Output += "\n";
+                }
             }
 
         public MainWindow()

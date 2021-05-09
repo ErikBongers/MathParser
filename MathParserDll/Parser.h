@@ -3,16 +3,15 @@
 #include "Tokenizer.h"
 #include <vector>
 
-enum class NodeType {NULL_, CONSTEXPR, PRIMARYEXPR, CALLEXPR, MULTEXPR, ADDEXPR, POWEREXPR, ASSIGNMENT, STATEMENT};
+enum class NodeType {CONSTEXPR, PRIMARYEXPR, CALLEXPR, MULTEXPR, ADDEXPR, POWEREXPR, ASSIGNMENT, STATEMENT};
 class Node
     {
     protected:
         Node(NodeType type) : type(type) {}
     public:
-        NodeType type = NodeType::NULL_;
+        NodeType type;
         Error error;
         Node() {}
-        bool isNull() { return type == NodeType::NULL_; }
         bool is(NodeType type) { return this->type == type; }
     };
 

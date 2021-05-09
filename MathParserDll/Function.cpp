@@ -45,6 +45,13 @@ Value Sqrt::execute()
     return sqrt(args[0].number);
     }
 
+bool Function::exists(const std::string& functionName)
+    {
+    if (functions.size() == 0)
+        Function::init();
+    return functions.count(functionName) != 0;
+    }
+
 Function* Function::get(const std::string& name) 
     {
     if (functions.size() == 0)

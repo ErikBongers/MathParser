@@ -27,8 +27,8 @@ namespace MathParserWPF
         public static string GetResult()
             {
             int strlen = getResultLen();
-            StringBuilder buf = new StringBuilder(100 + 1); //TODO: +1 necessary?
-            getResult(buf, 100);
+            StringBuilder buf = new StringBuilder(strlen);
+            getResult(buf, strlen);
             return buf.ToString();
             }
 

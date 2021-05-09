@@ -10,28 +10,18 @@ void Resolver::resolve()
     for (auto& stmt : parser.statements)
         {
         auto result = resolveStatement(*stmt);
-        std::ostringstream sstr;
-        sstr << "{";
-        if (result.id.type != TokenType::NULLPTR)
-            sstr << "\"id\" : \"" << result.id << "\"";
-        else
-            sstr << "\"id\" : \"#result#\"";
-        if (isnan(result.number))
-            sstr << "\"value\" : \"NaN\"";
-        else
-            sstr << "\"value\" : \"" << result.to_string() << "\"";//TODO: add format?
-        sstr << "}";
-        jsonRes.push_back(sstr.str());
+        jsonRes.push_back(result.to_json());
         }
     result = "";
     for (auto& s : jsonRes)
         result += s + ",";
-    result[result.size()] = 0; //remove last comma;
+    if(result.size() > 0)
+        result.resize(result.size()-1); //remove last comma;
     }
 
 Value Resolver::resolveStatement(const Statement& stmt)
     {
-    if (stmt.assignExpr->type != NodeType::NULL_)
+    if (stmt.assignExpr != nullptr)
         return resolveNode(*stmt.assignExpr);
     else
         return resolveNode(*stmt.addExpr);
@@ -92,7 +82,7 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
 Value Resolver::resolvePower(const PowerExpr& powerExpr)
     {
     Value prim = resolveNode(*powerExpr.p2);
-    if (powerExpr.p1->isNull())
+    if (powerExpr.p1 == nullptr)
         return prim;
     Value power = resolveNode(*powerExpr.p1);
     auto result = power ^ prim;
@@ -103,22 +93,22 @@ Value Resolver::resolvePower(const PowerExpr& powerExpr)
 
 Value Resolver::resolvePrim(const PrimaryExpr& prim)
     {
-    if (!prim.addExpr->isNull())
+    if (prim.addExpr != nullptr)
         return resolveNode(*prim.addExpr);
     else if (prim.Id.type != TokenType::NULLPTR )
         {
         if (parser.ids.count(prim.Id.stringValue) != 0)
             return resolveNode(*parser.ids[prim.Id.stringValue].addExpr);
         else
-            return Value(ErrorId::VAR_NOT_DEF, prim.Id);
+            return Value(ErrorId::VAR_NOT_DEF, prim.Id.stringValue.c_str());
         }
-    else if (!prim.callExpr->isNull())
+    else if (prim.callExpr != nullptr)
         {
-        auto f = Function::get(((CallExpr*)prim.callExpr)->functionName.stringValue);
+        auto f = Function::get(((CallExpr*)prim.callExpr)->functionName.stringValue.c_str());
         if (f == nullptr)
-            return Value(ErrorId::FUNC_NOT_DEF, prim.Id);
-        if (((CallExpr*)prim.callExpr)->argument->isNull())
-            return Value(ErrorId::FUNC_ARG_MIS, prim.Id);
+            return Value(ErrorId::FUNC_NOT_DEF, prim.Id.stringValue.c_str());
+        if (((CallExpr*)prim.callExpr)->argument == nullptr)
+            return Value(ErrorId::FUNC_ARG_MIS, prim.Id.stringValue.c_str());
         f->clearArgs();
         f->addArg(resolveNode(*((CallExpr*)prim.callExpr)->argument));
         return f->execute();

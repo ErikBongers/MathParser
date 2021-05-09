@@ -21,6 +21,7 @@ class Value
 
         std::string to_string();
         std::string to_string(const std::string& format);
+        std::string to_json();
 
         Value& operator+(const Value& value);
         Value& operator-(const Value& value);

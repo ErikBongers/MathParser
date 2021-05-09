@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include "pch.h"
 #include <cstdarg>
 #include <map>
 
@@ -14,24 +14,33 @@ enum class ErrorId
     W_POW_IMPL_MULT,
     };
 
+
+struct ErrorDef
+    {
+    ErrorId id;
+    std::string name;
+    std::string message;
+    };
+
 class ErrorDefs
     {
     public:
-        static std::map<ErrorId, std::string> errorDefs; 
+        static std::map<ErrorId, ErrorDef> errorDefs; 
         
-        static std::string getMsg(ErrorId id) { return errorDefs[id]; }
+        static const ErrorDef& get(ErrorId id) { return errorDefs[id]; }
     };
 
 
 class Error
     {
     public:
-        ErrorId id;
+        ErrorId id = ErrorId::NONE;
         std::string errorMsg;
-        int line;
-        int pos;
+        int line = -1;
+        int pos = -1;
 
         Error() {}
         Error(ErrorId id, va_list args=nullptr);
+        const std::string to_json();
     };
 

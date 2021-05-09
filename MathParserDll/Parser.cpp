@@ -18,10 +18,8 @@ Statement* Parser::parseStatement()
     {
     Statement* stmt = new Statement();
     stmt->assignExpr = parseAssignExpr();
-    if (stmt->assignExpr->isNull())
-        {
+    if (stmt->assignExpr == nullptr)
         stmt->addExpr = parseAddExpr();
-        }
     return stmt;
     }
 

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MathParserWPF": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

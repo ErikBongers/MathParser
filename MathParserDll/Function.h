@@ -16,7 +16,7 @@ class Function
         void clearArgs() { args.clear(); }
         void addArg(Value arg) { args.push_back(arg); }
         virtual Value execute() = 0;
-        static bool exists(const std::string& functionName) { return functions.count(functionName) != 0; }
+        static bool exists(const std::string& functionName);
         static void AddFunction(Function* f) { functions.emplace(f->getName(), f); }
         static Function* get(const std::string& name);
     };

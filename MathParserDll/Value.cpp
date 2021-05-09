@@ -32,6 +32,36 @@ std::string Value::to_string()
     return strs.str();
     }
 
+std::string Value::to_json()
+    {
+    std::ostringstream sstr;
+    sstr << "{";
+    if (id.type != TokenType::NULLPTR)
+        sstr << "\"id\" : \"" << id << "\"";
+    else
+        sstr << "\"id\" : \"#result#\"";
+    if (isnan(number))
+        sstr << ", \"value\" : \"NaN\"";
+    else
+        {
+        sstr << ", \"value\" : \"" 
+            << std::fixed
+            << std::setprecision(20)
+            << number << "\"";
+        sstr << ", \"unit\" : \"" << unit << "\"";
+        }
+    sstr << ", \"errors\" : [";
+    std::string comma = "";
+    for (auto& error : errors)
+        {
+        sstr << comma << error.to_json();
+        comma = ",";
+        }
+    sstr << "]";
+    sstr << "}";
+    return sstr.str();
+    }
+
 std::string Value::to_string(const std::string& format)
     {
     std::ostringstream str;

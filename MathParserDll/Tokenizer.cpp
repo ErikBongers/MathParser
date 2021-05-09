@@ -27,7 +27,8 @@ const char* to_string(TokenType tt)
         { TokenType::RAD, "RAD" },
         { TokenType::DEG, "DEG" },
         { TokenType::SEMI_COLON, "SEMI_COLON" },
-        { TokenType::UNKNOWN, "EOT" }
+        { TokenType::UNKNOWN, "??" },
+        { TokenType::NULLPTR, "" }
         };
     auto   it = TokenTypeStringMap.find(tt);
     return it == TokenTypeStringMap.end() ? "??" : it->second;

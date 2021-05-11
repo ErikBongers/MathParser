@@ -242,8 +242,9 @@ Token Parser::nextToken()
 
 void Parser::pushBackLastToken()
     {
+#ifndef __WASM__
     if (lastToken.type != TokenType::NULLPTR)
         throw new std::exception("Cannot push back a second token.");
-
+#endif
     lastToken = currentToken;
     }

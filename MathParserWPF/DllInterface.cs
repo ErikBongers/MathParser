@@ -6,7 +6,7 @@ namespace MathParserWPF
 
     public static class DllInterface
         {
-        private const string DllFilePath = @"D:\Documents\Programming\WPF and XNA\MathParser\x64\Debug\MathParserDll.dll";
+        private const string DllFilePath = @"D:\Documents\Programming\WPFandXNA\MathParser\x64\Debug\MathParserDll.dll";
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         private extern static int parse(string str);

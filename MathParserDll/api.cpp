@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "api.h"
 #include <string>
 #include <algorithm>
 #include <cstring>
 #include "Tokenizer.h"
 #include "Resolver.h"
+#include "api.h"
 
-int __cdecl parse(const char* str)
+int C_DECL parse(const char* str)
     {
     Parser parser(str);
     Resolver resolver(parser);
@@ -14,9 +14,9 @@ int __cdecl parse(const char* str)
     return resolver.getResultLen();
     }
 
-int __cdecl getResultLen() { return Resolver::getResultLen()+1; }
+int C_DECL getResultLen() { return Resolver::getResultLen() + 1; }
 
-void __cdecl getResult(char* buffer, int strlen)
+void C_DECL getResult(char* buffer, int strlen)
     {
     auto result = Resolver::getResult();
     result = result.substr(0, strlen);

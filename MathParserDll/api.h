@@ -1,10 +1,15 @@
 #pragma once
 
-extern "C" __declspec(dllexport)
-int __cdecl parse(const char* str);
+#ifdef __WASM__
+    #define C_EXPORT
+    #define C_DECL
+#else
+    #define C_EXPORT extern "C" __declspec(dllexport)
+    #define C_DECL __cdecl
+#endif
 
-extern "C" __declspec(dllexport)
-int __cdecl getResultLen();
+C_EXPORT int C_DECL parse(const char* str);
 
-extern "C" __declspec(dllexport)
-void __cdecl getResult(char* buffer, int strlen);
+C_EXPORT int C_DECL getResultLen();
+
+C_EXPORT void C_DECL getResult(char* buffer, int strlen);

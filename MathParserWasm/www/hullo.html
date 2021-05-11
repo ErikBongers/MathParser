@@ -88,7 +88,8 @@
         document.querySelector('.mybutton')
             .addEventListener('click', function() 
                 {
-                Module.print(Module.api.getMessage("Owkay..."));
+                Module.print(Module.api.getMessage("Slash? / ?"));
+                Module.print(Module.api.parseMath("a=1;b=3;c=b-a;c"));
                 });
     </script>
     <script async type="text/javascript" src="hullo.js"></script>

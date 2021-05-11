@@ -1,5 +1,6 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
+#ifndef __WASM__
 #include "framework.h"
 
 BOOL APIENTRY DllMain( HMODULE hModule,
@@ -18,3 +19,4 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
+#endif

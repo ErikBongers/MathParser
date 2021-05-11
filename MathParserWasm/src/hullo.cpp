@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <emscripten/emscripten.h>
 #include "concat.h"
+#include "api.h"
+
+char _result[10000];
 
 int main() {
-    printf("Hullo World\n");
+    printf("MathParser webassembly module 0.1\n");
 }
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,7 +21,13 @@ const char* getMessage(const char* text)
     return _message;
     }
 
-
+EMSCRIPTEN_KEEPALIVE 
+const char* parseMath(const char* str)
+	{
+	parse(str);
+	getResult(_result, 10000);
+	return _result;
+	}
 
 #ifdef __cplusplus
 }

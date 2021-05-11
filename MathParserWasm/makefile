@@ -22,4 +22,6 @@ $(BUILDDIR)/%.o : $(SRCDIR)/%.cpp
 .PHONY: clean
 
 clean:
-	rmdir /s build
+	rmdir /s /q build
+	del /q "$(DESTDIR)\hullo.wasm"
+	del /q "$(DESTDIR)\hullo.js"

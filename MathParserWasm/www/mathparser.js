@@ -1518,7 +1518,7 @@ function createExportWrapper(name, fixedasm) {
   };
 }
 
-var wasmBinaryFile = 'hullo.wasm';
+var wasmBinaryFile = 'mathparser.wasm';
 if (!isDataURI(wasmBinaryFile)) {
   wasmBinaryFile = locateFile(wasmBinaryFile);
 }
@@ -2369,9 +2369,6 @@ var asmLibraryArg = {
 var asm = createWasm();
 /** @type {function(...*):?} */
 var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__wasm_call_ctors");
-
-/** @type {function(...*):?} */
-var _getMessage = Module["_getMessage"] = createExportWrapper("getMessage");
 
 /** @type {function(...*):?} */
 var _parseMath = Module["_parseMath"] = createExportWrapper("parseMath");

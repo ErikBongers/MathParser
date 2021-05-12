@@ -3,19 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Test WASM</title>
-    <link rel="stylesheet" href="hullo.css">
+    <title>Math Parser 0.11</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <hr/>
+    <h1>Math Parser</h1>
+
     <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
     <div class="emscripten" id="status">Downloading...</div>
     <div class="emscripten">
       <progress value="0" max="100" id="progress" hidden=1></progress>  
     </div>
-    <textarea class="emscripten" id="output" rows="8"></textarea>
-    <hr>
-    <button class="mybutton">Run myFunction</button>
+
+    <textarea class="emscripten" id="txtInput" rows="8" placeholder="a=3+sin(30deg);&#10;b=a-3+PI;"></textarea>
+    <h2>Output</h2>
+    <textarea class="emscripten" id="txtOutput" rows="8"></textarea>
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
@@ -24,23 +26,6 @@
       var Module = {
         preRun: [],
         postRun: [],
-        print: (function() 
-            {
-            var element = document.getElementById('output');
-            if (element) element.value = ''; // clear browser cache
-            
-            return function(text) 
-                {
-                if (arguments.length > 1) 
-                    text = Array.prototype.slice.call(arguments).join(' ');
-                console.log(text);
-                if (element) 
-                    {
-                    element.value += text + "\n";
-                    element.scrollTop = element.scrollHeight; // focus on bottom
-                    }
-                };
-            })(),
         printErr: function(text) {
             if (arguments.length > 1) 
                 text = Array.prototype.slice.call(arguments).join(' ');
@@ -84,15 +69,7 @@
         };
       };
     </script>
-    <script type="text/javascript">
-        document.querySelector('.mybutton')
-            .addEventListener('click', function() 
-                {
-                Module.print(Module.api.getMessage("Slash? / ?"));
-                Module.print(Module.api.parseMath("a=1;b=3;c=b-a;c"));
-                });
-    </script>
-    <script async type="text/javascript" src="hullo.js"></script>
+    <script async type="text/javascript" src="mathparser.js"></script>
     <script async type="text/javascript" src="api.js"></script>
   </body>
 </html>

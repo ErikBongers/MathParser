@@ -18,6 +18,24 @@ void Function::init()
     Function::AddFunction(new Sqrt());
     };
 
+bool Function::exists(const std::string& functionName)
+    {
+    if (functions.size() == 0)
+        Function::init();
+    return functions.count(functionName) != 0;
+    }
+
+Function* Function::get(const std::string& name)
+    {
+    if (functions.size() == 0)
+        Function::init();
+    if (functions.count(name) == 0)
+        return nullptr;
+    return functions[name];
+    }
+
+// --- Standard function implementations ---
+
 Value Sin::execute()
     {
     if (args.size() != 1)
@@ -103,18 +121,3 @@ Value Sqrt::execute()
     return sqrt(args[0].number);
     }
 
-bool Function::exists(const std::string& functionName)
-    {
-    if (functions.size() == 0)
-        Function::init();
-    return functions.count(functionName) != 0;
-    }
-
-Function* Function::get(const std::string& name) 
-    {
-    if (functions.size() == 0)
-        Function::init();
-    if (functions.count(name) == 0)
-        return nullptr;
-    return functions[name]; 
-    }

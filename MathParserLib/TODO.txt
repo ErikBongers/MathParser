@@ -1,4 +1,5 @@
-﻿* error in func arguments not passed through.
+﻿* PI not defined
+* error in func arguments not passed through.
   > don't bother: first implement multiple args?
 * call dll again
   > what changes?:  clear result,...?

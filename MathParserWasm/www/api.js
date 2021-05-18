@@ -18,7 +18,7 @@ Module.onRuntimeInitialized = async _ => {
         			strErrors += "  " + e.message;
 	        		}
 	        	strErrors
-	        	Module.print((line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + (strErrors === ""? "" : "  <<<" + strErrors));
+	        	Module.print((line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit + (strErrors === ""? "" : "  <<<" + strErrors));
 	        	}
 			});
 
@@ -51,7 +51,10 @@ Module.onRuntimeInitialized = async _ => {
 		[...sFixed].slice().reverse().forEach(function(c) 
 			{
 			if(c === '.' && removeLastZero) //all decimals are zero > remove dot
+				{
+				removeLastZero = false;
 				return;
+				}
 			if(c!== '0' || !removeLastZero)
 				{
 				removeLastZero = false;

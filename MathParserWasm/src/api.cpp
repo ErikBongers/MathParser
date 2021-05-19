@@ -5,7 +5,7 @@
 char _result[10000];
 
 int main() {
-    printf("MathParser webassembly module 0.11\n");
+    printf("MathParser webassembly module 0.12\n");
 }
 
 #ifdef __cplusplus

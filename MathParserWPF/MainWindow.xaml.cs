@@ -52,6 +52,34 @@ namespace MathParserWPF
 
         private static void ParseFormula(string formula, MainWindow wnd)
             {
+            parseWithCSharp(formula, wnd);
+            parseWithDll(formula, wnd);
+            }
+
+        private static void parseWithDll(string formula, MainWindow wnd)
+            {
+            DllInterface.Parse(formula);
+            var strJson = DllInterface.GetResult();
+            //wnd.Output += strJson;
+            var jsonResult = JsonSerializer.Deserialize<JsonResults>(strJson);
+            wnd.Output += "\n";
+            foreach (var result in jsonResult.result)
+                {
+                double number;
+                bool isNum = double.TryParse(result.value, out number);
+                wnd.Output += (result.id == "#result#" ? "" : result.id + "=") + (isNum ? number.ToString("0.#######") : result.value) + result.unit;
+                if (result.errors.Length > 0)
+                    {
+                    wnd.Output += " <<< ";
+                    foreach (var err in result.errors)
+                        wnd.Output += err.message + "  ";
+                    }
+                wnd.Output += "\n";
+                }
+            }
+
+        private static void parseWithCSharp(string formula, MainWindow wnd)
+            {
             //Tokenizer tok = new Tokenizer(formula);
             Parser parser = new Parser(formula);
             var statements = parser.parse();
@@ -67,24 +95,6 @@ namespace MathParserWPF
                     wnd.Output += result.ToString("0.#######");
                 wnd.Output += "\n";
             });
-            DllInterface.Parse(formula);
-            var strJson = DllInterface.GetResult();
-            //wnd.Output += strJson;
-            var jsonResult = JsonSerializer.Deserialize<JsonResults>(strJson);
-            wnd.Output += "\n";
-            foreach(var result in jsonResult.result)
-                {
-                double number;
-                bool isNum = double.TryParse(result.value, out number);
-                wnd.Output += (result.id == "#result#" ? "" : result.id + "=")  + (isNum ? number.ToString("0.#######") : result.value) + result.unit;
-                if(result.errors.Length > 0)
-                    {
-                    wnd.Output += " <<< ";
-                    foreach (var err in result.errors)
-                        wnd.Output += err.message + "  ";
-                    }
-                wnd.Output += "\n";
-                }
             }
 
         public MainWindow()

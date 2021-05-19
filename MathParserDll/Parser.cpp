@@ -4,7 +4,9 @@
 
 void Parser::parse()
     {
-    ids.emplace("pi", Variable{ Token(TokenType::ID, "pi"), new ConstExpr(Token(TokenType::NUMBER, M_PI)) });
+    ConstExpr* pConst = createConst();
+    pConst->constNumber = Token(TokenType::NUMBER, M_PI);
+    ids.emplace("pi", Variable{ Token(TokenType::ID, "pi"), pConst});
     while (peekToken().type != TokenType::EOT)
         {
         statements.push_back(parseStatement());
@@ -16,7 +18,7 @@ void Parser::parse()
 
 Statement* Parser::parseStatement()
     {
-    Statement* stmt = new Statement();
+    Statement* stmt = createStatement();
     stmt->assignExpr = parseAssignExpr();
     if (stmt->assignExpr == nullptr)
         stmt->addExpr = parseAddExpr();
@@ -33,7 +35,7 @@ Node* Parser::parseAssignExpr()
         if (t.type == TokenType::EQ)
             {
             nextToken();//consume the EQ
-            AssignExpr* assign = new AssignExpr();
+            AssignExpr* assign = createAssign();
             assign->Id = id;
             assign->addExpr = parseAddExpr();
             ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->addExpr });
@@ -54,7 +56,7 @@ Node* Parser::parseAssignExpr()
 
 Node* Parser::parseAddExpr()
     {
-    AddExpr* addExpr = new AddExpr();
+    AddExpr* addExpr = createAdd();
     addExpr->a1 = parseMultExpr();
     auto t = nextToken();
     while (t.type == TokenType::PLUS || t.type == TokenType::MIN)
@@ -63,7 +65,7 @@ Node* Parser::parseAddExpr()
         addExpr->a2 = parseMultExpr();
         // prepare next iteration.
         auto oldAddExpr = addExpr;
-        addExpr = new AddExpr();
+        addExpr = createAdd();
         addExpr->a1 = oldAddExpr;
         t = nextToken();
         }
@@ -73,7 +75,7 @@ Node* Parser::parseAddExpr()
 
 Node* Parser::parseMultExpr()
     {
-    MultExpr* multExpr = new MultExpr();
+    MultExpr* multExpr = createMult();
     multExpr->m1 = parsePowerExpr();
     auto t = nextToken();
     while (t.type == TokenType::MULT || t.type == TokenType::DIV)
@@ -82,7 +84,7 @@ Node* Parser::parseMultExpr()
         multExpr->m2 = parsePowerExpr();
         // prepare next iteration.
         auto oldMultExpr = multExpr;
-        multExpr = new MultExpr();
+        multExpr = createMult();
         multExpr->m1 = oldMultExpr;
         //give warning if expr of form a/2b:
         if (multExpr->m1->is(NodeType::MULTEXPR))
@@ -108,7 +110,7 @@ Node* Parser::parseMultExpr()
 
 Node* Parser::parsePowerExpr()
     {
-    PowerExpr* powerExpr = new PowerExpr();
+    PowerExpr* powerExpr = createPower();
     powerExpr->p2 = parseImplicitMult();
     auto t = nextToken();
     if (t.type != TokenType::POWER)
@@ -118,7 +120,7 @@ Node* Parser::parsePowerExpr()
         }
     while (t.type == TokenType::POWER)
         {
-        PowerExpr* newPowerExpr = new PowerExpr();
+        PowerExpr* newPowerExpr = createPower();
         newPowerExpr->p1 = powerExpr;
         newPowerExpr->p2 = parseImplicitMult();
         powerExpr = newPowerExpr;
@@ -142,7 +144,7 @@ Node* Parser::parseImplicitMult()
            || t.type == TokenType::PAR_OPEN)
         {
         pushBackLastToken();
-        auto m = new MultExpr();
+        auto m = createMult();
         m->m1 = n1;
         m->op = Token(TokenType::MULT, '*');
         m->m2 = parsePrimaryExpr();
@@ -156,7 +158,7 @@ Node* Parser::parseImplicitMult()
 
 Node* Parser::parsePrimaryExpr()
     {
-    PrimaryExpr* primExpr = new PrimaryExpr();//TODO: get rid of this.
+    PrimaryExpr* primExpr = createPrimary();//TODO: get rid of this.
     auto t = nextToken();
     if (t.type == TokenType::NUMBER)
         {
@@ -193,7 +195,7 @@ Node* Parser::parsePrimaryExpr()
 
 ConstExpr* Parser::parseConst(bool negative)
     {
-    ConstExpr* constExpr = new ConstExpr();
+    ConstExpr* constExpr = createConst();
     auto t = nextToken();
     t.numberValue = (negative ? -1 : 1) * t.numberValue;
     constExpr->constNumber = t;
@@ -207,7 +209,7 @@ ConstExpr* Parser::parseConst(bool negative)
 
 CallExpr* Parser::parseCallExpr(Token functionName)
     {
-    CallExpr* callExpr = new CallExpr();
+    CallExpr* callExpr = createCall();
     callExpr->functionName = functionName;
     auto t = nextToken();
     if (t.type == TokenType::PAR_OPEN)
@@ -217,6 +219,15 @@ CallExpr* Parser::parseCallExpr(Token functionName)
         pushBackLastToken();
     return callExpr;
     }
+
+ConstExpr* Parser::createConst() { ConstExpr* p = new ConstExpr; nodes.push_back(p); return p; }
+AddExpr* Parser::createAdd()   { AddExpr* p = new AddExpr; nodes.push_back(p); return p; }
+MultExpr* Parser::createMult() { MultExpr* p = new MultExpr; nodes.push_back(p); return p; }
+PowerExpr* Parser::createPower() { PowerExpr* p = new PowerExpr; nodes.push_back(p); return p; }
+PrimaryExpr* Parser::createPrimary() { PrimaryExpr* p = new PrimaryExpr; nodes.push_back(p); return p; }
+AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }
+Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
+CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }
 
 Token Parser::peekToken()
     {

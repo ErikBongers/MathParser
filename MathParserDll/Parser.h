@@ -4,6 +4,8 @@
 #include <vector>
 
 enum class NodeType {CONSTEXPR, PRIMARYEXPR, CALLEXPR, MULTEXPR, ADDEXPR, POWEREXPR, ASSIGNMENT, STATEMENT};
+class Parser;
+
 class Node
     {
     protected:
@@ -11,8 +13,10 @@ class Node
     public:
         NodeType type;
         Error error;
-        Node() {}
         bool is(NodeType type) { return this->type == type; }
+    private:
+        Node() {}
+        friend class Parser;
     };
 
 class ConstExpr : public Node
@@ -20,8 +24,9 @@ class ConstExpr : public Node
     public:
         Token constNumber;
         Token unit;
+    private:
         ConstExpr() : Node(NodeType::CONSTEXPR) {};
-        ConstExpr(Token constNumber) : Node(NodeType::CONSTEXPR) , constNumber(constNumber) {};
+        friend class Parser;
     };
 
 class PrimaryExpr : public Node
@@ -30,7 +35,9 @@ class PrimaryExpr : public Node
         Token Id;
         Node* addExpr = nullptr;
         Node* callExpr = nullptr;
+    private:
         PrimaryExpr() : Node(NodeType::PRIMARYEXPR) {}
+        friend class Parser;
     };
 
 class CallExpr : public Node
@@ -38,7 +45,9 @@ class CallExpr : public Node
     public:
         Token functionName;
         Node* argument = nullptr; //TODO: make argument list
+    private:
         CallExpr() : Node(NodeType::CALLEXPR) {}
+        friend class Parser;
     };
 
 class MultExpr : public Node
@@ -48,7 +57,9 @@ class MultExpr : public Node
         Token op;
         Node* m2 = nullptr;
         bool implicitMult = false;
+    private:
         MultExpr() : Node(NodeType::MULTEXPR) {}
+        friend class Parser;
     };
 
 class PowerExpr : public Node
@@ -56,7 +67,9 @@ class PowerExpr : public Node
     public:
         Node* p1 = nullptr;
         Node* p2 = nullptr;
+    private:
         PowerExpr() : Node(NodeType::POWEREXPR) {}
+        friend class Parser;
     };
 
 class AddExpr : public Node
@@ -65,7 +78,9 @@ class AddExpr : public Node
         Node* a1 = nullptr;
         Token op;
         Node* a2 = nullptr;
+    private:
         AddExpr() : Node(NodeType::ADDEXPR) {}
+        friend class Parser;
     };
 
 class AssignExpr : public Node
@@ -73,7 +88,9 @@ class AssignExpr : public Node
     public: 
         Token Id;
         Node* addExpr = nullptr;
+    private:
         AssignExpr() : Node(NodeType::ASSIGNMENT) {}
+        friend class Parser;
     };
 
 class Statement : public Node
@@ -81,7 +98,9 @@ class Statement : public Node
     public:
         Node* assignExpr = nullptr;
         Node* addExpr = nullptr;
+    private:
         Statement() : Node(NodeType::STATEMENT) {}
+        friend class Parser;
     };
 
 class Variable
@@ -111,7 +130,17 @@ class Parser
         Node* parsePrimaryExpr();
         ConstExpr* parseConst(bool negative);
         CallExpr* parseCallExpr(Token functionName);
+        ~Parser() { for (auto node : nodes) delete node; }
+        ConstExpr* createConst();
+        AddExpr* createAdd();
+        MultExpr* createMult();
+        PowerExpr* createPower();
+        PrimaryExpr* createPrimary();
+        AssignExpr* createAssign();
+        CallExpr* createCall();
+        Statement* createStatement();
     private:
+        std::vector<Node*> nodes;
         Token currentToken = Token(TokenType::NULLPTR);
         Token lastToken = Token(TokenType::NULLPTR);
 

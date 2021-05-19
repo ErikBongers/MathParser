@@ -1,9 +1,6 @@
 ﻿* error in func arguments not passed through.
   > don't bother: first implement multiple args?
-* call dll again
-  > what changes?:  clear result,...?
-  > free up mem
-    > virtual destructors needed?
+* save last statement in localStorage.
 * add line and pos to errors.
 * implicit mult with power: precedence changes depending on order?
   > 2^3b  =  2^(3b) >> mult has prio
@@ -14,6 +11,16 @@ Nice to have
 * custom functions
 * resolve equations
 * units : nest them with operators
+  > m, km, cm, mm,...
+  > conversion?
+    x = 10km;
+    y = (cm)x; //probably not this notation.
+    y = x.cm;
+    y = y.cm;
+    y = (10km).cm;
+  > mathlab not compact enough:
+    https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
+
 * simplify
 * plotting
 * Latex visualisation

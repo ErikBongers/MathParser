@@ -3,10 +3,7 @@
 #include "api.h"
 
 char _result[10000];
-
-int main() {
-    printf("MathParser webassembly module 0.12\n");
-}
+char _version[10];
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,6 +17,21 @@ const char* parseMath(const char* str)
 	return _result;
 	}
 
+
+EMSCRIPTEN_KEEPALIVE 
+const char* getMathVersion(void)
+	{
+	getVersion(_version, 10);
+	return _version;
+	}
+
 #ifdef __cplusplus
 }
 #endif
+
+
+int main() {
+    printf("MathParser webassembly module");
+	printf("%s\n", getMathVersion());
+}
+

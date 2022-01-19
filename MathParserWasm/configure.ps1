@@ -1,0 +1,1 @@
+D:/Documents/Programming/wasm/emsdk/emsdk_env.ps1

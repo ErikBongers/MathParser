@@ -1,7 +1,10 @@
 Module.onRuntimeInitialized = async _ => {
     Module.api = {
-      parseMath: Module.cwrap('parseMath', 'string', ["string"]),
+		parseMath: Module.cwrap('parseMath', 'string', ["string"]),
+		getMathVersion: Module.cwrap('getMathVersion', 'string', []),
     };
+
+	window.document.title = "Math Parser " + Module.api.getMathVersion();
 
 	document.getElementById('txtInput')
 		.addEventListener('input', function()

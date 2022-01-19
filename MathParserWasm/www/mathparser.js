@@ -2374,6 +2374,9 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__w
 var _parseMath = Module["_parseMath"] = createExportWrapper("parseMath");
 
 /** @type {function(...*):?} */
+var _getMathVersion = Module["_getMathVersion"] = createExportWrapper("getMathVersion");
+
+/** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
 
 /** @type {function(...*):?} */

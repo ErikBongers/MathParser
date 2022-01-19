@@ -13,3 +13,5 @@ C_EXPORT int C_DECL parse(const char* str);
 C_EXPORT int C_DECL getResultLen();
 
 C_EXPORT void C_DECL getResult(char* buffer, int strlen);
+
+C_EXPORT void C_DECL getVersion(char* buffer, int strlen);

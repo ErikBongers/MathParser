@@ -13,7 +13,7 @@ Nice to have
 * units : nest them with operators
   > m, km, cm, mm,...
   > conversion?
-    x = 10km;
+    x = 10m; //what if m is defined as var (m=mass)? Warning would be annoying...but will only display for implicit mult! So...warning is ok?
     y = (cm)x; //probably not this notation.
     y = x.cm;
     y = y.cm;

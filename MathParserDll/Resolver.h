@@ -7,6 +7,7 @@ class Resolver
     private:
         Parser& parser;
         static std::string result;
+        std::map<std::string, Value> variables;
 
         Value resolveStatement(const Statement& stmt);
         Value resolveNode(const Node& node);

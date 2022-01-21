@@ -75,6 +75,7 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.addExpr);
     result.id = assign.Id;
+    variables[result.id.stringValue] = result;
     if (assign.error.id != ErrorId::NONE)
         result.errors.push_back(assign.error);
     return result;
@@ -98,8 +99,11 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         return resolveNode(*prim.addExpr);
     else if (prim.Id.type != TokenType::NULLPTR )
         {
-        if (parser.ids.count(prim.Id.stringValue) != 0)
-            return resolveNode(*parser.ids[prim.Id.stringValue].addExpr);
+        //if (parser.ids.count(prim.Id.stringValue) != 0)
+        //    return resolveNode(*parser.ids[prim.Id.stringValue].addExpr);
+        auto found = variables.find(prim.Id.stringValue);
+        if (found != variables.end())
+            return variables[prim.Id.stringValue];
         else
             return Value(ErrorId::VAR_NOT_DEF, prim.Id.stringValue.c_str());
         }

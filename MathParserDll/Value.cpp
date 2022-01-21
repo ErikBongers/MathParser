@@ -9,7 +9,7 @@ Value::Value(ErrorId errorId, ...)
     va_end(args);
     }
 
-Value::Value(Error& error)
+Value::Value(const Error& error)
     {
     errors.push_back(error);
     }

@@ -51,18 +51,18 @@ Token Tokenizer::next()
         peekedToken = Token(TokenType::NULLPTR);
         return t;
         }
-    if (pos >= strlen(stream))
+    if (pos >= size)
         return Token(TokenType::EOT);
 
     //skip whitespace
-    while (pos < strlen(stream))
+    while (pos < size)
         {
         if (stream[pos] != ' ' && stream[pos] != '\n' && stream[pos] != '\r')
             break;
         pos++;
         }
 
-    if (pos >= strlen(stream))
+    if (pos >= size)
         return Token(TokenType::EOT);
 
     char c = stream[pos];
@@ -89,6 +89,12 @@ Token Tokenizer::next()
         case '*':
             return Token(TokenType::MULT, c);
         case '/':
+            if (stream[pos] == '/')
+                {
+                pos++;
+                skipToEOL();
+                return next();
+                }
             return Token(TokenType::DIV, c);
         case '^':
             return Token(TokenType::POWER, c);
@@ -118,7 +124,7 @@ Token Tokenizer::parseId(char c)
 
     word += c;
 
-    while (pos < strlen(stream))
+    while (pos < size)
         {
         c = stream[pos];
         pos++;
@@ -153,7 +159,7 @@ Token Tokenizer::parseNumber(char c)
     else
         d = c - '0';
 
-    while (pos < strlen(stream))
+    while (pos < size)
         {
         c = stream[pos];
         pos++;
@@ -179,6 +185,13 @@ Token Tokenizer::parseNumber(char c)
         }
 
     return Token(TokenType::NUMBER, d);
+    }
+
+void Tokenizer::skipToEOL()
+    {
+    while (stream[pos] != '\n' && pos < size)
+        pos++;
+    pos++;
     }
 
 const std::string Token::to_string() const

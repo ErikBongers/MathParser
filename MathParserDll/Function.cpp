@@ -47,7 +47,20 @@ Value Max::execute(std::vector<Value>& args)
     double arg1 = args[1].number;
     if (args[1].unit.type == TokenType::DEG)
         arg1 = arg1 * M_PI / 180;
-    return arg0 > arg1 ? arg0 : arg1;
+    Value ret;
+    auto otherErrs = &ret.errors;
+    if (arg0 > arg1)
+        {
+        ret = args[0];
+        otherErrs = &args[1].errors;
+        }
+    else
+        {
+        ret = args[1];
+        otherErrs = &args[0].errors;
+        }
+    ret.errors.insert(ret.errors.begin(), otherErrs->begin(), otherErrs->end());
+    return ret;
     }
 
 Value Sin::execute(std::vector<Value>& args)

@@ -18,7 +18,7 @@ class Value
         Value(ErrorId errorId, ...);
         Value(double d, Token u);
         Value(Token id, double d, Token u);
-        Value(Error& error);
+        Value(const Error& error);
 
         std::string to_string();
         std::string to_string(const std::string& format);

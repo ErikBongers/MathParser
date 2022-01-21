@@ -111,23 +111,28 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
     else if (prim.callExpr != nullptr) //todo: create resolveCall();
         {
         auto& callExpr = *(CallExpr*)prim.callExpr;
-        auto fd = FunctionDef::get(callExpr.functionName.stringValue.c_str());
-        if (fd == nullptr)
-            return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.stringValue.c_str());
-        if(callExpr.error.id != ErrorId::NONE)
-            return Value(callExpr.error);
-
-        // check function arguments:
-        if (callExpr.arguments.size() != fd->argsCount())
-            return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.stringValue.c_str());
-        Function f(*fd);
-        for(auto arg : callExpr.arguments)
-            f.addArg(resolveNode(*arg));
-
-        return f.execute();
+        return resolveCall(callExpr);
         }
     else
         return Value(ErrorId::UNKNOWN_EXPR);
+    }
+
+Value Resolver::resolveCall(const CallExpr& callExpr)
+    {
+    auto fd = FunctionDef::get(callExpr.functionName.stringValue.c_str());
+    if (fd == nullptr)
+        return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.stringValue.c_str());
+    if (callExpr.error.id != ErrorId::NONE)
+        return Value(callExpr.error);
+
+    // check function arguments:
+    if (callExpr.arguments.size() != fd->argsCount())
+        return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.stringValue.c_str());
+    Function f(*fd);
+    for (auto arg : callExpr.arguments)
+        f.addArg(resolveNode(*arg));
+
+    return f.execute();
     }
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)

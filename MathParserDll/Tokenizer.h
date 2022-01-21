@@ -65,8 +65,9 @@ class Tokenizer
         const char* stream;
         int pos = 0; //pos at which to read next token.
         Token peekedToken = Token(TokenType::NULLPTR);
+        size_t size = -1;
     public:
-        Tokenizer(const char* stream) : stream(stream) { }
+        Tokenizer(const char* stream) : stream(stream) { size = strlen(stream); }
         Token peek();
         Token next();
 
@@ -74,5 +75,7 @@ class Tokenizer
         Token parseId(char c);
 
         Token parseNumber(char c);
+
+        void skipToEOL();
     };
 

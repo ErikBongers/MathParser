@@ -5,6 +5,7 @@
 std::string Resolver::result = "";
 void Resolver::resolve()
     {
+    variables.clear();
     std::vector<std::string> jsonRes;
     parser.parse();
     for (auto& stmt : parser.statements)

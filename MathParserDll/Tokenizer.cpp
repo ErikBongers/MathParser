@@ -27,6 +27,7 @@ const char* to_string(TokenType tt)
         { TokenType::RAD, "RAD" },
         { TokenType::DEG, "DEG" },
         { TokenType::SEMI_COLON, "SEMI_COLON" },
+        { TokenType::COMMA, "COMMA" },
         { TokenType::UNKNOWN, "??" },
         { TokenType::NULLPTR, "" }
         };
@@ -95,6 +96,8 @@ Token Tokenizer::next()
             return Token(TokenType::EQ, c);
         case ';':
             return Token(TokenType::SEMI_COLON, c);
+        case ',':
+            return Token(TokenType::COMMA, c);
         default:
             if ((c >= '0' && c <= '9') || c == '.')
                 {

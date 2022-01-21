@@ -175,7 +175,7 @@ Node* Parser::parsePrimaryExpr()
         }
     else if (t.type == TokenType::ID)
         {
-        if (Function::exists(t.stringValue))
+        if (FunctionDef::exists(t.stringValue))
             {
             primExpr->callExpr = parseCallExpr(t);
             }
@@ -212,11 +212,30 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     CallExpr* callExpr = createCall();
     callExpr->functionName = functionName;
     auto t = nextToken();
-    if (t.type == TokenType::PAR_OPEN)
-        callExpr->argument = parseAddExpr();
-    t = nextToken();
-    if (t.type != TokenType::PAR_CLOSE)
+    if (t.type != TokenType::PAR_OPEN)
+        {
+        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, functionName.stringValue.c_str());
         pushBackLastToken();
+        return callExpr;
+        }
+    //loop arguments
+    while (peekToken().type != TokenType::EOT)
+        {
+        if (peekToken().type == TokenType::SEMI_COLON)
+            break; //allow parsing of next statement
+        callExpr->arguments.push_back(parseAddExpr());
+        auto t = nextToken();
+        if (t.type == TokenType::PAR_CLOSE)
+            {
+            break;
+            }
+        if (t.type != TokenType::COMMA)
+            {
+            pushBackLastToken();
+            break;
+            }
+        }
+
     return callExpr;
     }
 

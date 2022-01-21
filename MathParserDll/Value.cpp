@@ -9,6 +9,11 @@ Value::Value(ErrorId errorId, ...)
     va_end(args);
     }
 
+Value::Value(Error& error)
+    {
+    errors.push_back(error);
+    }
+
 Value::Value(double d, Token u)
     {
     this->number = d;

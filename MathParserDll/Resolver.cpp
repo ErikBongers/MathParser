@@ -103,17 +103,23 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         else
             return Value(ErrorId::VAR_NOT_DEF, prim.Id.stringValue.c_str());
         }
-    else if (prim.callExpr != nullptr)
+    else if (prim.callExpr != nullptr) //todo: create resolveCall();
         {
         auto& callExpr = *(CallExpr*)prim.callExpr;
-        auto f = Function::get(callExpr.functionName.stringValue.c_str());
-        if (f == nullptr)
+        auto fd = FunctionDef::get(callExpr.functionName.stringValue.c_str());
+        if (fd == nullptr)
             return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.stringValue.c_str());
-        if (((CallExpr*)prim.callExpr)->argument == nullptr)
+        if(callExpr.error.id != ErrorId::NONE)
+            return Value(callExpr.error);
+
+        // check function arguments:
+        if (callExpr.arguments.size() != fd->argsCount())
             return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.stringValue.c_str());
-        f->clearArgs();
-        f->addArg(resolveNode(*((CallExpr*)prim.callExpr)->argument));
-        return f->execute();
+        Function f(*fd);
+        for(auto arg : callExpr.arguments)
+            f.addArg(resolveNode(*arg));
+
+        return f.execute();
         }
     else
         return Value(ErrorId::UNKNOWN_EXPR);

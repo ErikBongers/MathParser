@@ -44,7 +44,7 @@ class CallExpr : public Node
     {
     public:
         Token functionName;
-        Node* argument = nullptr; //TODO: make argument list
+        std::vector<Node*> arguments;
     private:
         CallExpr() : Node(NodeType::CALLEXPR) {}
         friend class Parser;

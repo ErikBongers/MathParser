@@ -10,6 +10,7 @@ enum class ErrorId
     VAR_NOT_DEF,
     FUNC_NOT_DEF,
     FUNC_ARG_MIS,
+    FUNC_NO_OPEN_PAR,
     W_DIV_IMPL_MULT,
     W_POW_IMPL_MULT,
     };
@@ -40,7 +41,10 @@ class Error
         int pos = -1;
 
         Error() {}
-        Error(ErrorId id, va_list args=nullptr);
+        Error(ErrorId id, va_list args);
+        Error(ErrorId id, ...);
         const std::string to_json();
+    private:
+        void buildErrorString(va_list args = nullptr);
     };
 

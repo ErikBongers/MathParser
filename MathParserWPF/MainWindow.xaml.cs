@@ -52,7 +52,7 @@ namespace MathParserWPF
 
         private static void ParseFormula(string formula, MainWindow wnd)
             {
-            parseWithCSharp(formula, wnd);
+            //parseWithCSharp(formula, wnd);
             parseWithDll(formula, wnd);
             }
 

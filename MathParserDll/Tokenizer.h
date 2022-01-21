@@ -22,6 +22,7 @@ enum class TokenType
     RAD,
     DEG,
     SEMI_COLON,
+    COMMA,
 
     UNKNOWN,
     EOT,

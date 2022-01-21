@@ -1,5 +1,11 @@
-﻿* error in func arguments not passed through.
+﻿* functions: multiple args
+  > all args are expressions (no type specified)
+  > check no of args during parsing.
+
+
+* error in func arguments not passed through.
   > don't bother: first implement multiple args?
+  > e.g. max() or min()
 * save last statement in localStorage.
 * add line and pos to errors.
 * implicit mult with power: precedence changes depending on order?

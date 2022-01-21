@@ -2,33 +2,34 @@
 #include "Function.h"
 #include "Tokenizer.h"
 
-std::map<std::string, Function*> Function::functions;
+std::map<std::string, FunctionDef*> FunctionDef::functions;
 
-void Function::init()
+void FunctionDef::init()
     {
-    Function::AddFunction(new Sin());
-    Function::AddFunction(new Cos());
-    Function::AddFunction(new Tan());
-    Function::AddFunction(new ArcSin());
-    Function::AddFunction(new ArcCos());
-    Function::AddFunction(new ArcTan());
-    Function::AddFunction(new ASin());
-    Function::AddFunction(new ACos());
-    Function::AddFunction(new ATan());
-    Function::AddFunction(new Sqrt());
+    FunctionDef::AddFunction(new Max());
+    FunctionDef::AddFunction(new Sin());
+    FunctionDef::AddFunction(new Cos());
+    FunctionDef::AddFunction(new Tan());
+    FunctionDef::AddFunction(new ArcSin());
+    FunctionDef::AddFunction(new ArcCos());
+    FunctionDef::AddFunction(new ArcTan());
+    FunctionDef::AddFunction(new ASin());
+    FunctionDef::AddFunction(new ACos());
+    FunctionDef::AddFunction(new ATan());
+    FunctionDef::AddFunction(new Sqrt());
     };
 
-bool Function::exists(const std::string& functionName)
+bool FunctionDef::exists(const std::string& functionName)
     {
     if (functions.size() == 0)
-        Function::init();
+        FunctionDef::init();
     return functions.count(functionName) != 0;
     }
 
-Function* Function::get(const std::string& name)
+FunctionDef* FunctionDef::get(const std::string& name)
     {
     if (functions.size() == 0)
-        Function::init();
+        FunctionDef::init();
     if (functions.count(name) == 0)
         return nullptr;
     return functions[name];
@@ -36,7 +37,20 @@ Function* Function::get(const std::string& name)
 
 // --- Standard function implementations ---
 
-Value Sin::execute()
+Value Max::execute(std::vector<Value>& args)
+    {
+    if (args.size() != 2)
+        return std::numeric_limits<double>::quiet_NaN();
+    double arg0 = args[0].number;
+    if (args[0].unit.type == TokenType::DEG)
+        arg0 = arg0 * M_PI / 180;
+    double arg1 = args[1].number;
+    if (args[1].unit.type == TokenType::DEG)
+        arg1 = arg1 * M_PI / 180;
+    return arg0 > arg1 ? arg0 : arg1;
+    }
+
+Value Sin::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -46,7 +60,7 @@ Value Sin::execute()
     return sin(arg);
     }
 
-Value Cos::execute()
+Value Cos::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -56,7 +70,7 @@ Value Cos::execute()
     return cos(arg);
     }
 
-Value Tan::execute()
+Value Tan::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -66,7 +80,7 @@ Value Tan::execute()
     return tan(arg);
     }
 
-Value ArcSin::execute()
+Value ArcSin::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -74,7 +88,7 @@ Value ArcSin::execute()
     return asin(arg);
     }
 
-Value ArcCos::execute()
+Value ArcCos::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -82,7 +96,7 @@ Value ArcCos::execute()
     return acos(arg);
     }
 
-Value ATan::execute()
+Value ATan::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -90,7 +104,7 @@ Value ATan::execute()
     return atan(arg);
     }
 
-Value ASin::execute()
+Value ASin::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -98,7 +112,7 @@ Value ASin::execute()
     return asin(arg);
     }
 
-Value ACos::execute()
+Value ACos::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -106,7 +120,7 @@ Value ACos::execute()
     return acos(arg);
     }
 
-Value ArcTan::execute()
+Value ArcTan::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
@@ -114,7 +128,7 @@ Value ArcTan::execute()
     return atan(arg);
     }
 
-Value Sqrt::execute()
+Value Sqrt::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();

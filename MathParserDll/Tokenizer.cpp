@@ -104,6 +104,8 @@ Token Tokenizer::next()
             return Token(TokenType::SEMI_COLON, c);
         case ',':
             return Token(TokenType::COMMA, c);
+        case '.':
+            return Token(TokenType::DOT, c);
         default:
             if ((c >= '0' && c <= '9') || c == '.')
                 {
@@ -175,7 +177,13 @@ Token Tokenizer::parseNumber(char c)
             }
         else if (c == '.')
             {
-            decimalDivider = 10;
+            if (stream[pos] >= '0' && stream[pos] <= '9')
+                decimalDivider = 10;
+            else//dot has other meaning
+                {
+                pos--;
+                break;
+                }
             }
         else
             {

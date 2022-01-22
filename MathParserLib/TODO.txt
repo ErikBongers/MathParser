@@ -1,4 +1,6 @@
-﻿* improve units
+﻿* don't execute() function when args have errors. 
+  > remove error merging in max()
+* improve units
   > can be complex (sort of expresson with only mult, div and power)
 
 * save last statement in localStorage.

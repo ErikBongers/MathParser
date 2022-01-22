@@ -23,6 +23,7 @@ enum class TokenType
     DEG,
     SEMI_COLON,
     COMMA,
+    DOT, //except for the decimal dot.
 
     UNKNOWN,
     EOT,

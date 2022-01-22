@@ -14,13 +14,13 @@ Value::Value(const Error& error)
     errors.push_back(error);
     }
 
-Value::Value(double d, Token u)
+Value::Value(double d, const Unit u)
     {
     this->number = d;
     this->unit = u;
     }
 
-Value::Value(Token id, double d, Token u)
+Value::Value(Token id, double d, const Unit u)
     {
     this->id = id;
     this->number = d;
@@ -70,10 +70,7 @@ std::string Value::to_json()
 std::string Value::to_string(const std::string& format)
     {
     std::ostringstream str;
-    if (unit.type == TokenType::RAD)
-        str << Value(number / M_PI * 180, Token(TokenType::DEG, "deg")).to_string();
-    else
-        str << to_string();
+    str << to_string();
     if (errors.size() > 0)
         {
         for(auto& err: errors)
@@ -85,7 +82,7 @@ std::string Value::to_string(const std::string& format)
 Value& Value::operator+(const Value& v)
     {
     number += v.number;
-    if (unit.type == TokenType::NULLPTR)
+    if (unit.id.type == TokenType::NULLPTR)
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -94,7 +91,7 @@ Value& Value::operator+(const Value& v)
 Value& Value::operator-(const Value& v)
     {
     number -= v.number;
-    if (unit.type == TokenType::NULLPTR)
+    if (unit.id.type == TokenType::NULLPTR)
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -103,7 +100,7 @@ Value& Value::operator-(const Value& v)
 Value& Value::operator*(const Value& v)
     {
     number *= v.number;
-    if (unit.type == TokenType::NULLPTR)
+    if (unit.id.type == TokenType::NULLPTR)
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -112,7 +109,7 @@ Value& Value::operator*(const Value& v)
 Value& Value::operator/(const Value& v)
     {
     number /= v.number;
-    if (unit.type == TokenType::NULLPTR)
+    if (unit.id.type == TokenType::NULLPTR)
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -121,7 +118,7 @@ Value& Value::operator/(const Value& v)
 Value& Value::operator^(const Value& v)
     {
     number = std::pow(number,v.number);
-    if (unit.type == TokenType::NULLPTR)
+    if (unit.id.type == TokenType::NULLPTR)
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;

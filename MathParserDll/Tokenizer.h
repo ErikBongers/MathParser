@@ -19,8 +19,6 @@ enum class TokenType
     NUMBER,
     POWER,
     ID,
-    RAD,
-    DEG,
     SEMI_COLON,
     COMMA,
     DOT, //except for the decimal dot.
@@ -39,10 +37,10 @@ class Token
         std::string stringValue;
         double numberValue;
         Token() : Token(TokenType::NULLPTR) {}
-        Token(TokenType type, char c)
+        Token(TokenType type, char c) : numberValue(-1)
             {
             this->type = type;
-            this->stringValue = std::to_string(c);
+            this->stringValue += c;
             }
         Token(TokenType type, double d)
             {

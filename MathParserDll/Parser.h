@@ -1,4 +1,5 @@
 #pragma once
+#include "Unit.h"
 #include "Error.h"
 #include "Tokenizer.h"
 #include <vector>
@@ -13,6 +14,7 @@ class Node
     public:
         NodeType type;
         Error error;
+        Unit unit;
         bool is(NodeType type) { return this->type == type; }
     private:
         Node() {}
@@ -23,7 +25,6 @@ class ConstExpr : public Node
     {
     public:
         Token constNumber;
-        Token unit;
     private:
         ConstExpr() : Node(NodeType::CONSTEXPR) {};
         friend class Parser;

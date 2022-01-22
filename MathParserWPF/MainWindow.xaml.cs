@@ -53,6 +53,7 @@ namespace MathParserWPF
         private static void ParseFormula(string formula, MainWindow wnd)
             {
             //parseWithCSharp(formula, wnd);
+            //wnd.Output += "\n";
             parseWithDll(formula, wnd);
             }
 
@@ -62,7 +63,6 @@ namespace MathParserWPF
             var strJson = DllInterface.GetResult();
             //wnd.Output += strJson;
             var jsonResult = JsonSerializer.Deserialize<JsonResults>(strJson);
-            wnd.Output += "\n";
             foreach (var result in jsonResult.result)
                 {
                 double number;

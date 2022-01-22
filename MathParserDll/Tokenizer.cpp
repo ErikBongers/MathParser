@@ -24,8 +24,6 @@ const char* to_string(TokenType tt)
         { TokenType::NUMBER, "NUMBER" },
         { TokenType::POWER, "POWER" },
         { TokenType::ID, "ID" },
-        { TokenType::RAD, "RAD" },
-        { TokenType::DEG, "DEG" },
         { TokenType::SEMI_COLON, "SEMI_COLON" },
         { TokenType::COMMA, "COMMA" },
         { TokenType::UNKNOWN, "??" },
@@ -143,12 +141,7 @@ Token Tokenizer::parseId(char c)
     std::string lower;
     lower.resize(word.length());
     std::transform(word.begin(), word.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
-    if (lower.compare("deg") == 0)
-        return Token(TokenType::DEG, word);
-    else if (lower.compare("rad") == 0)
-        return Token(TokenType::RAD, word);
-    else
-        return Token(TokenType::ID, word);
+    return Token(TokenType::ID, word);
     }
 
 Token Tokenizer::parseNumber(char c)

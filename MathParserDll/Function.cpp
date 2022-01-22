@@ -42,10 +42,10 @@ Value Max::execute(std::vector<Value>& args)
     if (args.size() != 2)
         return std::numeric_limits<double>::quiet_NaN();
     double arg0 = args[0].number;
-    if (args[0].unit.type == TokenType::DEG)
+    if (args[0].unit.id.stringValue == "deg")
         arg0 = arg0 * M_PI / 180;
     double arg1 = args[1].number;
-    if (args[1].unit.type == TokenType::DEG)
+    if (args[1].unit.id.stringValue == "deg")
         arg1 = arg1 * M_PI / 180;
     Value ret;
     auto otherErrs = &ret.errors;
@@ -68,7 +68,7 @@ Value Sin::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
-    if (args[0].unit.type == TokenType::DEG)
+    if (args[0].unit.id.stringValue == "deg")
         arg = arg * M_PI / 180;
     return sin(arg);
     }
@@ -78,7 +78,7 @@ Value Cos::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
-    if (args[0].unit.type == TokenType::DEG)
+    if (args[0].unit.id.stringValue == "deg")
         arg = arg * M_PI / 180;
     return cos(arg);
     }
@@ -88,7 +88,8 @@ Value Tan::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
-    if (args[0].unit.type == TokenType::DEG)
+    if (args[0].unit.id.stringValue == "deg")
+
         arg = arg * M_PI / 180;
     return tan(arg);
     }

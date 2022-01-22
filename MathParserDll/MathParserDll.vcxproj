@@ -160,6 +160,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="Tokenizer.h" />
+    <ClInclude Include="Unit.h" />
     <ClInclude Include="Value.h" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +178,7 @@
     </ClCompile>
     <ClCompile Include="Resolver.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
+    <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Value.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

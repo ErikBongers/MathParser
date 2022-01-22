@@ -21,5 +21,6 @@ primaryExpr = const |
               id | 
               "(", addExpr, ")"
               callExpr
-const= {-} [0..9]
+const = {-} [0..9] unit
+unit = id
 callExpr = funcId '(' exprList ')'

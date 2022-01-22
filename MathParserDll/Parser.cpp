@@ -200,10 +200,16 @@ ConstExpr* Parser::parseConst(bool negative)
     t.numberValue = (negative ? -1 : 1) * t.numberValue;
     constExpr->constNumber = t;
     t = nextToken();
-    if (t.type == TokenType::RAD || t.type == TokenType::DEG)
-        constExpr->unit = t;
+    if (t.type == TokenType::ID)
+        {
+        if (ids.count(t.stringValue) != 0)
+            pushBackLastToken(); //a known id: assuming an implicit mult, here.
+        else
+            constExpr->unit = t; //no known id: assuming a unit.
+        }
     else
         pushBackLastToken();
+
     return constExpr;
     }
 

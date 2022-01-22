@@ -17,3 +17,10 @@ class Unit
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
     };
 
+struct UnitDef
+    {
+    public:
+        std::string id;
+        double toSI; //conversion factor
+        static std::map<std::string, UnitDef> defs;
+    };

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Function.h"
 #include "Tokenizer.h"
+#include "Unit.h"
 
 std::map<std::string, FunctionDef*> FunctionDef::functions;
 
@@ -42,11 +43,12 @@ Value Max::execute(std::vector<Value>& args)
     if (args.size() != 2)
         return std::numeric_limits<double>::quiet_NaN();
     double arg0 = args[0].number;
+    double toDeg = UnitDef::defs["deg"].toSI;
     if (args[0].unit.id.stringValue == "deg")
-        arg0 = arg0 * M_PI / 180;
+        arg0 = arg0 * toDeg;
     double arg1 = args[1].number;
     if (args[1].unit.id.stringValue == "deg")
-        arg1 = arg1 * M_PI / 180;
+        arg1 = arg1 * toDeg;
     Value ret;
     auto otherErrs = &ret.errors;
     if (arg0 > arg1)
@@ -68,8 +70,9 @@ Value Sin::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
+    double toDeg = UnitDef::defs["deg"].toSI;
     if (args[0].unit.id.stringValue == "deg")
-        arg = arg * M_PI / 180;
+        arg = arg * toDeg;
     return sin(arg);
     }
 
@@ -78,8 +81,9 @@ Value Cos::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
+    double toDeg = UnitDef::defs["deg"].toSI;
     if (args[0].unit.id.stringValue == "deg")
-        arg = arg * M_PI / 180;
+        arg = arg * toDeg;
     return cos(arg);
     }
 
@@ -88,9 +92,9 @@ Value Tan::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
+    double toDeg = UnitDef::defs["deg"].toSI;
     if (args[0].unit.id.stringValue == "deg")
-
-        arg = arg * M_PI / 180;
+        arg = arg * toDeg;
     return tan(arg);
     }
 

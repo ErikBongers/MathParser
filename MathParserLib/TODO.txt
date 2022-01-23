@@ -1,4 +1,5 @@
-﻿* don't execute() function when args have errors. 
+﻿* use |x| for absolute value. (and also floor and ceil symbols? No - too difficult to type)
+* don't execute() function when args have errors. 
   > remove error merging in max()
 * improve units
   > can be complex (sort of expresson with only mult, div and power)
@@ -31,6 +32,15 @@ Nice to have
   > unit definitions are grouped per property (length, weight,...)
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
+* dates:
+  > only once 
+  > time-span: date - date -> timespan
+  > now() function
+  > x = now().year
+  > .year, .month,... are all integers, to avoid decimal rounding errors?
+  > half a minute?
+    > 1min.sec/2 => 30sec
+    > imin/2 => omin !!!
 
 * simplify
 * plotting

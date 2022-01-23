@@ -128,6 +128,7 @@ class Parser
         Node* parseMultExpr();
         Node* parsePowerExpr();
         Node* parseImplicitMult();
+        Node* parseUnitExpr();
         Node* parsePrimaryExpr();
         ConstExpr* parseConst(bool negative);
         CallExpr* parseCallExpr(Token functionName);

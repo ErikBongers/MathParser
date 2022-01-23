@@ -97,7 +97,14 @@ Value Resolver::resolvePower(const PowerExpr& powerExpr)
 Value Resolver::resolvePrim(const PrimaryExpr& prim)
     {
     if (prim.addExpr != nullptr)
-        return resolveNode(*prim.addExpr);
+        {
+        auto val = resolveNode(*prim.addExpr);
+        if (prim.unit.id.type != TokenType::NULLPTR)
+            {
+            val.unit = prim.unit;
+            }
+        return val;
+        }
     else if (prim.Id.type != TokenType::NULLPTR )
         {
         //if (parser.ids.count(prim.Id.stringValue) != 0)
@@ -111,7 +118,12 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
     else if (prim.callExpr != nullptr) //todo: create resolveCall();
         {
         auto& callExpr = *(CallExpr*)prim.callExpr;
-        return resolveCall(callExpr);
+        auto val = resolveCall(callExpr);
+        if (prim.unit.id.type != TokenType::NULLPTR)
+            {
+            val.unit = prim.unit;
+            }
+        return val;
         }
     else
         return Value(ErrorId::UNKNOWN_EXPR);

@@ -4,7 +4,7 @@
 #include "Tokenizer.h"
 #include <vector>
 
-enum class NodeType {CONSTEXPR, PRIMARYEXPR, CALLEXPR, MULTEXPR, ADDEXPR, POWEREXPR, ASSIGNMENT, STATEMENT};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, MULTEXPR, ADDEXPR, POWEREXPR, ASSIGNMENT, STATEMENT};
 class Parser;
 
 class Node
@@ -40,6 +40,17 @@ class PrimaryExpr : public Node
         PrimaryExpr() : Node(NodeType::PRIMARYEXPR) {}
         friend class Parser;
     };
+
+class PostfixExpr : public Node
+    {
+    public:
+        Node* primExpr = nullptr;
+        Token postfixId;
+    private:
+        PostfixExpr() : Node(NodeType::POSTFIXEXPR) {}
+        friend class Parser;
+    };
+
 
 class CallExpr : public Node
     {
@@ -129,6 +140,7 @@ class Parser
         Node* parsePowerExpr();
         Node* parseImplicitMult();
         Node* parseUnitExpr();
+        Node* parsePostFixExpr();
         Node* parsePrimaryExpr();
         ConstExpr* parseConst(bool negative);
         CallExpr* parseCallExpr(Token functionName);
@@ -138,6 +150,7 @@ class Parser
         MultExpr* createMult();
         PowerExpr* createPower();
         PrimaryExpr* createPrimary();
+        PostfixExpr* createPostfix();
         AssignExpr* createAssign();
         CallExpr* createCall();
         Statement* createStatement();

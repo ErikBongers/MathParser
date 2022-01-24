@@ -158,23 +158,43 @@ Node* Parser::parseImplicitMult()
 
 Node* Parser::parseUnitExpr()
     {
-    Node* prim = parsePrimaryExpr();
+    Node* node = parsePostFixExpr();
     auto t = nextToken();
     if (t.type == TokenType::ID)
         {
         if (ids.count(t.stringValue) != 0)
             pushBackLastToken(); //a known id: assuming an implicit mult, here.
         else
-            prim->unit = t; //no known id: assuming a unit.
+            node->unit = t; //no known id: assuming a unit.
         }
     else
         pushBackLastToken();
-    return prim;
+    return node;
+    }
+
+Node* Parser::parsePostFixExpr()
+    {
+    Node* node = parsePrimaryExpr();
+    auto t = nextToken();
+    if (t.type == TokenType::DOT)
+        {
+        t = nextToken();
+        if (t.type == TokenType::ID)
+            {
+            auto postfixExpr = (PostfixExpr*)createPostfix();
+            postfixExpr->primExpr = node;
+            postfixExpr->postfixId = t;
+            }
+        else
+            pushBackLastToken();
+        }
+    else
+        pushBackLastToken();
+    return node;
     }
 
 Node* Parser::parsePrimaryExpr()
     {
-    PrimaryExpr* primExpr = createPrimary();//TODO: get rid of this.
     auto t = nextToken();
     if (t.type == TokenType::NUMBER)
         {
@@ -193,20 +213,25 @@ Node* Parser::parsePrimaryExpr()
         {
         if (FunctionDef::exists(t.stringValue))
             {
-            primExpr->callExpr = parseCallExpr(t);
+            return parseCallExpr(t);
             }
         else
+            {
+            PrimaryExpr* primExpr = createPrimary();
             primExpr->Id = t;
+            return primExpr;
+            }
         }
     else if (t.type == TokenType::PAR_OPEN)
         {
+        PrimaryExpr* primExpr = createPrimary();//TODO: get rid of this.
         primExpr->addExpr = parseAddExpr();
         t = nextToken();
         //if (t.type != TokenType::PAR_CLOSE)
         //    primExpr.errorPos = 1;//todo
         return primExpr; //always return a 'wrapped' expression as a primExpr, not it's content, for analysis and warnings.
         }
-    return primExpr;
+    return createPrimary(); //error
     }
 
 ConstExpr* Parser::parseConst(bool negative)
@@ -266,6 +291,7 @@ AddExpr* Parser::createAdd()   { AddExpr* p = new AddExpr; nodes.push_back(p); r
 MultExpr* Parser::createMult() { MultExpr* p = new MultExpr; nodes.push_back(p); return p; }
 PowerExpr* Parser::createPower() { PowerExpr* p = new PowerExpr; nodes.push_back(p); return p; }
 PrimaryExpr* Parser::createPrimary() { PrimaryExpr* p = new PrimaryExpr; nodes.push_back(p); return p; }
+PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }
 AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }
 Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
 CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }

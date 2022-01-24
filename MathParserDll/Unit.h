@@ -17,10 +17,14 @@ class Unit
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
     };
 
+enum class UnitClass { LENGTH, TEMP, WEIGHT, DATE, UNDEFINED};
+
 struct UnitDef
     {
     public:
-        std::string id;
-        double toSI; //conversion factor
         static std::map<std::string, UnitDef> defs;
+
+        std::string id;
+        double toSI = 1; //conversion factor
+        UnitClass property = UnitClass::UNDEFINED;
     };

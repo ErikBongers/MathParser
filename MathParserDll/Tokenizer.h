@@ -22,6 +22,7 @@ enum class TokenType
     SEMI_COLON,
     COMMA,
     DOT, //except for the decimal dot.
+    QUOTE,
 
     UNKNOWN,
     EOT,

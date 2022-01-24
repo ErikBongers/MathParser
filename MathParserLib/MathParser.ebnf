@@ -17,8 +17,10 @@ impliedMultExpr = const id |
                   '(' addExpr ')' (id | const)
 powerExpr = unitExpr |
            powerExpr "^" unitExpr
-unitExpr = primaryExpr |
-           primaryExpr unit
+unitExpr = postFixExpr |
+           postFixExpr unit
+postFixExpr = primaryExpr |
+            primaryExpr '.' id
 primaryExpr = const | 
               id | 
               "(", addExpr, ")"

@@ -1,4 +1,8 @@
-﻿* use |x| for absolute value. (and also floor and ceil symbols? No - too difficult to type)
+﻿* resolve Conversions and Fragments
+  > start with conversions.
+  > postfixId should be a valid unit.
+    > even within the same 'family' or 'dimension' or 'property'
+* use |x| for absolute value. (and also floor and ceil symbols? No - too difficult to type)
 * don't execute() function when args have errors. 
   > remove error merging in max()
 * improve units
@@ -33,13 +37,14 @@ Nice to have
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
 * dates:
-  > only once 
+  > only once units and conversions/fragments are implemented.
+  > x = '12/12/2022 23:45:11';
   > time-span: date - date -> timespan
   > now() function
   > x = now().year
   > .year, .month,... are all integers, to avoid decimal rounding errors?
   > half a minute?
-    > 1min.sec/2 => 30sec
+    > 1min.sec/2 => 30sec 
     > imin/2 => omin !!!
 
 * simplify

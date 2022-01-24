@@ -104,6 +104,8 @@ Token Tokenizer::next()
             return Token(TokenType::COMMA, c);
         case '.':
             return Token(TokenType::DOT, c);
+        case '\'':
+            return Token(TokenType::QUOTE, c);
         default:
             if ((c >= '0' && c <= '9') || c == '.')
                 {
@@ -128,7 +130,10 @@ Token Tokenizer::parseId(char c)
         {
         c = stream[pos];
         pos++;
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') 
+            || c == '_'
+            || (c >= '0' && c <= '9')
+            )
             {
             word += c;
             }

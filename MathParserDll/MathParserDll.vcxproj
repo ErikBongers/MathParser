@@ -96,6 +96,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File updateBuildNo.ps1 "./version.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -115,6 +118,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File updateBuildNo.ps1 "./version.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -130,6 +136,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File updateBuildNo.ps1 "./version.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -149,6 +158,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File updateBuildNo.ps1 "./version.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="api.h" />
@@ -162,6 +174,7 @@
     <ClInclude Include="Tokenizer.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Value.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="api.cpp" />
@@ -180,6 +193,9 @@
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Value.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="updateBuildNo.ps1" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

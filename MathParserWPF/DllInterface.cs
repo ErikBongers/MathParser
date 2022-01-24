@@ -32,6 +32,16 @@ namespace MathParserWPF
             return buf.ToString();
             }
 
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private extern static void getVersion(StringBuilder buf, int strlen);
+
+        public static string GetVersion()
+            {
+            StringBuilder buf = new StringBuilder(100);
+            getVersion(buf, 100);
+            return buf.ToString();
+            }
+
         }
 
     }

@@ -5,8 +5,9 @@
 #include "Tokenizer.h"
 #include "Resolver.h"
 #include "api.h"
+#include "version.h"
 
-std::string version = "1.1314";
+std::string version = "1.0." + std::to_string(VERSION_BUILD);
 
 int C_DECL parse(const char* str)
     {

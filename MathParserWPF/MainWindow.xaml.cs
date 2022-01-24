@@ -103,6 +103,7 @@ namespace MathParserWPF
             Formula = "";
             this.DataContext = this;
             txtFormula.Focus();
+            this.Title = "MathParser " + DllInterface.GetVersion();
             }
         }
     }

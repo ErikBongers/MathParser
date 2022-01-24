@@ -37,8 +37,8 @@ Node* Parser::parseAssignExpr()
             nextToken();//consume the EQ
             AssignExpr* assign = createAssign();
             assign->Id = id;
-            assign->addExpr = parseAddExpr();
-            ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->addExpr });
+            assign->expr = parseAddExpr();
+            ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
             }
         else

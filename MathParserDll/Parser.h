@@ -99,7 +99,7 @@ class AssignExpr : public Node
     {
     public: 
         Token Id;
-        Node* addExpr = nullptr;
+        Node* expr = nullptr;
     private:
         AssignExpr() : Node(NodeType::ASSIGNMENT) {}
         friend class Parser;

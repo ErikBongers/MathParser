@@ -1,4 +1,5 @@
-﻿* resolve Conversions and Fragments
+﻿* parseXXX() all start with createXXX();, even though the created node may not be needed.
+* resolve Conversions and Fragments
   > start with conversions.
   > postfixId should be a valid unit.
     > even within the same 'family' or 'dimension' or 'property'

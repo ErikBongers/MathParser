@@ -40,6 +40,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::POWEREXPR: return resolvePower((const PowerExpr&)node);
         case NodeType::PRIMARYEXPR: return resolvePrim((const PrimaryExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
+        case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
         default: return Value(ErrorId::UNKNOWN_EXPR, nullptr);
         }
     }
@@ -74,7 +75,7 @@ Value Resolver::resolveMult(const MultExpr& multExpr)
 
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
-    auto result = resolveNode(*assign.addExpr);
+    auto result = resolveNode(*assign.expr);
     result.id = assign.Id;
     variables[result.id.stringValue] = result;
     if (assign.error.id != ErrorId::NONE)
@@ -141,8 +142,15 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     if (callExpr.arguments.size() != fd->argsCount())
         return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.stringValue.c_str());
     Function f(*fd);
+    std::vector<Error> errors;
     for (auto arg : callExpr.arguments)
-        f.addArg(resolveNode(*arg));
+        {
+        auto argVal = resolveNode(*arg);
+        errors.insert(errors.begin(), argVal.errors.begin(), argVal.errors.end());
+        f.addArg(argVal);
+        }
+    if (errors.size() > 0)
+        return Value(errors);
 
     return f.execute();
     }

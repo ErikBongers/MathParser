@@ -20,6 +20,7 @@ class Value
         Value(double d, const Unit u);
         Value(Token id, double d, const Unit u);
         Value(const Error& error);
+        Value(const std::vector<Error>& errors);
 
         std::string to_string();
         std::string to_string(const std::string& format);

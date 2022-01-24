@@ -14,6 +14,11 @@ Value::Value(const Error& error)
     errors.push_back(error);
     }
 
+Value::Value(const std::vector<Error>& errors)
+    {
+    this->errors.insert(this->errors.begin(), errors.begin(), errors.end());
+    }
+
 Value::Value(double d, const Unit u)
     {
     this->number = d;

@@ -15,11 +15,12 @@
   > 2^3b  =  2^(3b) >> mult has prio
   > 2b^3  =  2(b^3) >> power has prio
 * Tokenizer: replace all strlen(stream) with a variable.
+* www: keypad.
 
 Nice to have
 ---------------
-* custom functions
-* resolve equations
+* unary operators ++, --
+* combined assignment operators: += ,...
 * units : nest them with operators
   > m, km, cm, mm,...
   > conversion?
@@ -35,6 +36,14 @@ Nice to have
     y  = x:in;
     z=y:cm;
   > unit definitions are grouped per property (length, weight,...)
+  > how to clear units?
+    a=x.;
+    a=(x.)+3;
+    a=x.+3;
+    a=x.value;
+    a=value(x);
+    a=area(sdfsdfs).;
+    a=a.;
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
 * dates:
@@ -47,7 +56,23 @@ Nice to have
   > half a minute?
     > 1min.sec/2 => 30sec 
     > imin/2 => omin !!!
+* Implicit variable:
+    Implicit var _ always contains the last result (being the result of the previous statement)
+    10+20+30;
+    +40: //add to the result of the previous line.
+    But what if:
+    A=10;
+    +20;//add this to A or only to implicit var or error? -> no error. Add to Implicit result.
+    B=50;
+    +=30; //add to var of previous line.
+    +=40;// continue adding…
+
+    C=_; //underscore is implicit var. Assign last value to C, which is B in this case;
+    70;
+    D=_;//D = 70
+
+* custom functions
+* resolve equations
 
 * simplify
-* plotting
 * Latex visualisation

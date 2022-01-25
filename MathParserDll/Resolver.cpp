@@ -76,8 +76,8 @@ Value Resolver::resolveMult(const MultExpr& multExpr)
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.expr);
-    result.id = assign.Id;
-    variables[result.id.stringValue] = result;
+    variables[assign.Id.stringValue] = result; //do not store the value with the id. The value of a variable is just the value.
+    result.id = assign.Id; //see comment above...
     if (assign.error.id != ErrorId::NONE)
         result.errors.push_back(assign.error);
     return result;
@@ -152,7 +152,12 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     if (errors.size() > 0)
         return Value(errors);
 
-    return f.execute();
+    auto val = f.execute();
+    if (callExpr.unit.id.type != TokenType::NULLPTR)
+        {
+        val.unit = callExpr.unit;
+        }
+    return val;
     }
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)

@@ -31,5 +31,6 @@ class Value
         Value& operator*(const Value& value);
         Value& operator/(const Value& value);
         Value& operator^(const Value& value);
+        Value convertToUnit(const Unit& to);
     };
 

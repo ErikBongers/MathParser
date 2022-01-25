@@ -87,7 +87,7 @@ std::string Value::to_string(const std::string& format)
 Value& Value::operator+(const Value& v)
     {
     number += v.number;
-    if (unit.id.type == TokenType::NULLPTR)
+    if (!unit.id.empty())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -96,7 +96,7 @@ Value& Value::operator+(const Value& v)
 Value& Value::operator-(const Value& v)
     {
     number -= v.number;
-    if (unit.id.type == TokenType::NULLPTR)
+    if (!unit.id.empty())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -105,7 +105,7 @@ Value& Value::operator-(const Value& v)
 Value& Value::operator*(const Value& v)
     {
     number *= v.number;
-    if (unit.id.type == TokenType::NULLPTR)
+    if (!unit.id.empty())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -114,7 +114,7 @@ Value& Value::operator*(const Value& v)
 Value& Value::operator/(const Value& v)
     {
     number /= v.number;
-    if (unit.id.type == TokenType::NULLPTR)
+    if (!unit.id.empty())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -123,9 +123,29 @@ Value& Value::operator/(const Value& v)
 Value& Value::operator^(const Value& v)
     {
     number = std::pow(number,v.number);
-    if (unit.id.type == TokenType::NULLPTR)
+    if (!unit.id.empty())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
     }
 
+Value Value::convertToUnit(const Unit& to)
+    {
+    Value value = *this;
+    double fFrom = 1;
+    double fTo = 1;
+
+    if (UnitDef::defs.count(this->unit.id))
+        fFrom = UnitDef::defs[this->unit.id].toSI;
+    else
+        value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, this->unit.id.c_str()));
+    
+    if (UnitDef::defs.count(to.id))
+        fTo = UnitDef::defs[to.id].toSI;
+    else
+        value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.id.c_str()));
+    
+    value.number = this->number * fFrom/ fTo;
+    value.unit = to;
+    return value;
+    }

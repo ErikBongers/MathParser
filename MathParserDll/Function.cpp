@@ -44,10 +44,10 @@ Value Max::execute(std::vector<Value>& args)
         return std::numeric_limits<double>::quiet_NaN();
     double arg0 = args[0].number;
     double toDeg = UnitDef::defs["deg"].toSI;
-    if (args[0].unit.id.stringValue == "deg")
+    if (args[0].unit.id == "deg")
         arg0 = arg0 * toDeg;
     double arg1 = args[1].number;
-    if (args[1].unit.id.stringValue == "deg")
+    if (args[1].unit.id == "deg")
         arg1 = arg1 * toDeg;
     Value ret;
     auto otherErrs = &ret.errors;
@@ -71,7 +71,7 @@ Value Sin::execute(std::vector<Value>& args)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
     double toDeg = UnitDef::defs["deg"].toSI;
-    if (args[0].unit.id.stringValue == "deg")
+    if (args[0].unit.id == "deg")
         arg = arg * toDeg;
     return sin(arg);
     }
@@ -82,7 +82,7 @@ Value Cos::execute(std::vector<Value>& args)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
     double toDeg = UnitDef::defs["deg"].toSI;
-    if (args[0].unit.id.stringValue == "deg")
+    if (args[0].unit.id == "deg")
         arg = arg * toDeg;
     return cos(arg);
     }
@@ -93,7 +93,7 @@ Value Tan::execute(std::vector<Value>& args)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
     double toDeg = UnitDef::defs["deg"].toSI;
-    if (args[0].unit.id.stringValue == "deg")
+    if (args[0].unit.id == "deg")
         arg = arg * toDeg;
     return tan(arg);
     }

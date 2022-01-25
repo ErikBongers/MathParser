@@ -184,6 +184,7 @@ Node* Parser::parsePostFixExpr()
             auto postfixExpr = (PostfixExpr*)createPostfix();
             postfixExpr->primExpr = node;
             postfixExpr->postfixId = t;
+            return postfixExpr;
             }
         else
             pushBackLastToken();

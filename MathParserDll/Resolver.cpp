@@ -39,6 +39,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::ASSIGNMENT: return resolveAssign((const AssignExpr&)node);
         case NodeType::POWEREXPR: return resolvePower((const PowerExpr&)node);
         case NodeType::PRIMARYEXPR: return resolvePrim((const PrimaryExpr&)node);
+        case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
         default: return Value(ErrorId::UNKNOWN_EXPR, nullptr);
@@ -95,12 +96,20 @@ Value Resolver::resolvePower(const PowerExpr& powerExpr)
     return result;
     }
 
+//wrapper to parse postfixExpressions
+Value Resolver::resolvePostfix(const PostfixExpr& pfix)
+    {
+    auto val = resolveNode(*pfix.primExpr);
+    val = val.convertToUnit(pfix.postfixId);
+    return val;
+    }
+
 Value Resolver::resolvePrim(const PrimaryExpr& prim)
     {
     if (prim.addExpr != nullptr)
         {
         auto val = resolveNode(*prim.addExpr);
-        if (prim.unit.id.type != TokenType::NULLPTR)
+        if (!prim.unit.id.empty())
             {
             val.unit = prim.unit;
             }
@@ -120,7 +129,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         {
         auto& callExpr = *(CallExpr*)prim.callExpr;
         auto val = resolveCall(callExpr);
-        if (prim.unit.id.type != TokenType::NULLPTR)
+        if (!prim.unit.id.empty())
             {
             val.unit = prim.unit;
             }
@@ -153,7 +162,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         return Value(errors);
 
     auto val = f.execute();
-    if (callExpr.unit.id.type != TokenType::NULLPTR)
+    if (!callExpr.unit.id.empty())
         {
         val.unit = callExpr.unit;
         }

@@ -1,11 +1,11 @@
-﻿* parseXXX() all start with createXXX();, even though the created node may not be needed.
-* resolve Conversions and Fragments
+﻿* resolve Conversions and Fragments
   > start with conversions.
   > postfixId should be a valid unit.
     > even within the same 'family' or 'dimension' or 'property'
+* parseXXX() all start with createXXX();, even though the created node may not be needed.
 * use |x| for absolute value. (and also floor and ceil symbols? No - too difficult to type)
 * don't execute() function when args have errors. 
-  > remove error merging in max()
+  > remove error merging in max()d
 * improve units
   > can be complex (sort of expresson with only mult, div and power)
 

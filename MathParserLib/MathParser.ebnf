@@ -25,6 +25,8 @@ primaryExpr = const |
               id | 
               "(", addExpr, ")"
               callExpr
-const = {-} [0..9] unit
+const = {-} [0..9] unit |
+        QUOT formattedValue QUOT
+formattedValue = dateValue //for now, only dates.
 unit = id
 callExpr = funcId '(' exprList ')'

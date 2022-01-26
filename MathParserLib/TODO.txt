@@ -1,11 +1,9 @@
 ﻿* resolve Conversions and Fragments
-  > start with conversions.
-  > postfixId should be a valid unit.
-    > even within the same 'family' or 'dimension' or 'property'
+  > check same 'family' or 'dimension' or 'property'
 * parseXXX() all start with createXXX();, even though the created node may not be needed.
 * use |x| for absolute value. (and also floor and ceil symbols? No - too difficult to type)
 * don't execute() function when args have errors. 
-  > remove error merging in max()d
+  > remove error merging in max()
 * improve units
   > can be complex (sort of expresson with only mult, div and power)
 
@@ -51,11 +49,41 @@ Nice to have
   > x = '12/12/2022 23:45:11';
   > time-span: date - date -> timespan
   > now() function
-  > x = now().year
-  > .year, .month,... are all integers, to avoid decimal rounding errors?
+  > fragments:
+    > x = now().year
+    > .year, .month,... 
+      > are all integers, as decimals are confusing? 
+      > warning when stripping a decimal part? Suggesting conversion to a lower type?
+      > complex calculation:
+        > (1hour/2)*4 = 2hours !! thus, no warning needed!
+        > only warn about rounding at the end result
+          > when assinging to  var
+          > when converting to other unit.
   > half a minute?
     > 1min.sec/2 => 30sec 
     > imin/2 => omin !!!
+  > data types:
+    > see chrono lib
+    - timepoint (don't use 'date' as this will be a unit for timepoint truncated to only the date part)
+      > representation? readable date with or without time?
+      > depends on unit:
+        - date: only date
+        - dt (or datetime?): plus time
+        - time: 
+          > does this make sense?
+          > a time is perhaps only a duration?
+          > when a 
+    - duration:
+      > units
+        > singular and plural can be used - same meaning.
+        - day, month, year, hour, minute, second
+        - short version: dd, mm, yy, hh, min, ss
+  > units (fragments):
+    >
+  > conversions:
+    - UTC
+    - GPS
+    -...
 * Implicit variable:
     Implicit var _ always contains the last result (being the result of the previous statement)
     10+20+30;

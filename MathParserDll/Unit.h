@@ -18,7 +18,7 @@ class Unit
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
     };
 
-enum class UnitClass { LENGTH, TEMP, WEIGHT, DATE, UNDEFINED};
+enum class UnitClass { ANGLE, LENGTH, TEMP, WEIGHT, DATE, UNDEFINED};
 
 struct UnitDef
     {

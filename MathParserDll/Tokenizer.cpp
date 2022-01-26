@@ -81,12 +81,40 @@ Token Tokenizer::next()
             return Token(TokenType::BRAC_CLOSE, c);
 
         case '+':
+            {
+            if (pos < size && stream[pos] == '=')
+                {
+                pos++;
+                return Token(TokenType::EQ_PLUS);
+                }
             return Token(TokenType::PLUS, c);
+            }
         case '-':
+            {
+            if (pos < size && stream[pos] == '=')
+                {
+                pos++;
+                return Token(TokenType::EQ_MIN);
+                }
             return Token(TokenType::MIN, c);
+            }
         case '*':
+            {
+            if (pos < size && stream[pos] == '=')
+                {
+                pos++;
+                return Token(TokenType::EQ_MULT);
+                }
             return Token(TokenType::MULT, c);
+            }
         case '/':
+            {
+            if (pos < size && stream[pos] == '=')
+                {
+                pos++;
+                return Token(TokenType::EQ_DIV);
+                }
+
             if (stream[pos] == '/')
                 {
                 pos++;
@@ -94,6 +122,7 @@ Token Tokenizer::next()
                 return next();
                 }
             return Token(TokenType::DIV, c);
+            }
         case '^':
             return Token(TokenType::POWER, c);
         case '=':

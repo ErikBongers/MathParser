@@ -17,8 +17,11 @@
 
 Nice to have
 ---------------
+* implicit unit conversion:
+  > a=3km-5m.km; --> a=2.995km
+  > a=3km-5m;  --> same value, but...what unit? Leftmost? Lowest resolution? SI unit?
+  > a=3000m-1km; --> 2000m?
 * unary operators ++, --
-* combined assignment operators: += ,...
 * units : nest them with operators
   > m, km, cm, mm,...
   > conversion?
@@ -44,7 +47,20 @@ Nice to have
     a=a.;
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
+* magnitudes:
+  > within one unitClass
+    x = 3km - 5m; --> x = 2.nnn km?
 * dates:
+  > Value is currently only numeric.
+    > how to solve?
+    > any value can suddenly be turned into a date fragment:
+      (a*5+2)hours;
+    > so, fragments are ordinary Values with a unit.
+    > how about dates?
+    > You can't add dates:
+      yesterday + today = nonsense;
+    > but dates can still be used in expressions:
+      lastMonday = today-3days; --> <date> = <date> op <value>
   > only once units and conversions/fragments are implemented.
   > x = '12/12/2022 23:45:11';
   > time-span: date - date -> timespan

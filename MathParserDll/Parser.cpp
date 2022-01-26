@@ -41,6 +41,42 @@ Node* Parser::parseAssignExpr()
             ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
             }
+        else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV)
+            {
+            nextToken();//consume the EQ
+            AssignExpr* assign = createAssign();
+            assign->Id = id;
+            //prepare components to fabricate the new add or mult expression.
+            PrimaryExpr* idExpr = createPrimary();
+            idExpr->Id = id;
+            TokenType oper;
+            switch (t.type)
+                {
+                case TokenType::EQ_PLUS: oper = TokenType::PLUS; break;
+                case TokenType::EQ_MIN: oper = TokenType::MIN; break;
+                case TokenType::EQ_MULT: oper = TokenType::MULT; break;
+                case TokenType::EQ_DIV: oper = TokenType::DIV; break;
+                }
+
+            //build expression
+            if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN)
+                {
+                AddExpr* addExpr = createAdd();
+                addExpr->a1 = idExpr;
+                addExpr->op = Token(oper);
+                addExpr->a2 = parseAddExpr();
+                assign->expr = addExpr;
+                }
+            else
+                {
+                MultExpr* multExpr = createMult();
+                multExpr->m1 = idExpr;
+                multExpr->op = Token(oper);
+                multExpr->m2 = parseAddExpr(); //note the parseAddExpr instead of parseMultExpr(), as the right=hand of the assign is similar to an expression between parenthesis.
+                assign->expr = multExpr;
+                }
+            return assign;
+            }
         else
             {
             pushBackLastToken(); //pushing back the ID, not the EQ!

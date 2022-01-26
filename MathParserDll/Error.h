@@ -13,7 +13,8 @@ enum class ErrorId
     FUNC_NO_OPEN_PAR,
     W_DIV_IMPL_MULT,
     W_POW_IMPL_MULT,
-    UNIT_NOT_DEF
+    UNIT_NOT_DEF,
+    W_ASSUMING_UNIT
     };
 
 

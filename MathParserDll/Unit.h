@@ -26,6 +26,6 @@ struct UnitDef
         static std::map<std::string, UnitDef> defs;
 
         std::string id;
-        double toSI = 1; //conversion factor
+        double toSI = 1; //default conversion factor
         UnitClass property = UnitClass::UNDEFINED;
     };

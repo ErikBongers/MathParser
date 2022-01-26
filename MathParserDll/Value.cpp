@@ -86,26 +86,45 @@ std::string Value::to_string(const std::string& format)
 
 Value& Value::operator+(const Value& v)
     {
-    number += v.number;
-    if (!unit.id.empty())
-        unit = v.unit;
-    errors.insert(errors.end(), v.errors.begin(), v.errors.end());
-    return *this;
+    return doTerm(true, v);
     }
 
 Value& Value::operator-(const Value& v)
     {
-    number -= v.number;
-    if (!unit.id.empty())
-        unit = v.unit;
+    return doTerm(false, v);
+    }
+
+Value& Value::doTerm(bool adding, const Value& v)
+    {
+    //if both values have units: convert them to SI before operation.
+    if (!unit.id.empty() && !v.unit.id.empty())
+        {
+        double d1 = this->toSI();
+        double d2 = v.toSI();
+        number = adding ? (d1 + d2) : (d1 - d2);
+        number /= UnitDef::defs[this->unit.id].toSI;
+        }
+    //if both units have no units, just do operation.
+    else if (!unit.id.empty() && !v.unit.id.empty())
+        {
+        number = adding ? (number + v.number) : (number - v.number);
+        }
+    else //a value with a unit and one without it: assuming both same unit
+        {
+        number = adding ? (number + v.number) : (number - v.number);
+        if (this->unit.id.empty())
+            this->unit = v.unit;
+        errors.push_back(Error(ErrorId::W_ASSUMING_UNIT));
+        }
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
     }
 
 Value& Value::operator*(const Value& v)
     {
+    //TODO: if both units set: unit changes to unit*unit!
     number *= v.number;
-    if (!unit.id.empty())
+    if (unit.id.empty())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -113,8 +132,9 @@ Value& Value::operator*(const Value& v)
 
 Value& Value::operator/(const Value& v)
     {
+    //TODO: if both units set: unit changes to unit/unit!
     number /= v.number;
-    if (!unit.id.empty())
+    if (unit.id.empty())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;

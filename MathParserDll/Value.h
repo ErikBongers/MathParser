@@ -32,5 +32,8 @@ class Value
         Value& operator/(const Value& value);
         Value& operator^(const Value& value);
         Value convertToUnit(const Unit& to);
+        double toSI() const { return number * UnitDef::defs[unit.id].toSI; };
+    private:
+        Value& doTerm(bool adding, const Value& v);
     };
 

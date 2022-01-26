@@ -17,25 +17,8 @@
 
 Nice to have
 ---------------
-* implicit unit conversion:
-  > a=3km-5m.km; --> a=2.995km
-  > a=3km-5m;  --> same value, but...what unit? Leftmost? Lowest resolution? SI unit?
-  > a=3000m-1km; --> 2000m?
 * unary operators ++, --
-* units : nest them with operators
-  > m, km, cm, mm,...
-  > conversion?
-    x = 10m; //what if m is defined as var (m=mass)? Warning would be annoying...but will only display for implicit mult! So...warning is ok?
-    y = (cm)x; //is casting! Programmers may prefer this.
-    y = x.cm;
-    y = y.cm;
-    y = (10km).cm;
-    y = 10km.m; // conversion from km to m.
-    z = 10in.cm;
-    or use : ?
-    x = 10km:m;
-    y  = x:in;
-    z=y:cm;
+* units :
   > unit definitions are grouped per property (length, weight,...)
   > how to clear units?
     a=x.;

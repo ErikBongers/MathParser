@@ -7,7 +7,7 @@
 * improve units
   > can be complex (sort of expresson with only mult, div and power)
 
-* save last statement in localStorage.
+* www:  save last statement in localStorage.
 * add line and pos to errors.
 * implicit mult with power: precedence changes depending on order?
   > 2^3b  =  2^(3b) >> mult has prio

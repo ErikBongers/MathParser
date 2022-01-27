@@ -42,13 +42,8 @@ Value Max::execute(std::vector<Value>& args)
     {
     if (args.size() != 2)
         return std::numeric_limits<double>::quiet_NaN();
-    double arg0 = args[0].number;
-    double toDeg = UnitDef::defs["deg"].toSI;
-    if (args[0].unit.id == "deg")
-        arg0 = arg0 * toDeg;
-    double arg1 = args[1].number;
-    if (args[1].unit.id == "deg")
-        arg1 = arg1 * toDeg;
+    double arg0 = args[0].toSI();
+    double arg1 = args[1].toSI();
     Value ret;
     auto otherErrs = &ret.errors;
     if (arg0 > arg1)

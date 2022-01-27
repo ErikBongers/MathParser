@@ -223,7 +223,10 @@ Node* Parser::parsePostFixExpr()
             return postfixExpr;
             }
         else
+            {
+            node->unit = Unit::CLEAR();
             pushBackLastToken();
+            }
         }
     else
         pushBackLastToken();

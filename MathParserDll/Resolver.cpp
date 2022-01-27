@@ -109,10 +109,10 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
     if (prim.addExpr != nullptr)
         {
         auto val = resolveNode(*prim.addExpr);
-        if (!prim.unit.id.empty())
-            {
+        if (prim.unit.isClear())
+            val.unit = Unit();
+        else if (!prim.unit.id.empty())
             val.unit = prim.unit;
-            }
         return val;
         }
     else if (prim.Id.type != TokenType::NULLPTR )
@@ -121,7 +121,12 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         //    return resolveNode(*parser.ids[prim.Id.stringValue].addExpr);
         auto found = variables.find(prim.Id.stringValue);
         if (found != variables.end())
-            return variables[prim.Id.stringValue];
+            {
+            auto v = variables[prim.Id.stringValue];
+            if (prim.unit.isClear())
+                v.unit = Unit();
+            return v;
+            }
         else
             return Value(ErrorId::VAR_NOT_DEF, prim.Id.stringValue.c_str());
         }
@@ -129,10 +134,10 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         {
         auto& callExpr = *(CallExpr*)prim.callExpr;
         auto val = resolveCall(callExpr);
-        if (!prim.unit.id.empty())
-            {
+        if (prim.unit.isClear())
+            val.unit = Unit();
+        else if (!prim.unit.id.empty())
             val.unit = prim.unit;
-            }
         return val;
         }
     else
@@ -162,16 +167,19 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         return Value(errors);
 
     auto val = f.execute();
-    if (!callExpr.unit.id.empty())
-        {
+    if (callExpr.unit.isClear())
+        val.unit = Unit();
+    else if (!callExpr.unit.id.empty())
         val.unit = callExpr.unit;
-        }
     return val;
     }
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
-    return Value(constExpr.constNumber.numberValue, constExpr.unit);
+    auto v = Value(constExpr.constNumber.numberValue, constExpr.unit);
+    if (constExpr.unit.isClear())
+        v.unit = Unit();
+    return v;
     }
 
 std::string Resolver::formatError(const std::string errorMsg, ...)

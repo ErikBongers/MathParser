@@ -16,9 +16,11 @@ class Unit
         Unit() {}
         const char* to_string() const;
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
+        static Unit CLEAR() { return Unit("0"); }
+        bool isClear() const { return id == "0"; }
     };
 
-enum class UnitClass { ANGLE, LENGTH, TEMP, WEIGHT, DATE, UNDEFINED};
+enum class UnitClass { ANGLE, LENGTH, TEMP, WEIGHT, DATE, UNDEFINED, CLEAR};
 
 struct UnitDef
     {

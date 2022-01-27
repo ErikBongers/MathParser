@@ -104,8 +104,8 @@ Value& Value::doTerm(bool adding, const Value& v)
         number = adding ? (d1 + d2) : (d1 - d2);
         number /= UnitDef::defs[this->unit.id].toSI;
         }
-    //if both units have no units, just do operation.
-    else if (!unit.id.empty() && !v.unit.id.empty())
+    //if both values have no units, just do operation.
+    else if (unit.id.empty() && v.unit.id.empty())
         {
         number = adding ? (number + v.number) : (number - v.number);
         }

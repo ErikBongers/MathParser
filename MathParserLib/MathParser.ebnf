@@ -23,8 +23,10 @@ postFixExpr = primaryExpr |
             primaryExpr '.' id
 primaryExpr = const | 
               id | 
-              "(", addExpr, ")"
-              callExpr
+              "(", addExpr, ")" |
+              callExpr |
+              absExpr
+absExpr = '|' addExpr '|'
 const = {-} [0..9] unit |
         QUOT formattedValue QUOT
 formattedValue = dateValue //for now, only dates.

@@ -272,6 +272,17 @@ Node* Parser::parsePrimaryExpr()
         //    primExpr.errorPos = 1;//todo
         return primExpr; //always return a 'wrapped' expression as a primExpr, not it's content, for analysis and warnings.
         }
+    else if (t.type == TokenType::PIPE)
+        {
+        auto addExpr = parseAddExpr();
+        CallExpr* callExpr = createCall();
+        callExpr->arguments.push_back(addExpr);
+        callExpr->functionName = Token(TokenType::ID, "abs");
+        t = nextToken();
+        //if (t.type != TokenType::PAR_CLOSE)
+        //    callExpr.errorPos = 1;//todo
+        return callExpr;
+        }
     return createPrimary(); //error
     }
 

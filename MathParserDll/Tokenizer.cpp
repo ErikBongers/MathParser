@@ -26,6 +26,7 @@ const char* to_string(TokenType tt)
         { TokenType::ID, "ID" },
         { TokenType::SEMI_COLON, "SEMI_COLON" },
         { TokenType::COMMA, "COMMA" },
+        { TokenType::PIPE, "PIPE" },
         { TokenType::UNKNOWN, "??" },
         { TokenType::NULLPTR, "" }
         };
@@ -135,6 +136,8 @@ Token Tokenizer::next()
             return Token(TokenType::DOT, c);
         case '\'':
             return Token(TokenType::QUOTE, c);
+        case '|':
+            return Token(TokenType::PIPE, c);
         default:
             if ((c >= '0' && c <= '9') || c == '.')
                 {

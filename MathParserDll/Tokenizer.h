@@ -27,6 +27,7 @@ enum class TokenType
     COMMA,
     DOT, //except for the decimal dot.
     QUOTE,
+    PIPE,
 
     UNKNOWN,
     EOT,

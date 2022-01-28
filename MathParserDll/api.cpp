@@ -11,6 +11,7 @@ std::string version = "1.0." + std::to_string(VERSION_BUILD);
 
 int C_DECL parse(const char* str)
     {
+    UnitDef::init(); //todo: unsafe: parser and resolver require this. use dependency injection or singleton.
     Parser parser(str);
     Resolver resolver(parser);
     resolver.resolve();

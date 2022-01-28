@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Basic&family=JetBrains+Mono&display=swap');
 
+  * {
+	box-sizing: border-box;
+}
+
 body {
 	margin: 0px;
 	padding: 20px;
@@ -102,3 +106,43 @@ h2 {
 button {
 	margin-left: 20px;
 }
+
+
+/* grid */
+.grid-container {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	height: 10vh;
+	margin:10px;
+	}
+
+.grid-item {
+	display:flex;
+	justify-content: center;
+	border-radius: 1.5vw;
+	align-items: center;
+	font-family: 'JetBrains Mono', monospace;
+	}
+
+.grid-item.light
+{
+	background-color: #f0f0f0;
+}
+.grid-item.medium
+{
+	background-color: #dddddd;
+}
+
+@media only screen and (max-height: 1000px) {
+	.hide-on-phone {
+	  display: none;
+	}
+	.grid-container{
+		height: 28vh;
+	}
+	#txtInput, #txtOutput{
+		height: 28vh;
+	}
+  }
+  

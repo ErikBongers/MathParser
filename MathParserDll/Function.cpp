@@ -7,6 +7,8 @@ std::map<std::string, FunctionDef*> FunctionDef::functions;
 
 void FunctionDef::init()
     {
+    FunctionDef::AddFunction(new Int());
+    FunctionDef::AddFunction(new Abs());
     FunctionDef::AddFunction(new Max());
     FunctionDef::AddFunction(new Sin());
     FunctionDef::AddFunction(new Cos());
@@ -60,14 +62,31 @@ Value Max::execute(std::vector<Value>& args)
     return ret;
     }
 
+Value Int::execute(std::vector<Value>& args)
+    {
+    if (args.size() != 1)
+        return std::numeric_limits<double>::quiet_NaN();
+    Value arg = args[0];
+    arg.number = trunc(arg.number);
+    return arg;
+    }
+
+Value Abs::execute(std::vector<Value>& args)
+    {
+    if (args.size() != 1)
+        return std::numeric_limits<double>::quiet_NaN();
+    Value arg = args[0];
+    arg.number = abs(arg.number);
+    return arg;
+    }
+
 Value Sin::execute(std::vector<Value>& args)
     {
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
-    double toDeg = UnitDef::defs["deg"].toSI;
     if (args[0].unit.id == "deg")
-        arg = arg * toDeg;
+        arg = UnitDef::defs["deg"].toSI(arg);;
     return sin(arg);
     }
 
@@ -76,9 +95,8 @@ Value Cos::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
-    double toDeg = UnitDef::defs["deg"].toSI;
     if (args[0].unit.id == "deg")
-        arg = arg * toDeg;
+        arg = UnitDef::defs["deg"].toSI(arg);
     return cos(arg);
     }
 
@@ -87,9 +105,8 @@ Value Tan::execute(std::vector<Value>& args)
     if (args.size() != 1)
         return std::numeric_limits<double>::quiet_NaN();
     double arg = args[0].number;
-    double toDeg = UnitDef::defs["deg"].toSI;
     if (args[0].unit.id == "deg")
-        arg = arg * toDeg;
+        arg = UnitDef::defs["deg"].toSI(arg);
     return tan(arg);
     }
 

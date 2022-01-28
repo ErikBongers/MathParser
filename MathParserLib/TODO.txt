@@ -1,7 +1,8 @@
-﻿* resolve Conversions and Fragments
+﻿* use |x| for absolute value. (and also floor and ceil symbols? No - too difficult to type)
+  > first create the abs function.
+* resolve Conversions and Fragments
   > check same 'family' or 'dimension' or 'property'
 * parseXXX() all start with createXXX();, even though the created node may not be needed.
-* use |x| for absolute value. (and also floor and ceil symbols? No - too difficult to type)
 * don't execute() function when args have errors. 
   > remove error merging in max()
 * improve units
@@ -20,14 +21,6 @@ Nice to have
 * unary operators ++, --
 * units :
   > unit definitions are grouped per property (length, weight,...)
-  > how to clear units?
-    a=x.;
-    a=(x.)+3;
-    a=x.+3;
-    a=x.value;
-    a=value(x);
-    a=area(sdfsdfs).;
-    a=a.;
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
 * magnitudes:
@@ -77,6 +70,22 @@ Nice to have
         > singular and plural can be used - same meaning.
         - day, month, year, hour, minute, second
         - short version: dd, mm, yy, hh, min, ss
+        Timepoints
+Time_point<utc_clock> now = …;
+Now():
+Std:chrono::steady_clock::now() -> time_point<steady_clock>
+Std:chrono::utc_clock::now() -> time_point<utc_clock>
+
+Duration
+Duration = now() - then();
+Durations allow calculations and max(), floor(),…
+Floor is template: floor<Sec>(duration);
+
+See duration doc for conversions with or without precision loss, float or int.
+Duration_cast<hours> from_duration to_duration: so, duration are of a type? Probably not. Cast is needed for durations of INT type. The cast defines the resolution, I guess.
+Duration without cast: duration<double, millis>
+So, I guess for a duration<int, sec> a duration_cast<sec> is needed?
+
   > units (fragments):
     >
   > conversions:

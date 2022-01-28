@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Math Parser</h1>
+    <h1 class="hide-on-phone">Math Parser</h1>
 
     <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
     <div class="emscripten" id="status">Downloading...</div>
@@ -17,8 +17,16 @@
     </div>
 
     <textarea class="emscripten" id="txtInput" rows="8" autofocus placeholder="a=3+sin(30deg);&#10;b=a-3+PI;"></textarea>
-    <h2>Output</h2>
+    <h2 class="hide-on-phone">Output</h2>
     <textarea class="emscripten" id="txtOutput" rows="8"></textarea>
+
+
+
+    <div id="calculator" class="grid-container"></div>
+
+
+
+
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
@@ -75,6 +83,7 @@
     </script>
     <script async type="text/javascript" src="mathparser.wasm.js"></script>
     <script async type="text/javascript" src="api.js"></script>
+    <script defer type="text/javascript" src="keyboard.js"></script>
   </body>
 </html>
 

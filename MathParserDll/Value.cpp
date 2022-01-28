@@ -102,7 +102,7 @@ Value& Value::doTerm(bool adding, const Value& v)
         double d1 = this->toSI();
         double d2 = v.toSI();
         number = adding ? (d1 + d2) : (d1 - d2);
-        number /= UnitDef::defs[this->unit.id].toSI;
+        number = UnitDef::defs[this->unit.id].fromSI(number);
         }
     //if both values have no units, just do operation.
     else if (unit.id.empty() && v.unit.id.empty())
@@ -155,17 +155,20 @@ Value Value::convertToUnit(const Unit& to)
     double fFrom = 1;
     double fTo = 1;
 
-    if (UnitDef::defs.count(this->unit.id))
-        fFrom = UnitDef::defs[this->unit.id].toSI;
-    else
+    if (UnitDef::defs.count(this->unit.id) == 0)
+        {
         value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, this->unit.id.c_str()));
+        return value;
+        }
     
-    if (UnitDef::defs.count(to.id))
-        fTo = UnitDef::defs[to.id].toSI;
-    else
+    if (UnitDef::defs.count(to.id) == 0)
+        {
         value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.id.c_str()));
-    
-    value.number = this->number * fFrom/ fTo;
+        return value;
+        }
+
+    value.number = UnitDef::defs[this->unit.id].toSI(this->number); //from -> SI
+    value.number = UnitDef::defs[to.id].fromSI(value.number);  //SI -> to
     value.unit = to;
     return value;
     }

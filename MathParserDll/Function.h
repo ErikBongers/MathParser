@@ -31,6 +31,22 @@ class Function
         Value execute() { return functionDef.execute(args); }
     };
 
+class Int : public FunctionDef
+    {
+    public:
+        std::string getName() override { return "int"; }
+        size_t argsCount() override { return 1; }
+        Value execute(std::vector<Value>& args) override;
+    };
+
+class Abs : public FunctionDef
+    {
+    public:
+        std::string getName() override { return "abs"; }
+        size_t argsCount() override { return 1; }
+        Value execute(std::vector<Value>& args) override;
+    };
+
 class Max : public FunctionDef
     {
     public:

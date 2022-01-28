@@ -6,23 +6,26 @@ Module.onRuntimeInitialized = async _ => {
 
 	window.document.title = "Math Parser " + Module.api.getMathVersion();
 
+	Module.parseAfterChange = function(){
+		document.getElementById('txtOutput').value = "";
+		var result = Module.api.parseMath(document.getElementById('txtInput').value);
+		Module.log(result);
+		result = JSON.parse(result);
+		for(line of result.result)
+			{
+			let strErrors = "";
+			for(e of line.errors)
+				{
+				strErrors += "  " + e.message;
+				}
+			strErrors
+			Module.print((line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit + (strErrors === ""? "" : "  <<<" + strErrors));
+			}
+	};
 	document.getElementById('txtInput')
 		.addEventListener('input', function()
 			{
-			document.getElementById('txtOutput').value = "";
-	        var result = Module.api.parseMath(document.getElementById('txtInput').value);
-	        Module.log(result);
-	        result = JSON.parse(result);
-	        for(line of result.result)
-	        	{
-	        	let strErrors = "";
-	        	for(e of line.errors)
-	        		{
-        			strErrors += "  " + e.message;
-	        		}
-	        	strErrors
-	        	Module.print((line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit + (strErrors === ""? "" : "  <<<" + strErrors));
-	        	}
+				Module.parseAfterChange();
 			});
 
 	Module.print = (function() 

@@ -56,6 +56,7 @@ Node* Parser::parseAssignExpr()
                 case TokenType::EQ_MIN: oper = TokenType::MIN; break;
                 case TokenType::EQ_MULT: oper = TokenType::MULT; break;
                 case TokenType::EQ_DIV: oper = TokenType::DIV; break;
+                default:break;
                 }
 
             //build expression

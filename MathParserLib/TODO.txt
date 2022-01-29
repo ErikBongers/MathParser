@@ -6,13 +6,10 @@
 * improve units
   > can be complex (sort of expresson with only mult, div and power)
 
-* www:  save last statement in localStorage.
 * add line and pos to errors.
 * implicit mult with power: precedence changes depending on order?
   > 2^3b  =  2^(3b) >> mult has prio
   > 2b^3  =  2(b^3) >> power has prio
-* Tokenizer: replace all strlen(stream) with a variable.
-* www: keypad.
 
 Nice to have
 ---------------

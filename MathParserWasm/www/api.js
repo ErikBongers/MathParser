@@ -1,3 +1,8 @@
+window.addEventListener('load', (event) => {
+	if(localStorage.savedCode)
+		document.getElementById("txtInput").value = localStorage.savedCode;
+  });
+
 Module.onRuntimeInitialized = async _ => {
     Module.api = {
 		parseMath: Module.cwrap('parseMath', 'string', ["string"]),
@@ -25,6 +30,8 @@ Module.onRuntimeInitialized = async _ => {
 	document.getElementById('txtInput')
 		.addEventListener('input', function()
 			{
+				localStorage.savedCode = document.getElementById("txtInput").value;
+
 				Module.parseAfterChange();
 			});
 

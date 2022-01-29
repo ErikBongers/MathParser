@@ -20,7 +20,8 @@ powerExpr = unitExpr |
 unitExpr = postFixExpr |
            postFixExpr unit
 postFixExpr = primaryExpr |
-            primaryExpr '.' id
+            primaryExpr '.' id |
+            primaryExpr (INC | DEC)
 primaryExpr = const | 
               id | 
               "(", addExpr, ")" |

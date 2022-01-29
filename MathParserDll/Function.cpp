@@ -20,6 +20,8 @@ void FunctionDef::init()
     FunctionDef::AddFunction(new ACos());
     FunctionDef::AddFunction(new ATan());
     FunctionDef::AddFunction(new Sqrt());
+    FunctionDef::AddFunction(new Inc());
+    FunctionDef::AddFunction(new Dec());
     };
 
 bool FunctionDef::exists(const std::string& functionName)
@@ -60,6 +62,24 @@ Value Max::execute(std::vector<Value>& args)
         }
     ret.errors.insert(ret.errors.begin(), otherErrs->begin(), otherErrs->end());
     return ret;
+    }
+
+Value Inc::execute(std::vector<Value>& args)
+    {
+    if (args.size() != 1)
+        return std::numeric_limits<double>::quiet_NaN();
+    Value arg = args[0];
+    arg.number++;
+    return arg;
+    }
+
+Value Dec::execute(std::vector<Value>& args)
+    {
+    if (args.size() != 1)
+        return std::numeric_limits<double>::quiet_NaN();
+    Value arg = args[0];
+    arg.number--;
+    return arg;
     }
 
 Value Int::execute(std::vector<Value>& args)

@@ -229,6 +229,24 @@ Node* Parser::parsePostFixExpr()
             pushBackLastToken();
             }
         }
+    else if (t.type == TokenType::INC || t.type == TokenType::DEC)
+        {
+        if (node->type != NodeType::PRIMARYEXPR)
+            {
+            node->error = Error(ErrorId::VAR_EXPECTED);
+            return node;
+            }
+
+        PrimaryExpr* idExpr = (PrimaryExpr*)node;
+        CallExpr* callExpr = createCall();
+        callExpr->arguments.push_back(node);
+        callExpr->functionName = Token(TokenType::ID, t.type ==TokenType::INC ? "inc" : "dec");
+
+        AssignExpr* assignExpr = createAssign();
+        assignExpr->Id = idExpr->Id;
+        assignExpr->expr = callExpr;
+        return assignExpr;
+        }
     else
         pushBackLastToken();
     return node;
@@ -265,7 +283,7 @@ Node* Parser::parsePrimaryExpr()
         }
     else if (t.type == TokenType::PAR_OPEN)
         {
-        PrimaryExpr* primExpr = createPrimary();//TODO: get rid of this.
+        PrimaryExpr* primExpr = createPrimary();//TODO: get rid of this? See comment below...
         primExpr->addExpr = parseAddExpr();
         t = nextToken();
         //if (t.type != TokenType::PAR_CLOSE)

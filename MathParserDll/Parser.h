@@ -34,8 +34,8 @@ class PrimaryExpr : public Node
     {
     public:
         Token Id;
-        Node* addExpr = nullptr;
-        Node* callExpr = nullptr;
+        Node* addExpr = nullptr; //TODO: get rid of this?
+        Node* callExpr = nullptr; //TODO: get rid of this
     private:
         PrimaryExpr() : Node(NodeType::PRIMARYEXPR) {}
         friend class Parser;

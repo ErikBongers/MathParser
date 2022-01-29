@@ -20,6 +20,8 @@ const char* to_string(TokenType tt)
         { TokenType::MIN, "MIN" },
         { TokenType::DIV, "DIV" },
         { TokenType::MULT, "MULT" },
+        { TokenType::INC, "INC" },
+        { TokenType::DEC, "DEC" },
         { TokenType::EQ, "EQ" },
         { TokenType::NUMBER, "NUMBER" },
         { TokenType::POWER, "POWER" },
@@ -88,6 +90,11 @@ Token Tokenizer::next()
                 pos++;
                 return Token(TokenType::EQ_PLUS);
                 }
+            else if (pos < size && stream[pos] == '+')
+                {
+                pos++;
+                return Token(TokenType::INC);
+                }
             return Token(TokenType::PLUS, c);
             }
         case '-':
@@ -96,6 +103,11 @@ Token Tokenizer::next()
                 {
                 pos++;
                 return Token(TokenType::EQ_MIN);
+                }
+            else if (pos < size && stream[pos] == '-')
+                {
+                pos++;
+                return Token(TokenType::DEC);
                 }
             return Token(TokenType::MIN, c);
             }

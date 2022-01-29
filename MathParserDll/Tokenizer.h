@@ -15,6 +15,8 @@ enum class TokenType
     MIN,
     DIV,
     MULT,
+    INC,
+    DEC,
     EQ,
     EQ_PLUS,
     EQ_MIN,

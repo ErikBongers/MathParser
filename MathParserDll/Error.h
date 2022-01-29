@@ -14,7 +14,8 @@ enum class ErrorId
     W_DIV_IMPL_MULT,
     W_POW_IMPL_MULT,
     UNIT_NOT_DEF,
-    W_ASSUMING_UNIT
+    W_ASSUMING_UNIT,
+    VAR_EXPECTED,
     };
 
 

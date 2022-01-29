@@ -179,6 +179,8 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
     auto v = Value(constExpr.constNumber.numberValue, constExpr.unit);
     if (constExpr.unit.isClear())
         v.unit = Unit();
+    if (constExpr.error.id != ErrorId::NONE)
+        v.errors.push_back(constExpr.error);
     return v;
     }
 

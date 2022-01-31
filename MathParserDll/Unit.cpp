@@ -28,9 +28,9 @@ std::map<std::string, UnitDef> UnitDef::defs =
         { "micron", UnitDef("micron", 0.000001, UnitClass::LENGTH)},
         { "um", UnitDef("um", 0.000001, UnitClass::LENGTH)},
 
-        { "C", UnitDef("C", 0.000001, UnitClass::LENGTH)},
-        { "K", UnitDef("K", 1, UnitClass::LENGTH)},
-        { "F", UnitDef("F", 0.000001, UnitClass::LENGTH)}
+        { "C", UnitDef("C", 0.000001, UnitClass::TEMP)},
+        { "K", UnitDef("K", 1, UnitClass::TEMP)},
+        { "F", UnitDef("F", 0.000001, UnitClass::TEMP)}
     };
 
 void UnitDef::init()

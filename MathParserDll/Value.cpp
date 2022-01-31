@@ -99,6 +99,11 @@ Value& Value::doTerm(bool adding, const Value& v)
     //if both values have units: convert them to SI before operation.
     if (!unit.id.empty() && !v.unit.id.empty())
         {
+        if (UnitDef::defs[unit.id].property != UnitDef::defs[v.unit.id].property)
+            {
+            errors.push_back(Error(ErrorId::UNIT_PROP_DIFF));
+            return *this;
+            }
         double d1 = this->toSI();
         double d2 = v.toSI();
         number = adding ? (d1 + d2) : (d1 - d2);
@@ -166,7 +171,11 @@ Value Value::convertToUnit(const Unit& to)
         value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.id.c_str()));
         return value;
         }
-
+    if (UnitDef::defs[unit.id].property != UnitDef::defs[to.id].property)
+        {
+        value.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF));
+        return value;
+        }
     value.number = UnitDef::defs[this->unit.id].toSI(this->number); //from -> SI
     value.number = UnitDef::defs[to.id].fromSI(value.number);  //SI -> to
     value.unit = to;

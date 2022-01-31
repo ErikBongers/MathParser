@@ -1,11 +1,5 @@
 ﻿* resolve Conversions and Fragments
-  > check same 'family' or 'dimension' or 'property'
 * parseXXX() all start with createXXX();, even though the created node may not be needed.
-* don't execute() function when args have errors. 
-  > remove error merging in max()
-* improve units
-  > can be complex (sort of expresson with only mult, div and power)
-
 * add line and pos to errors.
 * implicit mult with power: precedence changes depending on order?
   > 2^3b  =  2^(3b) >> mult has prio
@@ -14,12 +8,8 @@
 Nice to have
 ---------------
 * units :
-  > unit definitions are grouped per property (length, weight,...)
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
-* magnitudes:
-  > within one unitClass
-    x = 3km - 5m; --> x = 2.nnn km?
 * dates:
   > Value is currently only numeric.
     > how to solve?

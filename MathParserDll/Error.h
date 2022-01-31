@@ -16,6 +16,7 @@ enum class ErrorId
     UNIT_NOT_DEF,
     W_ASSUMING_UNIT,
     VAR_EXPECTED,
+    UNIT_PROP_DIFF,
     };
 
 

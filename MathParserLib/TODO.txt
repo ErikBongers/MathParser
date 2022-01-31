@@ -32,7 +32,7 @@ Nice to have
     > but dates can still be used in expressions:
       lastMonday = today-3days; --> <date> = <date> op <value>
   > only once units and conversions/fragments are implemented.
-  > x = '12/12/2022 23:45:11';
+  > x = '12/12/2022 23:45:11'; --> allow all parsable dates, unless ambiguous.
   > time-span: date - date -> timespan
   > now() function
   > fragments:

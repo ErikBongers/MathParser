@@ -10,7 +10,7 @@ SRCS=$(wildcard $(SRC_DIR)/*.cpp)
 SRCS_LIB= $(wildcard $(SRC_LIB_DIR)/*.cpp)
 
 DEPFLAGS=-MMD -MP
-CFLAGS=-I "$(SRC_LIB_DIR)" -D__WASM__ $(DEPFLAGS)
+CFLAGS=-I "$(SRC_LIB_DIR)" -D__WASM__ $(DEPFLAGS) -std=c++20
 
 # local source compiled to build/
 OBS = $(notdir $(SRCS))

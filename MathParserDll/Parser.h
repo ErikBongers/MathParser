@@ -141,6 +141,7 @@ class Parser
         Node* parseImplicitMult();
         Node* parseUnitExpr();
         Node* parsePostFixExpr();
+        Node* parseOnePostFix(Node* node, Token t);
         Node* parsePrimaryExpr();
         ConstExpr* parseConst(bool negative);
         CallExpr* parseCallExpr(Token functionName);

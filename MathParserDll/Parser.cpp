@@ -93,21 +93,19 @@ Node* Parser::parseAssignExpr()
 
 Node* Parser::parseAddExpr()
     {
-    AddExpr* addExpr = createAdd();
-    addExpr->a1 = parseMultExpr();
+    Node* node = parseMultExpr();
     auto t = nextToken();
     while (t.type == TokenType::PLUS || t.type == TokenType::MIN)
         {
+        AddExpr* addExpr = createAdd();
+        addExpr->a1 = node;
         addExpr->op = t;
         addExpr->a2 = parseMultExpr();
-        // prepare next iteration.
-        auto oldAddExpr = addExpr;
-        addExpr = createAdd();
-        addExpr->a1 = oldAddExpr;
+        node = addExpr;
         t = nextToken();
         }
     pushBackLastToken();
-    return addExpr->a1; // last iteration incomplete.
+    return node;
     }
 
 Node* Parser::parseMultExpr()
@@ -147,14 +145,15 @@ Node* Parser::parseMultExpr()
 
 Node* Parser::parsePowerExpr()
     {
-    PowerExpr* powerExpr = createPower();
-    powerExpr->p2 = parseImplicitMult();
+    Node* node = parseImplicitMult();
     auto t = nextToken();
     if (t.type != TokenType::POWER)
         {
         pushBackLastToken();
-        return powerExpr->p2;
+        return node;
         }
+    PowerExpr* powerExpr = createPower();
+    powerExpr->p2 = node;
     while (t.type == TokenType::POWER)
         {
         PowerExpr* newPowerExpr = createPower();
@@ -213,6 +212,17 @@ Node* Parser::parsePostFixExpr()
     {
     Node* node = parsePrimaryExpr();
     auto t = nextToken();
+    while (t.type == TokenType::DOT || t.type == TokenType::INC || t.type == TokenType::DEC)
+        {
+        node = parseOnePostFix(node, t);
+        t = nextToken();
+        }
+    pushBackLastToken();
+    return node;
+    }
+
+Node* Parser::parseOnePostFix(Node* node, Token t)
+    {
     if (t.type == TokenType::DOT)
         {
         t = nextToken();
@@ -221,10 +231,10 @@ Node* Parser::parsePostFixExpr()
             auto postfixExpr = (PostfixExpr*)createPostfix();
             postfixExpr->primExpr = node;
             postfixExpr->postfixId = t;
-            return postfixExpr;
+            node = postfixExpr;
             }
         else
-            {
+            { //valid syntax: clear the unit, if any.
             node->unit = Unit::CLEAR();
             pushBackLastToken();
             }
@@ -240,15 +250,13 @@ Node* Parser::parsePostFixExpr()
         PrimaryExpr* idExpr = (PrimaryExpr*)node;
         CallExpr* callExpr = createCall();
         callExpr->arguments.push_back(node);
-        callExpr->functionName = Token(TokenType::ID, t.type ==TokenType::INC ? "inc" : "dec");
+        callExpr->functionName = Token(TokenType::ID, t.type == TokenType::INC ? "inc" : "dec");
 
         AssignExpr* assignExpr = createAssign();
         assignExpr->Id = idExpr->Id;
         assignExpr->expr = callExpr;
-        return assignExpr;
+        node = assignExpr;
         }
-    else
-        pushBackLastToken();
     return node;
     }
 

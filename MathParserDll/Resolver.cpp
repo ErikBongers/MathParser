@@ -99,6 +99,8 @@ Value Resolver::resolvePower(const PowerExpr& powerExpr)
 //wrapper to parse postfixExpressions
 Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     {
+    if (pfix.error.id != ErrorId::NONE)
+        return Value(pfix.error);
     auto val = resolveNode(*pfix.primExpr);
     val = val.convertToUnit(pfix.postfixId);
     return val;

@@ -162,7 +162,7 @@ Value Value::convertToUnit(const Unit& to)
 
     if (UnitDef::defs.count(this->unit.id) == 0)
         {
-        value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, this->unit.id.c_str()));
+        value.unit = to;
         return value;
         }
     

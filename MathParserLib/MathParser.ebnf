@@ -4,32 +4,46 @@ left or right associativity: https://stackoverflow.com/questions/41784524/prefer
 //top line has lowest precedence:
 //these are not function calls but structs:
 statements = statement {'; statement [';']}
+
 statement = addExpr |
             assignment
+
 assignment = id '=' addExpr
+
 addExpr = multExpr |  
           addExpr ("+" | "-") multExpr 
+
 multExpr = powerExpr |
            multExpr ("*" | "/") powerExpr |
            impliedMultExpr
+
 impliedMultExpr = const id |
                   multExpr '(' |
                   '(' addExpr ')' (id | const)
+
 powerExpr = unitExpr |
            powerExpr "^" unitExpr
+
 unitExpr = postFixExpr |
            postFixExpr unit
+
 postFixExpr = primaryExpr |
-            primaryExpr '.' id |
+            postFixExpr '.' id |
             primaryExpr (INC | DEC)
+            
 primaryExpr = const | 
               id | 
               "(", addExpr, ")" |
               callExpr |
               absExpr
+
 absExpr = '|' addExpr '|'
+
 const = {-} [0..9] unit |
         QUOT formattedValue QUOT
+
 formattedValue = dateValue //for now, only dates.
+
 unit = id
+
 callExpr = funcId '(' exprList ')'

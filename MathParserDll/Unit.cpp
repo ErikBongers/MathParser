@@ -30,7 +30,20 @@ std::map<std::string, UnitDef> UnitDef::defs =
 
         { "C", UnitDef("C", 0.000001, UnitClass::TEMP)},
         { "K", UnitDef("K", 1, UnitClass::TEMP)},
-        { "F", UnitDef("F", 0.000001, UnitClass::TEMP)}
+        { "F", UnitDef("F", 0.000001, UnitClass::TEMP)},
+
+        { "L", UnitDef("L", 1, UnitClass::VOLUME)},
+        { "ml", UnitDef("ml", 0.001, UnitClass::VOLUME)},
+        { "gal", UnitDef("gal", 3.785411784, UnitClass::VOLUME)},
+        { "pt", UnitDef("pt", 0.473176473, UnitClass::VOLUME)},
+
+        { "kg", UnitDef("kg", 1, UnitClass::MASS_WEIGHT)},
+        { "N", UnitDef("N", 1/9.80665, UnitClass::MASS_WEIGHT)}, //WEIGHT on earth, not mass!
+        { "g", UnitDef("g", 0.001, UnitClass::MASS_WEIGHT)},
+        { "mg", UnitDef("mg", 0.000001, UnitClass::MASS_WEIGHT)},
+        { "t", UnitDef("t", 1000, UnitClass::MASS_WEIGHT)},
+        { "lb", UnitDef("lb", 0.45359, UnitClass::MASS_WEIGHT)},
+        { "oz", UnitDef("oz", 1/ 35.2739619496, UnitClass::MASS_WEIGHT)}
     };
 
 void UnitDef::init()

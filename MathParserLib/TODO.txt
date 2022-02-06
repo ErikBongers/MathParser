@@ -93,6 +93,32 @@ So, I guess for a duration<int, sec> a duration_cast<sec> is needed?
 
 * custom functions
 * resolve equations
+* Variable ranges and wildcards
+    Sum(a..z) : // sum all vars a to z
+    Sum(a*); sum all vars that start with a; -> ambiguous syntax
+    Sum([a*]);
+    Ranges: always use [] ?
+    Allow both (a..z) and ([a..z])
 
 * simplify
 * Latex visualisation
+Weight.
+Kg – en afgeleiden
+Lbs/lbl?
+Pounds?
+
+
+Volume:
+L en afgeleiden.
+
+
+Unit and var with same name:
+F=123;
+33F; >>> alleen in dit geval warning ambiguous. Wat is oplossing? 33.F ?
+33C.F; >> not ambiguous !
+
+Voor eigen gebruik: online storage?
+Of via localStorage: “Save as, in local browser”.
+En ook klassieke “Save as” en “Open” en “New”, …
+
+drag en drop file on textarea?

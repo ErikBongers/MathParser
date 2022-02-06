@@ -43,6 +43,7 @@ std::map<std::string, UnitDef> UnitDef::defs =
         { "mg", UnitDef("mg", 0.000001, UnitClass::MASS_WEIGHT)},
         { "t", UnitDef("t", 1000, UnitClass::MASS_WEIGHT)},
         { "lb", UnitDef("lb", 0.45359, UnitClass::MASS_WEIGHT)},
+        { "lbs", UnitDef("lbs", 0.45359, UnitClass::MASS_WEIGHT)},
         { "oz", UnitDef("oz", 1/ 35.2739619496, UnitClass::MASS_WEIGHT)}
     };
 

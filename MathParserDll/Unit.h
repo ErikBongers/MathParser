@@ -21,7 +21,7 @@ class Unit
         bool isClear() const { return id == "0"; }
     };
 
-enum class UnitClass { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DATE, VOLUME, UNDEFINED, CLEAR};
+enum class UnitClass { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DATE, VOLUME, UNDEFINED};
 
 struct UnitDef
     {

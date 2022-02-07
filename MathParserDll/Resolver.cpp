@@ -86,11 +86,9 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
 
 Value Resolver::resolvePower(const PowerExpr& powerExpr)
     {
-    Value prim = resolveNode(*powerExpr.p2);
-    if (powerExpr.p1 == nullptr)
-        return prim;
-    Value power = resolveNode(*powerExpr.p1);
-    auto result = power ^ prim;
+    Value base = resolveNode(*powerExpr.p1);
+    Value exponent = resolveNode(*powerExpr.p2);
+    auto result = base ^ exponent;
     if (powerExpr.error.id != ErrorId::NONE)
         result.errors.push_back(powerExpr.error);
     return result;

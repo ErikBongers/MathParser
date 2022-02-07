@@ -102,15 +102,6 @@ So, I guess for a duration<int, sec> a duration_cast<sec> is needed?
 
 * simplify
 * Latex visualisation
-Weight.
-Kg – en afgeleiden
-Lbs/lbl?
-Pounds?
-
-
-Volume:
-L en afgeleiden.
-
 
 Unit and var with same name:
 F=123;
@@ -121,4 +112,8 @@ Voor eigen gebruik: online storage?
 Of via localStorage: “Save as, in local browser”.
 En ook klassieke “Save as” en “Open” en “New”, …
 
-drag en drop file on textarea?
+* drag en drop file on textarea?
+* Save and open? 
+  > unlikely, as this violates the browser sandbox.
+  > download and upload: yes.
+    > requires active webserver.

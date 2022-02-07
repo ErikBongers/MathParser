@@ -110,17 +110,15 @@ Node* Parser::parseAddExpr()
 
 Node* Parser::parseMultExpr()
     {
-    MultExpr* multExpr = createMult();
-    multExpr->m1 = parsePowerExpr();
+    Node* node = parsePowerExpr();
     auto t = nextToken();
     while (t.type == TokenType::MULT || t.type == TokenType::DIV)
         {
+        MultExpr* multExpr = createMult();
+        multExpr->m1 = node;
         multExpr->op = t;
         multExpr->m2 = parsePowerExpr();
-        // prepare next iteration.
-        auto oldMultExpr = multExpr;
-        multExpr = createMult();
-        multExpr->m1 = oldMultExpr;
+        node = multExpr;
         //give warning if expr of form a/2b:
         if (multExpr->m1->is(NodeType::MULTEXPR))
             {
@@ -140,26 +138,19 @@ Node* Parser::parseMultExpr()
         t = nextToken();
         }
     pushBackLastToken();
-    return multExpr->m1; // last iteration incomplete.
+    return node;
     }
 
 Node* Parser::parsePowerExpr()
     {
     Node* node = parseImplicitMult();
     auto t = nextToken();
-    if (t.type != TokenType::POWER)
-        {
-        pushBackLastToken();
-        return node;
-        }
-    PowerExpr* powerExpr = createPower();
-    powerExpr->p2 = node;
     while (t.type == TokenType::POWER)
         {
-        PowerExpr* newPowerExpr = createPower();
-        newPowerExpr->p1 = powerExpr;
-        newPowerExpr->p2 = parseImplicitMult();
-        powerExpr = newPowerExpr;
+        PowerExpr* powerExpr = createPower();
+        powerExpr->p1 = node;
+        powerExpr->p2 = parsePowerExpr(); //right associative!
+        node = powerExpr;
         if ((powerExpr->p1->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p1)->implicitMult)
             || (powerExpr->p2->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p2)->implicitMult))
             {
@@ -168,7 +159,7 @@ Node* Parser::parsePowerExpr()
         t = nextToken();
         }
     pushBackLastToken();
-    return powerExpr;
+    return node;
     }
 
 Node* Parser::parseImplicitMult()

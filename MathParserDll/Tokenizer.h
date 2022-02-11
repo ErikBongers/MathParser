@@ -84,5 +84,6 @@ class Tokenizer
         Token parseNumber(char c);
 
         void skipToEOL();
+        void skipToEndOfComment();
     };
 

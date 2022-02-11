@@ -28,7 +28,7 @@ unitExpr = postFixExpr |
            postFixExpr unit
 
 postFixExpr = primaryExpr |
-            postFixExpr '.' id |
+            postFixExpr '.' [ id ] |
             primaryExpr (INC | DEC)
             
 primaryExpr = const | 

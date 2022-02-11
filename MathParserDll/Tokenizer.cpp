@@ -134,6 +134,12 @@ Token Tokenizer::next()
                 skipToEOL();
                 return next();
                 }
+            else if (stream[pos] == '*')
+                {
+                pos++;
+                skipToEndOfComment();
+                return next();
+                }
             return Token(TokenType::DIV, c);
             }
         case '^':
@@ -174,7 +180,7 @@ Token Tokenizer::parseId(char c)
         {
         c = stream[pos];
         pos++;
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') 
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
             || c == '_'
             || (c >= '0' && c <= '9')
             )
@@ -242,6 +248,25 @@ void Tokenizer::skipToEOL()
     while (stream[pos] != '\n' && pos < size)
         pos++;
     pos++;
+    }
+
+void Tokenizer::skipToEndOfComment()
+    {
+    while(true)
+        {
+        while (stream[pos] != '*' && pos < size)
+            {
+            pos++;
+            }
+        pos++;
+        if (stream[pos] == '/')
+            {
+            pos++;
+            return;
+            }
+        if(pos >= size)
+            return;
+        }
     }
 
 const std::string Token::to_string() const

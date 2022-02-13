@@ -30,6 +30,7 @@ enum class TokenType
     DOT, //except for the decimal dot.
     QUOTE,
     PIPE,
+    ECHO,
 
     UNKNOWN,
     EOT,
@@ -69,16 +70,19 @@ class Token
 class Tokenizer
     {
     private:
-        const char* stream;
-        int pos = 0; //pos at which to read next token.
+        const char* _stream;
+        unsigned int pos = 0; //pos at which to read next token.
         Token peekedToken = Token(TokenType::NULLPTR);
         size_t size = -1;
     public:
-        Tokenizer(const char* stream) : stream(stream) { size = strlen(stream); }
+        Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
         Token peek();
         Token next();
 
     private:
+        char nextChar();
+        char peekChar();
+        char peekSecondChar();
         Token parseId(char c);
 
         Token parseNumber(char c);

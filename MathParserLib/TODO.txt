@@ -117,3 +117,22 @@ En ook klassieke “Save as” en “Open” en “New”, …
   > unlikely, as this violates the browser sandbox.
   > download and upload: yes.
     > requires active webserver.
+
+* Suppresion of output
+    #temp=1+2+3;  suppress output, but do the calculation
+    Also a block version:
+    ## -> double hashtag allows to keep things line agnostic.
+    Statements…
+    ##
+    Errors are ALWAYS output.
+    Block comments are accumulated and do give the line number!
+* Add a way to echo a line.
+    (an executable line?)
+    !// for a comment line?
+    What about an executable line?
+    !1+1;//this will echo the line.
+      > what about the result? perhaps with an eq sign: 2 = 1+1
+      > !a=1+1; 
+        > a=1+1 = 2
+        > or: a=2 = 1+1
+    !#1+1; -->echo this line...but suppres the output.

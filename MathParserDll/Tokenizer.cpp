@@ -29,6 +29,7 @@ const char* to_string(TokenType tt)
         { TokenType::SEMI_COLON, "SEMI_COLON" },
         { TokenType::COMMA, "COMMA" },
         { TokenType::PIPE, "PIPE" },
+        { TokenType::ECHO, "!" },
         { TokenType::UNKNOWN, "??" },
         { TokenType::NULLPTR, "" }
         };
@@ -56,106 +57,94 @@ Token Tokenizer::next()
         return Token(TokenType::EOT);
 
     //skip whitespace
-    while (pos < size)
+    while (char c = peekChar())
         {
-        if (stream[pos] != ' ' && stream[pos] != '\n' && stream[pos] != '\r')
+        if (c != ' ' && c != '\n' && c != '\r')
             break;
-        pos++;
+        nextChar(); //consume
         }
 
-    if (pos >= size)
+
+    char c = nextChar();
+    if (!c)
         return Token(TokenType::EOT);
 
-    char c = stream[pos];
-    pos++;
     switch (c)
         {
-        case '{':
-            return Token(TokenType::CURL_OPEN, c);
-        case '}':
-            return Token(TokenType::CURL_CLOSE, c);
-        case '(':
-            return Token(TokenType::PAR_OPEN, c);
-        case ')':
-            return Token(TokenType::PAR_CLOSE, c);
-        case '[':
-            return Token(TokenType::BRAC_OPEN, c);
-        case ']':
-            return Token(TokenType::BRAC_CLOSE, c);
+        case '!': return Token(TokenType::ECHO, c);
+        case '{': return Token(TokenType::CURL_OPEN, c);
+        case '}': return Token(TokenType::CURL_CLOSE, c);
+        case '(': return Token(TokenType::PAR_OPEN, c);
+        case ')': return Token(TokenType::PAR_CLOSE, c);
+        case '[': return Token(TokenType::BRAC_OPEN, c);
+        case ']': return Token(TokenType::BRAC_CLOSE, c);
+        case '^': return Token(TokenType::POWER, c);
+        case '=': return Token(TokenType::EQ, c);
+        case ';': return Token(TokenType::SEMI_COLON, c);
+        case ',': return Token(TokenType::COMMA, c);
+        case '.': return Token(TokenType::DOT, c);
+        case '\'': return Token(TokenType::QUOTE, c);
+        case '|': return Token(TokenType::PIPE, c);
 
         case '+':
             {
-            if (pos < size && stream[pos] == '=')
+            if (peekChar() == '=')
                 {
-                pos++;
+                nextChar(); //consume
                 return Token(TokenType::EQ_PLUS);
                 }
-            else if (pos < size && stream[pos] == '+')
+            else if (peekChar() == '+')
                 {
-                pos++;
+                nextChar(); //consume
                 return Token(TokenType::INC);
                 }
             return Token(TokenType::PLUS, c);
             }
         case '-':
             {
-            if (pos < size && stream[pos] == '=')
+            if (peekChar() == '=')
                 {
-                pos++;
+                nextChar(); //consume
                 return Token(TokenType::EQ_MIN);
                 }
-            else if (pos < size && stream[pos] == '-')
+            else if (peekChar() == '-')
                 {
-                pos++;
+                nextChar(); //consume
                 return Token(TokenType::DEC);
                 }
             return Token(TokenType::MIN, c);
             }
         case '*':
             {
-            if (pos < size && stream[pos] == '=')
+            if (peekChar() == '=')
                 {
-                pos++;
+                nextChar(); //consume
                 return Token(TokenType::EQ_MULT);
                 }
             return Token(TokenType::MULT, c);
             }
         case '/':
             {
-            if (pos < size && stream[pos] == '=')
+            if (peekChar() == '=')
                 {
-                pos++;
+                nextChar(); //consume
                 return Token(TokenType::EQ_DIV);
                 }
 
-            if (stream[pos] == '/')
+            if (peekChar() == '/')
                 {
-                pos++;
+                nextChar(); //consume
                 skipToEOL();
                 return next();
                 }
-            else if (stream[pos] == '*')
+            else if (peekChar() == '*')
                 {
-                pos++;
+                nextChar(); //consume
                 skipToEndOfComment();
                 return next();
                 }
             return Token(TokenType::DIV, c);
             }
-        case '^':
-            return Token(TokenType::POWER, c);
-        case '=':
-            return Token(TokenType::EQ, c);
-        case ';':
-            return Token(TokenType::SEMI_COLON, c);
-        case ',':
-            return Token(TokenType::COMMA, c);
-        case '.':
-            return Token(TokenType::DOT, c);
-        case '\'':
-            return Token(TokenType::QUOTE, c);
-        case '|':
-            return Token(TokenType::PIPE, c);
         default:
             if ((c >= '0' && c <= '9') || c == '.')
                 {
@@ -176,20 +165,18 @@ Token Tokenizer::parseId(char c)
 
     word += c;
 
-    while (pos < size)
+    while (c = peekChar())
         {
-        c = stream[pos];
-        pos++;
         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
             || c == '_'
             || (c >= '0' && c <= '9')
             )
             {
+            nextChar(); //consume
             word += c;
             }
         else
             {
-            pos--;
             break;
             }
         }
@@ -197,6 +184,27 @@ Token Tokenizer::parseId(char c)
     lower.resize(word.length());
     std::transform(word.begin(), word.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
     return Token(TokenType::ID, word);
+    }
+
+char Tokenizer::nextChar()
+    {
+    if(pos >= size)
+        return 0; //EOF
+    return _stream[pos++];
+    }
+
+char Tokenizer::peekChar()
+    {
+    if(pos >= size)
+        return 0; //EOF
+    return _stream[pos];
+    }
+
+char Tokenizer::peekSecondChar()
+    {
+    if((pos+1) >= size)
+        return 0; //EOF
+    return _stream[pos+1];
     }
 
 Token Tokenizer::parseNumber(char c)
@@ -209,12 +217,11 @@ Token Tokenizer::parseNumber(char c)
     else
         d = c - '0';
 
-    while (pos < size)
+    while (c = peekChar())
         {
-        c = stream[pos];
-        pos++;
         if (c >= '0' && c <= '9')
             {
+            nextChar(); //consume
             if (decimalDivider == 1)
                 d = d * 10 + (c - '0');
             else
@@ -225,17 +232,19 @@ Token Tokenizer::parseNumber(char c)
             }
         else if (c == '.')
             {
-            if (stream[pos] >= '0' && stream[pos] <= '9')
+            char cc = peekSecondChar();
+            if (cc >= '0' && cc <= '9')
+                {
+                nextChar(); //consume DOT
                 decimalDivider = 10;
+                }
             else//dot has other meaning
                 {
-                pos--;
                 break;
                 }
             }
         else
             {
-            pos--;
             break;
             }
         }
@@ -245,26 +254,28 @@ Token Tokenizer::parseNumber(char c)
 
 void Tokenizer::skipToEOL()
     {
-    while (stream[pos] != '\n' && pos < size)
-        pos++;
-    pos++;
+    while (char c = nextChar())
+        {
+        if(c == '\n')
+            break;
+        }
     }
 
 void Tokenizer::skipToEndOfComment()
     {
     while(true)
         {
-        while (stream[pos] != '*' && pos < size)
+        while (char c = nextChar())
             {
-            pos++;
+            if(c == '*')
+                break;
             }
-        pos++;
-        if (stream[pos] == '/')
+        if (peekChar() == '/')
             {
-            pos++;
+            nextChar(); //consume
             return;
             }
-        if(pos >= size)
+        if(!peekChar())
             return;
         }
     }

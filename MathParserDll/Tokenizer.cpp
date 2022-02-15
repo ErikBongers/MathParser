@@ -66,7 +66,7 @@ Token Tokenizer::next()
         }
 
 
-    char c = nextChar();
+    c = nextChar();
     if (!c)
         return Token(TokenType::EOT);
 

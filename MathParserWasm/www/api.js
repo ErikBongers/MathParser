@@ -18,13 +18,20 @@ Module.onRuntimeInitialized = async _ => {
 		result = JSON.parse(result);
 		for(line of result.result)
 			{
+			let strComments = "";
+			for(cmt of line.comments)
+				{
+				strComments += cmt + "\n";
+				}
 			let strErrors = "";
 			for(e of line.errors)
 				{
 				strErrors += "  " + e.message;
 				}
-			strErrors
-			Module.print((line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit + (strErrors === ""? "" : "  <<<" + strErrors));
+			let strText = "";
+			if(line.text != "")
+			  	strText = " " + line.text;
+			Module.print(strComments + (line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit + strText + (strErrors === ""? "" : "  <<<" + strErrors));
 			}
 	};
 	document.getElementById('txtInput')

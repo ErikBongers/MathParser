@@ -1,4 +1,6 @@
-﻿* resolve Conversions and Fragments
+﻿* BUG: comments combined with ECHO lines still shows too much in Output
+
+* resolve Conversions and Fragments
 * parseXXX() all start with createXXX();, even though the created node may not be needed.
 * add line and pos to errors.
 * implicit mult with power: precedence changes depending on order?
@@ -128,11 +130,15 @@ En ook klassieke “Save as” en “Open” en “New”, …
     Block comments are accumulated and do give the line number!
 * Add a way to echo a line.
     (an executable line?)
+      > a line is not executable, but a statement is, which could be multi-line.
     !// for a comment line?
     What about an executable line?
-    !1+1;//this will echo the line.
+    !1+1;//this will echo the statement (multi-line).
       > what about the result? perhaps with an eq sign: 2 = 1+1
       > !a=1+1; 
         > a=1+1 = 2
         > or: a=2 = 1+1
     !#1+1; -->echo this line...but suppres the output.
+
+   Multiple comment lines possible within one statement.
+   List them on top of Statement and result (Value)

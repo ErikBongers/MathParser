@@ -10,18 +10,32 @@ void Parser::parse()
     while (peekToken().type != TokenType::EOT)
         {
         statements.push_back(parseStatement());
-        nextToken();
-        if (currentToken.type != TokenType::SEMI_COLON)
-            pushBackLastToken();//continue, although what follows is an error
         }
     }
 
 Statement* Parser::parseStatement()
     {
     Statement* stmt = createStatement();
+    bool echo = (peekToken().type == TokenType::ECHO);
+    if(echo)
+        nextToken(); //consume ECHO
     stmt->assignExpr = parseAssignExpr();
     if (stmt->assignExpr == nullptr)
         stmt->addExpr = parseAddExpr();
+    nextToken();
+    if (currentToken.type == TokenType::SEMI_COLON)
+        { 
+        if(echo)
+            {
+            stmt->text = currentToken.stringValue;
+            if(stmt->text.starts_with("\r\n"))
+                stmt->text.erase(0, 2);
+            }
+        stmt->comment_lines = tok.comment_lines;
+        tok.comment_lines.clear();
+        }
+    else
+        pushBackLastToken();//continue, although what follows is an error
     return stmt;
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include <vector>
 #include <iostream>
 
 enum class TokenType
@@ -31,6 +32,7 @@ enum class TokenType
     QUOTE,
     PIPE,
     ECHO,
+    COMMENT_LINE,
 
     UNKNOWN,
     EOT,
@@ -73,21 +75,23 @@ class Tokenizer
         const char* _stream;
         unsigned int pos = 0; //pos at which to read next token.
         Token peekedToken = Token(TokenType::NULLPTR);
+        std::string currentStatement;
         size_t size = -1;
     public:
+        std::vector<std::string> comment_lines;
         Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
         Token peek();
         Token next();
 
     private:
-        char nextChar();
+        char nextChar(bool storeChars = true);
         char peekChar();
         char peekSecondChar();
         Token parseId(char c);
 
         Token parseNumber(char c);
 
-        void skipToEOL();
+        void skipToEOL(bool storeChars);
         void skipToEndOfComment();
     };
 

@@ -23,10 +23,14 @@ void Resolver::resolve()
 
 Value Resolver::resolveStatement(const Statement& stmt)
     {
+    Value result;
     if (stmt.assignExpr != nullptr)
-        return resolveNode(*stmt.assignExpr);
+        result = resolveNode(*stmt.assignExpr);
     else
-        return resolveNode(*stmt.addExpr);
+        result = resolveNode(*stmt.addExpr);
+    result.text = stmt.text;
+    result.comment_lines = stmt.comment_lines;
+    return result;
     }
 
 Value Resolver::resolveNode(const Node& node)

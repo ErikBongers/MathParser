@@ -13,6 +13,8 @@ class Value
         double number = 0;
         Unit unit;
         std::vector<Error> errors;
+        std::string text;
+        std::vector<std::string> comment_lines;
 
         Value() {}
         Value(double d) { this->number = d; }

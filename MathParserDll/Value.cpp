@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Value.h"
+#include "json.h"
 
 Value::Value(ErrorId errorId, ...)
     {
@@ -65,6 +66,17 @@ std::string Value::to_json()
     for (auto& error : errors)
         {
         sstr << comma << error.to_json();
+        comma = ",";
+        }
+    sstr << "]";
+    sstr << ", \"text\" : \""
+        << escape_json(text)
+        << "\"";
+    sstr << ", \"comments\" : [";
+    comma = "";
+    for (auto& comm : comment_lines)
+        {
+        sstr << comma << "\"" << escape_json(make_one_line(comm)) << "\"";
         comma = ",";
         }
     sstr << "]";

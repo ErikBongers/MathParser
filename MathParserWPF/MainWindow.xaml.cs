@@ -65,6 +65,8 @@ namespace MathParserWPF
             var jsonResult = JsonSerializer.Deserialize<JsonResults>(strJson);
             foreach (var result in jsonResult.result)
                 {
+                foreach (var cmt in result.comments)
+                    wnd.Output += cmt + "\n";
                 double number;
                 bool isNum = double.TryParse(result.value, out number);
                 wnd.Output += (result.id == "#result#" ? "" : result.id + "=") + (isNum ? number.ToString("0.#######") : result.value) + result.unit;
@@ -74,6 +76,7 @@ namespace MathParserWPF
                     foreach (var err in result.errors)
                         wnd.Output += err.message + "  ";
                     }
+                wnd.Output += result.text;
                 wnd.Output += "\n";
                 }
             }

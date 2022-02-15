@@ -57,7 +57,8 @@ Token Tokenizer::next()
         return Token(TokenType::EOT);
 
     //skip whitespace
-    while (char c = peekChar())
+    char c;
+    while ((c = peekChar()))
         {
         if (c != ' ' && c != '\n' && c != '\r')
             break;
@@ -71,7 +72,6 @@ Token Tokenizer::next()
 
     switch (c)
         {
-        case '!': return Token(TokenType::ECHO, c);
         case '{': return Token(TokenType::CURL_OPEN, c);
         case '}': return Token(TokenType::CURL_CLOSE, c);
         case '(': return Token(TokenType::PAR_OPEN, c);
@@ -80,12 +80,29 @@ Token Tokenizer::next()
         case ']': return Token(TokenType::BRAC_CLOSE, c);
         case '^': return Token(TokenType::POWER, c);
         case '=': return Token(TokenType::EQ, c);
-        case ';': return Token(TokenType::SEMI_COLON, c);
         case ',': return Token(TokenType::COMMA, c);
         case '.': return Token(TokenType::DOT, c);
         case '\'': return Token(TokenType::QUOTE, c);
         case '|': return Token(TokenType::PIPE, c);
-
+        case '!': 
+            {
+            if (peekChar() == '/' && peekSecondChar() == '/')
+                {
+                nextChar(); //consume
+                nextChar(); //consume
+                skipToEOL(true);
+                comment_lines.push_back(currentStatement);
+                currentStatement.clear();
+                return next();
+                }
+            return Token(TokenType::ECHO, c);
+            }
+        case ';': 
+            {
+            auto t = Token(TokenType::SEMI_COLON, currentStatement);
+            currentStatement.clear();
+            return t;
+            }
         case '+':
             {
             if (peekChar() == '=')
@@ -133,8 +150,9 @@ Token Tokenizer::next()
 
             if (peekChar() == '/')
                 {
-                nextChar(); //consume
-                skipToEOL();
+                nextChar(false); //consume
+                currentStatement.pop_back(); //remove the first '/' from the statement.
+                skipToEOL(false);
                 return next();
                 }
             else if (peekChar() == '*')
@@ -165,7 +183,7 @@ Token Tokenizer::parseId(char c)
 
     word += c;
 
-    while (c = peekChar())
+    while ((c = peekChar()))
         {
         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
             || c == '_'
@@ -186,10 +204,12 @@ Token Tokenizer::parseId(char c)
     return Token(TokenType::ID, word);
     }
 
-char Tokenizer::nextChar()
+char Tokenizer::nextChar(bool storeChars)
     {
     if(pos >= size)
         return 0; //EOF
+    if(storeChars)
+        currentStatement.push_back(_stream[pos]);
     return _stream[pos++];
     }
 
@@ -217,7 +237,7 @@ Token Tokenizer::parseNumber(char c)
     else
         d = c - '0';
 
-    while (c = peekChar())
+    while ((c = peekChar()))
         {
         if (c >= '0' && c <= '9')
             {
@@ -252,9 +272,10 @@ Token Tokenizer::parseNumber(char c)
     return Token(TokenType::NUMBER, d);
     }
 
-void Tokenizer::skipToEOL()
+void Tokenizer::skipToEOL(bool storeChars)
     {
-    while (char c = nextChar())
+    char c;
+    while ((c = nextChar(storeChars)))
         {
         if(c == '\n')
             break;
@@ -265,7 +286,8 @@ void Tokenizer::skipToEndOfComment()
     {
     while(true)
         {
-        while (char c = nextChar())
+        char c;
+        while ((c = nextChar()))
             {
             if(c == '*')
                 break;

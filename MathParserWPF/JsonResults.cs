@@ -10,7 +10,9 @@ public class Result
     public string value { get; set; }
     public string unit { get; set; }
     public Error[] errors { get; set; }
-    }
+    public string text { get; set; }
+    public string[] comments { get; set; }
+}
 
 public class Error
     {

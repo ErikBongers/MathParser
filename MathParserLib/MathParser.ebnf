@@ -5,7 +5,8 @@ left or right associativity: https://stackoverflow.com/questions/41784524/prefer
 //these are not function calls but structs:
 statements = statement {'; statement [';']}
 
-statement = addExpr |
+statement = '!' addExpr |
+            addExpr |
             assignment
 
 assignment = id '=' addExpr

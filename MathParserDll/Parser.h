@@ -16,6 +16,7 @@ class Node
         Error error;
         Unit unit;
         bool is(NodeType type) { return this->type == type; }
+
     private:
         Node() {}
         friend class Parser;
@@ -110,6 +111,8 @@ class Statement : public Node
     public:
         Node* assignExpr = nullptr;
         Node* addExpr = nullptr;
+        std::string text;
+        std::vector<std::string> comment_lines;
     private:
         Statement() : Node(NodeType::STATEMENT) {}
         friend class Parser;
@@ -159,6 +162,7 @@ class Parser
         std::vector<Node*> nodes;
         Token currentToken = Token(TokenType::NULLPTR);
         Token lastToken = Token(TokenType::NULLPTR);
+        Token peekedToken = Token(TokenType::NULLPTR);
 
         Token peekToken();
         Token nextToken();

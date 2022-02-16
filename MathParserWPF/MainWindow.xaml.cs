@@ -1,6 +1,7 @@
 ﻿using MathParserLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -99,7 +100,7 @@ namespace MathParserWPF
                 wnd.Output += "\n";
             });
             }
-
+        const string localStorageFileName = "localstorage.txt";
         public MainWindow()
             {
             InitializeComponent();
@@ -107,6 +108,13 @@ namespace MathParserWPF
             this.DataContext = this;
             txtFormula.Focus();
             this.Title = "MathParser " + DllInterface.GetVersion();
+            if(File.Exists(localStorageFileName))
+                this.Formula = File.ReadAllText(localStorageFileName);
             }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            File.WriteAllText(localStorageFileName, Formula);
         }
+    }
     }

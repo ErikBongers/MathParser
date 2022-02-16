@@ -19,9 +19,11 @@ Module.onRuntimeInitialized = async _ => {
 		for(line of result.result)
 			{
 			let strComments = "";
+			let strNL = "";
 			for(cmt of line.comments)
 				{
-				strComments += cmt + "\n";
+				strComments += strNL + cmt;
+				strNL = "\n";
 				}
 			let strErrors = "";
 			for(e of line.errors)
@@ -31,7 +33,14 @@ Module.onRuntimeInitialized = async _ => {
 			let strText = "";
 			if(line.text != "")
 			  	strText = " " + line.text;
-			Module.print(strComments + (line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit + strText + (strErrors === ""? "" : "  <<<" + strErrors));
+			let strLine = "";
+			if(line.mute == false || line.errors.length > 0)
+				strLine += (line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit;
+			strLine += strText + (strErrors === ""? "" : "  <<<" + strErrors)
+			if(strComments.length > 0)
+				Module.print(strComments);
+			if(strLine.length > 0)
+				Module.print(strLine);
 			}
 	};
 	document.getElementById('txtInput')

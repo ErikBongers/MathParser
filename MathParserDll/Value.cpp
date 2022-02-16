@@ -80,6 +80,7 @@ std::string Value::to_json()
         comma = ",";
         }
     sstr << "]";
+    sstr << ", \"mute\": " << (mute?"true":"false");
     sstr << "}";
     return sstr.str();
     }

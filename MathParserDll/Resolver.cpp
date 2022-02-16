@@ -30,6 +30,7 @@ Value Resolver::resolveStatement(const Statement& stmt)
         result = resolveNode(*stmt.addExpr);
     result.text = stmt.text;
     result.comment_lines = stmt.comment_lines;
+    result.mute = stmt.mute;
     return result;
     }
 

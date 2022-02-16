@@ -33,6 +33,9 @@ enum class TokenType
     PIPE,
     ECHO,
     COMMENT_LINE,
+    MUTE_LINE,
+    MUTE_START,
+    MUTE_END,
 
     UNKNOWN,
     EOT,
@@ -75,9 +78,9 @@ class Tokenizer
         const char* _stream;
         unsigned int pos = 0; //pos at which to read next token.
         Token peekedToken = Token(TokenType::NULLPTR);
-        std::string currentStatement;
         size_t size = -1;
     public:
+        std::string currentStatement;
         std::vector<std::string> comment_lines;
         Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
         Token peek();

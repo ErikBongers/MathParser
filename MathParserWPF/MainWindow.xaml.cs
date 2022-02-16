@@ -70,15 +70,18 @@ namespace MathParserWPF
                     wnd.Output += cmt + "\n";
                 double number;
                 bool isNum = double.TryParse(result.value, out number);
-                wnd.Output += (result.id == "#result#" ? "" : result.id + "=") + (isNum ? number.ToString("0.#######") : result.value) + result.unit;
+                string strResult = "";
+                if(!result.mute || result.errors.Length > 0)
+                    strResult = (result.id == "#result#" ? "" : result.id + "=") + (isNum ? number.ToString("0.#######") : result.value) + result.unit; ;
                 if (result.errors.Length > 0)
                     {
-                    wnd.Output += " <<< ";
+                    strResult += " <<< ";
                     foreach (var err in result.errors)
-                        wnd.Output += err.message + "  ";
+                        strResult += err.message + "  ";
                     }
-                wnd.Output += result.text;
-                wnd.Output += "\n";
+                strResult += result.text;
+                if(strResult.Length > 0)
+                    wnd.Output += strResult + "\n";
                 }
             }
 

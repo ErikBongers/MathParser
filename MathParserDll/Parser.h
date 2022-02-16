@@ -113,6 +113,8 @@ class Statement : public Node
         Node* addExpr = nullptr;
         std::string text;
         std::vector<std::string> comment_lines;
+        bool mute = false; //mute output
+        bool echo = false; //echo statement
     private:
         Statement() : Node(NodeType::STATEMENT) {}
         friend class Parser;
@@ -133,10 +135,13 @@ class Parser
     public:
         std::map<std::string, Variable> ids;
         std::vector<Statement*> statements;
-        
+        bool muteBlock = false;
+
         Parser(const char* stream) : tok(stream) { }
         void parse();
         Statement* parseStatement();
+        Statement* parseStatementHeader(Statement* stmt);
+        Statement* parseStatementBody(Statement* stmt);
         Node* parseAssignExpr();
         Node* parseAddExpr();
         Node* parseMultExpr();

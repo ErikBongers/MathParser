@@ -16,16 +16,50 @@ void Parser::parse()
 Statement* Parser::parseStatement()
     {
     Statement* stmt = createStatement();
-    bool echo = (peekToken().type == TokenType::ECHO);
-    if(echo)
+    stmt = parseStatementHeader(stmt);
+    stmt->mute |= this->muteBlock;
+    return stmt;
+    }
+
+Statement* Parser::parseStatementHeader(Statement* stmt)
+    {
+    if(peekToken().type == TokenType::ECHO)
+        {
         nextToken(); //consume ECHO
+        stmt->echo = true;
+        return parseStatementHeader(stmt);
+        }
+    if(peekToken().type == TokenType::MUTE_LINE)
+        {
+        nextToken(); //consume MUTE
+        stmt->mute = true;
+        return parseStatementHeader(stmt);
+        }
+    if(peekToken().type == TokenType::MUTE_START)
+        {
+        nextToken(); //consume MUTE
+        this->muteBlock = true;
+        return parseStatementHeader(stmt);
+        }
+    if(peekToken().type == TokenType::MUTE_END)
+        {
+        nextToken(); //consume MUTE
+        this->muteBlock = false;
+        return parseStatementHeader(stmt);
+        }
+    tok.currentStatement.clear();//remove all the statement-header stuff and new lines between statements.
+    return parseStatementBody(stmt);
+    }
+
+Statement* Parser::parseStatementBody(Statement* stmt)
+    {
     stmt->assignExpr = parseAssignExpr();
     if (stmt->assignExpr == nullptr)
         stmt->addExpr = parseAddExpr();
     nextToken();
     if (currentToken.type == TokenType::SEMI_COLON)
         { 
-        if(echo)
+        if(stmt->echo)
             {
             stmt->text = currentToken.stringValue;
             if(stmt->text.starts_with("\r\n"))

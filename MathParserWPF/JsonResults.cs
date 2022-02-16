@@ -12,6 +12,7 @@ public class Result
     public Error[] errors { get; set; }
     public string text { get; set; }
     public string[] comments { get; set; }
+    public bool mute { get; set; }
 }
 
 public class Error

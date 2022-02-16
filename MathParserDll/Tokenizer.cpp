@@ -140,26 +140,33 @@ Token Tokenizer::next()
                 }
             return Token(TokenType::MULT, c);
             }
-        case '/':
-            {
-            if (peekChar() == '=')
-                {
-                nextChar(); //consume
-                return Token(TokenType::EQ_DIV);
-                }
-
+        case '#':
             if (peekChar() == '/')
                 {
-                nextChar(false); //consume
-                currentStatement.pop_back(); //remove the first '/' from the statement.
-                skipToEOL(false);
-                return next();
-                }
-            else if (peekChar() == '*')
-                {
                 nextChar(); //consume
-                skipToEndOfComment();
-                return next();
+                return Token(TokenType::MUTE_END);
+                }
+            return Token(TokenType::MUTE_LINE, c);
+        case '/':
+            {
+            auto cc = peekChar();
+            switch (cc)
+                {
+                case '=':
+                    nextChar(); //consume
+                    return Token(TokenType::EQ_DIV);
+                case '/':
+                    nextChar(false); //consume
+                    currentStatement.pop_back(); //remove the first '/' from the statement.
+                    skipToEOL(false);
+                    return next();
+                case '*':
+                    nextChar(); //consume
+                    skipToEndOfComment();
+                    return next();
+                case '#':
+                    nextChar(); //consume
+                    return Token(TokenType::MUTE_START);
                 }
             return Token(TokenType::DIV, c);
             }

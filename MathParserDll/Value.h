@@ -15,6 +15,7 @@ class Value
         std::vector<Error> errors;
         std::string text;
         std::vector<std::string> comment_lines;
+        bool mute = false;
 
         Value() {}
         Value(double d) { this->number = d; }

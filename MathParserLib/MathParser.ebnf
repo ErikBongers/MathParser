@@ -3,9 +3,12 @@ left or right associativity: https://stackoverflow.com/questions/41784524/prefer
 
 //top line has lowest precedence:
 //these are not function calls but structs:
+
+echoComment = '!//' rest_of_line
+
 statements = statement {'; statement [';']}
 
-statement = '!' addExpr |
+statement = '!' addExpr |  //echo statement
             addExpr |
             assignment
 

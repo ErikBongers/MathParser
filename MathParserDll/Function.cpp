@@ -42,10 +42,10 @@ FunctionDef* FunctionDef::get(const std::string& name)
 
 // --- Standard function implementations ---
 
-Value Max::execute(std::vector<Value>& args)
+Value Max::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 2)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg0 = args[0].toSI();
     double arg1 = args[1].toSI();
     Value ret;
@@ -64,124 +64,124 @@ Value Max::execute(std::vector<Value>& args)
     return ret;
     }
 
-Value Inc::execute(std::vector<Value>& args)
+Value Inc::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     Value arg = args[0];
     arg.number++;
     return arg;
     }
 
-Value Dec::execute(std::vector<Value>& args)
+Value Dec::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     Value arg = args[0];
     arg.number--;
     return arg;
     }
 
-Value Int::execute(std::vector<Value>& args)
+Value Int::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     Value arg = args[0];
     arg.number = trunc(arg.number);
     return arg;
     }
 
-Value Abs::execute(std::vector<Value>& args)
+Value Abs::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     Value arg = args[0];
     arg.number = abs(arg.number);
     return arg;
     }
 
-Value Sin::execute(std::vector<Value>& args)
+Value Sin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
     if (args[0].unit.id == "deg")
         arg = UnitDef::defs["deg"].toSI(arg);;
-    return sin(arg);
+    return Value(sin(arg), line, pos);
     }
 
-Value Cos::execute(std::vector<Value>& args)
+Value Cos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
     if (args[0].unit.id == "deg")
         arg = UnitDef::defs["deg"].toSI(arg);
-    return cos(arg);
+    return Value(cos(arg), line, pos);
     }
 
-Value Tan::execute(std::vector<Value>& args)
+Value Tan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
     if (args[0].unit.id == "deg")
         arg = UnitDef::defs["deg"].toSI(arg);
-    return tan(arg);
+    return Value(tan(arg), line, pos);
     }
 
-Value ArcSin::execute(std::vector<Value>& args)
+Value ArcSin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
-    return asin(arg);
+    return Value(asin(arg), line, pos);
     }
 
-Value ArcCos::execute(std::vector<Value>& args)
+Value ArcCos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
-    return acos(arg);
+    return Value(acos(arg), line, pos);
     }
 
-Value ATan::execute(std::vector<Value>& args)
+Value ATan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
-    return atan(arg);
+    return Value(atan(arg), line, pos);
     }
 
-Value ASin::execute(std::vector<Value>& args)
+Value ASin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
-    return asin(arg);
+    return Value(asin(arg), line, pos);
     }
 
-Value ACos::execute(std::vector<Value>& args)
+Value ACos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
-    return acos(arg);
+    return Value(acos(arg), line, pos);
     }
 
-Value ArcTan::execute(std::vector<Value>& args)
+Value ArcTan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
-    return atan(arg);
+    return Value(atan(arg), line, pos);
     }
 
-Value Sqrt::execute(std::vector<Value>& args)
+Value Sqrt::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     if (args.size() != 1)
-        return std::numeric_limits<double>::quiet_NaN();
-    return sqrt(args[0].number);
+        return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
+    return Value(sqrt(args[0].number), line, pos);
     }
 

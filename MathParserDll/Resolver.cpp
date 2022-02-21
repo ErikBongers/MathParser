@@ -47,7 +47,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
-        default: return Value(ErrorId::UNKNOWN_EXPR, nullptr);
+        default: return Value(ErrorId::UNKNOWN_EXPR, 0, 0, nullptr); //TODO: can this be avoided?
         }
     }
 
@@ -133,7 +133,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
             return v;
             }
         else
-            return Value(ErrorId::VAR_NOT_DEF, prim.Id.stringValue.c_str());
+            return Value(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
         }
     else if (prim.callExpr != nullptr) //todo: create resolveCall();
         {
@@ -146,20 +146,20 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         return val;
         }
     else
-        return Value(ErrorId::UNKNOWN_EXPR);
+        return Value(ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
     }
 
 Value Resolver::resolveCall(const CallExpr& callExpr)
     {
     auto fd = FunctionDef::get(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
-        return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.stringValue.c_str());
+        return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
     if (callExpr.error.id != ErrorId::NONE)
         return Value(callExpr.error);
 
     // check function arguments:
     if (callExpr.arguments.size() != fd->argsCount())
-        return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.stringValue.c_str());
+        return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
     Function f(*fd);
     std::vector<Error> errors;
     for (auto arg : callExpr.arguments)
@@ -171,7 +171,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     if (errors.size() > 0)
         return Value(errors);
 
-    auto val = f.execute();
+    auto val = f.execute(callExpr.functionName.line, callExpr.functionName.pos);
     if (callExpr.unit.isClear())
         val.unit = Unit();
     else if (!callExpr.unit.id.empty())
@@ -181,7 +181,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
-    auto v = Value(constExpr.constNumber.numberValue, constExpr.unit);
+    auto v = Value(constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
     if (constExpr.unit.isClear())
         v.unit = Unit();
     if (constExpr.error.id != ErrorId::NONE)

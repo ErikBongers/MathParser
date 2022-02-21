@@ -2,26 +2,29 @@
 #include "Tokenizer.h"
 #include "Unit.h"
 #include "Error.h"
-#include <sstream>
 #include <iomanip>
 #include <vector>
 
 class Value
     {
     public:
-        Token id = Token(TokenType::NULLPTR); //optional, in case of a variable.
+        Token id = Token::Null(); //optional, in case of a variable.
         double number = 0;
         Unit unit;
         std::vector<Error> errors;
         std::string text;
         std::vector<std::string> comment_lines;
         bool mute = false;
+        unsigned int line;
+        unsigned int pos;
 
-        Value() {}
-        Value(double d) { this->number = d; }
-        Value(ErrorId errorId, ...);
-        Value(double d, const Unit u);
-        Value(Token id, double d, const Unit u);
+        Value() : line(0), pos(0) {}
+        Value(double d, unsigned int line, unsigned int pos)
+            : line(line), pos(pos)
+            { this->number = d; }
+        Value(ErrorId errorId, unsigned int line, unsigned int pos, ...);
+        Value(double d, const Unit u, unsigned int line, unsigned int pos);
+        Value(Token id, double d, const Unit u, unsigned int line, unsigned int pos);
         Value(const Error& error);
         Value(const std::vector<Error>& errors);
 

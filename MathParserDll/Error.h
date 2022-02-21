@@ -22,7 +22,7 @@ enum class ErrorId
 
 struct ErrorDef
     {
-    ErrorId id;
+    ErrorId id = ErrorId::NONE;
     std::string name;
     std::string message;
     };
@@ -41,12 +41,12 @@ class Error
     public:
         ErrorId id = ErrorId::NONE;
         std::string errorMsg;
-        int line = -1;
-        int pos = -1;
+        unsigned int line = -1;
+        unsigned int pos = -1;
 
         Error() {}
-        Error(ErrorId id, va_list args);
-        Error(ErrorId id, ...);
+        Error(ErrorId id, unsigned int line, unsigned int pos, va_list args);
+        Error(ErrorId id, unsigned int line, unsigned int pos, ...);
         const std::string to_json();
     private:
         void buildErrorString(va_list args = nullptr);

@@ -47,26 +47,34 @@ const char* to_string(TokenType tt);
 class Token
     {
     public:
+        static Token Null() { return Token(TokenType::NULLPTR, 0, 0); }
         TokenType type;
         std::string stringValue;
         double numberValue;
-        Token() : Token(TokenType::NULLPTR) {}
-        Token(TokenType type, char c) : numberValue(-1)
+        unsigned int pos;
+        unsigned int line;
+        Token() : Token(TokenType::NULLPTR, 0, 0) {}
+        Token(TokenType type, char c, unsigned int line, unsigned int pos) 
+            : numberValue(-1), line(line), pos(pos)
             {
             this->type = type;
             this->stringValue += c;
             }
-        Token(TokenType type, double d)
+        Token(TokenType type, double d, unsigned int line, unsigned int pos)
+            : line(line), pos(pos)
             {
             this->type = type;
             this->numberValue = d;
             }
-        Token(TokenType type, std::string str)
+        Token(TokenType type, std::string str, unsigned int line, unsigned int pos)
+            : line(line), pos(pos)
             {
             this->type = type;
             this->stringValue = str;
             }
-        Token(TokenType type) : Token(type, ' ') { }
+        Token(TokenType type, unsigned int line, unsigned int pos)
+            : Token(type, ' ', line, pos) 
+            { }
         const std::string to_string() const;
         friend std::ostream& operator<<(std::ostream& os, const Token& t);
     };
@@ -77,7 +85,9 @@ class Tokenizer
     private:
         const char* _stream;
         unsigned int pos = 0; //pos at which to read next token.
-        Token peekedToken = Token(TokenType::NULLPTR);
+        unsigned int line = 0;
+        unsigned int linePos = 0;
+        Token peekedToken = Token(TokenType::NULLPTR, 0, 0);
         size_t size = -1;
     public:
         std::string currentStatement;
@@ -85,6 +95,8 @@ class Tokenizer
         Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
         Token peek();
         Token next();
+        unsigned int getLine() { return line;}
+        unsigned int getLinePos() { return linePos-1;} //linePos always contains the NEXT pos.
 
     private:
         char nextChar(bool storeChars = true);

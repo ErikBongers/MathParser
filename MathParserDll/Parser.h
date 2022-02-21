@@ -18,7 +18,7 @@ class Node
         bool is(NodeType type) { return this->type == type; }
 
     private:
-        Node() {}
+        Node() : type(NodeType::CONSTEXPR) {}
         friend class Parser;
     };
 
@@ -165,9 +165,9 @@ class Parser
         Statement* createStatement();
     private:
         std::vector<Node*> nodes;
-        Token currentToken = Token(TokenType::NULLPTR);
-        Token lastToken = Token(TokenType::NULLPTR);
-        Token peekedToken = Token(TokenType::NULLPTR);
+        Token currentToken = Token::Null();
+        Token lastToken = Token::Null();
+        Token peekedToken = Token::Null();
 
         Token peekToken();
         Token nextToken();

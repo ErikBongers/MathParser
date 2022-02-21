@@ -13,7 +13,7 @@ class FunctionDef
     public:
         virtual std::string getName() = 0;
         virtual size_t argsCount() = 0;
-        virtual Value execute(std::vector<Value>& args) = 0;
+        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) = 0;
         static bool exists(const std::string& functionName);
         static void AddFunction(FunctionDef* f) { functions.emplace(f->getName(), f); }
         static FunctionDef* get(const std::string& name);
@@ -28,7 +28,7 @@ class Function
     public:
         Function(FunctionDef& def) : functionDef(def) { }
         void addArg(Value arg) { args.push_back(arg); }
-        Value execute() { return functionDef.execute(args); }
+        Value execute(unsigned int line, unsigned int pos) { return functionDef.execute(args, line, pos); }
     };
 
 class Inc : public FunctionDef
@@ -36,7 +36,7 @@ class Inc : public FunctionDef
     public:
         std::string getName() override { return "inc"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Dec : public FunctionDef
@@ -44,7 +44,7 @@ class Dec : public FunctionDef
     public:
         std::string getName() override { return "dec"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Int : public FunctionDef
@@ -52,7 +52,7 @@ class Int : public FunctionDef
     public:
         std::string getName() override { return "int"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Abs : public FunctionDef
@@ -60,7 +60,7 @@ class Abs : public FunctionDef
     public:
         std::string getName() override { return "abs"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Max : public FunctionDef
@@ -68,7 +68,7 @@ class Max : public FunctionDef
     public:
         std::string getName() override { return "max"; }
         size_t argsCount() override { return 2; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Sin : public FunctionDef
@@ -76,7 +76,7 @@ class Sin : public FunctionDef
     public:
         std::string getName() override { return "sin"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Cos : public FunctionDef
@@ -84,7 +84,7 @@ class Cos : public FunctionDef
     public:
         std::string getName() override { return "cos"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Tan : public FunctionDef
@@ -92,7 +92,7 @@ class Tan : public FunctionDef
     public:
         std::string getName() override { return "tan"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ArcSin : public FunctionDef
@@ -100,7 +100,7 @@ class ArcSin : public FunctionDef
     public:
         std::string getName() override { return "arcsin"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ArcCos : public FunctionDef
@@ -108,7 +108,7 @@ class ArcCos : public FunctionDef
     public:
         std::string getName() override { return "arccos"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ArcTan : public FunctionDef
@@ -116,7 +116,7 @@ class ArcTan : public FunctionDef
     public:
         std::string getName() override { return "arctan"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ASin : public FunctionDef
@@ -124,7 +124,7 @@ class ASin : public FunctionDef
     public:
         std::string getName() override { return "asin"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ACos : public FunctionDef
@@ -132,7 +132,7 @@ class ACos : public FunctionDef
     public:
         std::string getName() override { return "acos"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ATan : public FunctionDef
@@ -140,7 +140,7 @@ class ATan : public FunctionDef
     public:
         std::string getName() override { return "atan"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Sqrt : public FunctionDef
@@ -148,5 +148,5 @@ class Sqrt : public FunctionDef
     public:
         std::string getName() override { return "sqrt"; }
         size_t argsCount() override { return 1; }
-        Value execute(std::vector<Value>& args) override;
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };

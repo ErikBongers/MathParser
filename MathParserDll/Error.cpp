@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "Error.h"
 #include "json.h"
+#include <sstream>
 
-Error::Error(ErrorId id, va_list args)
+Error::Error(ErrorId id, unsigned int line, unsigned int pos, va_list args)
+    : line(line), pos(pos)
     {
     this->id = id;
     buildErrorString(args);
@@ -16,12 +18,13 @@ void Error::buildErrorString(va_list args)
     }
 
 
-Error::Error(ErrorId id, ...)
+Error::Error(ErrorId id, unsigned int line, unsigned int pos, ...)
+    : line(line), pos(pos)
     {
     this->id = id;
 
     va_list args;
-    va_start(args, id);
+    va_start(args, pos);
     buildErrorString(args);
     va_end(args);
     }
@@ -29,17 +32,20 @@ Error::Error(ErrorId id, ...)
 const std::string Error::to_json()
     {
     auto it = ErrorDefs::errorDefs.find(id);
-    std::string str;
+    std::ostringstream sstr;
+    sstr << "{";
     if(it == ErrorDefs::errorDefs.end())
         { 
-        str = "{ \"id\" : \"??\" }";
+        sstr << "\"id\" : \"??\"";
         }
     else
         {
         auto& ed = it->second;
-        str = "{ \"id\" : \"" + ed.name + "\", \"message\" : \"" + escape_json(errorMsg) + "\"}";
+        sstr << "\"id\" : \"" + ed.name + "\", \"message\" : \"" + escape_json(errorMsg) + "\"";
         }
-    return str;
+    sstr << ", \"line\": " << line << ", \"pos\": " << pos;
+    sstr << "}";
+    return sstr.str();
     }
 
 std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =

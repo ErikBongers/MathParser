@@ -5,8 +5,8 @@
 void Parser::parse()
     {
     ConstExpr* pConst = createConst();
-    pConst->constNumber = Token(TokenType::NUMBER, M_PI);
-    ids.emplace("pi", Variable{ Token(TokenType::ID, "pi"), pConst});
+    pConst->constNumber = Token(TokenType::NUMBER, M_PI, tok.getLine(), tok.getLinePos());
+    ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
     while (peekToken().type != TokenType::EOT)
         {
         statements.push_back(parseStatement());
@@ -114,7 +114,7 @@ Node* Parser::parseAssignExpr()
                 {
                 AddExpr* addExpr = createAdd();
                 addExpr->a1 = idExpr;
-                addExpr->op = Token(oper);
+                addExpr->op = Token(oper, tok.getLine(), tok.getLinePos());
                 addExpr->a2 = parseAddExpr();
                 assign->expr = addExpr;
                 }
@@ -122,7 +122,7 @@ Node* Parser::parseAssignExpr()
                 {
                 MultExpr* multExpr = createMult();
                 multExpr->m1 = idExpr;
-                multExpr->op = Token(oper);
+                multExpr->op = Token(oper, tok.getLine(), tok.getLinePos());
                 multExpr->m2 = parseAddExpr(); //note the parseAddExpr instead of parseMultExpr(), as the right=hand of the assign is similar to an expression between parenthesis.
                 assign->expr = multExpr;
                 }
@@ -180,7 +180,7 @@ Node* Parser::parseMultExpr()
                     MultExpr* m2 = static_cast<MultExpr*>(div->m2);
                     if (m2->implicitMult)
                         {
-                        div->error = Error(ErrorId::W_DIV_IMPL_MULT);
+                        div->error = Error(ErrorId::W_DIV_IMPL_MULT, tok.getLine(), tok.getLinePos());
                         }
                     }
                 }
@@ -204,7 +204,7 @@ Node* Parser::parsePowerExpr()
         if ((powerExpr->p1->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p1)->implicitMult)
             || (powerExpr->p2->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p2)->implicitMult))
             {
-            powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT);
+            powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT, tok.getLine(), tok.getLinePos());
             }
         t = nextToken();
         }
@@ -223,7 +223,7 @@ Node* Parser::parseImplicitMult()
         pushBackLastToken();
         auto m = createMult();
         m->m1 = n1;
-        m->op = Token(TokenType::MULT, '*');
+        m->op = Token(TokenType::MULT, '*', tok.getLine(), tok.getLinePos());
         m->m2 = parseUnitExpr();
         m->implicitMult = true;
         n1 = m;
@@ -284,14 +284,14 @@ Node* Parser::parseOnePostFix(Node* node, Token t)
         {
         if (node->type != NodeType::PRIMARYEXPR)
             {
-            node->error = Error(ErrorId::VAR_EXPECTED);
+            node->error = Error(ErrorId::VAR_EXPECTED, tok.getLine(), tok.getLinePos());
             return node;
             }
 
         PrimaryExpr* idExpr = (PrimaryExpr*)node;
         CallExpr* callExpr = createCall();
         callExpr->arguments.push_back(node);
-        callExpr->functionName = Token(TokenType::ID, t.type == TokenType::INC ? "inc" : "dec");
+        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "inc" : "dec"), tok.getLine(), tok.getLinePos());
 
         AssignExpr* assignExpr = createAssign();
         assignExpr->Id = idExpr->Id;
@@ -344,7 +344,7 @@ Node* Parser::parsePrimaryExpr()
         auto addExpr = parseAddExpr();
         CallExpr* callExpr = createCall();
         callExpr->arguments.push_back(addExpr);
-        callExpr->functionName = Token(TokenType::ID, "abs");
+        callExpr->functionName = Token(TokenType::ID, "abs", tok.getLine(), tok.getLinePos());
         t = nextToken();
         //if (t.type != TokenType::PAR_CLOSE)
         //    callExpr.errorPos = 1;//todo
@@ -380,7 +380,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     auto t = nextToken();
     if (t.type != TokenType::PAR_OPEN)
         {
-        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, functionName.stringValue.c_str());
+        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, tok.getLine(), tok.getLinePos(), functionName.stringValue.c_str());
         pushBackLastToken();
         return callExpr;
         }
@@ -428,7 +428,7 @@ Token Parser::nextToken()
     if (lastToken.type != TokenType::NULLPTR)
         {
         currentToken = lastToken;
-        lastToken = Token(TokenType::NULLPTR);
+        lastToken = Token::Null();
         }
     else
         {

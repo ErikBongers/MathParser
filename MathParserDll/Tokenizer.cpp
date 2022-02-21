@@ -50,11 +50,11 @@ Token Tokenizer::next()
     if (peekedToken.type != TokenType::NULLPTR)
         {
         Token t = peekedToken;
-        peekedToken = Token(TokenType::NULLPTR);
+        peekedToken = Token::Null();
         return t;
         }
     if (pos >= size)
-        return Token(TokenType::EOT);
+        return Token(TokenType::EOT, getLine(), getLinePos());
 
     //skip whitespace
     char c;
@@ -68,22 +68,22 @@ Token Tokenizer::next()
 
     c = nextChar();
     if (!c)
-        return Token(TokenType::EOT);
+        return Token(TokenType::EOT, getLine(), getLinePos());
 
     switch (c)
         {
-        case '{': return Token(TokenType::CURL_OPEN, c);
-        case '}': return Token(TokenType::CURL_CLOSE, c);
-        case '(': return Token(TokenType::PAR_OPEN, c);
-        case ')': return Token(TokenType::PAR_CLOSE, c);
-        case '[': return Token(TokenType::BRAC_OPEN, c);
-        case ']': return Token(TokenType::BRAC_CLOSE, c);
-        case '^': return Token(TokenType::POWER, c);
-        case '=': return Token(TokenType::EQ, c);
-        case ',': return Token(TokenType::COMMA, c);
-        case '.': return Token(TokenType::DOT, c);
-        case '\'': return Token(TokenType::QUOTE, c);
-        case '|': return Token(TokenType::PIPE, c);
+        case '{': return Token(TokenType::CURL_OPEN, c, getLine(), getLinePos());
+        case '}': return Token(TokenType::CURL_CLOSE, c, getLine(), getLinePos());
+        case '(': return Token(TokenType::PAR_OPEN, c, getLine(), getLinePos());
+        case ')': return Token(TokenType::PAR_CLOSE, c, getLine(), getLinePos());
+        case '[': return Token(TokenType::BRAC_OPEN, c, getLine(), getLinePos());
+        case ']': return Token(TokenType::BRAC_CLOSE, c, getLine(), getLinePos());
+        case '^': return Token(TokenType::POWER, c, getLine(), getLinePos());
+        case '=': return Token(TokenType::EQ, c, getLine(), getLinePos());
+        case ',': return Token(TokenType::COMMA, c, getLine(), getLinePos());
+        case '.': return Token(TokenType::DOT, c, getLine(), getLinePos());
+        case '\'': return Token(TokenType::QUOTE, c, getLine(), getLinePos());
+        case '|': return Token(TokenType::PIPE, c, getLine(), getLinePos());
         case '!': 
             {
             if (peekChar() == '/' && peekSecondChar() == '/')
@@ -95,11 +95,11 @@ Token Tokenizer::next()
                 currentStatement.clear();
                 return next();
                 }
-            return Token(TokenType::ECHO, c);
+            return Token(TokenType::ECHO, c, getLine(), getLinePos());
             }
         case ';': 
             {
-            auto t = Token(TokenType::SEMI_COLON, currentStatement);
+            auto t = Token(TokenType::SEMI_COLON, currentStatement, getLine(), getLinePos());
             currentStatement.clear();
             return t;
             }
@@ -108,45 +108,45 @@ Token Tokenizer::next()
             if (peekChar() == '=')
                 {
                 nextChar(); //consume
-                return Token(TokenType::EQ_PLUS);
+                return Token(TokenType::EQ_PLUS, getLine(), getLinePos()-1);
                 }
             else if (peekChar() == '+')
                 {
                 nextChar(); //consume
-                return Token(TokenType::INC);
+                return Token(TokenType::INC, getLine(), getLinePos()-1);
                 }
-            return Token(TokenType::PLUS, c);
+            return Token(TokenType::PLUS, c, getLine(), getLinePos());
             }
         case '-':
             {
             if (peekChar() == '=')
                 {
                 nextChar(); //consume
-                return Token(TokenType::EQ_MIN);
+                return Token(TokenType::EQ_MIN, getLine(), getLinePos()-1);
                 }
             else if (peekChar() == '-')
                 {
                 nextChar(); //consume
-                return Token(TokenType::DEC);
+                return Token(TokenType::DEC, getLine(), getLinePos()-1);
                 }
-            return Token(TokenType::MIN, c);
+            return Token(TokenType::MIN, c, getLine(), getLinePos());
             }
         case '*':
             {
             if (peekChar() == '=')
                 {
                 nextChar(); //consume
-                return Token(TokenType::EQ_MULT);
+                return Token(TokenType::EQ_MULT, getLine(), getLinePos()-1);
                 }
-            return Token(TokenType::MULT, c);
+            return Token(TokenType::MULT, c, getLine(), getLinePos());
             }
         case '#':
             if (peekChar() == '/')
                 {
                 nextChar(); //consume
-                return Token(TokenType::MUTE_END);
+                return Token(TokenType::MUTE_END, getLine(), getLinePos()-1);
                 }
-            return Token(TokenType::MUTE_LINE, c);
+            return Token(TokenType::MUTE_LINE, c, getLine(), getLinePos());
         case '/':
             {
             auto cc = peekChar();
@@ -154,7 +154,7 @@ Token Tokenizer::next()
                 {
                 case '=':
                     nextChar(); //consume
-                    return Token(TokenType::EQ_DIV);
+                    return Token(TokenType::EQ_DIV, getLine(), getLinePos()-1);
                 case '/':
                     nextChar(false); //consume
                     currentStatement.pop_back(); //remove the first '/' from the statement.
@@ -166,9 +166,9 @@ Token Tokenizer::next()
                     return next();
                 case '#':
                     nextChar(); //consume
-                    return Token(TokenType::MUTE_START);
+                    return Token(TokenType::MUTE_START, getLine(), getLinePos()-1);
                 }
-            return Token(TokenType::DIV, c);
+            return Token(TokenType::DIV, c, getLine(), getLinePos());
             }
         default:
             if ((c >= '0' && c <= '9') || c == '.')
@@ -180,14 +180,14 @@ Token Tokenizer::next()
                 return parseId(c);
                 }
             else
-                return Token(TokenType::UNKNOWN, c);
+                return Token(TokenType::UNKNOWN, c, getLine(), getLinePos());
         }
     }
 
 Token Tokenizer::parseId(char c)
     {
     std::string word = "";
-
+    auto wordPos = getLinePos();
     word += c;
 
     while ((c = peekChar()))
@@ -208,7 +208,7 @@ Token Tokenizer::parseId(char c)
     std::string lower;
     lower.resize(word.length());
     std::transform(word.begin(), word.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
-    return Token(TokenType::ID, word);
+    return Token(TokenType::ID, word, getLine(), wordPos);
     }
 
 char Tokenizer::nextChar(bool storeChars)
@@ -217,6 +217,12 @@ char Tokenizer::nextChar(bool storeChars)
         return 0; //EOF
     if(storeChars)
         currentStatement.push_back(_stream[pos]);
+    if(_stream[pos] == '\n')
+        {
+        line++;
+        linePos = 0;
+        }
+    linePos++;
     return _stream[pos++];
     }
 
@@ -236,6 +242,7 @@ char Tokenizer::peekSecondChar()
 
 Token Tokenizer::parseNumber(char c)
     {
+    auto numPos = getLinePos();
     //we already have the first digit
     double d = 0;
     double decimalDivider = 1;
@@ -276,7 +283,7 @@ Token Tokenizer::parseNumber(char c)
             }
         }
 
-    return Token(TokenType::NUMBER, d);
+    return Token(TokenType::NUMBER, d, getLine(), numPos);
     }
 
 void Tokenizer::skipToEOL(bool storeChars)

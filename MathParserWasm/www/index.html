@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Parser 0.12</title>
     <link rel="stylesheet" href="style.css">
+    <script src="codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+    <script src="codemirror/mode/mathparser/mathparser.js"></script>
   </head>
   <body>
     <h1 class="hide-on-phone">Math Parser</h1>
@@ -24,9 +27,17 @@
       <div id="calculator"></div>
     </div>
 
+    <div id="newEditor"></div>
 
 
     <script type='text/javascript'>
+      var codeMirrorConfig = {
+        value: "!a=1+2; //zever\n#b=3;\n",
+        mode:  "math_parser",
+        lineNumbers: true
+      };
+      var myCodeMirror = CodeMirror(document.getElementById('newEditor'), codeMirrorConfig);
+
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');

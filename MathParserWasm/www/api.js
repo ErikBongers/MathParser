@@ -1,6 +1,6 @@
 window.addEventListener('load', (event) => {
 	if(localStorage.savedCode)
-		document.getElementById("txtInput").value = localStorage.savedCode;
+		myCodeMirror.doc.setValue(localStorage.savedCode);
   });
 
 Module.onRuntimeInitialized = async _ => {
@@ -13,7 +13,7 @@ Module.onRuntimeInitialized = async _ => {
 
 	Module.parseAfterChange = function(){
 		document.getElementById('txtOutput').value = "";
-		var result = Module.api.parseMath(document.getElementById('txtInput').value);
+		var result = Module.api.parseMath(myCodeMirror.doc.getValue());
 		Module.log(result);
 		result = JSON.parse(result);
 		for(line of result.result)
@@ -43,15 +43,13 @@ Module.onRuntimeInitialized = async _ => {
 				Module.print(strLine);
 			}
 	};
-	document.getElementById('txtInput')
-		.addEventListener('input', function()
-			{
-				localStorage.savedCode = document.getElementById("txtInput").value;
+//this code requires parseAfterChange() to be defined:
+	myCodeMirror.on("change", function(instance, changeObj){
+		localStorage.savedCode = myCodeMirror.doc.getValue();
+		Module.parseAfterChange(localStorage.savedCode);
+});
 
-				Module.parseAfterChange();
-			});
-
-	Module.print = (function() 
+Module.print = (function() 
             {
             var txtOutput = document.getElementById('txtOutput');
             if (txtOutput) txtOutput.value = ''; // clear browser cache

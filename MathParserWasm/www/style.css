@@ -123,8 +123,15 @@ button {
 	border-style: solid;
 	border-color: #999;
 	border-width: 1px;
+	position: relative;
 }
-
+#codeMirror{
+	position: relative;
+	height: 100%;
+}
+.CodeMirror {
+	height: inherit;
+}
 #output {
 	grid-column: 2;
 	grid-row: 1 / 4;

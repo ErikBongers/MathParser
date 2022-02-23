@@ -5,9 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Parser 0.12</title>
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="style.css">
     <script src="codemirror/lib/codemirror.js"></script>
-    <link rel="stylesheet" href="codemirror/lib/codemirror.css">
     <script src="codemirror/mode/mathparser/mathparser.js"></script>
   </head>
   <body>
@@ -20,7 +20,9 @@
     </div>
 
     <div class="layout-grid">
-      <div class="" id="txtInput"></div>
+      <div class="" id="txtInput">
+        <div id="codeMirror"></div>
+      </div>
       <div id="output">
         <textarea class="" id="txtOutput" spellcheck="false" rows="8"></textarea>
       </div>
@@ -34,7 +36,7 @@
         mode:  "math_parser",
         lineNumbers: true
       };
-      var myCodeMirror = CodeMirror(document.getElementById('txtInput'), codeMirrorConfig);
+      var myCodeMirror = CodeMirror(document.getElementById('codeMirror'), codeMirrorConfig);
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');

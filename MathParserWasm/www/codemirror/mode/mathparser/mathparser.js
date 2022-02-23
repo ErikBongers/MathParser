@@ -21,7 +21,14 @@
           if(state.inBlockComment)
             return this.parseBlockComment(stream, state);
           var peek = stream.peek();
-          if(peek == '#' || peek == '!') {
+          if(peek == '#') {
+              stream.next();
+              if(stream.peek() == '/'){
+                stream.next();
+              }
+              return "output-qualifier";
+            }
+          else if(peek == '!'){
             stream.next();
             return "output-qualifier";
             }
@@ -31,11 +38,14 @@
               stream.skipToEnd();
               return "comment";
             }
-            else if(stream.peek() == '*')
-            {
+            else if(stream.peek() == '*'){
               stream.next();
               state.inBlockComment = true;
               return "comment";
+            }
+            else if(stream.peek() == '#'){
+              stream.next();
+              return "output-qualifier";
             }
           }
         //TODO: parse identifers and postfixes (units)

@@ -47,7 +47,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
-        default: return Value(ErrorId::UNKNOWN_EXPR, 0, 0, nullptr); //TODO: can this be avoided?
+        default: return Value(ErrorId::UNKNOWN_EXPR, 0, 0);
         }
     }
 
@@ -116,7 +116,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         auto val = resolveNode(*prim.addExpr);
         if (prim.unit.isClear())
             val.unit = Unit();
-        else if (!prim.unit.id.empty())
+        else if (!prim.unit.isClear())
             val.unit = prim.unit;
         return val;
         }
@@ -141,7 +141,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         auto val = resolveCall(callExpr);
         if (prim.unit.isClear())
             val.unit = Unit();
-        else if (!prim.unit.id.empty())
+        else if (!prim.unit.isClear())
             val.unit = prim.unit;
         return val;
         }
@@ -174,7 +174,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     auto val = f.execute(callExpr.functionName.line, callExpr.functionName.pos);
     if (callExpr.unit.isClear())
         val.unit = Unit();
-    else if (!callExpr.unit.id.empty())
+    else if (!callExpr.unit.isClear())
         val.unit = callExpr.unit;
     return val;
     }
@@ -184,6 +184,13 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
     auto v = Value(constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
     if (constExpr.unit.isClear())
         v.unit = Unit();
+    else
+        {
+        if (UnitDef::defs.count(v.unit.id.stringValue) == 0)
+            {
+            v.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.unit.id.line, v.unit.id.pos, v.unit.id.stringValue.c_str()));
+            }
+        }
     if (constExpr.error.id != ErrorId::NONE)
         v.errors.push_back(constExpr.error);
     return v;

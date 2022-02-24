@@ -22,7 +22,8 @@ class Value
         Value(double d, unsigned int line, unsigned int pos)
             : line(line), pos(pos)
             { this->number = d; }
-        Value(ErrorId errorId, unsigned int line, unsigned int pos, ...);
+        Value(ErrorId errorId, unsigned int line, unsigned int pos);
+        Value(ErrorId errorId, unsigned int line, unsigned int pos, const std::string& arg1);
         Value(double d, const Unit u, unsigned int line, unsigned int pos);
         Value(Token id, double d, const Unit u, unsigned int line, unsigned int pos);
         Value(const Error& error);
@@ -38,8 +39,8 @@ class Value
         Value& operator/(const Value& value);
         Value& operator^(const Value& value);
         Value convertToUnit(const Unit& to);
-        double toSI() const { return UnitDef::defs[unit.id].toSI(number); };
-        double fromSI() const { return UnitDef::defs[unit.id].fromSI(number); };
+        double toSI() const { return UnitDef::defs[unit.id.stringValue].toSI(number); };
+        double fromSI() const { return UnitDef::defs[unit.id.stringValue].fromSI(number); };
     private:
         Value& doTerm(bool adding, const Value& v);
     };

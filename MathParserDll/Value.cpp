@@ -3,13 +3,16 @@
 #include "json.h"
 #include <sstream>
 
-Value::Value(ErrorId errorId, unsigned int line, unsigned int pos ...)
+Value::Value(ErrorId errorId, unsigned int line, unsigned int pos)
     : line(line), pos(pos)
     {
-    va_list args;
-    va_start(args, pos);
-    errors.push_back(Error(errorId, line, pos, args));
-    va_end(args);
+    errors.push_back(Error(errorId, line, pos));
+    }
+
+Value::Value(ErrorId errorId, unsigned int line, unsigned int pos, const std::string& arg1)
+    : line(line), pos(pos)
+    {
+    errors.push_back(Error(errorId, line, pos, arg1));
     }
 
 Value::Value(const Error& error)
@@ -116,9 +119,9 @@ Value& Value::operator-(const Value& v)
 Value& Value::doTerm(bool adding, const Value& v)
     {
     //if both values have units: convert them to SI before operation.
-    if (!unit.id.empty() && !v.unit.id.empty())
+    if (!unit.isClear() && !v.unit.isClear())
         {
-        if (UnitDef::defs[unit.id].property != UnitDef::defs[v.unit.id].property)
+        if (UnitDef::defs[unit.id.stringValue].property != UnitDef::defs[v.unit.id.stringValue].property)
             {
             errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
             return *this;
@@ -126,17 +129,17 @@ Value& Value::doTerm(bool adding, const Value& v)
         double d1 = this->toSI();
         double d2 = v.toSI();
         number = adding ? (d1 + d2) : (d1 - d2);
-        number = UnitDef::defs[this->unit.id].fromSI(number);
+        number = UnitDef::defs[this->unit.id.stringValue].fromSI(number);
         }
     //if both values have no units, just do operation.
-    else if (unit.id.empty() && v.unit.id.empty())
+    else if (unit.isClear() && v.unit.isClear())
         {
         number = adding ? (number + v.number) : (number - v.number);
         }
     else //a value with a unit and one without it: assuming both same unit
         {
         number = adding ? (number + v.number) : (number - v.number);
-        if (this->unit.id.empty())
+        if (this->unit.isClear())
             this->unit = v.unit;
         errors.push_back(Error(ErrorId::W_ASSUMING_UNIT, line, pos));
         }
@@ -148,7 +151,7 @@ Value& Value::operator*(const Value& v)
     {
     //TODO: if both units set: unit changes to unit*unit!
     number *= v.number;
-    if (unit.id.empty())
+    if (unit.isClear())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -158,7 +161,7 @@ Value& Value::operator/(const Value& v)
     {
     //TODO: if both units set: unit changes to unit/unit!
     number /= v.number;
-    if (unit.id.empty())
+    if (unit.isClear())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -167,7 +170,7 @@ Value& Value::operator/(const Value& v)
 Value& Value::operator^(const Value& v)
     {
     number = std::pow(number,v.number);
-    if (!unit.id.empty())
+    if (!unit.isClear())
         unit = v.unit;
     errors.insert(errors.end(), v.errors.begin(), v.errors.end());
     return *this;
@@ -179,24 +182,24 @@ Value Value::convertToUnit(const Unit& to)
     double fFrom = 1;
     double fTo = 1;
 
-    if (UnitDef::defs.count(this->unit.id) == 0)
+    if (UnitDef::defs.count(this->unit.id.stringValue) == 0)
         {
         value.unit = to;
         return value;
         }
     
-    if (UnitDef::defs.count(to.id) == 0)
+    if (UnitDef::defs.count(to.id.stringValue) == 0)
         {
-        value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, line, pos, to.id.c_str()));
+        value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.id.line, to.id.pos, to.id.stringValue.c_str()));
         return value;
         }
-    if (UnitDef::defs[unit.id].property != UnitDef::defs[to.id].property)
+    if (UnitDef::defs[unit.id.stringValue].property != UnitDef::defs[to.id.stringValue].property)
         {
         value.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
         return value;
         }
-    value.number = UnitDef::defs[this->unit.id].toSI(this->number); //from -> SI
-    value.number = UnitDef::defs[to.id].fromSI(value.number);  //SI -> to
+    value.number = UnitDef::defs[this->unit.id.stringValue].toSI(this->number); //from -> SI
+    value.number = UnitDef::defs[to.id.stringValue].fromSI(value.number);  //SI -> to
     value.unit = to;
     return value;
     }

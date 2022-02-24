@@ -6,10 +6,14 @@ left or right associativity: https://stackoverflow.com/questions/41784524/prefer
 
 echoComment = '!//' rest_of_line
 
-statements = statement {'; statement [';']}
+statements = '/#' statementBlock '#/' |
 
-statement = '!' addExpr |  //echo statement
-            addExpr |
+statementsBlock = statement {'; statement [';']}
+
+statement = '!' statementBody |
+            '#' statementBody
+
+statementBody = addExpr |
             assignment
 
 assignment = id '=' addExpr

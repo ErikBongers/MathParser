@@ -237,7 +237,7 @@ Node* Parser::parseUnitExpr()
     {
     Node* node = parsePostFixExpr();
     auto t = nextToken();
-    if (t.type == TokenType::ID)
+    if (t.type == TokenType::ID) //TODO: is never gonna happen because already parsed by parsePostFix() ???
         {
         if (ids.count(t.stringValue) != 0)
             pushBackLastToken(); //a known id: assuming an implicit mult, here.
@@ -306,13 +306,13 @@ Node* Parser::parsePrimaryExpr()
     auto t = nextToken();
     if (t.type == TokenType::NUMBER)
         {
-        pushBackLastToken();
         return parseConst(false);
         }
     else if (t.type == TokenType::MIN)
         {
         if (peekToken().type == TokenType::NUMBER)
             {
+            nextToken();
             return parseConst(true);
             }
         //else error?
@@ -332,12 +332,11 @@ Node* Parser::parsePrimaryExpr()
         }
     else if (t.type == TokenType::PAR_OPEN)
         {
-        PrimaryExpr* primExpr = createPrimary();//TODO: get rid of this? See comment below...
-        primExpr->addExpr = parseAddExpr();
+        auto addExpr = parseAddExpr();
         t = nextToken();
         //if (t.type != TokenType::PAR_CLOSE)
         //    primExpr.errorPos = 1;//todo
-        return primExpr; //always return a 'wrapped' expression as a primExpr, not it's content, for analysis and warnings.
+        return addExpr;
         }
     else if (t.type == TokenType::PIPE)
         {
@@ -355,21 +354,9 @@ Node* Parser::parsePrimaryExpr()
 
 ConstExpr* Parser::parseConst(bool negative)
     {
-    ConstExpr* constExpr = createConst();
-    auto t = nextToken();
-    t.numberValue = (negative ? -1 : 1) * t.numberValue;
-    constExpr->constNumber = t;
-    t = nextToken();
-    if (t.type == TokenType::ID)
-        {
-        if (ids.count(t.stringValue) != 0)
-            pushBackLastToken(); //a known id: assuming an implicit mult, here.
-        else
-            constExpr->unit = t; //no known id: assuming a unit.
-        }
-    else
-        pushBackLastToken();
-
+    auto constExpr = createConst();
+    currentToken.numberValue = (negative ? -1 : 1) * currentToken.numberValue;
+    constExpr->constNumber = currentToken;
     return constExpr;
     }
 

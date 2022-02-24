@@ -222,7 +222,8 @@ char Tokenizer::nextChar(bool storeChars)
         line++;
         linePos = 0;
         }
-    linePos++;
+    else
+        linePos++;
     return _stream[pos++];
     }
 

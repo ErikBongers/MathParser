@@ -1,4 +1,14 @@
-﻿* replace printf with std::format for type safety.
+﻿* echo:
+  > update ebnf
+  > echo-comment on same line as statement: keep it there in output.
+  > echo statement with plain comment behind it: hide comment.
+  > echo statement with double !! -> also echo the plain comment behind it.
+  > Echo-comments's don't really belong to statements...perhaps make them statements of their own?
+    > except for an echo behind a statement.
+  > echo-blocks: /! ... !/
+    > to enable echo of all statements, just start top line with '/!' and don't even include the closing '!/' (it should thus not give an error not closing it).
+
+* replace printf with std::format for type safety.
   > https://stackoverflow.com/questions/47199389/is-there-any-implementation-of-type-safe-compile-time-checked-printf
 TODO: security:
     > Check insertion risk

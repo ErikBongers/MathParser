@@ -48,6 +48,7 @@ class Token
     {
     public:
         static Token Null() { return Token(TokenType::NULLPTR, 0, 0); }
+        bool isNull() const { return type == TokenType::NULLPTR;}
         TokenType type;
         std::string stringValue;
         double numberValue;

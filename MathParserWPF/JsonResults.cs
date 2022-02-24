@@ -19,4 +19,6 @@ public class Error
     {
     public string id { get; set; }
     public string message { get; set; }
-    }
+    public int line { get; set; }
+    public int pos { get; set; }
+}

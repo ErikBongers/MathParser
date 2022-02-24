@@ -77,7 +77,7 @@ namespace MathParserWPF
                     {
                     strResult += " <<< ";
                     foreach (var err in result.errors)
-                        strResult += err.message + "  ";
+                        strResult += $"[{err.line}, {err.pos}] {err.message}";
                     }
                 strResult += result.text;
                 if(strResult.Length > 0)

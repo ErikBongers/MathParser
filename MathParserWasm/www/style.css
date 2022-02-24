@@ -135,6 +135,9 @@ button {
 #output {
 	grid-column: 2;
 	grid-row: 1 / 4;
+	border-style: solid;
+	border-color: #999;
+	border-width: 1px;
 }
 
 #txtOutput {

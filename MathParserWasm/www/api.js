@@ -10,12 +10,23 @@ Module.onRuntimeInitialized = async _ => {
     };
 
 	window.document.title = "Math Parser " + Module.api.getMathVersion();
+	Module.convertErrorToCodeMirror = function(e){
+		var hint = {
+            message: e.message,
+            severity: "error", //"warning"
+            from: CodeMirror.Pos(e.line, e.pos),
+            to: CodeMirror.Pos(e.line, e.pos+1)
+          };
+      return hint;
+	};
 
 	Module.parseAfterChange = function(){
-		document.getElementById('txtOutput').value = "";
+		Module.parserErrors = [];
+		cmOutput.setValue("");
 		var result = Module.api.parseMath(myCodeMirror.doc.getValue());
 		Module.log(result);
 		result = JSON.parse(result);
+		var strOutput = "";
 		for(line of result.result)
 			{
 			let strComments = "";
@@ -29,6 +40,7 @@ Module.onRuntimeInitialized = async _ => {
 			for(e of line.errors)
 				{
 				strErrors += "  " + e.message;
+				Module.parserErrors.push(Module.convertErrorToCodeMirror(e));
 				}
 			let strText = "";
 			if(line.text != "")
@@ -38,10 +50,11 @@ Module.onRuntimeInitialized = async _ => {
 				strLine += (line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit;
 			strLine += strText + (strErrors === ""? "" : "  <<<" + strErrors)
 			if(strComments.length > 0)
-				Module.print(strComments);
+				strOutput+= strComments + "\n";
 			if(strLine.length > 0)
-				Module.print(strLine);
+				strOutput+= strLine + "\n";
 			}
+		cmOutput.setValue(strOutput);
 	};
 //this code requires parseAfterChange() to be defined:
 	myCodeMirror.on("change", function(instance, changeObj){

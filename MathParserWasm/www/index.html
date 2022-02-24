@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Parser 0.12</title>
     <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="codemirror/addon/lint/lint.css">
     <link rel="stylesheet" href="style.css">
     <script src="codemirror/lib/codemirror.js"></script>
     <script src="codemirror/mode/mathparser/mathparser.js"></script>
+    <script src="codemirror/addon/lint/lint.js"></script>
+    <script src="codemirror/addon/lint/mathparser-lint.js"></script>
   </head>
   <body>
     <h1 class="hide-on-phone">Math Parser</h1>
@@ -20,28 +23,24 @@
     </div>
 
     <div class="layout-grid">
-      <div class="" id="txtInput">
+      <div id="txtInput">
         <div id="codeMirror"></div>
       </div>
       <div id="output">
-        <textarea class="" id="txtOutput" spellcheck="false" rows="8"></textarea>
+        <div id="txtOutput" spellcheck="false" rows="8"></div>
       </div>
       <div id="calculator"></div>
     </div>
 
 
     <script type='text/javascript'>
-      var codeMirrorConfig = {
-        value: "!a=1+2; //zever\n#b=3;\n",
-        mode:  "math_parser",
-        lineNumbers: true
-      };
-      var myCodeMirror = CodeMirror(document.getElementById('codeMirror'), codeMirrorConfig);
+      
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
 
       var Module = {
+        parserErrors: [],
         preRun: [],
         postRun: [],
         printErr: function(text) {
@@ -89,6 +88,22 @@
           if (text) Module.printErr('[post-exception status] ' + text);
         };
       };
+      CodeMirror.registerHelper("mathparser", "Module", Module);
+      var cmConfigInput = {
+        value: "",
+        mode:  "math_parser",
+        lineNumbers: true,
+        gutters: ["CodeMirror-lint-markers"],
+        lint: true
+      };
+      var cmConfigOutput = {
+        value: "",
+        mode:  "math_parser",
+        lineNumbers: false
+      };
+      var myCodeMirror = CodeMirror(document.getElementById('codeMirror'), cmConfigInput);
+      var cmOutput = CodeMirror(document.getElementById('txtOutput'), cmConfigOutput);
+
     </script>
     <script async type="text/javascript" src="mathparser.wasm.js"></script>
     <script async type="text/javascript" src="api.js"></script>

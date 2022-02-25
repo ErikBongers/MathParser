@@ -176,7 +176,7 @@ button {
 	background-color: #dddddd;
 }
 
-@media only screen and (max-height: 1000px) {
+@media only screen and (max-width: 30em) {
 	.layout-grid {
 		height: 80vh;
 	}

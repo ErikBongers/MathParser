@@ -29,13 +29,15 @@ Module.onRuntimeInitialized = async _ => {
 		var strOutput = "";
 		for(line of result.result)
 			{
-			let strComments = "";
+			if(line.onlyComment == true)
+			{
+				strOutput += "//" + line.comment + "\n";
+				continue;
+			}
+			let strComment = "";
+			if(line.comment != "")
+				strComment = "//" + line.comment;
 			let strNL = "";
-			for(cmt of line.comments)
-				{
-				strComments += strNL + cmt;
-				strNL = "\n";
-				}
 			let strErrors = "";
 			for(e of line.errors)
 				{
@@ -48,9 +50,8 @@ Module.onRuntimeInitialized = async _ => {
 			let strLine = "";
 			if(line.mute == false || line.errors.length > 0)
 				strLine += (line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit;
-			strLine += strText + (strErrors === ""? "" : "  <<<" + strErrors)
-			if(strComments.length > 0)
-				strOutput+= strComments + "\n";
+			strLine += strText + (strErrors === ""? "" : "  <<<" + strErrors);
+			strLine += strComment;
 			if(strLine.length > 0)
 				strOutput+= strLine + "\n";
 			}

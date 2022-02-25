@@ -13,7 +13,8 @@ class Value
         Unit unit;
         std::vector<Error> errors;
         std::string text;
-        std::vector<std::string> comment_lines;
+        std::string comment_line;
+        bool onlyComment = false;
         bool mute = false;
         unsigned int line;
         unsigned int pos;

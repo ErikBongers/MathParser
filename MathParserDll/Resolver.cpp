@@ -26,10 +26,12 @@ Value Resolver::resolveStatement(const Statement& stmt)
     Value result;
     if (stmt.assignExpr != nullptr)
         result = resolveNode(*stmt.assignExpr);
-    else
+    else if (stmt.addExpr != nullptr)
         result = resolveNode(*stmt.addExpr);
+    else
+        result.onlyComment = true;
     result.text = stmt.text;
-    result.comment_lines = stmt.comment_lines;
+    result.comment_line = stmt.comment_line.stringValue;
     result.mute = stmt.mute;
     return result;
     }
@@ -107,6 +109,8 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     if (pfix.error.id != ErrorId::NONE)
         return Value(pfix.error);
     auto val = resolveNode(*pfix.primExpr);
+    if(pfix.postfixId.isNull())
+        val.unit = Unit::CLEAR();
     val = val.convertToUnit(pfix.postfixId);
     return val;
     }
@@ -132,8 +136,6 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         if (found != variables.end())
             {
             auto v = variables[prim.Id.stringValue];
-            if (prim.unit.isClear())
-                v.unit = Unit();
             return v;
             }
         else

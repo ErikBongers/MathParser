@@ -32,7 +32,7 @@ enum class TokenType
     QUOTE,
     PIPE,
     ECHO,
-    COMMENT_LINE,
+    ECHO_COMMENT_LINE,
     MUTE_LINE,
     MUTE_START,
     MUTE_END,
@@ -54,6 +54,7 @@ class Token
         double numberValue;
         unsigned int pos;
         unsigned int line;
+        bool isFirstOnLine = false;
         Token() : Token(TokenType::NULLPTR, 0, 0) {}
         Token(TokenType type, char c, unsigned int line, unsigned int pos) 
             : numberValue(-1), line(line), pos(pos)
@@ -74,7 +75,7 @@ class Token
             this->stringValue = str;
             }
         Token(TokenType type, unsigned int line, unsigned int pos)
-            : Token(type, ' ', line, pos) 
+            : Token(type, 0.0, line, pos) 
             { }
         const std::string to_string() const;
         friend std::ostream& operator<<(std::ostream& os, const Token& t);
@@ -88,11 +89,11 @@ class Tokenizer
         unsigned int pos = 0; //pos at which to read next token.
         unsigned int line = 0;
         unsigned int linePos = 0;
+        bool newLineStarted = true;
         Token peekedToken = Token(TokenType::NULLPTR, 0, 0);
         size_t size = -1;
     public:
         std::string currentStatement;
-        std::vector<std::string> comment_lines;
         Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
         Token peek();
         Token next();
@@ -108,6 +109,8 @@ class Tokenizer
         Token parseNumber(char c);
 
         void skipToEOL(bool storeChars);
+        std::string getToEOL(bool storeChars);
         void skipToEndOfComment();
+        Token _nextToken();
     };
 

@@ -53,6 +53,14 @@ Token Tokenizer::next()
         peekedToken = Token::Null();
         return t;
         }
+    auto t = _nextToken();
+    t.isFirstOnLine = newLineStarted;
+    newLineStarted = false;
+    return t;
+    }
+
+Token Tokenizer::_nextToken()
+    {
     if (pos >= size)
         return Token(TokenType::EOT, getLine(), getLinePos());
 
@@ -90,10 +98,9 @@ Token Tokenizer::next()
                 {
                 nextChar(); //consume
                 nextChar(); //consume
-                skipToEOL(true);
-                comment_lines.push_back(currentStatement);
+                auto comment = getToEOL(true); //todo: store chars or not?
                 currentStatement.clear();
-                return next();
+                return Token(TokenType::ECHO_COMMENT_LINE, comment, getLine(), getLinePos());
                 }
             return Token(TokenType::ECHO, c, getLine(), getLinePos());
             }
@@ -159,11 +166,11 @@ Token Tokenizer::next()
                     nextChar(false); //consume
                     currentStatement.pop_back(); //remove the first '/' from the statement.
                     skipToEOL(false);
-                    return next();
+                    return _nextToken();
                 case '*':
                     nextChar(); //consume
                     skipToEndOfComment();
-                    return next();
+                    return _nextToken();
                 case '#':
                     nextChar(); //consume
                     return Token(TokenType::MUTE_START, getLine(), getLinePos()-1);
@@ -221,6 +228,7 @@ char Tokenizer::nextChar(bool storeChars)
         {
         line++;
         linePos = 0;
+        newLineStarted = true;
         }
     else
         linePos++;
@@ -285,6 +293,21 @@ Token Tokenizer::parseNumber(char c)
         }
 
     return Token(TokenType::NUMBER, d, getLine(), numPos);
+    }
+
+std::string Tokenizer::getToEOL(bool storeChars)
+    {
+    std::string buf;
+    char c;
+    while ((c = peekChar())) 
+        {
+        if(c == '\n')
+            break; //don't eat newLine yet. The nextToken should be marked as firstOnNewLine.
+        nextChar();
+        if(c != '\r')
+            buf += c;
+        }
+    return buf;
     }
 
 void Tokenizer::skipToEOL(bool storeChars)

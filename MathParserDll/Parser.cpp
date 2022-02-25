@@ -9,7 +9,22 @@ void Parser::parse()
     ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
     while (peekToken().type != TokenType::EOT)
         {
-        statements.push_back(parseStatement());
+        auto stmt = parseStatement();
+        statements.push_back(stmt);
+        if (peekToken().type == TokenType::ECHO_COMMENT_LINE)
+            {
+            auto t = tok.next();
+            if (t.isFirstOnLine)
+                {
+                stmt = createStatement();
+                stmt->comment_line = t;
+                statements.push_back(stmt);
+                }
+            else
+                {
+                stmt->comment_line = t;
+                }
+            }
         }
     }
 
@@ -28,6 +43,13 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         nextToken(); //consume ECHO
         stmt->echo = true;
         return parseStatementHeader(stmt);
+        }
+    if(peekToken().type == TokenType::ECHO_COMMENT_LINE)
+        {
+        auto t = nextToken(); //consume ECHO
+        stmt = createStatement();
+        stmt->comment_line = t;
+        return stmt;
         }
     if(peekToken().type == TokenType::MUTE_LINE)
         {
@@ -67,8 +89,6 @@ Statement* Parser::parseStatementBody(Statement* stmt)
             else if(stmt->text.starts_with("\n"))
                 stmt->text.erase(0, 1);
             }
-        stmt->comment_lines = tok.comment_lines;
-        tok.comment_lines.clear();
         }
     else
         pushBackLastToken();//continue, although what follows is an error
@@ -251,16 +271,16 @@ Node* Parser::parseOnePostFix(Node* node, Token t)
     if (t.type == TokenType::DOT)
         {
         t = nextToken();
+        auto postfixExpr = createPostfix();
+        postfixExpr->primExpr = node;
+        node = postfixExpr;
         if (t.type == TokenType::ID)
             {
-            auto postfixExpr = (PostfixExpr*)createPostfix();
-            postfixExpr->primExpr = node;
             postfixExpr->postfixId = t;
-            node = postfixExpr;
             }
         else
             { //valid syntax: clear the unit, if any.
-            node->unit = Unit::CLEAR();
+            postfixExpr->postfixId = Token::Null();
             pushBackLastToken();
             }
         }

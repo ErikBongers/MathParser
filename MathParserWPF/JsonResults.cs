@@ -11,7 +11,8 @@ public class Result
     public string unit { get; set; }
     public Error[] errors { get; set; }
     public string text { get; set; }
-    public string[] comments { get; set; }
+    public string comment { get; set; }
+    public bool onlyComment { get; set; }
     public bool mute { get; set; }
 }
 

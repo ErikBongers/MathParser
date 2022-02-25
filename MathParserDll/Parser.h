@@ -112,7 +112,7 @@ class Statement : public Node
         Node* assignExpr = nullptr;
         Node* addExpr = nullptr;
         std::string text;
-        std::vector<std::string> comment_lines;
+        Token comment_line;
         bool mute = false; //mute output
         bool echo = false; //echo statement
     private:

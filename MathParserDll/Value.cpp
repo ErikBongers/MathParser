@@ -81,14 +81,9 @@ std::string Value::to_json()
     sstr << ", \"text\" : \""
         << escape_json(text)
         << "\"";
-    sstr << ", \"comments\" : [";
-    comma = "";
-    for (auto& comm : comment_lines)
-        {
-        sstr << comma << "\"" << escape_json(make_one_line(comm)) << "\"";
-        comma = ",";
-        }
-    sstr << "]";
+    sstr << ", \"comment\" : ";
+    sstr <<  "\"" << escape_json(make_one_line(comment_line)) << "\"";
+    sstr << ", \"onlyComment\": " << (onlyComment?"true":"false");
     sstr << ", \"mute\": " << (mute?"true":"false");
     sstr << "}";
     return sstr.str();

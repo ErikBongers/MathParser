@@ -62,6 +62,8 @@ Value Resolver::resolveAdd(const AddExpr& addExpr)
         result = a1 - a2;
     if (addExpr.error.id != ErrorId::NONE)
         result.errors.push_back(addExpr.error);
+    if(!addExpr.unit.isClear())
+        result = result.convertToUnit(addExpr.unit);
     return result;
     }
 
@@ -114,9 +116,11 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
     if (prim.addExpr != nullptr)
         {
         auto val = resolveNode(*prim.addExpr);
-        if (prim.unit.isClear())
-            val.unit = Unit();
-        else if (!prim.unit.isClear())
+        if (!prim.unit.isClear() && !val.unit.isClear())
+            {
+            val = val.convertToUnit(prim.unit);
+            }
+        else if(!prim.unit.isClear())
             val.unit = prim.unit;
         return val;
         }

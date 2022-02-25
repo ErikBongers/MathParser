@@ -214,7 +214,7 @@ Node* Parser::parsePowerExpr()
 
 Node* Parser::parseImplicitMult()
     {
-    Node* n1 = parseUnitExpr();
+    Node* n1 = parsePostFixExpr();
     auto t = nextToken();
     while ((t.type == TokenType::ID
             || t.type == TokenType::NUMBER)
@@ -224,7 +224,7 @@ Node* Parser::parseImplicitMult()
         auto m = createMult();
         m->m1 = n1;
         m->op = Token(TokenType::MULT, '*', tok.getLine(), tok.getLinePos());
-        m->m2 = parseUnitExpr();
+        m->m2 = parsePostFixExpr();
         m->implicitMult = true;
         n1 = m;
         t = nextToken();
@@ -233,25 +233,9 @@ Node* Parser::parseImplicitMult()
     return n1;
     }
 
-Node* Parser::parseUnitExpr()
-    {
-    Node* node = parsePostFixExpr();
-    auto t = nextToken();
-    if (t.type == TokenType::ID) //TODO: is never gonna happen because already parsed by parsePostFix() ???
-        {
-        if (ids.count(t.stringValue) != 0)
-            pushBackLastToken(); //a known id: assuming an implicit mult, here.
-        else
-            node->unit = t; //no known id: assuming a unit.
-        }
-    else
-        pushBackLastToken();
-    return node;
-    }
-
 Node* Parser::parsePostFixExpr()
     {
-    Node* node = parsePrimaryExpr();
+    Node* node = parseUnitExpr();
     auto t = nextToken();
     while (t.type == TokenType::DOT || t.type == TokenType::INC || t.type == TokenType::DEC)
         {
@@ -298,6 +282,22 @@ Node* Parser::parseOnePostFix(Node* node, Token t)
         assignExpr->expr = callExpr;
         node = assignExpr;
         }
+    return node;
+    }
+
+Node* Parser::parseUnitExpr()
+    {
+    Node* node = parsePrimaryExpr();
+    auto t = nextToken();
+    if (t.type == TokenType::ID) //TODO: is never gonna happen because already parsed by parsePostFix() ???
+        {
+        if (ids.count(t.stringValue) != 0)
+            pushBackLastToken(); //a known id: assuming an implicit mult, here.
+        else
+            node->unit = t; //no known id: assuming a unit.
+        }
+    else
+        pushBackLastToken();
     return node;
     }
 

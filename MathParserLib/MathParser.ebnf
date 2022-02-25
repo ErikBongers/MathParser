@@ -29,16 +29,15 @@ impliedMultExpr = const id |
                   multExpr '(' |
                   '(' addExpr ')' (id | const)
 
-powerExpr = unitExpr |
-           powerExpr "^" unitExpr
+powerExpr = postFixExpr |
+           powerExpr "^" postFixExpr
 
-unitExpr = postFixExpr |
-           postFixExpr unit
-
-postFixExpr = primaryExpr |
+postFixExpr = unitExpr |
             postFixExpr '.' [ id ] |
             primaryExpr (INC | DEC)
             
+unitExpr = primaryExpr [unit]
+
 primaryExpr = const | 
               id | 
               "(", addExpr, ")" |

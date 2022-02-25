@@ -121,15 +121,17 @@ Value& Value::doTerm(bool adding, const Value& v)
     //if both values have units: convert them to SI before operation.
     if (!unit.isClear() && !v.unit.isClear())
         {
-        if (UnitDef::defs[unit.id.stringValue].property != UnitDef::defs[v.unit.id.stringValue].property)
-            {
-            errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
-            return *this;
-            }
+        if(UnitDef::exists(unit.id.stringValue) && UnitDef::exists(v.unit.id.stringValue))
+            if (UnitDef::get(unit.id.stringValue).property != UnitDef::get(v.unit.id.stringValue).property)
+                {
+                errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
+                return *this;
+                }
         double d1 = this->toSI();
         double d2 = v.toSI();
         number = adding ? (d1 + d2) : (d1 - d2);
-        number = UnitDef::defs[this->unit.id.stringValue].fromSI(number);
+        if(UnitDef::exists(this->unit.id.stringValue))
+            number = UnitDef::get(this->unit.id.stringValue).fromSI(number);
         }
     //if both values have no units, just do operation.
     else if (unit.isClear() && v.unit.isClear())
@@ -182,24 +184,40 @@ Value Value::convertToUnit(const Unit& to)
     double fFrom = 1;
     double fTo = 1;
 
-    if (UnitDef::defs.count(this->unit.id.stringValue) == 0)
+    if (UnitDef::exists(this->unit.id.stringValue) == false)
         {
         value.unit = to;
         return value;
         }
     
-    if (UnitDef::defs.count(to.id.stringValue) == 0)
+    if (UnitDef::exists(to.id.stringValue) == false)
         {
         value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.id.line, to.id.pos, to.id.stringValue.c_str()));
         return value;
         }
-    if (UnitDef::defs[unit.id.stringValue].property != UnitDef::defs[to.id.stringValue].property)
+    if (UnitDef::get(unit.id.stringValue).property != UnitDef::get(to.id.stringValue).property)
         {
         value.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
         return value;
         }
-    value.number = UnitDef::defs[this->unit.id.stringValue].toSI(this->number); //from -> SI
-    value.number = UnitDef::defs[to.id.stringValue].fromSI(value.number);  //SI -> to
+    value.number = UnitDef::get(this->unit.id.stringValue).toSI(this->number); //from -> SI
+    value.number = UnitDef::get(to.id.stringValue).fromSI(value.number);  //SI -> to
     value.unit = to;
     return value;
+    }
+
+inline double Value::toSI() const 
+    { 
+    if(UnitDef::exists(unit.id.stringValue))
+        return UnitDef::get(unit.id.stringValue).toSI(number);
+    else
+        return number;
+    }
+
+inline double Value::fromSI() const 
+    { 
+    if(UnitDef::exists(unit.id.stringValue))
+        return UnitDef::get(unit.id.stringValue).fromSI(number); 
+    else
+        return number;
     }

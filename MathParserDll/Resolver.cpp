@@ -186,7 +186,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
         v.unit = Unit();
     else
         {
-        if (UnitDef::defs.count(v.unit.id.stringValue) == 0)
+        if (UnitDef::exists(v.unit.id.stringValue) == false)
             {
             v.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.unit.id.line, v.unit.id.pos, v.unit.id.stringValue.c_str()));
             }

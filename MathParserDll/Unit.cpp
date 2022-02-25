@@ -56,3 +56,11 @@ void UnitDef::init()
     defs["F"].toSI = [](double d) { return (d - 32) * 5 / 9 + 273.15; };
     defs["F"].fromSI = [](double d) { return (d - 273.15) * 9 / 5 + 32; };
     }
+
+UnitDef& UnitDef::get(const std::string& key)
+    {
+    if(UnitDef::exists(key))
+        return UnitDef::defs[key];
+    else
+        throw std::out_of_range ("blah");
+    }

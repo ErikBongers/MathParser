@@ -106,7 +106,7 @@ Value Sin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos
         return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
     if (args[0].unit.id.stringValue == "deg")
-        arg = UnitDef::defs["deg"].toSI(arg);;
+        arg = UnitDef::get("deg").toSI(arg);;
     return Value(sin(arg), line, pos);
     }
 
@@ -116,7 +116,7 @@ Value Cos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos
         return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
     if (args[0].unit.id.stringValue == "deg")
-        arg = UnitDef::defs["deg"].toSI(arg);
+        arg = UnitDef::get("deg").toSI(arg);
     return Value(cos(arg), line, pos);
     }
 
@@ -126,7 +126,7 @@ Value Tan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos
         return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
     double arg = args[0].number;
     if (args[0].unit.id.stringValue == "deg")
-        arg = UnitDef::defs["deg"].toSI(arg);
+        arg = UnitDef::get("deg").toSI(arg);
     return Value(tan(arg), line, pos);
     }
 

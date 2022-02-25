@@ -26,9 +26,11 @@ struct UnitDef
     {
     private:
         double _toSI = 1; //default conversion factor
-    public:
         static std::map<std::string, UnitDef> defs;
+    public:
         static void init();
+        static UnitDef& get(const std::string& key);
+        static bool exists(const std::string& key) { return defs.count(key) != 0; }
 
         std::string id;
         UnitClass property = UnitClass::UNDEFINED;

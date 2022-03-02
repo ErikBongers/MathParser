@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="codemirror/addon/lint/lint.css">
     <link rel="stylesheet" href="style.css">
-    <script src="codemirror/lib/codemirror.js"></script>
-    <script src="codemirror/mode/mathparser/mathparser.js"></script>
-    <script src="codemirror/addon/lint/lint.js"></script>
-    <script src="codemirror/addon/lint/mathparser-lint.js"></script>
   </head>
   <body>
     <h1 class="hide-on-phone">Math Parser</h1>
@@ -88,23 +84,9 @@
           if (text) Module.printErr('[post-exception status] ' + text);
         };
       };
-      CodeMirror.registerHelper("mathparser", "Module", Module);
-      var cmConfigInput = {
-        value: "",
-        mode:  "math_parser",
-        lineNumbers: true,
-        gutters: ["CodeMirror-lint-markers"],
-        lint: true
-      };
-      var cmConfigOutput = {
-        value: "",
-        mode:  "math_parser",
-        lineNumbers: false
-      };
-      var myCodeMirror = CodeMirror(document.getElementById('codeMirror'), cmConfigInput);
-      var cmOutput = CodeMirror(document.getElementById('txtOutput'), cmConfigOutput);
 
     </script>
+    <script src="editor.bundle.js"></script>
     <script async type="text/javascript" src="mathparser.wasm.js"></script>
     <script async type="text/javascript" src="api.js"></script>
     <script defer type="text/javascript" src="keyboard.js"></script>

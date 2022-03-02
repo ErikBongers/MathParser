@@ -1,8 +1,3 @@
-window.addEventListener('load', (event) => {
-	if(localStorage.savedCode)
-		myCodeMirror.doc.setValue(localStorage.savedCode);
-  });
-
 Module.onRuntimeInitialized = async _ => {
     Module.api = {
 		parseMath: Module.cwrap('parseMath', 'string', ["string"]),
@@ -10,20 +5,21 @@ Module.onRuntimeInitialized = async _ => {
     };
 
 	window.document.title = "Math Parser " + Module.api.getMathVersion();
-	Module.convertErrorToCodeMirror = function(e){
+	Module.convertErrorToCodeMirror = function(e, doc){
+		let pos = doc.line(e.line+1).from + e.pos;
 		var hint = {
             message: e.message,
             severity: "error", //"warning"
-            from: CodeMirror.Pos(e.line, e.pos),
-            to: CodeMirror.Pos(e.line, e.pos+1)
+            from: pos,
+            to: pos+1
           };
       return hint;
 	};
 
 	Module.parseAfterChange = function(){
 		Module.parserErrors = [];
-		cmOutput.setValue("");
-		var result = Module.api.parseMath(myCodeMirror.doc.getValue());
+		localStorage.savedCode = cm.editor.state.doc.toString();
+		var result = Module.api.parseMath(cm.editor.state.doc.toString());
 		Module.log(result);
 		result = JSON.parse(result);
 		var strOutput = "";
@@ -36,13 +32,13 @@ Module.onRuntimeInitialized = async _ => {
 			}
 			let strComment = "";
 			if(line.comment != "")
-				strComment = "//" + line.comment;
+				strComment = " //" + line.comment;
 			let strNL = "";
 			let strErrors = "";
 			for(e of line.errors)
 				{
 				strErrors += "  " + e.message;
-				Module.parserErrors.push(Module.convertErrorToCodeMirror(e));
+				Module.parserErrors.push(Module.convertErrorToCodeMirror(e, cm.editor.state.doc));
 				}
 			let strText = "";
 			if(line.text != "")
@@ -55,18 +51,23 @@ Module.onRuntimeInitialized = async _ => {
 			if(strLine.length > 0)
 				strOutput+= strLine + "\n";
 			}
-		cmOutput.setValue(strOutput);
+			let transaction = cm.cmOutput.state.update({changes: {from: 0, to: cm.cmOutput.state.doc.length, insert: strOutput}});
+			cm.cmOutput.update([transaction]);
 	};
-//this code requires parseAfterChange() to be defined:
-	myCodeMirror.on("change", function(instance, changeObj){
-		localStorage.savedCode = myCodeMirror.doc.getValue();
-		Module.parseAfterChange(localStorage.savedCode);
-});
 
-Module.print = (function() 
+	cm.setLintSource((view) => {
+		Module.parseAfterChange();
+		return Module.parserErrors;
+	});
+	if(localStorage.savedCode) {
+		let transaction = cm.editor.state.update({changes: {from: 0, to: cm.editor.state.doc.length, insert: localStorage.savedCode}});
+		cm.editor.update([transaction]);
+		}
+
+	Module.print = (function() 
             {
             var txtOutput = document.getElementById('txtOutput');
-            if (txtOutput) txtOutput.value = ''; // clear browser cache
+            if (txtOutput) txtOutput.value = '';
             
             return function(text) 
                 {

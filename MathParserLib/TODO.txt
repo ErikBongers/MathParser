@@ -1,6 +1,6 @@
-﻿* Conversion to units bug:
-    distance=10km + 1mi + 30m;
-    distance=distance.mi;
+﻿* html: rename txtInput and txtOutput tags (and update all code and css)
+* npm scripts that start with a dot:
+https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * create function hasErrors() as opposed to hasWarnings()
   > use in places where errors are counted.

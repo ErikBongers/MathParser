@@ -27,7 +27,7 @@ $(info $(shell mkdir $(BUILDDIR)\lib 2> nul))
 
 $(DESTDIR)/hullo.js: $(OBS) $(OBS_LIB)
 	del /q "$(DESTDIR)\mathparser.wasm.js"
-	$(CXX) -o $(DESTDIR)/mathparser.js $(OBS) $(OBS_LIB) -O0 -s WASM=1 --shell-file html_template/shell_minimal.html -s NO_EXIT_RUNTIME=1  -s "EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']"
+	$(CXX) -o $(DESTDIR)/mathparser.js $(OBS) $(OBS_LIB) -O0 -s WASM=1 -s NO_EXIT_RUNTIME=1  -s "EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']"
 	rename "$(DESTDIR)\mathparser.js" mathparser.wasm.js
 
 -include $(DEPS)

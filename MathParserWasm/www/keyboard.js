@@ -34,19 +34,10 @@ var Calc = {
         },
     typeIt: function(event){
         let theText = event.srcElement.innerHTML;
-        let txtInput = document.querySelector("#txtInput");
-        if (txtInput.selectionStart || txtInput.selectionStart == '0') {
-            var startPos = txtInput.selectionStart;
-            var endPos = txtInput.selectionEnd;
-            txtInput.value = txtInput.value.substring(0, startPos)
-                + theText
-                + txtInput.value.substring(endPos, txtInput.value.length);
-                txtInput.selectionStart = startPos + theText.length; txtInput.selectionEnd = startPos + theText.length;
-        } else {
-            txtInput.value += theText;
-        }
-        Module.parseAfterChange();
-        txtInput.focus();
+        let transactionSpec = cm.editor.state.replaceSelection(theText);
+        let transaction = cm.editor.state.update(transactionSpec);
+        cm.editor.update([transaction]);
+        cm.editor.focus();
     } 
 };
 

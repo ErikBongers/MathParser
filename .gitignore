@@ -365,3 +365,7 @@ FodyWeavers.xsd
 
 *.wasm
 *.wasm.js
+*.bundle.js
+package-lock.json
+/MathParserWasm/src/lang-mathparser/src/parser.js
+/MathParserWasm/src/lang-mathparser/src/parser.terms.js

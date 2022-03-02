@@ -75,7 +75,7 @@ export let editor = new EditorView({
       lintGutter()
     ]
   }),
-  parent: document.getElementById("codeMirror")
+  parent: document.getElementById("txtInput")
 })
 
 export let cmOutput = new EditorView({

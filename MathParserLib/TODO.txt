@@ -1,5 +1,4 @@
-﻿* html: rename txtInput and txtOutput tags (and update all code and css)
-* npm scripts that start with a dot:
+﻿* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * create function hasErrors() as opposed to hasWarnings()
@@ -27,7 +26,6 @@ https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-start
 
 Nice to have
 ---------------
-* syntax highlighting and annotation: codemirror
 * units :
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html

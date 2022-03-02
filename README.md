@@ -18,7 +18,7 @@ a+=2; b /= a; //a statement always ends with a semi-colon, not a new line.
 a=1*7; //will output only the variable and it's result: a=7;
 7*3; //will only output the result: 21
 ```
-
+sdf
 #### Echo
 ```
 !b=60/3; //Will **echo** the code in addition to the result: b=20 b=60/3

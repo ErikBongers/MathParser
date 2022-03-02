@@ -60,3 +60,14 @@ Hot=Hot.C; //set new unit for variable Hot
 
 * [TODO]: round() and abs() in combination with units.
 * [TODO]: make min and max varargs?
+
+## Technical
+The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (brute force) with 2 keep-aheads and 1 push-back.
+Parser errors are non-blocking.
+### Projects
+* **MathParserDll** main parser project.
+* **MathParserWASM** is a web project that compiles the dll into a WASM file. It is the main user interface.
+* **MathParserWPF** a Windows desktop GUI for the parser dll. 
+* **MathParserLib** C# version. [![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
+* **MathParserLibTests** C# tests. [![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
+

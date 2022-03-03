@@ -13,7 +13,14 @@ a=3+4; //this is a typical statement.
 b=2a+3; //implicit multiplication is allowed: same as (2*a)+3;
 a+=2; b=a*10; //a statement always ends with a semi-colon, not a new line, so these are two statements.
 ```
-
+### Operators
+In addition to the usual `+ - * /` operators there are:
+```
+a=3^2; //exponent operator
+a=|-3|; //absolute value operator
+a++; //increment operator: same as a=a+1 or a+=1;
+a--; //decrement operator.
+```
 ### Output control
 ```
 a=2*7; //will output only the variable and it's result: a=14
@@ -62,7 +69,7 @@ Hot=Hot.C; //set new unit for variable Hot
 * [TODO]: make min and max varargs?
 
 ## Technical
-The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (brute force) with 2 keep-aheads and 1 push-back.
+The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (brute force) with 2 look-aheads and 1 push-back.
 Parser errors are non-blocking.
 ### Projects
 * **MathParserDll** main parser project.
@@ -71,3 +78,13 @@ Parser errors are non-blocking.
 * **MathParserLib** C# version. [![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
 * **MathParserLibTests** C# tests. [![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
 
+Those who are into parser development may want to take a look at the `.ebnf` file (which stands for *Erik's BNF* :) )
+
+## Build stack
+All projects in **Visual Studio**, except for the WASM project, which is build in **VS Code**.
+The WASM compilation obviously uses `emscripten`.
+In addition `rollup` is used to bundle the CodeMirror 6 online editor.
+Note that a separate parser is written for CodeMirror syntax highlighting.
+The (json) output of the C++ parser is fed to CodeMirror's *linter* for error annotation.
+## Try it
+There's a online version available at [Google Cloud Platform](https://storage.googleapis.com/mathparser/index.html).

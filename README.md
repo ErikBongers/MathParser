@@ -14,8 +14,9 @@ b=2a+3; //implicit multiplication is allowed: same as (2*a)+3;
 a+=2; b=a*10; //a statement always ends with a semi-colon, not a new line, so these are two statements.
 ```
 ### Operators
-In addition to the usual `+ - * /` operators there are:
+In addition to the usual `+ - * /` operators, there are:
 ```
+a+=7; //same as a=a+7, also works with - * /
 a=3^2; //exponent operator
 a=|-3|; //absolute value operator
 a++; //increment operator: same as a=a+1 or a+=1;
@@ -30,7 +31,7 @@ a=2*7; //will output only the variable and it's result: a=14
 ##### Echo
 An exclamation mark `!` is used to echo the full expression to the output.
 ```
-!b=60/3; //Will **echo** the code in addition to the result: b=20 b=60/3
+!b=60/3; //Will echo the code together with the result: b=20 b=60/3
 !//echo this comment line
 !q=100/10; !//some comment  --> output: q=10 q=100/10 //some comment
 ```
@@ -49,16 +50,20 @@ a;
 ```
 ### Units
 ```
-Distance=10km+1mi;
-Imperial=Distance.mi;
-Result=(Imperial+5m).km;
-Hot=1000K.C.F; //Conversion from K to C to F. Intermediate conversion to C is pointless.
-Hot=Hot.C; //set new unit for variable Hot
+Distance=10km+1mi; //Distance will be expressed in the first unit: km.
+Imperial=Distance.mi; //Conversion
+Result=(Imperial+5m).km; //Conversion of an expression.
+Hot=1000K.C.F; //Conversion from K to C to F. Note that the intermediate conversion to C is pointless.
+Hot.C; //Output the value of Hot in Celcius. Note that Hot remains in K!
+Hot=Hot.C; //Convert Hot to Celcius.
+
 ```
 #### Implemented units:
-* Length: `km, m, mm, ft, mi, th,` [TODO] complete this list
+* Angle: `rad, deg`
+* Length: `km, m, cm, mm, um (micron), in, ft, mi, thou, yd` [TODO] complete this list
 * Temperature: `C, F, K`
-* [TODO] complete this list
+* Mass (weight): `kg, g, mg, t, lb (lbs), oz, N` (note that for convenience no distinction is made between weight and mass)
+* Volume: `L, ml, gal, pt`
 
 ### Functions
 * Trigonometry: `sin, cos, tan, asin, acos, atan`
@@ -67,6 +72,9 @@ Hot=Hot.C; //set new unit for variable Hot
 
 * [TODO]: round() and abs() in combination with units.
 * [TODO]: make min and max varargs?
+
+### Constants
+Currently only PI. (also in lower case)
 
 ## Technical
 The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (brute force) with 2 look-aheads and 1 push-back.

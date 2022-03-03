@@ -16,6 +16,7 @@ class Value
         std::string comment_line;
         bool onlyComment = false;
         bool mute = false;
+        bool constant = false;
         unsigned int line;
         unsigned int pos;
 

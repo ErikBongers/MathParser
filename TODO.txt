@@ -27,6 +27,19 @@ https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-start
   > 2^3b  =  2^(3b) >> mult has prio
   > 2b^3  =  2(b^3) >> power has prio
 
+GUI
+---
+3 possible GUIs:
+
+1. Current one (code left, output right or bottom) --> desktop + mobile.
+2. Code right, output left --> desktop only?
+  > the output could be really small column if echo (!) is ignored.
+  > align output with input
+3. Command line.  --> desktop + mobile.
+   > actually perhaps preferred for mobile...
+   > ignore echo?
+
+
 Nice to have
 ---------------
 * units :

@@ -6,6 +6,10 @@ std::string Resolver::result = "";
 void Resolver::resolve()
     {
     variables.clear();
+    auto PI = Value(M_PI, 0, 0);
+    PI.constant = true;
+    variables.emplace("PI", PI);
+    variables.emplace("pi", PI);
     std::vector<std::string> jsonRes;
     parser.parse();
     for (auto& stmt : parser.statements)
@@ -86,6 +90,8 @@ Value Resolver::resolveMult(const MultExpr& multExpr)
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.expr);
+    if(variables[assign.Id.stringValue].constant)
+        result.errors.push_back(Error(ErrorId::CONST_REDEF, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
     variables[assign.Id.stringValue] = result; //do not store the value with the id. The value of a variable is just the value.
     result.id = assign.Id; //see comment above...
     if (assign.error.id != ErrorId::NONE)

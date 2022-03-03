@@ -40,8 +40,12 @@ const char* to_string(TokenType tt)
 Token Tokenizer::peek()
     {
     auto savedPos = pos;
+    auto savedLine = line;
+    auto savedLinePos = linePos;
     auto t = next();
     pos = savedPos;
+    line = savedLine;
+    linePos = savedLinePos;
     return t;
     }
 

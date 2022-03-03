@@ -10,6 +10,8 @@ void Parser::parse()
     while (peekToken().type != TokenType::EOT)
         {
         auto stmt = parseStatement();
+        if(stmt->echo)
+            stmt->text = tok.getText(statementStartPos, tok.getPos());
         statements.push_back(stmt);
         if (peekToken().type == TokenType::ECHO_COMMENT_LINE)
             {
@@ -69,7 +71,7 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         this->muteBlock = false;
         return parseStatementHeader(stmt);
         }
-    tok.currentStatement.clear();//remove all the statement-header stuff and new lines between statements.
+    statementStartPos = tok.getPos(); //don't include the output annotations in the statement's text
     return parseStatementBody(stmt);
     }
 

@@ -39,20 +39,14 @@ const char* to_string(TokenType tt)
 
 Token Tokenizer::peek()
     {
-    if (peekedToken.type != TokenType::NULLPTR)
-        return peekedToken;
-    peekedToken = next();
-    return peekedToken;
+    auto savedPos = pos;
+    auto t = next();
+    pos = savedPos;
+    return t;
     }
 
 Token Tokenizer::next()
     {
-    if (peekedToken.type != TokenType::NULLPTR)
-        {
-        Token t = peekedToken;
-        peekedToken = Token::Null();
-        return t;
-        }
     auto t = _nextToken();
     t.isFirstOnLine = newLineStarted;
     newLineStarted = false;
@@ -98,16 +92,14 @@ Token Tokenizer::_nextToken()
                 {
                 nextChar(); //consume
                 nextChar(); //consume
-                auto comment = getToEOL(true); //todo: store chars or not?
-                currentStatement.clear();
+                auto comment = getToEOL(); //todo: store chars or not?
                 return Token(TokenType::ECHO_COMMENT_LINE, comment, getLine(), getLinePos());
                 }
             return Token(TokenType::ECHO, c, getLine(), getLinePos());
             }
         case ';': 
             {
-            auto t = Token(TokenType::SEMI_COLON, currentStatement, getLine(), getLinePos());
-            currentStatement.clear();
+            auto t = Token(TokenType::SEMI_COLON, c, getLine(), getLinePos());
             return t;
             }
         case '+':
@@ -163,9 +155,8 @@ Token Tokenizer::_nextToken()
                     nextChar(); //consume
                     return Token(TokenType::EQ_DIV, getLine(), getLinePos()-1);
                 case '/':
-                    nextChar(false); //consume
-                    currentStatement.pop_back(); //remove the first '/' from the statement.
-                    skipToEOL(false);
+                    nextChar(); //consume
+                    skipToEOL();
                     return _nextToken();
                 case '*':
                     nextChar(); //consume
@@ -218,12 +209,10 @@ Token Tokenizer::parseId(char c)
     return Token(TokenType::ID, word, getLine(), wordPos);
     }
 
-char Tokenizer::nextChar(bool storeChars)
+char Tokenizer::nextChar()
     {
     if(pos >= size)
         return 0; //EOF
-    if(storeChars)
-        currentStatement.push_back(_stream[pos]);
     if(_stream[pos] == '\n')
         {
         line++;
@@ -295,7 +284,7 @@ Token Tokenizer::parseNumber(char c)
     return Token(TokenType::NUMBER, d, getLine(), numPos);
     }
 
-std::string Tokenizer::getToEOL(bool storeChars)
+std::string Tokenizer::getToEOL()
     {
     std::string buf;
     char c;
@@ -310,10 +299,10 @@ std::string Tokenizer::getToEOL(bool storeChars)
     return buf;
     }
 
-void Tokenizer::skipToEOL(bool storeChars)
+void Tokenizer::skipToEOL()
     {
     char c;
-    while ((c = nextChar(storeChars)))
+    while ((c = nextChar()))
         {
         if(c == '\n')
             break;

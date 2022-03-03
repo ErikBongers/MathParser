@@ -168,6 +168,7 @@ class Parser
         Token currentToken = Token::Null();
         Token lastToken = Token::Null();
         Token peekedToken = Token::Null();
+        unsigned int statementStartPos = 0;
 
         Token peekToken();
         Token nextToken();

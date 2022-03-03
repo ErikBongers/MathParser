@@ -90,26 +90,26 @@ class Tokenizer
         unsigned int line = 0;
         unsigned int linePos = 0;
         bool newLineStarted = true;
-        Token peekedToken = Token(TokenType::NULLPTR, 0, 0);
         size_t size = -1;
     public:
-        std::string currentStatement;
         Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
         Token peek();
         Token next();
         unsigned int getLine() { return line;}
         unsigned int getLinePos() { return linePos-1;} //linePos always contains the NEXT pos.
+        unsigned int getPos() { return pos;} //pos always contains the NEXT pos.
+        std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
 
     private:
-        char nextChar(bool storeChars = true);
+        char nextChar();
         char peekChar();
         char peekSecondChar();
         Token parseId(char c);
 
         Token parseNumber(char c);
 
-        void skipToEOL(bool storeChars);
-        std::string getToEOL(bool storeChars);
+        void skipToEOL();
+        std::string getToEOL();
         void skipToEndOfComment();
         Token _nextToken();
     };

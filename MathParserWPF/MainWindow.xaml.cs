@@ -85,7 +85,7 @@ namespace MathParserWPF
                     foreach (var err in result.errors)
                         strResult += $"[{err.line}, {err.pos}] {err.message}";
                     }
-                strResult += $"{result.text} {strComment}";
+                strResult += $" {result.text} {strComment}";
                 if (strResult.Length > 0)
                     wnd.Output += strResult + "\n";
                 }

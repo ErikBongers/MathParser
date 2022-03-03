@@ -1,5 +1,4 @@
-﻿* errors for variables: move them to the statement, to avoid repetition (or delete them after having been added to a value?)
-* make min and max varargs?
+﻿* make min and max varargs?
 
 * npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period

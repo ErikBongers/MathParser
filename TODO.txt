@@ -1,4 +1,4 @@
-﻿* round() and abs() in combination with units.
+﻿* errors for variables: move them to the statement, to avoid repetition (or delete them after having been added to a value?)
 * make min and max varargs?
 
 * npm scripts that start with a dot:

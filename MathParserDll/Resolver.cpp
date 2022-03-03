@@ -103,7 +103,7 @@ Value Resolver::resolvePower(const PowerExpr& powerExpr)
     {
     Value base = resolveNode(*powerExpr.p1);
     Value exponent = resolveNode(*powerExpr.p2);
-    auto result = base ^ exponent;
+    auto& result = base ^ exponent;
     if (powerExpr.error.id != ErrorId::NONE)
         result.errors.push_back(powerExpr.error);
     return result;
@@ -141,7 +141,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         auto found = variables.find(prim.Id.stringValue);
         if (found != variables.end())
             {
-            auto v = variables[prim.Id.stringValue];
+            auto& v = variables[prim.Id.stringValue];
             return v;
             }
         else
@@ -184,10 +184,9 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         return Value(errors);
 
     auto val = f.execute(callExpr.functionName.line, callExpr.functionName.pos);
-    if (callExpr.unit.isClear())
-        val.unit = Unit();
-    else if (!callExpr.unit.isClear())
+    if (!callExpr.unit.isClear())
         val.unit = callExpr.unit;
+    //else: don't clear the unit as it may have been set by the function.
     return val;
     }
 

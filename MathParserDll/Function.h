@@ -177,3 +177,39 @@ class Sqrt : public FunctionDef
         size_t maxArgs() override { return 1; }
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
+
+class Round : public FunctionDef
+    {
+    public:
+        std::string getName() override { return "round"; }
+        size_t minArgs() override { return 1; }
+        size_t maxArgs() override { return 1; }
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+    };
+
+class Floor : public FunctionDef
+    {
+    public:
+        std::string getName() override { return "floor"; }
+        size_t minArgs() override { return 1; }
+        size_t maxArgs() override { return 1; }
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+    };
+
+class Ceil : public FunctionDef
+    {
+    public:
+        std::string getName() override { return "ceil"; }
+        size_t minArgs() override { return 1; }
+        size_t maxArgs() override { return 1; }
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+    };
+
+class Trunc: public FunctionDef
+    {
+    public:
+        std::string getName() override { return "trunc"; }
+        size_t minArgs() override { return 1; }
+        size_t maxArgs() override { return 1; }
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+    };

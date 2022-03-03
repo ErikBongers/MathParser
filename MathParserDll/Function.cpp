@@ -23,6 +23,10 @@ void FunctionDef::init()
     FunctionDef::AddFunction(new Sqrt());
     FunctionDef::AddFunction(new Inc());
     FunctionDef::AddFunction(new Dec());
+    FunctionDef::AddFunction(new Round());
+    FunctionDef::AddFunction(new Floor());
+    FunctionDef::AddFunction(new Ceil());
+    FunctionDef::AddFunction(new Trunc());
     };
 
 bool FunctionDef::isCorrectArgCount(size_t argCnt)
@@ -190,5 +194,26 @@ Value Sqrt::execute(std::vector<Value>& args, unsigned int line, unsigned int po
     {
     return Value(sqrt(args[0].number), line, pos);
     }
+
+Value Round::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    return Value(round(args[0].number), line, pos);
+    }
+
+Value Floor::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    return Value(floor(args[0].number), line, pos);
+    }
+
+Value Ceil::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    return Value(ceil(args[0].number), line, pos);
+    }
+
+Value Trunc::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    return Value(trunc(args[0].number), line, pos);
+    }
+
 
 

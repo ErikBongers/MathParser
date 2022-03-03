@@ -1,18 +1,13 @@
-﻿* npm scripts that start with a dot:
+﻿* BUG: !floor(distance); //BUG: output does not show function name!
+
+* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * create function hasErrors() as opposed to hasWarnings()
   > use in places where errors are counted.
-* Output to left of input
-  > #txtOutput .CodeMirror {  text-align: right!important;  }
-  > option to 'mirror' the lines or to collapse (remove) empty output lines
-
 * echo:
-  > update ebnf
-  > echo-comment on same line as statement: keep it there in output.
-  > echo statement with plain comment behind it: hide comment.
   > echo statement with double !! -> also echo the plain comment behind it.
-  > echo-blocks: /! ... !/ or !/*...*/
+  > echo-blocks: /! ... !/ and !/*...*/
     > to enable echo of all statements, just start top line with '/!' and don't even include the closing '!/' (it should thus not give an error not closing it).
 
 *security:
@@ -32,6 +27,10 @@ GUI
 2. Code right, output left --> desktop only?
   > the output could be really small column if echo (!) is ignored.
   > align output with input
+    * Output to left of input
+      > #txtOutput .CodeMirror {  text-align: right!important;  }
+      > option to 'mirror' the lines or to collapse (remove) empty output lines
+
 3. Command line.  --> desktop + mobile.
    > actually perhaps preferred for mobile...
    > ignore echo?
@@ -42,6 +41,10 @@ Nice to have
 * units :
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
+  > temperature: in physics temperatures often mean ranges or differences in temperatur: 5C means a difference of 5C.
+  > complex units.
+    > set a unit to a var BEFORE an equation.
+      > when the eq is assinged to the var, a warning should be generated if the unit changes. (this allows for checking the physical dimension of your eq.)
 * dates:
   > Value is currently only numeric.
     > how to solve?

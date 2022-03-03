@@ -10,6 +10,7 @@ void FunctionDef::init()
     FunctionDef::AddFunction(new Int());
     FunctionDef::AddFunction(new Abs());
     FunctionDef::AddFunction(new Max());
+    FunctionDef::AddFunction(new Min());
     FunctionDef::AddFunction(new Sin());
     FunctionDef::AddFunction(new Cos());
     FunctionDef::AddFunction(new Tan());
@@ -41,8 +42,7 @@ FunctionDef* FunctionDef::get(const std::string& name)
     }
 
 // --- Standard function implementations ---
-
-Value Max::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value minMax(std::vector<Value>& args, unsigned int line, unsigned int pos, bool max)
     {
     if (args.size() != 2)
         return Value(std::numeric_limits<double>::quiet_NaN(), line, pos);
@@ -50,7 +50,7 @@ Value Max::execute(std::vector<Value>& args, unsigned int line, unsigned int pos
     double arg1 = args[1].toSI();
     Value ret;
     auto otherErrs = &ret.errors;
-    if (arg0 > arg1)
+    if (max? (arg0 > arg1) : (arg0 < arg1))
         {
         ret = args[0];
         otherErrs = &args[1].errors;
@@ -62,6 +62,16 @@ Value Max::execute(std::vector<Value>& args, unsigned int line, unsigned int pos
         }
     ret.errors.insert(ret.errors.begin(), otherErrs->begin(), otherErrs->end());
     return ret;
+    }
+
+Value Max::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    return minMax(args, line, pos, true);
+    }
+
+Value Min::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    return minMax(args, line, pos, false);
     }
 
 Value Inc::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)

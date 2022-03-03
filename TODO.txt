@@ -1,4 +1,7 @@
-﻿* npm scripts that start with a dot:
+﻿* round() and abs() in combination with units.
+* make min and max varargs?
+
+* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * create function hasErrors() as opposed to hasWarnings()
@@ -181,13 +184,10 @@ Temperature:
 ** Basic expr:
 Expression without assignment:
 5*7;
-TODO: put result in last line’s result _;
 
 ** Functions
 Trigonometry: sin, cos, tan, asin, acos, atan
 Other: max, min(????), round, abs;
 Alternative for abs: |x|
-TODO: round() and abs() in combination with units.
-TODO: make min and max varargs?
 < change Function to have a min and a max no of args.
 

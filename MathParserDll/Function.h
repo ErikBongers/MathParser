@@ -71,6 +71,14 @@ class Max : public FunctionDef
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
+class Min : public FunctionDef
+    {
+    public:
+        std::string getName() override { return "min"; }
+        size_t argsCount() override { return 2; }
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+    };
+
 class Sin : public FunctionDef
     {
     public:

@@ -13,6 +13,8 @@ const char* Unit::to_string() const
 
 std::map<std::string, UnitDef> UnitDef::defs =
     {
+        {"", UnitDef("", 1, UnitClass::UNDEFINED)}, //dummy unit for convenience.
+
         {"rad", UnitDef("rad", 1, UnitClass::ANGLE)},
         {"deg", UnitDef("deg", M_PI / 180, UnitClass::ANGLE)},
 
@@ -63,4 +65,9 @@ UnitDef& UnitDef::get(const std::string& key)
         return UnitDef::defs[key];
     else
         throw std::out_of_range ("blah");
+    }
+
+bool UnitDef::isSameProperty(const Unit& u1, const Unit& u2)
+    {
+    return get(u1.id.stringValue).property == get(u2.id.stringValue).property;
     }

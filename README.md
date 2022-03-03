@@ -67,8 +67,8 @@ Hot=Hot.C; //Convert Hot to Celcius.
 
 ### Functions
 * Trigonometry: `sin, cos, tan, asin, acos, atan`
-* Other: `max, min, round, abs`
-* Alternative for abs: `|x|` is the same as `abs(x)`
+* Other: `max(val1, val2,...), min(val1,val2,...), round, abs`
+* `|x|` is the same as `abs(x)`
 
 * [TODO]: round() and abs() in combination with units.
 * [TODO]: make min and max varargs?

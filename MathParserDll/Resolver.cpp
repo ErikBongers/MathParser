@@ -171,7 +171,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         return Value(callExpr.error);
 
     // check function arguments:
-    if (callExpr.arguments.size() != fd->argsCount())
+    if (!fd->isCorrectArgCount(callExpr.arguments.size()))
         return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
     Function f(*fd);
     std::vector<Error> errors;

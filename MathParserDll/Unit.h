@@ -31,6 +31,7 @@ struct UnitDef
         static void init();
         static UnitDef& get(const std::string& key);
         static bool exists(const std::string& key) { return defs.count(key) != 0; }
+        static bool isSameProperty(const Unit& u1, const Unit& u2);
 
         std::string id;
         UnitClass property = UnitClass::UNDEFINED;

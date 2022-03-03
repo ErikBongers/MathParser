@@ -1,6 +1,4 @@
-﻿* make min and max varargs?
-
-* npm scripts that start with a dot:
+﻿* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * create function hasErrors() as opposed to hasWarnings()

@@ -1,8 +1,6 @@
-﻿EBNF of C++ : http://www.externsoft.ch/download/cpp-iso.html
+﻿Note: EBNF means Erik's BNF :)
+EBNF of C++ : http://www.externsoft.ch/download/cpp-iso.html
 left or right associativity: https://stackoverflow.com/questions/41784524/preferred-way-of-removing-left-recursion-of-ebnf
-
-//top line has lowest precedence:
-//these are not function calls but structs:
 
 echoComment = '!//' rest_of_line
 

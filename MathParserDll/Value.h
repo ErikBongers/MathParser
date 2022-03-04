@@ -35,15 +35,15 @@ class Value
         std::string to_string(const std::string& format);
         std::string to_json();
 
-        Value& operator+(const Value& value);
-        Value& operator-(const Value& value);
-        Value& operator*(const Value& value);
-        Value& operator/(const Value& value);
-        Value& operator^(const Value& value);
+        Value operator+(const Value& value);
+        Value operator-(const Value& value);
+        Value operator*(const Value& value);
+        Value operator/(const Value& value);
+        Value operator^(const Value& value);
         Value convertToUnit(const Unit& to);
         double toSI() const;
         double fromSI() const;
     private:
-        Value& doTerm(bool adding, const Value& v);
+        Value doTerm(bool adding, const Value& v);
     };
 

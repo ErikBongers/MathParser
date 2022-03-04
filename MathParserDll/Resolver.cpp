@@ -104,7 +104,7 @@ Value Resolver::resolvePower(const PowerExpr& powerExpr)
     {
     Value base = resolveNode(*powerExpr.p1);
     Value exponent = resolveNode(*powerExpr.p2);
-    auto& result = base ^ exponent;
+    auto result = base ^ exponent;
     if (powerExpr.error.id != ErrorId::NONE)
         result.errors.push_back(powerExpr.error);
     return result;

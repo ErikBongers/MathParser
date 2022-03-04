@@ -1,6 +1,4 @@
-﻿* BUG: !floor(distance); //BUG: output does not show function name!
-
-* npm scripts that start with a dot:
+﻿* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * create function hasErrors() as opposed to hasWarnings()
@@ -41,10 +39,9 @@ Nice to have
 * units :
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
-  > temperature: in physics temperatures often mean ranges or differences in temperatur: 5C means a difference of 5C.
   > complex units.
-    > set a unit to a var BEFORE an equation.
-      > when the eq is assinged to the var, a warning should be generated if the unit changes. (this allows for checking the physical dimension of your eq.)
+    > if you set a unit to a var BEFORE an equation:
+      > when the eq is assigned to the var, a warning should be generated if the unit changes. (this allows for checking the physical dimension of your eq.)
 * dates:
   > Value is currently only numeric.
     > how to solve?

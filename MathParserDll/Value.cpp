@@ -101,76 +101,84 @@ std::string Value::to_string(const std::string& format)
     return str.str();
     }
 
-Value& Value::operator+(const Value& v)
+Value Value::operator+(const Value& v)
     {
     return doTerm(true, v);
     }
 
-Value& Value::operator-(const Value& v)
+Value Value::operator-(const Value& v)
     {
     return doTerm(false, v);
     }
 
-Value& Value::doTerm(bool adding, const Value& v)
+Value Value::doTerm(bool adding, const Value& v)
     {
+    Value result = *this;
+    result.constant = false;
     //if both values have units: convert them to SI before operation.
     if (!unit.isClear() && !v.unit.isClear())
         {
         if(UnitDef::exists(unit.id.stringValue) && UnitDef::exists(v.unit.id.stringValue))
             if (UnitDef::get(unit.id.stringValue).property != UnitDef::get(v.unit.id.stringValue).property)
                 {
-                errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
-                return *this;
+                result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
+                return result;
                 }
         double d1 = this->toSI();
         double d2 = v.toSI();
-        number = adding ? (d1 + d2) : (d1 - d2);
+        result.number = adding ? (d1 + d2) : (d1 - d2);
         if(UnitDef::exists(this->unit.id.stringValue))
-            number = UnitDef::get(this->unit.id.stringValue).fromSI(number);
+            result.number = UnitDef::get(this->unit.id.stringValue).fromSI(result.number);
         }
     //if both values have no units, just do operation.
     else if (unit.isClear() && v.unit.isClear())
         {
-        number = adding ? (number + v.number) : (number - v.number);
+        result.number = adding ? (number + v.number) : (number - v.number);
         }
     else //a value with a unit and one without it: assuming both same unit
         {
-        number = adding ? (number + v.number) : (number - v.number);
+        result.number = adding ? (number + v.number) : (number - v.number);
         if (this->unit.isClear())
-            this->unit = v.unit;
-        errors.push_back(Error(ErrorId::W_ASSUMING_UNIT, line, pos));
+            result.unit = v.unit;
+        result.errors.push_back(Error(ErrorId::W_ASSUMING_UNIT, line, pos));
         }
-    errors.insert(errors.end(), v.errors.begin(), v.errors.end());
-    return *this;
+    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
+    return result;
     }
 
-Value& Value::operator*(const Value& v)
+Value Value::operator*(const Value& v)
     {
+    Value result = *this;
+    result.constant = false;
     //TODO: if both units set: unit changes to unit*unit!
-    number *= v.number;
+    result.number *= v.number;
     if (unit.isClear())
-        unit = v.unit;
-    errors.insert(errors.end(), v.errors.begin(), v.errors.end());
-    return *this;
+        result.unit = v.unit;
+    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
+    return result;
     }
 
-Value& Value::operator/(const Value& v)
+Value Value::operator/(const Value& v)
     {
+    Value result = *this;
+    result.constant = false;
     //TODO: if both units set: unit changes to unit/unit!
-    number /= v.number;
+    result.number /= v.number;
     if (unit.isClear())
-        unit = v.unit;
-    errors.insert(errors.end(), v.errors.begin(), v.errors.end());
-    return *this;
+        result.unit = v.unit;
+    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
+    return result;
     }
 
-Value& Value::operator^(const Value& v)
+Value Value::operator^(const Value& v)
     {
-    number = std::pow(number,v.number);
+    Value result = *this;
+    result.constant = false;
+    result.number = std::pow(number,v.number);
     if (!unit.isClear())
-        unit = v.unit;
-    errors.insert(errors.end(), v.errors.begin(), v.errors.end());
-    return *this;
+        result.unit = v.unit;
+    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
+    return result;
     }
 
 Value Value::convertToUnit(const Unit& to)

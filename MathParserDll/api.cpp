@@ -15,7 +15,7 @@ int C_DECL parse(const char* str)
     Parser parser(str);
     Resolver resolver(parser);
     resolver.resolve();
-    return resolver.getResultLen();
+    return getResultLen();
     }
 
 int C_DECL getResultLen() { return Resolver::getResultLen() + 1; }

@@ -13,4 +13,6 @@
 #include <math.h>
 #include <cstdarg>
 #include <string>
+#include <map>
+#include <vector>
 #endif //PCH_H

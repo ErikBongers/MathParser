@@ -65,6 +65,7 @@ Value minMax(std::vector<Value>& args, unsigned int line, unsigned int pos, bool
     double val0;
 
     ret = args[0];
+    auto unit = args[0].unit;
     for(int i = 1; i < args.size(); i++)
         {
         val0 = ret.toSI();
@@ -78,7 +79,7 @@ Value minMax(std::vector<Value>& args, unsigned int line, unsigned int pos, bool
             {
             ret = args[i];
             }
-        if(!UnitDef::isSameProperty(ret.unit, args[i].unit))
+        if(!UnitDef::isSameProperty(unit, args[i].unit))
            diffUnits = true;
         }
     std::vector<Error> errors;

@@ -192,18 +192,14 @@ Node* Parser::parseMultExpr()
         multExpr->m2 = parsePowerExpr();
         node = multExpr;
         //give warning if expr of form a/2b:
-        if (multExpr->m1->is(NodeType::MULTEXPR))
+        if (multExpr->op.type == TokenType::DIV)
             {
-            MultExpr* div = static_cast<MultExpr*>(multExpr->m1);
-            if (div->op.type == TokenType::DIV)
+            if (multExpr->m2->is(NodeType::MULTEXPR))
                 {
-                if (div->m2->is(NodeType::MULTEXPR))
+                MultExpr* m2 = static_cast<MultExpr*>(multExpr->m2);
+                if (m2->implicitMult)
                     {
-                    MultExpr* m2 = static_cast<MultExpr*>(div->m2);
-                    if (m2->implicitMult)
-                        {
-                        div->error = Error(ErrorId::W_DIV_IMPL_MULT, tok.getLine(), tok.getLinePos());
-                        }
+                    multExpr->error = Error(ErrorId::W_DIV_IMPL_MULT, tok.getLine(), tok.getLinePos());
                     }
                 }
             }

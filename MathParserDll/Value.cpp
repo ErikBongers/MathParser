@@ -187,7 +187,7 @@ Value Value::convertToUnit(const Unit& to)
     double fFrom = 1;
     double fTo = 1;
 
-    if (UnitDef::exists(this->unit.id.stringValue) == false)
+    if (unit.isClear())
         {
         value.unit = to;
         return value;

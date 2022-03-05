@@ -1,6 +1,5 @@
 #pragma once
 #include "pch.h"
-#include <map>
 
 enum class ErrorId
     {
@@ -25,6 +24,7 @@ struct ErrorDef
     ErrorId id = ErrorId::NONE;
     const char* name = nullptr;
     const char* message = nullptr;
+    bool isWarning() { return name[0] == 'W'; }
     };
 
 class ErrorDefs
@@ -48,5 +48,8 @@ class Error
         Error(ErrorId id, unsigned int line, unsigned int pos);
         Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1);
         const std::string to_json();
+        bool isWarning();
     };
+
+bool hasRealErrors(std::vector<Error>& errors);
 

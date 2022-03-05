@@ -119,47 +119,47 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     if(pfix.postfixId.isNull())
         val.unit = Unit::CLEAR();
     val = val.convertToUnit(pfix.postfixId);
-    return val;
+    //in case of (x.km)m, both postfixId (km) and unit (m) are filled.
+    return applyUnit(pfix, val);
     }
 
 Value Resolver::resolvePrim(const PrimaryExpr& prim)
     {
+    Value val;
     if (prim.addExpr != nullptr)
         {
         auto val = resolveNode(*prim.addExpr);
-        if (!prim.unit.isClear() && !val.unit.isClear())
-            {
-            val = val.convertToUnit(prim.unit);
-            }
-        else if(!prim.unit.isClear())
-            val.unit = prim.unit;
-        return val;
         }
     else if (prim.Id.type != TokenType::NULLPTR )
         {
-        //if (parser.ids.count(prim.Id.stringValue) != 0)
-        //    return resolveNode(*parser.ids[prim.Id.stringValue].addExpr);
         auto found = variables.find(prim.Id.stringValue);
         if (found != variables.end())
             {
-            auto& v = variables[prim.Id.stringValue];
-            return v;
+            val = variables[prim.Id.stringValue];
             }
         else
             return Value(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
         }
-    else if (prim.callExpr != nullptr) //todo: create resolveCall();
+    else if (prim.callExpr != nullptr)
         {
         auto& callExpr = *(CallExpr*)prim.callExpr;
         auto val = resolveCall(callExpr);
-        if (prim.unit.isClear())
-            val.unit = Unit();
-        else if (!prim.unit.isClear())
-            val.unit = prim.unit;
-        return val;
         }
     else
         return Value(ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
+
+    return applyUnit(prim, val);
+    }
+
+Value& Resolver::applyUnit(const Node& node, Value& val)
+    {
+    if (!node.unit.isClear() && !val.unit.isClear())
+        {
+        val = val.convertToUnit(node.unit);
+        }
+    else if (!node.unit.isClear())
+        val.unit = node.unit;
+    return val;
     }
 
 Value Resolver::resolveCall(const CallExpr& callExpr)
@@ -181,14 +181,11 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         errors.insert(errors.begin(), argVal.errors.begin(), argVal.errors.end());
         f.addArg(argVal);
         }
-    if (errors.size() > 0)
+    if (hasRealErrors(errors))
         return Value(errors);
 
     auto val = f.execute(callExpr.functionName.line, callExpr.functionName.pos);
-    if (!callExpr.unit.isClear())
-        val.unit = callExpr.unit;
-    //else: don't clear the unit as it may have been set by the function.
-    return val;
+    return applyUnit(callExpr, val);
     }
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)

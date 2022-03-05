@@ -1,8 +1,6 @@
 ﻿* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
-* create function hasErrors() as opposed to hasWarnings()
-  > use in places where errors are counted.
 * echo:
   > echo statement with double !! -> also echo the plain comment behind it.
   > echo-blocks: /! ... !/ and !/*...*/

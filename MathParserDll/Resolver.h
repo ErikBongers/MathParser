@@ -16,6 +16,7 @@ class Resolver
         Value resolveAssign(const AssignExpr& assignExpr);
         Value resolvePower(const PowerExpr& powerExpr);
         Value resolvePrim(const PrimaryExpr& primExpr);
+        Value& applyUnit(const Node& node, Value& val);
         Value resolvePostfix(const PostfixExpr& postfixExpr);
         Value resolveCall(const CallExpr& callExpr);
         Value resolveConst(const ConstExpr& constExpr);

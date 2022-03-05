@@ -33,21 +33,21 @@ Error::Error(ErrorId id, unsigned int line, unsigned int pos)
 
 const std::string Error::to_json()
     {
-    auto it = ErrorDefs::errorDefs.find(id);
     std::ostringstream sstr;
+    bool isWarning = false;
     sstr << "{";
-    if(it == ErrorDefs::errorDefs.end())
-        { 
-        sstr << "\"id\" : \"??\"";
-        }
-    else
-        {
-        auto& ed = it->second;
-        sstr << "\"id\" : \"" << ed.name << "\", \"message\" : \"" + escape_json(errorMsg) + "\"";
-        }
+    auto& ed = ErrorDefs::get(id);
+    sstr << "\"id\" : \"" << ed.name << "\", \"message\" : \"" + escape_json(errorMsg) + "\"";
+    isWarning = ed.name[0] == 'W';
+    sstr << ", \"isWarning\": " << (isWarning ? "true":"false");
     sstr << ", \"line\": " << line << ", \"pos\": " << pos;
     sstr << "}";
     return sstr.str();
+    }
+
+bool Error::isWarning()
+    {
+    return ErrorDefs::get(id).name[0] == 'W';
     }
 
 std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
@@ -65,3 +65,13 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
     {ErrorId::UNIT_PROP_DIFF, {ErrorId::UNIT_PROP_DIFF, "UNIT_PROP_DIFF", "The units are not for the same property (lenght, temperature,...)."}},
     {ErrorId::CONST_REDEF, {ErrorId::CONST_REDEF, "CONST_REDEF", "Warning: redefinition of constant {0}."}},
     };
+
+bool hasRealErrors(std::vector<Error>& errors)
+    {
+    for (auto& err : errors)
+        {
+        if(!err.isWarning())
+            return true;
+        }
+    return false;
+    }

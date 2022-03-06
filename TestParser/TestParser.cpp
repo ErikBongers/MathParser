@@ -40,6 +40,7 @@ namespace TestParser
             assertResult("  (PI)kg                  ", 3.14159265358979311600, "kg");
             assertResult("  1m*2                    ", 2, "m");
             assertResult("  1*2m                    ", 2, "m");
+            assertResult("  km=123                    ", 123, "", "W_VAR_IS_UNIT");
             }
 
         struct Error

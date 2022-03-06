@@ -16,6 +16,7 @@ enum class ErrorId
     VAR_EXPECTED,
     UNIT_PROP_DIFF,
     CONST_REDEF,
+    W_VAR_IS_UNIT,
     };
 
 

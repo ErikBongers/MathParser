@@ -90,11 +90,18 @@ Value Resolver::resolveMult(const MultExpr& multExpr)
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.expr);
+    if (variables.count(assign.Id.stringValue) == 0)
+        {
+        if (UnitDef::exists(assign.Id.stringValue))
+            {
+            result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
+            }
+        }
     if(variables[assign.Id.stringValue].constant)
         result.errors.push_back(Error(ErrorId::CONST_REDEF, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
     variables[assign.Id.stringValue] = result; //do not store the value with the id. The value of a variable is just the value.
     variables[assign.Id.stringValue].errors.clear(); //don't keep the errors with the variables, but only keep thew with the statement's result.
-    result.id = assign.Id; //see comment above...
+    result.id = assign.Id;
     if (assign.error.id != ErrorId::NONE)
         result.errors.push_back(assign.error);
     return result;

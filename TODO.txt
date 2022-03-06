@@ -41,6 +41,20 @@ Nice to have
     > if you set a unit to a var BEFORE an equation:
       > when the eq is assigned to the var, a warning should be generated if the unit changes. (this allows for checking the physical dimension of your eq.)
 * dates:
+  > goal: calculate age
+    > age = (now()-birthdate).years; // -> subtraction is a duration.
+      > age is a duration or just a number?
+    > age = <last_day_of_this_year> - birthdate;
+    > how to get last day of this year based on now()?
+      > trunc(now(), 'year') + 1 year - 1 day;
+      > now().year:december:last
+        > is this format with the colon unambiguous?
+        > new keywords:all months, all days, and 'last'
+        > is it always clear if we're talking about the last day or the last month?
+        > 10:11:12 > always interpreted as yy:mm:dd
+        > (10:11:12).year , ...and other fragments.
+
+
   > Value is currently only numeric.
     > how to solve?
     > any value can suddenly be turned into a date fragment:

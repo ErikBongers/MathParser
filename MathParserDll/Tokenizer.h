@@ -33,6 +33,8 @@ enum class TokenType
     PIPE,
     ECHO,
     ECHO_COMMENT_LINE,
+    ECHO_START,
+    ECHO_END,
     MUTE_LINE,
     MUTE_START,
     MUTE_END,
@@ -99,6 +101,7 @@ class Tokenizer
         unsigned int getLinePos() { return linePos-1;} //linePos always contains the NEXT pos.
         unsigned int getPos() { return pos;} //pos always contains the NEXT pos.
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
+        void skipWhiteSpace();
 
     private:
         char nextChar();

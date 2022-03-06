@@ -57,12 +57,8 @@ Token Tokenizer::next()
     return t;
     }
 
-Token Tokenizer::_nextToken()
+void Tokenizer::skipWhiteSpace()
     {
-    if (pos >= size)
-        return Token(TokenType::EOT, getLine(), getLinePos());
-
-    //skip whitespace
     char c;
     while ((c = peekChar()))
         {
@@ -70,7 +66,15 @@ Token Tokenizer::_nextToken()
             break;
         nextChar(); //consume
         }
+    }
+Token Tokenizer::_nextToken()
+    {
+    if (pos >= size)
+        return Token(TokenType::EOT, getLine(), getLinePos());
 
+    //skip whitespace
+    char c;
+    skipWhiteSpace();
 
     c = nextChar();
     if (!c)
@@ -98,6 +102,11 @@ Token Tokenizer::_nextToken()
                 nextChar(); //consume
                 auto comment = getToEOL(); //todo: store chars or not?
                 return Token(TokenType::ECHO_COMMENT_LINE, comment, getLine(), getLinePos());
+                }
+            else if (peekChar() == '/')
+                {
+                nextChar();
+                return Token(TokenType::ECHO_END, "!/", getLine(), getLinePos()-1);
                 }
             return Token(TokenType::ECHO, c, getLine(), getLinePos());
             }
@@ -169,6 +178,9 @@ Token Tokenizer::_nextToken()
                 case '#':
                     nextChar(); //consume
                     return Token(TokenType::MUTE_START, getLine(), getLinePos()-1);
+                case '!':
+                    nextChar(); //consume
+                    return Token(TokenType::ECHO_START, getLine(), getLinePos()-1);
                 }
             return Token(TokenType::DIV, c, getLine(), getLinePos());
             }

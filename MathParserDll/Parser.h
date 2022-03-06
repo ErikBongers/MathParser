@@ -136,6 +136,7 @@ class Parser
         std::map<std::string, Variable> ids;
         std::vector<Statement*> statements;
         bool muteBlock = false;
+        bool echoBlock = false;
 
         Parser(const char* stream) : tok(stream) { }
         void parse();

@@ -7,6 +7,7 @@ echoComment = '!//' rest_of_line
 comment = '//' rest_of_line
 
 statements = '/#' statementBlock '#/' |
+             '/!' statementBlock '!/'
 
 statementsBlock = statement {'; statement [';']}
 

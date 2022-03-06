@@ -71,7 +71,20 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         this->muteBlock = false;
         return parseStatementHeader(stmt);
         }
-    statementStartPos = tok.getPos(); //don't include the output annotations in the statement's text
+    if(peekToken().type == TokenType::ECHO_START)
+        {
+        nextToken(); //consume ECHO
+        this->echoBlock = true;
+        return parseStatementHeader(stmt);
+        }
+    if(peekToken().type == TokenType::ECHO_END)
+        {
+        nextToken(); //consume ECHO
+        this->echoBlock = false;
+        return parseStatementHeader(stmt);
+        }
+    tok.skipWhiteSpace();
+    statementStartPos = tok.getPos();
     return parseStatementBody(stmt);
     }
 
@@ -94,6 +107,8 @@ Statement* Parser::parseStatementBody(Statement* stmt)
         }
     else
         pushBackLastToken();//continue, although what follows is an error
+    if(echoBlock)
+        stmt->echo = true;
     return stmt;
     }
 

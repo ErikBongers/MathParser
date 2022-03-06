@@ -3,8 +3,8 @@ https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-start
 
 * echo:
   > echo statement with double !! -> also echo the plain comment behind it.
-  > echo-blocks: /! ... !/ and !/*...*/
-    > to enable echo of all statements, just start top line with '/!' and don't even include the closing '!/' (it should thus not give an error not closing it).
+    > problematic: comments are not always at the end of a statement.
+    > generally, what to do with echos of multi-line statements? Strip newlines?
 
 *security:
   > Check buffer overflow of input and output buffer : check at JS and WASM/C++.
@@ -56,7 +56,10 @@ Nice to have
 
 
   > Value is currently only numeric.
-    > how to solve?
+    > since dates are so different from numeric values, they require seperate classes, with their own resolvers and operators.
+      > timepoint : UTC ( or system?) date.
+      > duration : contains a numeric value and a 
+      > calendar
     > any value can suddenly be turned into a date fragment:
       (a*5+2)hours;
     > so, fragments are ordinary Values with a unit.

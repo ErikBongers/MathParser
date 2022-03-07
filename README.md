@@ -97,3 +97,7 @@ Note that a separate parser is written for CodeMirror syntax highlighting.
 The (json) output of the C++ parser is fed to CodeMirror's *linter* for error annotation.
 ## Try it
 There's a online version available at [Google Cloud Platform](https://storage.googleapis.com/mathparser/index.html).
+
+## Disclaimer
+This is a personal project, for fun.
+Don't let your rocket launches depend on it.

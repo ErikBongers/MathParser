@@ -128,7 +128,7 @@ Node* Parser::parseAssignExpr()
             ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
             }
-        else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV)
+        else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
             {
             nextToken();//consume the EQ
             AssignExpr* assign = createAssign();
@@ -155,7 +155,24 @@ Node* Parser::parseAssignExpr()
                 addExpr->a2 = parseAddExpr();
                 assign->expr = addExpr;
                 }
-            else
+            else if (t.type == TokenType::EQ_UNIT)
+                {
+                PostfixExpr* pfix = createPostfix();
+                pfix->primExpr = idExpr;
+                assign->Id = id;
+                assign->expr = pfix;
+                auto t = nextToken();
+                if (t.type == TokenType::ID)
+                    {
+                    pfix->postfixId = t;
+                    }
+                else
+                    { //valid syntax: clear the unit, if any.
+                    pfix->postfixId = Token::Null();
+                    pushBackLastToken();
+                    }
+                }
+            else //TODO: making assumptions here...
                 {
                 MultExpr* multExpr = createMult();
                 multExpr->m1 = idExpr;

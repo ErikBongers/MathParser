@@ -8,8 +8,6 @@ https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-start
 
 *security:
   > Check buffer overflow of input and output buffer : check at JS and WASM/C++.
-* implement a.=km to convert units.
-* resolve Conversions and Fragments
 * implicit mult with power: precedence changes depending on order?
   > 2^3b  =  2^(3b) >> mult has prio
   > 2b^3  =  2(b^3) >> power has prio

@@ -91,7 +91,6 @@ Token Tokenizer::_nextToken()
         case '^': return Token(TokenType::POWER, c, getLine(), getLinePos());
         case '=': return Token(TokenType::EQ, c, getLine(), getLinePos());
         case ',': return Token(TokenType::COMMA, c, getLine(), getLinePos());
-        case '.': return Token(TokenType::DOT, c, getLine(), getLinePos());
         case '\'': return Token(TokenType::QUOTE, c, getLine(), getLinePos());
         case '|': return Token(TokenType::PIPE, c, getLine(), getLinePos());
         case '!': 
@@ -114,6 +113,16 @@ Token Tokenizer::_nextToken()
             {
             auto t = Token(TokenType::SEMI_COLON, c, getLine(), getLinePos());
             return t;
+            }
+        case '.': 
+            {
+            if (peekChar() == '=')
+                {
+                nextChar(); //consume
+                return Token(TokenType::EQ_UNIT, getLine(), getLinePos()-1);
+                }
+            else
+                return Token(TokenType::DOT, c, getLine(), getLinePos());
             }
         case '+':
             {

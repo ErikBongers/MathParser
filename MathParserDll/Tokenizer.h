@@ -23,6 +23,7 @@ enum class TokenType
     EQ_MIN,
     EQ_MULT,
     EQ_DIV,
+    EQ_UNIT,
     NUMBER,
     POWER,
     ID,

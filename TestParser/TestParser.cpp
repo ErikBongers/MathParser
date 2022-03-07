@@ -27,6 +27,18 @@ namespace TestParser
             assertResult("a=3; max(12/2a, 0)", 2, "", "W_DIV_IMPL_MULT");
             }
 
+        TEST_METHOD(TestAssignStatements)
+            {
+            assertResult("  a=3;a.=km               ", 3, "km");
+            assertResult("  a=3km; a.=;             ", 3, "");
+            assertResult("  a=3;a*=2                ", 6, "");
+            assertResult("  a=3;a*=2km              ", 6, "km");
+            assertResult("  a=3km; a*=2;            ", 6, "km");
+            assertResult("  a=3;a+=2                ", 5, "");
+            assertResult("  a=3km; a+=2;            ", 5, "km", "W_ASSUMING_UNIT");
+            assertResult("  a=3; a+=2km;            ", 5, "km", "W_ASSUMING_UNIT");
+            }
+
         TEST_METHOD(TestUnits)
             {
             assertResult("  10km+5m                 ", 10.005, "km");

@@ -15,6 +15,12 @@ namespace TestParser
             assertResult("a=1+2*3^4;", 163, "");
             }
 
+        TEST_METHOD(TestNameConflicts)
+            {
+            assertResult("  km=123                    ", 123, "", "W_VAR_IS_UNIT");
+            assertResult("  sin=123                   ", 123, "", "W_VAR_IS_FUNCTION");
+            }
+
         TEST_METHOD(TestErrorsAndWarnings)
             {
             assertResult("a=3; 12/2a", 2, "", "W_DIV_IMPL_MULT");
@@ -40,7 +46,6 @@ namespace TestParser
             assertResult("  (PI)kg                  ", 3.14159265358979311600, "kg");
             assertResult("  1m*2                    ", 2, "m");
             assertResult("  1*2m                    ", 2, "m");
-            assertResult("  km=123                    ", 123, "", "W_VAR_IS_UNIT");
             }
 
         struct Error

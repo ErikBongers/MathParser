@@ -8,7 +8,6 @@ https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-start
 
 *security:
   > Check buffer overflow of input and output buffer : check at JS and WASM/C++.
-  > check conflicts between var names, units, function names (and keywords)
 * implement a.=km to convert units.
 * resolve Conversions and Fragments
 * implicit mult with power: precedence changes depending on order?

@@ -96,6 +96,11 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
             }
+        else if (FunctionDef::exists(assign.Id.stringValue))
+            {
+            result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
+            }
+
         }
     if(variables[assign.Id.stringValue].constant)
         result.errors.push_back(Error(ErrorId::CONST_REDEF, assign.Id.line, assign.Id.pos, assign.Id.stringValue));

@@ -17,6 +17,7 @@ enum class ErrorId
     UNIT_PROP_DIFF,
     CONST_REDEF,
     W_VAR_IS_UNIT,
+    W_VAR_IS_FUNCTION,
     };
 
 

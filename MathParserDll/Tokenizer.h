@@ -45,8 +45,6 @@ enum class TokenType
     NULLPTR
     };
 
-const char* to_string(TokenType tt);
-
 class Token
     {
     public:
@@ -80,8 +78,6 @@ class Token
         Token(TokenType type, unsigned int line, unsigned int pos)
             : Token(type, 0.0, line, pos) 
             { }
-        const std::string to_string() const;
-        friend std::ostream& operator<<(std::ostream& os, const Token& t);
     };
 
 

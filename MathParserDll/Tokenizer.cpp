@@ -2,41 +2,6 @@
 #include "Tokenizer.h"
 #include <algorithm>
 
-std::ostream& operator<<(std::ostream& os, const Token& t) 
-    { 
-    os << t.to_string(); return os; 
-    }
-
-const char* to_string(TokenType tt)
-    {
-    const std::map<TokenType, const char*> TokenTypeStringMap{
-        { TokenType::BRAC_OPEN, "BRAC_OPEN" },
-        { TokenType::BRAC_CLOSE, "BRAC_CLOSE" },
-        { TokenType::CURL_OPEN, "CURL_OPEN" },
-        { TokenType::CURL_CLOSE, "CURL_CLOSE" },
-        { TokenType::PAR_OPEN, "PAR_OPEN" },
-        { TokenType::PAR_CLOSE, "PAR_CLOSE" },
-        { TokenType::PLUS, "PLUS" },
-        { TokenType::MIN, "MIN" },
-        { TokenType::DIV, "DIV" },
-        { TokenType::MULT, "MULT" },
-        { TokenType::INC, "INC" },
-        { TokenType::DEC, "DEC" },
-        { TokenType::EQ, "EQ" },
-        { TokenType::NUMBER, "NUMBER" },
-        { TokenType::POWER, "POWER" },
-        { TokenType::ID, "ID" },
-        { TokenType::SEMI_COLON, "SEMI_COLON" },
-        { TokenType::COMMA, "COMMA" },
-        { TokenType::PIPE, "PIPE" },
-        { TokenType::ECHO, "!" },
-        { TokenType::UNKNOWN, "??" },
-        { TokenType::NULLPTR, "" }
-        };
-    auto   it = TokenTypeStringMap.find(tt);
-    return it == TokenTypeStringMap.end() ? "??" : it->second;
-    }
-
 Token Tokenizer::peek()
     {
     auto savedPos = pos;
@@ -67,15 +32,15 @@ void Tokenizer::skipWhiteSpace()
         nextChar(); //consume
         }
     }
+
 Token Tokenizer::_nextToken()
     {
     if (pos >= size)
         return Token(TokenType::EOT, getLine(), getLinePos());
 
-    //skip whitespace
-    char c;
     skipWhiteSpace();
 
+    char c;
     c = nextChar();
     if (!c)
         return Token(TokenType::EOT, getLine(), getLinePos());
@@ -352,14 +317,4 @@ void Tokenizer::skipToEndOfComment()
         if(!peekChar())
             return;
         }
-    }
-
-const std::string Token::to_string() const
-    {
-    if (type == TokenType::NUMBER)
-        return std::to_string(numberValue);
-    else if (type == TokenType::ID)
-        return stringValue;
-    else
-        return ::to_string(type);
     }

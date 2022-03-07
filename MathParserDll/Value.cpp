@@ -57,7 +57,7 @@ std::string Value::to_json()
     std::ostringstream sstr;
     sstr << "{";
     if (id.type != TokenType::NULLPTR)
-        sstr << "\"id\" : \"" << id << "\"";
+        sstr << "\"id\" : \"" << id.stringValue << "\"";
     else
         sstr << "\"id\" : \"#result#\"";
     if (isnan(number))

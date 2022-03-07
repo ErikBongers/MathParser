@@ -32,21 +32,21 @@ a=2*7; //will output only the variable and it's result: a=14
 An exclamation mark `!` is used to echo the full expression to the output.
 ```
 !b=60/3; //Will echo the code together with the result: b=20 b=60/3
-!//echo this comment line
+!//this comment line will appear on the output
 !q=100/10; !//some comment  --> output: q=10 q=100/10 //some comment
 ```
 ##### Mute
-A hashtag `#` is used to mute the the result.
+A hashtag `#` is used to mute the result.
 ```
 #c=sin(30deg); //suppress output, but still execute the code.
 !#d=a+b; //execute the statement, echo the code, but mute the result
-/# //suppress output for the next 4 lines.
+/# //suppress output for the next 4 lines, with intermediate results
 a+=1;
 a+=3;
 a+=PI;
 a+=7;
 #/
-a;
+a; //finally, the result will be output
 ```
 ### Units
 ```
@@ -54,8 +54,9 @@ Distance=10km+1mi; //Distance will be expressed in the first unit: km.
 Imperial=Distance.mi; //Conversion
 Result=(Imperial+5m).km; //Conversion of an expression.
 Hot=1000K.C.F; //Conversion from K to C to F. Note that the intermediate conversion to C is pointless.
-Hot.C; //Output the value of Hot in Celcius. Note that Hot remains in K!
+Hot.C; //Output the value of Hot in Celcius. Note that the variable Hot remains in K!
 Hot=Hot.C; //Convert Hot to Celcius.
+Hot.=C; //Does the same as the above line.
 
 ```
 #### Implemented units:

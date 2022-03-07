@@ -20,18 +20,25 @@ int C_DECL parse(const char* str)
 
 int C_DECL getResultLen() { return Resolver::getResultLen() + 1; }
 
-void C_DECL getResult(char* buffer, int strlen)
+void trimStringAndCopy(std::string& str, char* buffer, int buflen)
     {
-    auto result = Resolver::getResult();
-    result = result.substr(0, strlen);
-
-    std::copy(result.begin(), result.end(), buffer);
-    buffer[std::min(strlen - 1, (int)result.size())] = 0;
+    if(buflen <= 0)
+        return;
+    if(str.size() >= buflen)
+        str.resize(buflen-1);
+    std::copy(str.begin(), str.end(), buffer);
+    buffer[(int)str.size()] = 0;
     }
 
-void C_DECL getVersion(char* buffer, int strlen)
+void C_DECL getResult(char* buffer, int buflen)
     {
-    std::copy(version.begin(), version.end(), buffer); //TODO: replace with copy_n
-    buffer[std::min(strlen - 1, (int)version.size())] = 0;
+    auto result = Resolver::getResult();
+    trimStringAndCopy(result, buffer, buflen);
+    }
+
+void C_DECL getVersion(char* buffer, int buflen)
+    {
+    auto copy = version;
+    trimStringAndCopy(copy, buffer, buflen);
     }
 

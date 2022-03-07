@@ -16,6 +16,6 @@ C_IMP_EXP int C_DECL parse(const char* str);
 
 C_IMP_EXP int C_DECL getResultLen();
 
-C_IMP_EXP void C_DECL getResult(char* buffer, int strlen);
+C_IMP_EXP void C_DECL getResult(char* buffer, int buflen);
 
-C_IMP_EXP void C_DECL getVersion(char* buffer, int strlen);
+C_IMP_EXP void C_DECL getVersion(char* buffer, int buflen);

@@ -2,6 +2,7 @@
 #include "Value.h"
 #include "json.h"
 #include <sstream>
+#include <bitset>
 
 Value::Value(ErrorId errorId, unsigned int line, unsigned int pos)
     : line(line), pos(pos)
@@ -60,16 +61,36 @@ std::string Value::to_json()
         sstr << "\"id\" : \"" << id.stringValue << "\"";
     else
         sstr << "\"id\" : \"#result#\"";
+    std::ostringstream numval;
     if (isnan(number))
-        sstr << ", \"value\" : \"NaN\"";
+        numval << "NaN";
     else
         {
-        sstr << ", \"value\" : \"" 
-            << std::fixed
+        numval << std::fixed
             << std::setprecision(20)
-            << number << "\"";
-        sstr << ", \"unit\" : \"" << unit << "\"";
+            << number;
         }
+    sstr << ", \"value\" : \"" << numval.str() << "\"";
+    sstr << ", \"unit\" : \"" << unit << "\"";
+
+    std::string formatted;
+    if (numFormat == NumFormat::BIN)
+        {
+        formatted = std::bitset<64>((long)number).to_string();
+        formatted.erase(0, formatted.find_first_not_of('0'));
+        }
+    else if (numFormat == NumFormat::HEX)
+        {
+        std::ostringstream oss;
+        oss << std::hex << (long)number;
+        formatted = oss.str();
+        }
+
+    sstr << ", \"formatted\" : \""
+        << formatted
+        << "\"";
+
+
     sstr << ", \"errors\" : [";
     std::string comma = "";
     for (auto& error : errors)

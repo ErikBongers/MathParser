@@ -203,6 +203,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
 Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
     auto v = Value(constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
+    v.numFormat = constExpr.constNumber.numFormat;
     if (constExpr.unit.isClear())
         v.unit = Unit();
     else

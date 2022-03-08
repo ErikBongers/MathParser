@@ -321,9 +321,9 @@ Token Tokenizer::parseNumber(char c)
     auto numPos = getLinePos();
 
     if(peekChar() == 'b' || peekChar() == 'B')
-        return Token(TokenType::NUMBER, parseBinary(), getLine(), numPos);
+        return Token(TokenType::NUMBER, parseBinary(), getLine(), numPos, NumFormat::BIN);
     else if(peekChar() == 'x' || peekChar() == 'X')
-        return Token(TokenType::NUMBER, parseHex(), getLine(), numPos);
+        return Token(TokenType::NUMBER, parseHex(), getLine(), numPos, NumFormat::HEX);
     else
         return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
     }

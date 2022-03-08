@@ -66,8 +66,8 @@ class Token
             this->type = type;
             this->stringValue += c;
             }
-        Token(TokenType type, double d, unsigned int line, unsigned int pos)
-            : line(line), pos(pos)
+        Token(TokenType type, double d, unsigned int line, unsigned int pos, NumFormat numFormat = NumFormat::DEC)
+            : line(line), pos(pos), numFormat(numFormat)
             {
             this->type = type;
             this->numberValue = d;

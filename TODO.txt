@@ -1,4 +1,11 @@
-﻿* npm scripts that start with a dot:
+﻿* add binary and hex. Also E-notation?
+  > .bin, dec, hex as units?
+  > in principle, these are output formats that can be combined with units.
+    > so, keep it separate.
+  > are these reserved words? yes.
+  > can they be overrulled? yes: probably used simultaneously
+    > dec = 0b1010_01010.dec.C or  .C.dec
+* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * echo:

@@ -228,9 +228,9 @@ char Tokenizer::peekSecondChar()
     return _stream[pos+1];
     }
 
-Token Tokenizer::parseNumber(char c)
+
+double Tokenizer::parseDecimal(char c)
     {
-    auto numPos = getLinePos();
     //we already have the first digit
     double d = 0;
     double decimalDivider = 1;
@@ -270,8 +270,62 @@ Token Tokenizer::parseNumber(char c)
             break;
             }
         }
+    return d;
+    }
 
-    return Token(TokenType::NUMBER, d, getLine(), numPos);
+double Tokenizer::parseBinary()
+    {
+    nextChar(); //consume 'b'
+    unsigned long bin = 0;
+
+    while(peekChar() == '0' || peekChar() == '1' || peekChar() == '_')
+        {
+        char c = nextChar();
+        if(c == '_')
+            continue;
+
+        bin <<=1;
+        if(c == '1')
+            bin++;
+        }
+    return bin;
+    }
+
+double Tokenizer::parseHex()
+    {
+    nextChar(); //consume 'x'
+    unsigned long hex = 0;
+
+    while((peekChar() >= '0' && peekChar() <= '9') 
+          || (peekChar() >= 'a' && peekChar() <= 'f') 
+          || (peekChar() >= 'A' && peekChar() <= 'F') 
+          || peekChar() == '_')
+        {
+        char c = nextChar();
+        if(c == '_')
+            continue;
+
+        hex *=16;
+        if(c >= '0' && c <= '9')
+            hex += c - '0';
+        else if( (c >= 'a' && c <= 'f'))
+            hex += 10 + c - 'a';
+        else if( (c >= 'A' && c <= 'F'))
+            hex += 10 + c - 'A';
+        }
+    return hex;
+    }
+
+Token Tokenizer::parseNumber(char c)
+    {
+    auto numPos = getLinePos();
+
+    if(peekChar() == 'b' || peekChar() == 'B')
+        return Token(TokenType::NUMBER, parseBinary(), getLine(), numPos);
+    else if(peekChar() == 'x' || peekChar() == 'X')
+        return Token(TokenType::NUMBER, parseHex(), getLine(), numPos);
+    else
+        return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
     }
 
 std::string Tokenizer::getToEOL()

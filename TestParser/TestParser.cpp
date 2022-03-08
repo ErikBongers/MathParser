@@ -15,6 +15,12 @@ namespace TestParser
             assertResult("a=1+2*3^4;", 163, "");
             }
 
+        TEST_METHOD(TestNumberFormats)
+            {
+            assertResult("0b111_1011;", 123, "");
+            assertResult("0x1E240;", 123456, "");
+            }
+
         TEST_METHOD(TestNameConflicts)
             {
             assertResult("  km=123                    ", 123, "", "W_VAR_IS_UNIT");

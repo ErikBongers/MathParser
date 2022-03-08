@@ -5,12 +5,14 @@
 #include <iomanip>
 #include <vector>
 
+
 class Value
     {
     public:
         Token id = Token::Null(); //optional, in case of a variable.
         double number = 0;
         Unit unit;
+        NumFormat numFormat = NumFormat::DEC;
         std::vector<Error> errors;
         std::string text;
         std::string comment_line;

@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 
+enum class NumFormat { DEC, BIN, HEX };
+
 enum class TokenType
     {
     BRAC_OPEN,
@@ -53,6 +55,7 @@ class Token
         TokenType type;
         std::string stringValue;
         double numberValue;
+        NumFormat numFormat = NumFormat::DEC;
         unsigned int pos;
         unsigned int line;
         bool isFirstOnLine = false;
@@ -102,9 +105,13 @@ class Tokenizer
 
     private:
         char nextChar();
-        char peekChar();
-        char peekSecondChar();
+        inline char peekChar();
+        inline char peekSecondChar();
         Token parseId(char c);
+
+        double parseDecimal(char c);
+        double parseBinary();
+        double parseHex();
 
         Token parseNumber(char c);
 

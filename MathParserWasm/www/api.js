@@ -44,8 +44,11 @@ Module.onRuntimeInitialized = async _ => {
 			if(line.text != "")
 			  	strText = " " + line.text;
 			let strLine = "";
+			let strFormatted = Module.formatFloatString(line.value);
+			if (line.format != "DEC")
+				strFormatted = line.formatted;
 			if(line.mute == false || line.errors.length > 0)
-				strLine += (line.id==="#result#" ? "" : line.id + "=")  + Module.formatFloatString(line.value) + line.unit;
+				strLine += (line.id==="#result#" ? "" : line.id + "=")  + strFormatted + line.unit;
 			strLine += strText + (strErrors === ""? "" : "  <<<" + strErrors);
 			strLine += strComment;
 			if(strLine.length > 0)

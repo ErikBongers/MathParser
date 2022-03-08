@@ -77,8 +77,21 @@ namespace MathParserWPF
                 double number;
                 bool isNum = double.TryParse(result.value, out number);
                 string strResult = "";
-                if(!result.mute || result.errors.Length > 0)
-                    strResult = (result.id == "#result#" ? "" : result.id + "=") + (isNum ? number.ToString("0.#######") : result.value) + result.unit; ;
+                if (!result.mute || result.errors.Length > 0)
+                    {
+                    string numval;
+                    if (isNum)
+                        {
+                        if (result.format == "BIN" || result.format == "HEX")
+                            numval = result.formatted;
+                        else
+                            numval = number.ToString("0.#######");
+                        }
+                    else
+                        numval = result.value;
+                    strResult = (result.id == "#result#" ? "" : result.id + "=") + numval + result.unit;
+
+                    }
                 if (result.errors.Length > 0)
                     {
                     strResult += " <<< ";

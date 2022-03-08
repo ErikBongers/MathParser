@@ -12,6 +12,8 @@ It was created out of a desire for a simple mathematical script language outside
 a=3+4; //this is a typical statement.
 b=2a+3; //implicit multiplication is allowed: same as (2*a)+3;
 a+=2; b=a*10; //a statement always ends with a semi-colon, not a new line, so these are two statements.
+0xFF; //hexadecimal notation for decimal 255
+0b101; //binary notation for decimal 5
 ```
 ### Operators
 In addition to the usual `+ - * /` operators, there are:

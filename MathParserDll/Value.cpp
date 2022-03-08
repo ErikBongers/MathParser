@@ -73,17 +73,25 @@ std::string Value::to_json()
     sstr << ", \"value\" : \"" << numval.str() << "\"";
     sstr << ", \"unit\" : \"" << unit << "\"";
 
+    std::string format = "DEC";
+    if(numFormat == NumFormat::BIN)
+        format = "BIN";
+    else if(numFormat == NumFormat::HEX)
+        format = "HEX";
+    sstr << ", \"format\" : \"" << format << "\"";
+
     std::string formatted;
     if (numFormat == NumFormat::BIN)
         {
         formatted = std::bitset<64>((long)number).to_string();
         formatted.erase(0, formatted.find_first_not_of('0'));
+        formatted = "0b" + formatted;
         }
     else if (numFormat == NumFormat::HEX)
         {
         std::ostringstream oss;
         oss << std::hex << (long)number;
-        formatted = oss.str();
+        formatted = "0x"+oss.str();
         }
 
     sstr << ", \"formatted\" : \""

@@ -8,6 +8,8 @@ public class Result
     {
     public string id { get; set; }
     public string value { get; set; }
+    public string format { get; set; }
+    public string formatted { get; set; }
     public string unit { get; set; }
     public Error[] errors { get; set; }
     public string text { get; set; }

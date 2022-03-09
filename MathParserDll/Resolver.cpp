@@ -127,10 +127,17 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     {
     if (pfix.error.id != ErrorId::NONE)
         return Value(pfix.error);
-    auto val = resolveNode(*pfix.primExpr);
+    auto val = resolveNode(*pfix.expr);
     if(pfix.postfixId.isNull())
         val.unit = Unit::CLEAR();
-    val = val.convertToUnit(pfix.postfixId);
+    else if(pfix.postfixId.stringValue == "bin")
+        val.numFormat = NumFormat::BIN;
+    else if(pfix.postfixId.stringValue == "hex")
+        val.numFormat = NumFormat::HEX;
+    else if(pfix.postfixId.stringValue == "dec")
+        val.numFormat = NumFormat::DEC;
+    else
+        val = val.convertToUnit(pfix.postfixId);
     //in case of (x.km)m, both postfixId (km) and unit (m) are filled.
     return applyUnit(pfix, val);
     }

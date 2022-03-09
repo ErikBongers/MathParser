@@ -45,7 +45,7 @@ class PrimaryExpr : public Node
 class PostfixExpr : public Node
     {
     public:
-        Node* primExpr = nullptr;
+        Node* expr = nullptr;
         Token postfixId;
     private:
         PostfixExpr() : Node(NodeType::POSTFIXEXPR) {}

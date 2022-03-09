@@ -34,8 +34,9 @@ powerExpr = postFixExpr |
            powerExpr "^" postFixExpr
 
 postFixExpr = unitExpr |
+            postFixExpr '.' ( "dec" | "hex" | "bin") |
             postFixExpr '.' [ id ] |
-            primaryExpr (INC | DEC)
+            primaryExpr ("++" | "--")
             
 unitExpr = primaryExpr [unit]
 

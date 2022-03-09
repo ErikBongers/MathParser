@@ -17,8 +17,11 @@ namespace TestParser
 
         TEST_METHOD(TestNumberFormats)
             {
-            assertResult("0b111_1011;", 123, "");
-            assertResult("0x1E240;", 123456, "");
+            assertResult("0b111_1011", 123, "", "", "BIN");
+            assertResult("0x1E240", 123456, "", "", "HEX");
+            assertResult("0b111_1011C.dec", 123, "C", "", "DEC");
+            assertResult("(0b111_1011.)", 123, "", "", "BIN");
+            assertResult("(0b111_1011C.).dec", 123, "", "", "DEC");
             }
 
         TEST_METHOD(TestNameConflicts)
@@ -49,6 +52,7 @@ namespace TestParser
             {
             assertResult("  10km+5m                 ", 10.005, "km");
             assertResult("  (10km+5m).              ", 10.005, "");
+            assertResult("  (10km.)                 ", 10, "");
             assertResult("  (10km+5m).m             ", 10005, "m");
             assertResult("  10kg.g.N.lb.kg          ", 10, "kg");
             assertResult("  max(10,20)km            ", 20, "km");
@@ -83,7 +87,7 @@ namespace TestParser
             double value;
             };
 
-        void assertResult(const char* stmt, double expectedResult, const std::string expectedUnit, const std::string errorId = "")
+        void assertResult(const char* stmt, double expectedResult, const std::string expectedUnit, const std::string errorId = "", const std::string expectedFormat = "DEC")
             {
             std::string msg;
             auto result = parseSingleResult(stmt);
@@ -114,6 +118,8 @@ namespace TestParser
             Assert::AreEqual(expectedResult, d);
             msg = std::format("\"{0}\" has incorrect unit {1}, which should be {2}", stmt, (const std::string)result["unit"], expectedUnit);
             Assert::AreEqual(expectedUnit, (const std::string)result["unit"], toWstring(msg).c_str());
+            msg = std::format("\"{0}\" has incorrect format {1}, which should be {2}", stmt, (const std::string)result["format"], expectedFormat);
+            Assert::AreEqual(expectedFormat, (const std::string)result["format"], toWstring(msg).c_str());
             }
 
         void assertError(const char* stmt, const std::string errorId)

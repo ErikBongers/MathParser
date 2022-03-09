@@ -37,7 +37,7 @@ class Function
 class Inc : public FunctionDef
     {
     public:
-        std::string getName() override { return "inc"; }
+        std::string getName() override { return "_ inc"; }
         size_t minArgs() override { return 1; }
         size_t maxArgs() override { return 1; }
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
@@ -46,7 +46,7 @@ class Inc : public FunctionDef
 class Dec : public FunctionDef
     {
     public:
-        std::string getName() override { return "dec"; }
+        std::string getName() override { return "_ dec"; }
         size_t minArgs() override { return 1; }
         size_t maxArgs() override { return 1; }
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;

@@ -158,7 +158,7 @@ Node* Parser::parseAssignExpr()
             else if (t.type == TokenType::EQ_UNIT)
                 {
                 PostfixExpr* pfix = createPostfix();
-                pfix->primExpr = idExpr;
+                pfix->expr = idExpr;
                 assign->Id = id;
                 assign->expr = pfix;
                 auto t = nextToken();
@@ -302,7 +302,7 @@ Node* Parser::parseOnePostFix(Node* node, Token t)
         {
         t = nextToken();
         auto postfixExpr = createPostfix();
-        postfixExpr->primExpr = node;
+        postfixExpr->expr = node;
         node = postfixExpr;
         if (t.type == TokenType::ID)
             {
@@ -325,7 +325,7 @@ Node* Parser::parseOnePostFix(Node* node, Token t)
         PrimaryExpr* idExpr = (PrimaryExpr*)node;
         CallExpr* callExpr = createCall();
         callExpr->arguments.push_back(node);
-        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "inc" : "dec"), tok.getLine(), tok.getLinePos());
+        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), tok.getLine(), tok.getLinePos());
 
         AssignExpr* assignExpr = createAssign();
         assignExpr->Id = idExpr->Id;

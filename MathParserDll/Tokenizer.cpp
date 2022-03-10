@@ -229,10 +229,11 @@ char Tokenizer::peekSecondChar()
     }
 
 
-double Tokenizer::parseDecimal(char c)
+Number Tokenizer::parseDecimal(char c)
     {
     //we already have the first digit
     double d = 0;
+    int e = 0;
     double decimalDivider = 1;
     if (c == '.')
         decimalDivider = 10;
@@ -270,7 +271,32 @@ double Tokenizer::parseDecimal(char c)
             break;
             }
         }
-    return d;
+    if (peekChar() == 'e' || peekChar() == 'E')
+        {
+        nextChar();//consume 'E'
+        e = parseInteger();
+        }
+    return Number(d, e);
+    }
+
+int Tokenizer::parseInteger()
+    {
+    int i = 0;
+    char c;
+
+    while ((c = peekChar()))
+        {
+        if (c >= '0' && c <= '9')
+            {
+            nextChar(); //consume
+            i = i * 10 + (c - '0');
+            }
+        else
+            {
+            break;
+            }
+        }
+    return i;
     }
 
 double Tokenizer::parseBinary()
@@ -321,9 +347,9 @@ Token Tokenizer::parseNumber(char c)
     auto numPos = getLinePos();
 
     if(peekChar() == 'b' || peekChar() == 'B')
-        return Token(TokenType::NUMBER, parseBinary(), getLine(), numPos, NumFormat::BIN);
+        return Token(TokenType::NUMBER, Number(parseBinary(), 0), getLine(), numPos, NumFormat::BIN);
     else if(peekChar() == 'x' || peekChar() == 'X')
-        return Token(TokenType::NUMBER, parseHex(), getLine(), numPos, NumFormat::HEX);
+        return Token(TokenType::NUMBER, Number(parseHex(), 0), getLine(), numPos, NumFormat::HEX);
     else
         return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
     }

@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "Resolver.h"
 #include "Function.h"
+#include "Number.h"
 
 std::string Resolver::result = "";
 void Resolver::resolve()
     {
     variables.clear();
-    auto PI = Value(M_PI, 0, 0);
+    auto PI = Value(Number(M_PI, 0), 0, 0);
     PI.constant = true;
     variables.emplace("PI", PI);
     variables.emplace("pi", PI);

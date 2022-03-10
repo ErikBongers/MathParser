@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include "Number.h"
 
 enum class NumFormat { DEC, BIN, HEX };
 
@@ -54,23 +55,23 @@ class Token
         bool isNull() const { return type == TokenType::NULLPTR;}
         TokenType type;
         std::string stringValue;
-        double numberValue;
+        Number numberValue = {0,0};
         NumFormat numFormat = NumFormat::DEC;
         unsigned int pos;
         unsigned int line;
         bool isFirstOnLine = false;
         Token() : Token(TokenType::NULLPTR, 0, 0) {}
         Token(TokenType type, char c, unsigned int line, unsigned int pos) 
-            : numberValue(-1), line(line), pos(pos)
+            : line(line), pos(pos)
             {
             this->type = type;
             this->stringValue += c;
             }
-        Token(TokenType type, double d, unsigned int line, unsigned int pos, NumFormat numFormat = NumFormat::DEC)
+        Token(TokenType type, Number n, unsigned int line, unsigned int pos, NumFormat numFormat = NumFormat::DEC)
             : line(line), pos(pos), numFormat(numFormat)
             {
             this->type = type;
-            this->numberValue = d;
+            this->numberValue = n;
             }
         Token(TokenType type, std::string str, unsigned int line, unsigned int pos)
             : line(line), pos(pos)
@@ -79,7 +80,7 @@ class Token
             this->stringValue = str;
             }
         Token(TokenType type, unsigned int line, unsigned int pos)
-            : Token(type, 0.0, line, pos) 
+            : Token(type, Number(0.0, 0), line, pos) 
             { }
     };
 
@@ -109,9 +110,10 @@ class Tokenizer
         inline char peekSecondChar();
         Token parseId(char c);
 
-        double parseDecimal(char c);
+        Number parseDecimal(char c);
         double parseBinary();
         double parseHex();
+        int parseInteger();
 
         Token parseNumber(char c);
 

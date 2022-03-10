@@ -5,7 +5,7 @@
 void Parser::parse()
     {
     ConstExpr* pConst = createConst();
-    pConst->constNumber = Token(TokenType::NUMBER, M_PI, tok.getLine(), tok.getLinePos());
+    pConst->constNumber = Token(TokenType::NUMBER, Number(M_PI, 0), tok.getLine(), tok.getLinePos());
     ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
     while (peekToken().type != TokenType::EOT)
         {
@@ -405,7 +405,7 @@ Node* Parser::parsePrimaryExpr()
 ConstExpr* Parser::parseConst(bool negative)
     {
     auto constExpr = createConst();
-    currentToken.numberValue = (negative ? -1 : 1) * currentToken.numberValue;
+    currentToken.numberValue.number = (negative ? -1 : 1) * currentToken.numberValue.number;
     constExpr->constNumber = currentToken;
     return constExpr;
     }

@@ -12,7 +12,7 @@ namespace TestParser
         
         TEST_METHOD(TestPrecedence)
             {
-            assertResult("a=1+2*3^4;", 163, "");
+            assertResult("a=1+2*3^4;", 163);
             }
 
         TEST_METHOD(TestNumberFormats)
@@ -22,6 +22,8 @@ namespace TestParser
             assertResult("0b111_1011C.dec", 123, "C", "", "DEC");
             assertResult("(0b111_1011.)", 123, "", "", "BIN");
             assertResult("(0b111_1011C.).dec", 123, "", "", "DEC");
+            assertResult("123E10 + 234E10", 3570000000000);
+            
             }
 
         TEST_METHOD(TestNameConflicts)
@@ -46,6 +48,7 @@ namespace TestParser
             assertResult("  a=3;a+=2                ", 5, "");
             assertResult("  a=3km; a+=2;            ", 5, "km", "W_ASSUMING_UNIT");
             assertResult("  a=3; a+=2km;            ", 5, "km", "W_ASSUMING_UNIT");
+            assertResult("  dec=123;                ", 123, ""); // dec should not conflict with the dec() function.
             }
 
         TEST_METHOD(TestUnits)
@@ -87,7 +90,7 @@ namespace TestParser
             double value;
             };
 
-        void assertResult(const char* stmt, double expectedResult, const std::string expectedUnit, const std::string errorId = "", const std::string expectedFormat = "DEC")
+        void assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC")
             {
             std::string msg;
             auto result = parseSingleResult(stmt);

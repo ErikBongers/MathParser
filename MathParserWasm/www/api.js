@@ -44,7 +44,7 @@ Module.onRuntimeInitialized = async _ => {
 			if(line.text != "")
 			  	strText = " " + line.text;
 			let strLine = "";
-			let strFormatted = Module.formatFloatString(line.value);
+			let strFormatted = Module.formatFloatString(line.number, line.exponent);
 			if (line.format != "DEC")
 				strFormatted = line.formatted;
 			if(line.mute == false || line.errors.length > 0)
@@ -86,7 +86,7 @@ Module.onRuntimeInitialized = async _ => {
     Module.log = function(text) {
     	console.log(text);
     	};
-    Module.formatFloatString = function(floatString)
+    Module.formatFloatString = function(floatString, exponent)
     	{
 		var sFixed = parseFloat(floatString).toFixed(5);
 		if(sFixed.search(".") == -1)
@@ -106,6 +106,9 @@ Module.onRuntimeInitialized = async _ => {
 				sResult = c + sResult;
 				}
 			});
+		if (exponent !== 0) {
+			sResult += "E" + exponent;
+        }
 		return sResult;
     	};
   };

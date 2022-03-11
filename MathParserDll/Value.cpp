@@ -43,7 +43,7 @@ std::string Value::to_string() //TODO: unused?
     std::ostringstream strs;
     strs << std::fixed
         << std::setprecision(5)
-        << number.to_double() //TODO: use exponent notation when applicable.
+        << number.number
         << unit;
     return strs.str();
     }
@@ -63,9 +63,19 @@ std::string Value::to_json()
         {
         numval << std::fixed
             << std::setprecision(20)
-            << number.to_double();  //TODO: use exponent notation when applicable.
+            << number.to_double();
         }
     sstr << ", \"value\" : \"" << numval.str() << "\"";
+    numval = std::ostringstream();
+    if (isnan(number.number))
+        numval << "NaN";
+    else
+        {
+        numval << std::fixed
+            << std::setprecision(20)
+            << number.number;
+        }
+    sstr << ", \"number\" : \"" << numval.str() << "\"";
     sstr << ", \"unit\" : \"" << unit << "\"";
 
     std::string format = "DEC";
@@ -93,6 +103,7 @@ std::string Value::to_json()
         << formatted
         << "\"";
 
+    sstr << ", \"exponent\" : " << number.exponent;
 
     sstr << ", \"errors\" : [";
     std::string comma = "";
@@ -157,7 +168,7 @@ Value Value::doTerm(bool adding, const Value& v)
     //if a unit is missing, just do operation.
     else 
         {
-        result.number = Number(adding ? (number.to_double() + v.number.to_double()) : (number.to_double() - v.number.to_double()), 0);
+        result.number = adding ? (number + v.number) : (number - v.number);
         //if one unit is set, use it but give a warning
         if (!unit.isClear() || !v.unit.isClear())
             {
@@ -175,7 +186,7 @@ Value Value::operator*(const Value& v)
     Value result = *this;
     result.constant = false;
     //TODO: if both units set: unit changes to unit*unit!
-    result.number = Number(result.number.to_double() * v.number.to_double(), 0);
+    result.number = result.number * v.number;
     if (unit.isClear())
         result.unit = v.unit;
     result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
@@ -187,7 +198,7 @@ Value Value::operator/(const Value& v)
     Value result = *this;
     result.constant = false;
     //TODO: if both units set: unit changes to unit/unit!
-    result.number = Number(result.number.to_double() / v.number.to_double(), 0);
+    result.number = result.number / v.number;
     if (unit.isClear())
         result.unit = v.unit;
     result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
@@ -249,18 +260,3 @@ inline double Value::fromSI() const
         return number.to_double();
     }
 
-Number& Number::operator++(int)
-    {
-    number = to_double();
-    number++;
-    exponent = 0;
-    return *this;
-    }
-
-Number& Number::operator--(int)
-    {
-    number = to_double();
-    number--;
-    exponent = 0;
-    return *this;
-    }

@@ -22,8 +22,15 @@ namespace TestParser
             assertResult("0b111_1011C.dec", 123, "C", "", "DEC");
             assertResult("(0b111_1011.)", 123, "", "", "BIN");
             assertResult("(0b111_1011C.).dec", 123, "", "", "DEC");
-            assertResult("123E10 + 234E10", 3570000000000);
-            
+
+            }
+
+        TEST_METHOD(TestExponents)
+            {
+            assertExponent("123E10 + 234E10", 357, 10);
+            assertExponent("234E10 - 123E10", 111, 10);
+            assertExponent("123E10 * 2E10", 246, 20);
+            assertExponent("246E10 / 2E10", 123, 0);
             }
 
         TEST_METHOD(TestNameConflicts)
@@ -90,11 +97,17 @@ namespace TestParser
             double value;
             };
 
-        void assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC")
+        void assertExponent(const char* stmt, double expectedNumber, int expectedExponent)
+            {
+            assertResult(stmt, expectedNumber, "", "", "DEC", expectedExponent);
+            }
+
+        void assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
             {
             std::string msg;
             auto result = parseSingleResult(stmt);
             logJson(result);
+            //errors
             if(hasErrors(result))
                 {
                 if (errorId == "")
@@ -116,11 +129,28 @@ namespace TestParser
                 msg = std::format("\"{0}\" did not report error: {1}", stmt, errorId);
                 Assert::Fail(toWstring(msg).c_str());
                 }
-            std::string value = result["value"];
-            double d = std::stod(value);
-            Assert::AreEqual(expectedResult, d);
+            if(result["exponent"]== 0)
+                {
+                //value
+                std::string value = result["value"];
+                double d = std::stod(value);
+                Assert::AreEqual(expectedResult, d);
+                }
+            else
+                {
+                //number
+                std::string value = result["number"];
+                double d = std::stod(value);
+                Assert::AreEqual(expectedResult, d);
+                //exponent
+                int e = result["exponent"];
+                msg = std::format("\"{0}\" has incorrect exponent {1}, which should be {2}", stmt, (int)result["exponent"], expectedExponent);
+                Assert::AreEqual(expectedExponent, (int)result["exponent"], toWstring(msg).c_str());
+                }
+            //unit
             msg = std::format("\"{0}\" has incorrect unit {1}, which should be {2}", stmt, (const std::string)result["unit"], expectedUnit);
             Assert::AreEqual(expectedUnit, (const std::string)result["unit"], toWstring(msg).c_str());
+            //format
             msg = std::format("\"{0}\" has incorrect format {1}, which should be {2}", stmt, (const std::string)result["format"], expectedFormat);
             Assert::AreEqual(expectedFormat, (const std::string)result["format"], toWstring(msg).c_str());
             }

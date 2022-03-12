@@ -82,8 +82,8 @@ Hot.=C; //Does the same as the above line.
 Currently only PI. (also in lower case)
 
 ## Technical
-The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (brute force) with 2 look-aheads and 1 push-back.
-Parser errors are non-blocking.
+The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (I think) with 1 look-ahead and 1 push-back.
+Parser errors are handled gracefully.
 ### Projects
 * **MathParserDll** main parser project.
 * **MathParserWASM** is a web project that compiles the dll into a WASM file. It is the main user interface.
@@ -103,5 +103,5 @@ The (json) output of the C++ parser is fed to CodeMirror's *linter* for error an
 There's a online version available at [Google Cloud Platform](https://storage.googleapis.com/mathparser/index.html).
 
 ## Disclaimer
-This is a personal project, for fun.
+This is a personal project, for fun.  
 Don't let your rocket launches depend on it.

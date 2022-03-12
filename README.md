@@ -2,7 +2,8 @@
 # MathParser
 ## Introduction
 Mathparser is a mathematical expression language based on C-style syntax.
-It was created out of a desire for a simple mathematical script language outside of spreadsheets or online c-compilers or mathlab and other math tools.
+It was created out of a desire for a simple mathematical script language outside of spreadsheets, online c-compilers, mathlab and other math tools.
+I would think it would feel more familiar to programmers that those other tools.
 
 ## Language reference
 

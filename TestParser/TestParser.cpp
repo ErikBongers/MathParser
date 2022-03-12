@@ -17,12 +17,13 @@ namespace TestParser
 
         TEST_METHOD(TestNumberFormats)
             {
+            assertResult("123_456", 123456);
+            assertResult("-123_456", -123456);
             assertResult("0b111_1011", 123, "", "", "BIN");
             assertResult("0x1E240", 123456, "", "", "HEX");
             assertResult("0b111_1011C.dec", 123, "C", "", "DEC");
             assertResult("(0b111_1011.)", 123, "", "", "BIN");
             assertResult("(0b111_1011C.).dec", 123, "", "", "DEC");
-
             }
 
         TEST_METHOD(TestExponents)

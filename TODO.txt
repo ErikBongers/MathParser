@@ -40,22 +40,37 @@ Nice to have
   > goal: calculate age
     > age = (now()-birthdate).years; // -> subtraction is a duration.
       > age is a duration or just a number?
-    > age = <last_day_of_this_year> - birthdate;
+    > age before end of year = <last_day_of_this_year> - birthdate;
     > how to get last day of this year based on now()?
       > trunc(now(), 'year') + 1 year - 1 day;
-      > now().year:december:last
+      > create new date in yy:mm:dd format: now().year:december:last
         > is this format with the colon unambiguous?
-        > new keywords:all months, all days, and 'last'
+        > new keywords:all months, all days, and 'last' (and 'first'? No! First is alwayt 1)
         > is it always clear if we're talking about the last day or the last month?
         > 10:11:12 > always interpreted as yy:mm:dd
         > (10:11:12).year , ...and other fragments.
+      > 'last'
+        > can perhaps be kept for as long as possible in calculations that result in a different month? or in februari of a different year, and thus a different last day?
+        > how to display 'last' in output?
+          : februari 28(last) --> this version seems more intuitive to read, yet fairly short.
+          > feburary 28 (last day) --> too long
+          : februari 28.last  --> postfix notation? Feels like a subfield...
+          : 2022:february:last(28) -> this could be both input syntax as output syntax, with or without the (28), which could be ignored when added to the input.
+          
 
 
   > Value is currently only numeric.
+    > Dates and numbers can not be calculated with directly: now() + 5 ? Five what? days? hours?
     > since dates are so different from numeric values, they require seperate classes, with their own resolvers and operators.
       > timepoint : UTC ( or system?) date.
       > duration : contains a numeric value and a 
       > calendar
+    > Value must have a type field: number, timepoint, duration, calendar,...
+    > How to avoid a code mess in Resolver?
+      > A resolver per type?
+      > Or Keep a general resolver, and create a Calculator per type?
+      > An expression can contain sub parts for other value types.
+        > elon_time = (timepoint - timepoint).hours * big_integer.
     > any value can suddenly be turned into a date fragment:
       (a*5+2)hours;
     > so, fragments are ordinary Values with a unit.
@@ -96,7 +111,7 @@ Nice to have
       > units
         > singular and plural can be used - same meaning.
         - day, month, year, hour, minute, second
-        - short version: dd, mm, yy, hh, min, ss
+        - short version: dd, mon (mm = millimeter), yy, hh, min, ss
         Timepoints
 Time_point<utc_clock> now = …;
 Now():
@@ -155,55 +170,4 @@ En ook klassieke “Save as” en “Open” en “New”, …
   > unlikely, as this violates the browser sandbox.
   > download and upload: yes.
     > requires active webserver.
-
-
-MANUAL
-----------
-> Present manual as a script or a html page?
-  > in case of a script: it should not overwrite the user's script.
-> Where to add the manual?
-  > question mark button on main page?
-  > fold out within main page?
-  > on phone?
-Math Parser allows arithmetic expressions in a C-style format:
-** Basic syntax
-//this is a comment line
-a=3+4;
-b=2a+3; //implicit multiplication is allowed.
-a+=2; b /= a;
-
-** Output control
-a=1; //
-!b=5/6; // -> echo the code in addition to the result
-!//echo this comment line
-
-#c=sin(30deg); //suppress output, but still execute the code.
-!#d=a+b; //echo the code…but suppress the result
-/# //suppress output for the next 4 lines.
-a+=1;
-a+=3;
-a+=PI;
-a+=7;
-#/
-a;
-
-** Units
-Distance=10km+1mi;
-Imperial=Distance.mi;
-Result=(Imperial+5m).km;
-Hot=1000K.C.F; //Conversion from K to C to F. Intermediate conversion to C is pointless.
-Hot=Hot.C; //set new unit for variable Hot
-Implemented units:
-Length:
-Temperature:
-…
-** Basic expr:
-Expression without assignment:
-5*7;
-
-** Functions
-Trigonometry: sin, cos, tan, asin, acos, atan
-Other: max, min(????), round, abs;
-Alternative for abs: |x|
-< change Function to have a min and a max no of args.
 

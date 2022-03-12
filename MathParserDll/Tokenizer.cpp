@@ -266,6 +266,11 @@ Number Tokenizer::parseDecimal(char c)
                 break;
                 }
             }
+        else if (c == '_')
+            {
+            nextChar();
+            continue;
+            }
         else
             {
             break;
@@ -300,6 +305,11 @@ int Tokenizer::parseInteger()
             {
             nextChar(); //consume
             i = i * 10 + (c - '0');
+            }
+        else if (c == '_')
+            {
+            nextChar();
+            continue;
             }
         else
             {

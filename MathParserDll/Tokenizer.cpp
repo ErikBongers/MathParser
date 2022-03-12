@@ -283,6 +283,16 @@ int Tokenizer::parseInteger()
     {
     int i = 0;
     char c;
+    int factor = 1;
+    if (peekChar() == '-')
+        {
+        nextChar();
+        factor = -1;
+        }
+    else if (peekChar() == '+')
+        {
+        nextChar();
+        }
 
     while ((c = peekChar()))
         {
@@ -296,7 +306,7 @@ int Tokenizer::parseInteger()
             break;
             }
         }
-    return i;
+    return i*factor;
     }
 
 double Tokenizer::parseBinary()

@@ -31,6 +31,7 @@ namespace TestParser
             assertExponent("234E10 - 123E10", 111, 10);
             assertExponent("123E10 * 2E10", 246, 20);
             assertExponent("246E10 / 2E10", 123, 0);
+            assertExponent("1E-2", 1, -2);
             }
 
         TEST_METHOD(TestNameConflicts)

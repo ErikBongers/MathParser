@@ -2,21 +2,26 @@
 #include "Tokenizer.h"
 #include <algorithm>
 
-Token Tokenizer::peek()
+Token Tokenizer::peek(bool includeEchoComment)
     {
     auto savedPos = pos;
     auto savedLine = line;
     auto savedLinePos = linePos;
-    auto t = next();
+    auto t = next(includeEchoComment);
     pos = savedPos;
     line = savedLine;
     linePos = savedLinePos;
     return t;
     }
 
-Token Tokenizer::next()
+Token Tokenizer::next(bool includeEchoComment)
     {
     auto t = _nextToken();
+    if(includeEchoComment == false)
+        {
+        while(t.type == TokenType::ECHO_COMMENT_LINE)
+            t = _nextToken();
+        }
     t.isFirstOnLine = newLineStarted;
     newLineStarted = false;
     return t;

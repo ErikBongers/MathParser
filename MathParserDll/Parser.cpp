@@ -13,9 +13,9 @@ void Parser::parse()
         if(stmt->echo)
             stmt->text = tok.getText(statementStartPos, tok.getPos());
         statements.push_back(stmt);
-        if (peekToken().type == TokenType::ECHO_COMMENT_LINE)
+        if (peekToken(true).type == TokenType::ECHO_COMMENT_LINE)
             {
-            auto t = tok.next();
+            auto t = tok.next(true);
             if (t.isFirstOnLine)
                 {
                 stmt = createStatement();
@@ -452,15 +452,15 @@ AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_
 Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
 CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }
 
-Token Parser::peekToken()
+Token Parser::peekToken(bool includeEchoComment)
     {
     if (lastToken.type != TokenType::NULLPTR)
         return lastToken;
     else
-        return tok.peek();
+        return tok.peek(includeEchoComment);
     }
 
-Token Parser::nextToken()
+Token Parser::nextToken(bool includeEchoComment)
     {
     if (lastToken.type != TokenType::NULLPTR)
         {
@@ -469,7 +469,7 @@ Token Parser::nextToken()
         }
     else
         {
-        currentToken = tok.next();
+        currentToken = tok.next(includeEchoComment);
         }
     return currentToken;
     }

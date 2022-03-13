@@ -171,8 +171,8 @@ class Parser
         Token peekedToken = Token::Null();
         unsigned int statementStartPos = 0;
 
-        Token peekToken();
-        Token nextToken();
+        Token peekToken(bool includeEchoComment = false);
+        Token nextToken(bool includeEchoComment = false);
         void pushBackLastToken();
     };
 

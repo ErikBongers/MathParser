@@ -96,8 +96,8 @@ class Tokenizer
         size_t size = -1;
     public:
         Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
-        Token peek();
-        Token next();
+        Token peek(bool includeEchoComment = false);
+        Token next(bool includeEchoComment = false);
         unsigned int getLine() { return line;}
         unsigned int getLinePos() { return linePos-1;} //linePos always contains the NEXT pos.
         unsigned int getPos() { return pos;} //pos always contains the NEXT pos.

@@ -1,5 +1,4 @@
-﻿* statement: store the start and end loc of statement (excluding last comment line)
-* npm scripts that start with a dot:
+﻿* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * echo:

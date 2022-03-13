@@ -27,6 +27,13 @@ void Parser::parse()
                 stmt->comment_line = t;
                 }
             }
+        while (peekToken(true).type == TokenType::ECHO_COMMENT_LINE)
+            {
+            auto t = tok.next(true);
+            stmt = createStatement();
+            stmt->comment_line = t;
+            statements.push_back(stmt);
+            }
         }
     }
 

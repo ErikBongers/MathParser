@@ -137,6 +137,7 @@ class Parser
         std::vector<Statement*> statements;
         bool muteBlock = false;
         bool echoBlock = false;
+        bool echoTrailingComment = false;
 
         Parser(const char* stream) : tok(stream) { }
         void parse();

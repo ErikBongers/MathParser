@@ -2,24 +2,24 @@
 #include "Tokenizer.h"
 #include <algorithm>
 
-Token Tokenizer::peek(bool includeEchoComment)
+Token Tokenizer::peek(bool includeComment)
     {
     auto savedPos = pos;
     auto savedLine = line;
     auto savedLinePos = linePos;
-    auto t = next(includeEchoComment);
+    auto t = next(includeComment);
     pos = savedPos;
     line = savedLine;
     linePos = savedLinePos;
     return t;
     }
 
-Token Tokenizer::next(bool includeEchoComment)
+Token Tokenizer::next(bool includeComment)
     {
     auto t = _nextToken();
-    if(includeEchoComment == false)
+    if(includeComment == false)
         {
-        while(t.type == TokenType::ECHO_COMMENT_LINE)
+        while(t.type == TokenType::ECHO_COMMENT_LINE || t.type == TokenType::COMMENT_LINE)
             t = _nextToken();
         }
     t.isFirstOnLine = newLineStarted;
@@ -69,13 +69,18 @@ Token Tokenizer::_nextToken()
                 {
                 nextChar(); //consume
                 nextChar(); //consume
-                auto comment = getToEOL(); //todo: store chars or not?
+                auto comment = getToEOL();
                 return Token(TokenType::ECHO_COMMENT_LINE, comment, getLine(), getLinePos());
                 }
             else if (peekChar() == '/')
                 {
                 nextChar();
                 return Token(TokenType::ECHO_END, "!/", getLine(), getLinePos()-1);
+                }
+            else if (peekChar() == '!')
+                {
+                nextChar();
+                return Token(TokenType::ECHO_DOUBLE, "!", getLine(), getLinePos()-1);
                 }
             return Token(TokenType::ECHO, c, getLine(), getLinePos());
             }
@@ -147,9 +152,11 @@ Token Tokenizer::_nextToken()
                     nextChar(); //consume
                     return Token(TokenType::EQ_DIV, getLine(), getLinePos()-1);
                 case '/':
+                    {
                     nextChar(); //consume
-                    skipToEOL();
-                    return _nextToken();
+                    auto comment = getToEOL();
+                    return Token(TokenType::COMMENT_LINE, comment, getLine(), getLinePos());
+                    }
                 case '*':
                     nextChar(); //consume
                     skipToEndOfComment();

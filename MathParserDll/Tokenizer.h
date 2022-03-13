@@ -37,8 +37,10 @@ enum class TokenType
     PIPE,
     ECHO,
     ECHO_COMMENT_LINE,
+    COMMENT_LINE,
     ECHO_START,
     ECHO_END,
+    ECHO_DOUBLE,
     MUTE_LINE,
     MUTE_START,
     MUTE_END,
@@ -96,8 +98,8 @@ class Tokenizer
         size_t size = -1;
     public:
         Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
-        Token peek(bool includeEchoComment = false);
-        Token next(bool includeEchoComment = false);
+        Token peek(bool includeComment = false);
+        Token next(bool includeComment = false);
         unsigned int getLine() { return line;}
         unsigned int getLinePos() { return linePos-1;} //linePos always contains the NEXT pos.
         unsigned int getPos() { return pos;} //pos always contains the NEXT pos.

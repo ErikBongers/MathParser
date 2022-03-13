@@ -15,6 +15,16 @@ namespace TestParser
             assertResult("a=1+2*3^4;", 163);
             }
 
+        TEST_METHOD(TestEcho)
+            {
+            assertOutput("a=1;", 1, "", "");
+            assertOutput("a=1; //comment", 1, "", "");
+            assertOutput("a=1; !//comment", 1, "", "comment");
+            assertOutput("!a=1;", 1, "a=1;", "");
+            assertOutput("!a=1; !//comment", 1, "a=1;", "comment");
+            assertOutput("!!a=1; //comment", 1, "a=1;", "comment");
+            }
+
         TEST_METHOD(TestNumberFormats)
             {
             assertResult("123_456", 123456);
@@ -104,9 +114,23 @@ namespace TestParser
             assertResult(stmt, expectedNumber, "", "", "DEC", expectedExponent);
             }
 
-        void assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
+        void assertOutput(const char* stmt, double expectedResult, const std::string text, const std::string comment)
             {
             std::string msg;
+
+            json result = assertResult(stmt, expectedResult);
+            //text
+            msg = std::format("\"{0}\" has incorrect comment\"{1}\", which should be \"{2}\"", stmt, (const std::string)result["text"], (const std::string)result["text"]);
+            Assert::AreEqual(text, (const std::string)result["text"], toWstring(msg).c_str());
+            //comment
+            msg = std::format("\"{0}\" has incorrect comment\"{1}\", which should be \"{2}\"", stmt, (const std::string)result["comment"], (const std::string)result["comment"]);
+            Assert::AreEqual(comment, (const std::string)result["comment"], toWstring(msg).c_str());
+            }
+
+        json assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
+            {
+            std::string msg;
+
             auto result = parseSingleResult(stmt);
             logJson(result);
             //errors
@@ -155,6 +179,7 @@ namespace TestParser
             //format
             msg = std::format("\"{0}\" has incorrect format {1}, which should be {2}", stmt, (const std::string)result["format"], expectedFormat);
             Assert::AreEqual(expectedFormat, (const std::string)result["format"], toWstring(msg).c_str());
+            return result;
             }
 
         void assertError(const char* stmt, const std::string errorId)

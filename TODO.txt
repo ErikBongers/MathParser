@@ -1,17 +1,6 @@
 ﻿* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
-* echo:
-  > echo statement with double !! -> also echo the plain comment behind it.
-    > problematic: comments are not always at the end of a statement.
-      > what to do with a echo_comment mid statement?
-        > Don't test for it in normal parser flow.
-        - Ignore it when it's NOT at the end of a statement behind ';' and newline
-        - when the statement is echoed:
-          - echo the statement text from startpoint to finish point
-          - echo the echo_comment that is behind the statement (like above)
-    > generally, what to do with echos of multi-line statements? Strip newlines?
-
 * implicit mult with power: precedence changes depending on order?
   > 2^3b  =  2^(3b) >> mult has prio
   > 2b^3  =  2(b^3) >> power has prio

@@ -13,7 +13,8 @@ void Parser::parse()
         if(stmt->echo)
             stmt->text = tok.getText(statementStartPos, tok.getPos());
         statements.push_back(stmt);
-        if (peekToken(true).type == TokenType::ECHO_COMMENT_LINE)
+        if (peekToken(true).type == TokenType::ECHO_COMMENT_LINE
+            || (echoTrailingComment && peekToken(true).type == TokenType::COMMENT_LINE))
             {
             auto t = tok.next(true);
             if (t.isFirstOnLine)
@@ -27,12 +28,16 @@ void Parser::parse()
                 stmt->comment_line = t;
                 }
             }
-        while (peekToken(true).type == TokenType::ECHO_COMMENT_LINE)
+        echoTrailingComment = false;
+        while (peekToken(true).type == TokenType::ECHO_COMMENT_LINE || peekToken(true).type == TokenType::COMMENT_LINE)
             {
             auto t = tok.next(true);
-            stmt = createStatement();
-            stmt->comment_line = t;
-            statements.push_back(stmt);
+            if(t.type == TokenType::ECHO_COMMENT_LINE)
+                {
+                stmt = createStatement();
+                stmt->comment_line = t;
+                statements.push_back(stmt);
+                }
             }
         }
     }
@@ -51,6 +56,13 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         {
         nextToken(); //consume ECHO
         stmt->echo = true;
+        return parseStatementHeader(stmt);
+        }
+    if(peekToken().type == TokenType::ECHO_DOUBLE)
+        {
+        nextToken(); //consume ECHO
+        stmt->echo = true;
+        echoTrailingComment = true;
         return parseStatementHeader(stmt);
         }
     if(peekToken().type == TokenType::ECHO_COMMENT_LINE)

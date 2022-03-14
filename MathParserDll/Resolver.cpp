@@ -193,18 +193,18 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     // check function arguments:
     if (!fd->isCorrectArgCount(callExpr.arguments.size()))
         return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
-    Function f(*fd);
     std::vector<Error> errors;
+    std::vector<Value> args;
     for (auto arg : callExpr.arguments)
         {
         auto argVal = resolveNode(*arg);
         errors.insert(errors.begin(), argVal.errors.begin(), argVal.errors.end());
-        f.addArg(argVal);
+        args.push_back(argVal);
         }
     if (hasRealErrors(errors))
         return Value(errors);
 
-    auto val = f.execute(callExpr.functionName.line, callExpr.functionName.pos);
+    auto val = fd->call(args, callExpr.functionName.line, callExpr.functionName.pos);
     return applyUnit(callExpr, val);
     }
 

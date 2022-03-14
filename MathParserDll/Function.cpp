@@ -7,39 +7,43 @@ std::map<std::string, FunctionDef*> FunctionDef::functions;
 
 void FunctionDef::init()
     {
-    FunctionDef::AddFunction(new Int());
-    FunctionDef::AddFunction(new Abs());
-    FunctionDef::AddFunction(new Max());
-    FunctionDef::AddFunction(new Min());
-    FunctionDef::AddFunction(new Sin());
-    FunctionDef::AddFunction(new Cos());
-    FunctionDef::AddFunction(new Tan());
-    FunctionDef::AddFunction(new ArcSin());
-    FunctionDef::AddFunction(new ArcCos());
-    FunctionDef::AddFunction(new ArcTan());
-    FunctionDef::AddFunction(new ASin());
-    FunctionDef::AddFunction(new ACos());
-    FunctionDef::AddFunction(new ATan());
-    FunctionDef::AddFunction(new Sqrt());
-    FunctionDef::AddFunction(new Inc());
-    FunctionDef::AddFunction(new Dec());
-    FunctionDef::AddFunction(new Round());
-    FunctionDef::AddFunction(new Floor());
-    FunctionDef::AddFunction(new Ceil());
-    FunctionDef::AddFunction(new Trunc());
+    FunctionDef::Add(new Int());
+    FunctionDef::Add(new Abs());
+    FunctionDef::Add(new Max());
+    FunctionDef::Add(new Min());
+    FunctionDef::Add(new Sin());
+    FunctionDef::Add(new Cos());
+    FunctionDef::Add(new Tan());
+    FunctionDef::Add(new ArcSin());
+    FunctionDef::Add(new ArcCos());
+    FunctionDef::Add(new ArcTan());
+    FunctionDef::Add(new ASin());
+    FunctionDef::Add(new ACos());
+    FunctionDef::Add(new ATan());
+    FunctionDef::Add(new Sqrt());
+    FunctionDef::Add(new Inc());
+    FunctionDef::Add(new Dec());
+    FunctionDef::Add(new Round());
+    FunctionDef::Add(new Floor());
+    FunctionDef::Add(new Ceil());
+    FunctionDef::Add(new Trunc());
     };
+
+FunctionDef::FunctionDef(const std::string& name, size_t minArgs, size_t maxArgs)
+    : name(name), minArgs(minArgs), maxArgs(maxArgs)
+    {}
 
 bool FunctionDef::isCorrectArgCount(size_t argCnt)
     {
-    return argCnt >= minArgs() && argCnt <= maxArgs();
+    return argCnt >= minArgs && argCnt <= maxArgs;
     }
 
-Value Function::execute(unsigned int line, unsigned int pos)
+Value FunctionDef::call(std::vector<Value>& args, unsigned int line, unsigned int pos)
     { 
-    if (!functionDef.isCorrectArgCount(args.size()))
+    if (!isCorrectArgCount(args.size()))
         return Value({std::numeric_limits<double>::quiet_NaN(), 0}, line, pos);
 
-    return functionDef.execute(args, line, pos); 
+    return execute(args, line, pos); 
     }
 
 bool FunctionDef::exists(const std::string& functionName)

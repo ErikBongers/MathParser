@@ -12,204 +12,157 @@ class FunctionDef
 
 
     public:
+        std::string name;
+        size_t minArgs;
+        size_t maxArgs;
+
+        FunctionDef(const std::string& name, size_t minArgs, size_t maxArgs);
+
         bool isCorrectArgCount(size_t argCnt);
-        virtual std::string getName() = 0;
-        virtual size_t minArgs() = 0;
-        virtual size_t maxArgs() = 0;
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) = 0;
+        Value call(std::vector<Value>& args, unsigned int line, unsigned int pos);
         static bool exists(const std::string& functionName);
-        static void AddFunction(FunctionDef* f) { functions.emplace(f->getName(), f); }
+        static void Add(FunctionDef* f) { functions.emplace(f->name, f); }
         static FunctionDef* get(const std::string& name);
-    };
-
-class Function
-    {
-    protected:
-        std::vector<Value> args;
-        FunctionDef& functionDef;
-
-    public:
-        Function(FunctionDef& def) : functionDef(def) { }
-        void addArg(Value arg) { args.push_back(arg); }
-        Value execute(unsigned int line, unsigned int pos);
+    private:
+        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) = 0;
     };
 
 class Inc : public FunctionDef
     {
     public:
-        std::string getName() override { return "_ inc"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Inc() : FunctionDef("_ inc", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Dec : public FunctionDef
     {
     public:
-        std::string getName() override { return "_ dec"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Dec() : FunctionDef("_ dec", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Int : public FunctionDef
     {
     public:
-        std::string getName() override { return "int"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Int() : FunctionDef("_ int", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Abs : public FunctionDef
     {
     public:
-        std::string getName() override { return "abs"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Abs() : FunctionDef("abs", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Max : public FunctionDef
     {
     public:
-        std::string getName() override { return "max"; }
-        size_t minArgs() override { return 2; }
-        size_t maxArgs() override { return 99; }
+        Max() : FunctionDef("max", 2, 99) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Min : public FunctionDef
     {
     public:
-        std::string getName() override { return "min"; }
-        size_t minArgs() override { return 2; }
-        size_t maxArgs() override { return 99; }
+        Min() : FunctionDef("min", 2, 99) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Sin : public FunctionDef
     {
     public:
-        std::string getName() override { return "sin"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Sin() : FunctionDef("sin", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Cos : public FunctionDef
     {
     public:
-        std::string getName() override { return "cos"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Cos() : FunctionDef("cos", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Tan : public FunctionDef
     {
     public:
-        std::string getName() override { return "tan"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Tan() : FunctionDef("tan", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ArcSin : public FunctionDef
     {
     public:
-        std::string getName() override { return "arcsin"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        ArcSin() : FunctionDef("arcsin", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ArcCos : public FunctionDef
     {
     public:
-        std::string getName() override { return "arccos"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        ArcCos() : FunctionDef("arccos", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ArcTan : public FunctionDef
     {
     public:
-        std::string getName() override { return "arctan"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        ArcTan() : FunctionDef("arctan", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ASin : public FunctionDef
     {
     public:
-        std::string getName() override { return "asin"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        ASin() : FunctionDef("asin", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ACos : public FunctionDef
     {
     public:
-        std::string getName() override { return "acos"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        ACos() : FunctionDef("acos", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class ATan : public FunctionDef
     {
     public:
-        std::string getName() override { return "atan"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        ATan() : FunctionDef("atan", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Sqrt : public FunctionDef
     {
     public:
-        std::string getName() override { return "sqrt"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Sqrt() : FunctionDef("sqrt", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Round : public FunctionDef
     {
     public:
-        std::string getName() override { return "round"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Round() : FunctionDef("round", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Floor : public FunctionDef
     {
     public:
-        std::string getName() override { return "floor"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Floor() : FunctionDef("floor", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Ceil : public FunctionDef
     {
     public:
-        std::string getName() override { return "ceil"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Ceil() : FunctionDef("ceil", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
 
 class Trunc: public FunctionDef
     {
     public:
-        std::string getName() override { return "trunc"; }
-        size_t minArgs() override { return 1; }
-        size_t maxArgs() override { return 1; }
+        Trunc() : FunctionDef("trunc", 1, 1) {}
         Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };

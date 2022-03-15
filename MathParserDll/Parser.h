@@ -4,7 +4,7 @@
 #include "Tokenizer.h"
 #include <vector>
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, MULTEXPR, ADDEXPR, POWEREXPR, ASSIGNMENT, STATEMENT};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT};
 class Parser;
 
 class Node
@@ -63,36 +63,15 @@ class CallExpr : public Node
         friend class Parser;
     };
 
-class MultExpr : public Node
+class BinaryOpExpr : public Node
     {
     public:
-        Node* m1 = nullptr;
+        Node* n1 = nullptr;
         Token op;
-        Node* m2 = nullptr;
+        Node* n2 = nullptr;
         bool implicitMult = false;
     private:
-        MultExpr() : Node(NodeType::MULTEXPR) {}
-        friend class Parser;
-    };
-
-class PowerExpr : public Node
-    {
-    public:
-        Node* p1 = nullptr;
-        Node* p2 = nullptr;
-    private:
-        PowerExpr() : Node(NodeType::POWEREXPR) {}
-        friend class Parser;
-    };
-
-class AddExpr : public Node
-    {
-    public:
-        Node* a1 = nullptr;
-        Token op;
-        Node* a2 = nullptr;
-    private:
-        AddExpr() : Node(NodeType::ADDEXPR) {}
+        BinaryOpExpr() : Node(NodeType::BINARYOPEXPR) {}
         friend class Parser;
     };
 
@@ -157,9 +136,7 @@ class Parser
         CallExpr* parseCallExpr(Token functionName);
         ~Parser() { for (auto node : nodes) delete node; }
         ConstExpr* createConst();
-        AddExpr* createAdd();
-        MultExpr* createMult();
-        PowerExpr* createPower();
+        BinaryOpExpr* createBinaryOp();
         PrimaryExpr* createPrimary();
         PostfixExpr* createPostfix();
         AssignExpr* createAssign();

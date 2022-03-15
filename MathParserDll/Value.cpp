@@ -4,6 +4,10 @@
 #include <sstream>
 #include <bitset>
 
+Value::Value(Number n, unsigned int line, unsigned int pos)
+    : line(line), pos(pos), type(ValueType::NUMBER), number(n)
+    {}
+
 Value::Value(ErrorId errorId, unsigned int line, unsigned int pos)
     : line(line), pos(pos)
     {
@@ -29,12 +33,12 @@ Value::Value(const std::vector<Error>& errors)
     }
 
 Value::Value(Number n, const Unit u, unsigned int line, unsigned int pos)
-    : line(line), pos(pos), number(n), unit(u)
+    : line(line), pos(pos), number(n), unit(u), type(ValueType::NUMBER)
     {
     }
 
 Value::Value(Token id, Number n, const Unit u, unsigned int line, unsigned int pos)
-    : line(line), pos(pos), id(id), number(n), unit(u)
+    : line(line), pos(pos), id(id), number(n), unit(u), type(ValueType::NUMBER)
     {
     }
 
@@ -136,86 +140,6 @@ std::string Value::to_string(const std::string& format)
     return str.str();
     }
 
-Value Value::operator+(const Value& v)
-    {
-    return doTerm(true, v);
-    }
-
-Value Value::operator-(const Value& v)
-    {
-    return doTerm(false, v);
-    }
-
-Value Value::doTerm(bool adding, const Value& v)
-    {
-    Value result = *this;
-    result.constant = false;
-    //if both values have units: convert them to SI before operation.
-    if (!unit.isClear() && !v.unit.isClear())
-        {
-        if(UnitDef::exists(unit.id.stringValue) && UnitDef::exists(v.unit.id.stringValue))
-            if (UnitDef::get(unit.id.stringValue).property != UnitDef::get(v.unit.id.stringValue).property)
-                {
-                result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
-                return result;
-                }
-        double d1 = this->toSI();
-        double d2 = v.toSI();
-        result.number = Number(adding ? (d1 + d2) : (d1 - d2), 0);
-        if(UnitDef::exists(this->unit.id.stringValue))
-            result.number = Number(UnitDef::get(this->unit.id.stringValue).fromSI(result.number.to_double()), 0); //TODO: try to keep exponent.
-        }
-    //if a unit is missing, just do operation.
-    else 
-        {
-        result.number = adding ? (number + v.number) : (number - v.number);
-        //if one unit is set, use it but give a warning
-        if (!unit.isClear() || !v.unit.isClear())
-            {
-            if (this->unit.isClear())
-                result.unit = v.unit;
-            result.errors.push_back(Error(ErrorId::W_ASSUMING_UNIT, line, pos));
-            }
-        }
-    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
-    return result;
-    }
-
-Value Value::operator*(const Value& v)
-    {
-    Value result = *this;
-    result.constant = false;
-    //TODO: if both units set: unit changes to unit*unit!
-    result.number = result.number * v.number;
-    if (unit.isClear())
-        result.unit = v.unit;
-    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
-    return result;
-    }
-
-Value Value::operator/(const Value& v)
-    {
-    Value result = *this;
-    result.constant = false;
-    //TODO: if both units set: unit changes to unit/unit!
-    result.number = result.number / v.number;
-    if (unit.isClear())
-        result.unit = v.unit;
-    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
-    return result;
-    }
-
-Value Value::operator^(const Value& v)
-    {
-    Value result = *this;
-    result.constant = false;
-    result.number = Number(std::pow(number.to_double(), v.number.to_double()), 0);
-    if (!unit.isClear())
-        result.unit = v.unit;
-    result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
-    return result;
-    }
-
 Value Value::convertToUnit(const Unit& to)
     {
     Value value = *this;
@@ -244,7 +168,7 @@ Value Value::convertToUnit(const Unit& to)
     return value;
     }
 
-inline double Value::toSI() const 
+double Value::toSI() const 
     { 
     if(UnitDef::exists(unit.id.stringValue))
         return UnitDef::get(unit.id.stringValue).toSI(number.to_double());
@@ -252,7 +176,7 @@ inline double Value::toSI() const
         return number.to_double();
     }
 
-inline double Value::fromSI() const 
+double Value::fromSI() const 
     { 
     if(UnitDef::exists(unit.id.stringValue))
         return UnitDef::get(unit.id.stringValue).fromSI(number.to_double()); 

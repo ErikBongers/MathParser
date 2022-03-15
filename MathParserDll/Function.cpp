@@ -49,7 +49,7 @@ Value FunctionDef::call(std::vector<Value>& args, unsigned int line, unsigned in
 bool FunctionDef::exists(const std::string& functionName)
     {
     if (functions.size() == 0)
-        FunctionDef::init();
+        FunctionDef::init(); //TODO: replace with injection.
     return functions.count(functionName) != 0;
     }
 

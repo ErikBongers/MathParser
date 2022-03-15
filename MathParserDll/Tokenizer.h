@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include "Number.h"
+#include "ValueType.h"
 
 enum class NumFormat { DEC, BIN, HEX };
 
@@ -57,33 +58,22 @@ class Token
         bool isNull() const { return type == TokenType::NULLPTR;}
         TokenType type;
         std::string stringValue;
+
+        ValueType valueType = ValueType::NONE;
         Number numberValue = {0,0};
+        //Timepoint
+        //Duration
+        //Calendar
+
         NumFormat numFormat = NumFormat::DEC;
         unsigned int pos;
         unsigned int line;
         bool isFirstOnLine = false;
         Token() : Token(TokenType::NULLPTR, 0, 0) {}
-        Token(TokenType type, char c, unsigned int line, unsigned int pos) 
-            : line(line), pos(pos)
-            {
-            this->type = type;
-            this->stringValue += c;
-            }
-        Token(TokenType type, Number n, unsigned int line, unsigned int pos, NumFormat numFormat = NumFormat::DEC)
-            : line(line), pos(pos), numFormat(numFormat)
-            {
-            this->type = type;
-            this->numberValue = n;
-            }
-        Token(TokenType type, std::string str, unsigned int line, unsigned int pos)
-            : line(line), pos(pos)
-            {
-            this->type = type;
-            this->stringValue = str;
-            }
-        Token(TokenType type, unsigned int line, unsigned int pos)
-            : Token(type, Number(0.0, 0), line, pos) 
-            { }
+        Token(TokenType type, char c, unsigned int line, unsigned int pos);
+        Token(TokenType type, Number n, unsigned int line, unsigned int pos, NumFormat numFormat = NumFormat::DEC);
+        Token(TokenType type, std::string str, unsigned int line, unsigned int pos);
+        Token(TokenType type, unsigned int line, unsigned int pos);
     };
 
 

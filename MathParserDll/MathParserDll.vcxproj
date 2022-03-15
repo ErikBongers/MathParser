@@ -173,12 +173,14 @@
     <ClInclude Include="Function.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="Number.h" />
+    <ClInclude Include="OperatorDef.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="Tokenizer.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Value.h" />
+    <ClInclude Include="ValueType.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +190,7 @@
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="json.cpp" />
     <ClCompile Include="Number.cpp" />
+    <ClCompile Include="OperatorDef.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

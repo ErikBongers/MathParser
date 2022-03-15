@@ -15,6 +15,11 @@ namespace TestParser
             assertResult("a=1+2*3^4;", 163);
             }
 
+        TEST_METHOD(TestCalls)
+            {
+            assertResult("sin(30deg)", 0.5);
+            }
+
         TEST_METHOD(TestEcho)
             {
             assertOutput("a=1;", 1, "", "");
@@ -160,7 +165,7 @@ namespace TestParser
                 //value
                 std::string value = result["value"];
                 double d = std::stod(value);
-                Assert::AreEqual(expectedResult, d);
+                Assert::AreEqual(std::round(expectedResult*10000)/10000, std::round(d*10000)/10000);
                 }
             else
                 {

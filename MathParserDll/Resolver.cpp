@@ -2,6 +2,7 @@
 #include "Resolver.h"
 #include "Function.h"
 #include "Number.h"
+#include "OperatorDef.h"
 
 std::string Resolver::result = "";
 void Resolver::resolve()
@@ -45,11 +46,9 @@ Value Resolver::resolveNode(const Node& node)
     {
     switch (node.type)
         {
-        case NodeType::ADDEXPR : return resolveAdd((const AddExpr&)node);
-        case NodeType::MULTEXPR: return resolveMult((const MultExpr&)node);
+        case NodeType::BINARYOPEXPR: return resolveBinaryOp((const BinaryOpExpr&)node);
         case NodeType::STATEMENT: return resolveStatement((const Statement&)node);
         case NodeType::ASSIGNMENT: return resolveAssign((const AssignExpr&)node);
-        case NodeType::POWEREXPR: return resolvePower((const PowerExpr&)node);
         case NodeType::PRIMARYEXPR: return resolvePrim((const PrimaryExpr&)node);
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
@@ -58,33 +57,35 @@ Value Resolver::resolveNode(const Node& node)
         }
     }
 
-Value Resolver::resolveAdd(const AddExpr& addExpr)
+Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     {
-    Value a1 = resolveNode(*addExpr.a1);
-    Value a2 = resolveNode(*addExpr.a2);
+    //TODO TEST: get rid of this!
+    if(OperatorDef::operators.size() == 0)
+        OperatorDef::init();
+    //END TODO
+
+    Value a1 = resolveNode(*addExpr.n1);
+    Value a2 = resolveNode(*addExpr.n2);
     Value result;
-    if (addExpr.op.type == TokenType::PLUS)
-        result = a1 + a2;
-    else
-        result = a1 - a2;
+    
+    OperatorType opType;
+    switch (addExpr.op.type)
+        {
+        case TokenType::PLUS: opType = OperatorType::PLUS; break;
+        case TokenType::MIN: opType = OperatorType::MIN; break;
+        case TokenType::MULT: opType = OperatorType::MULT; break;
+        case TokenType::DIV: opType = OperatorType::DIV; break;
+        case TokenType::POWER: opType = OperatorType::POW; break;
+        }
+    OperatorDef& op = OperatorDef::get(OperatorId(ValueType::NUMBER, opType, ValueType::NUMBER, ValueType::NUMBER));
+    std::vector<Value> args;
+    args.push_back(a1);
+    args.push_back(a2);
+    result = op.call(args, a1.line, a1.pos);
     if (addExpr.error.id != ErrorId::NONE)
         result.errors.push_back(addExpr.error);
     if(!addExpr.unit.isClear())
         result = result.convertToUnit(addExpr.unit);
-    return result;
-    }
-
-Value Resolver::resolveMult(const MultExpr& multExpr)
-    {
-    Value m1 = resolveNode(*multExpr.m1);
-    Value m2 = resolveNode(*multExpr.m2);
-    Value result;
-    if (multExpr.op.type == TokenType::MULT)
-        result = m1 * m2;
-    else
-        result = m1 / m2;
-    if (multExpr.error.id != ErrorId::NONE)
-        result.errors.push_back(multExpr.error);
     return result;
     }
 
@@ -110,16 +111,6 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
     result.id = assign.Id;
     if (assign.error.id != ErrorId::NONE)
         result.errors.push_back(assign.error);
-    return result;
-    }
-
-Value Resolver::resolvePower(const PowerExpr& powerExpr)
-    {
-    Value base = resolveNode(*powerExpr.p1);
-    Value exponent = resolveNode(*powerExpr.p2);
-    auto result = base ^ exponent;
-    if (powerExpr.error.id != ErrorId::NONE)
-        result.errors.push_back(powerExpr.error);
     return result;
     }
 

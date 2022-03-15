@@ -166,13 +166,13 @@ Node* Parser::parseAssignExpr()
                 }
 
             //build expression
-            if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN)
+            if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV)
                 {
-                AddExpr* addExpr = createAdd();
-                addExpr->a1 = idExpr;
-                addExpr->op = Token(oper, tok.getLine(), tok.getLinePos());
-                addExpr->a2 = parseAddExpr();
-                assign->expr = addExpr;
+                BinaryOpExpr* binOpExpr = createBinaryOp();
+                binOpExpr->n1 = idExpr;
+                binOpExpr->op = Token(oper, tok.getLine(), tok.getLinePos());
+                binOpExpr->n2 = parseAddExpr();
+                assign->expr = binOpExpr;
                 }
             else if (t.type == TokenType::EQ_UNIT)
                 {
@@ -190,14 +190,6 @@ Node* Parser::parseAssignExpr()
                     pfix->postfixId = Token::Null();
                     pushBackLastToken();
                     }
-                }
-            else //TODO: making assumptions here...
-                {
-                MultExpr* multExpr = createMult();
-                multExpr->m1 = idExpr;
-                multExpr->op = Token(oper, tok.getLine(), tok.getLinePos());
-                multExpr->m2 = parseAddExpr(); //note the parseAddExpr instead of parseMultExpr(), as the right=hand of the assign is similar to an expression between parenthesis.
-                assign->expr = multExpr;
                 }
             return assign;
             }
@@ -220,10 +212,10 @@ Node* Parser::parseAddExpr()
     auto t = nextToken();
     while (t.type == TokenType::PLUS || t.type == TokenType::MIN)
         {
-        AddExpr* addExpr = createAdd();
-        addExpr->a1 = node;
+        BinaryOpExpr* addExpr = createBinaryOp();
+        addExpr->n1 = node;
         addExpr->op = t;
-        addExpr->a2 = parseMultExpr();
+        addExpr->n2 = parseMultExpr();
         node = addExpr;
         t = nextToken();
         }
@@ -237,18 +229,18 @@ Node* Parser::parseMultExpr()
     auto t = nextToken();
     while (t.type == TokenType::MULT || t.type == TokenType::DIV)
         {
-        MultExpr* multExpr = createMult();
-        multExpr->m1 = node;
+        BinaryOpExpr* multExpr = createBinaryOp();
+        multExpr->n1 = node;
         multExpr->op = t;
-        multExpr->m2 = parsePowerExpr();
+        multExpr->n2 = parsePowerExpr();
         node = multExpr;
         //give warning if expr of form a/2b:
         if (multExpr->op.type == TokenType::DIV)
             {
-            if (multExpr->m2->is(NodeType::MULTEXPR))
+            if (multExpr->n2->is(NodeType::BINARYOPEXPR))
                 {
-                MultExpr* m2 = static_cast<MultExpr*>(multExpr->m2);
-                if (m2->implicitMult)
+                BinaryOpExpr* n2 = static_cast<BinaryOpExpr*>(multExpr->n2);
+                if (n2->implicitMult)
                     {
                     multExpr->error = Error(ErrorId::W_DIV_IMPL_MULT, tok.getLine(), tok.getLinePos());
                     }
@@ -266,12 +258,13 @@ Node* Parser::parsePowerExpr()
     auto t = nextToken();
     while (t.type == TokenType::POWER)
         {
-        PowerExpr* powerExpr = createPower();
-        powerExpr->p1 = node;
-        powerExpr->p2 = parsePowerExpr(); //right associative!
+        BinaryOpExpr* powerExpr = createBinaryOp();
+        powerExpr->n1 = node;
+        powerExpr->op = t;
+        powerExpr->n2 = parsePowerExpr(); //right associative!
         node = powerExpr;
-        if ((powerExpr->p1->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p1)->implicitMult)
-            || (powerExpr->p2->is(NodeType::MULTEXPR) && static_cast<MultExpr*>(powerExpr->p2)->implicitMult))
+        if ((powerExpr->n1->is(NodeType::BINARYOPEXPR) && static_cast<BinaryOpExpr*>(powerExpr->n1)->implicitMult)
+            || (powerExpr->n2->is(NodeType::BINARYOPEXPR) && static_cast<BinaryOpExpr*>(powerExpr->n2)->implicitMult))
             {
             powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT, tok.getLine(), tok.getLinePos());
             }
@@ -290,10 +283,10 @@ Node* Parser::parseImplicitMult()
            || t.type == TokenType::PAR_OPEN)
         {
         pushBackLastToken();
-        auto m = createMult();
-        m->m1 = n1;
+        auto m = createBinaryOp();
+        m->n1 = n1;
         m->op = Token(TokenType::MULT, '*', tok.getLine(), tok.getLinePos());
-        m->m2 = parsePostFixExpr();
+        m->n2 = parsePostFixExpr();
         m->implicitMult = true;
         n1 = m;
         t = nextToken();
@@ -462,9 +455,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     }
 
 ConstExpr* Parser::createConst() { ConstExpr* p = new ConstExpr; nodes.push_back(p); return p; }
-AddExpr* Parser::createAdd()   { AddExpr* p = new AddExpr; nodes.push_back(p); return p; }
-MultExpr* Parser::createMult() { MultExpr* p = new MultExpr; nodes.push_back(p); return p; }
-PowerExpr* Parser::createPower() { PowerExpr* p = new PowerExpr; nodes.push_back(p); return p; }
+BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
 PrimaryExpr* Parser::createPrimary() { PrimaryExpr* p = new PrimaryExpr; nodes.push_back(p); return p; }
 PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }
 AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }

@@ -1,4 +1,18 @@
-﻿* npm scripts that start with a dot:
+﻿* Operators: avoid exception when operator does not exist.
+* Operators/Units/Functions: use injection.
+
+* How to use different value types?
+  > They interact, so separate patterns won't work.
+  > operators?
+    > yeah...
+    > how to call the right operator?
+      > check type of A and B, find operator for A and B.
+      > pfff...sounds messy.
+      > but then again...name mangling does EXACTLY the same thing!
+      > create a map with mangled names for operators?
+        > if not found: error message: can't apply operator blah to type blah and blah.
+    > yeah...sounds great!
+* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * implicit mult with power: precedence changes depending on order?
@@ -52,10 +66,22 @@ Nice to have
           : februari 28.last  --> postfix notation? Feels like a subfield...
           : 2022:february:last(28) -> this could be both input syntax as output syntax, with or without the (28), which could be ignored when added to the input.
           
-
+  > Date notation
+    > '/' or '-' is not usable as it's same as MIN and DIV.
+    > string notation! We don't have string values in a math application, so we can use quotes for dates. Perhaps use single quotes, to allow double quotes for actual strings? Yeah...
 
   > Value is currently only numeric.
     > Dates and numbers can not be calculated with directly: now() + 5 ? Five what? days? hours?
+    > Analize a complexer expression with date stuff. See how it unravels and how to resolve it.
+      : elon_time = now() + ((timepoint - timepoint).hours * big_integer)
+      > timepoint = timepoint + [ (timepoint - timepoint = duration).hours = duration_in_unit_hours * number ]
+      > basic expressions:
+        - assign timepoint
+        - timepoint operator- timepoint ==> duration // note that only the minus operator makes sense. See chrono for all operators.
+        - duration operator* int
+
+
+
     > since dates are so different from numeric values, they require seperate classes, with their own resolvers and operators.
       > timepoint : UTC ( or system?) date.
       > duration : contains a numeric value and a 

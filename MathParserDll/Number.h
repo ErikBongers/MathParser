@@ -8,10 +8,10 @@ struct Number
     Number& operator++(int);
     Number& operator--(int);
     double to_double() const { return number * std::pow(10, exponent); }
-    Number operator+(const Number& n2);
-    Number operator-(const Number& n2);
-    Number operator*(const Number& n2);
-    Number operator/(const Number& n2);
+    Number operator+(const Number& n2) const;
+    Number operator-(const Number& n2) const;
+    Number operator*(const Number& n2) const;
+    Number operator/(const Number& n2) const;
     Number convertToExponent(int e) const;
     };
 

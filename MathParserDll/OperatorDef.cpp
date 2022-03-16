@@ -15,7 +15,7 @@ bool OperatorId::operator<(OperatorId const& id2) const
     if(this->op > id2.op)
         return false;
 
-    if(this->type2 < this->type2)
+    if(this->type2 < id2.type2)
         return true;
     return false;
     }

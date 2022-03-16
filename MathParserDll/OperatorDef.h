@@ -39,7 +39,7 @@ class OperatorDefs
         void init();
         std::map<OperatorId, OperatorDef*> operators;
         void Add(OperatorDef* op) { operators.emplace(op->id, op); }
-        OperatorDef& get(const OperatorId& id) { return *operators[id]; }
+        OperatorDef* get(const OperatorId& id) { return operators[id]; }
         UnitDefs& unitDefs;
     };
 

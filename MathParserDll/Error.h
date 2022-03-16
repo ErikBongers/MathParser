@@ -18,6 +18,7 @@ enum class ErrorId
     CONST_REDEF,
     W_VAR_IS_UNIT,
     W_VAR_IS_FUNCTION,
+    NO_OP,
     };
 
 
@@ -49,6 +50,8 @@ class Error
         Error() {}
         Error(ErrorId id, unsigned int line, unsigned int pos);
         Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1);
+        Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1, const std::string& arg2);
+        Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1, const std::string& arg2, const std::string& arg3);
         const std::string to_json();
         bool isWarning();
     };

@@ -22,23 +22,17 @@ class Unit
 
 enum class UnitClass { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DATE, VOLUME, UNDEFINED};
 
-struct UnitDef
+class UnitDef
     {
     private:
         double _toSI = 1; //default conversion factor
-        static std::map<std::string, UnitDef> defs;
-    public:
-        static void init();
-        static UnitDef& get(const std::string& key);
-        static bool exists(const std::string& key) { return defs.count(key) != 0; }
-        static bool isSameProperty(const Unit& u1, const Unit& u2);
 
+    public:
         std::string id;
         UnitClass property = UnitClass::UNDEFINED;
 
         std::function<double(double)> toSI;
         std::function<double(double)> fromSI;
-
         UnitDef()
             :UnitDef("", 1, UnitClass::UNDEFINED)
             {}
@@ -52,3 +46,17 @@ struct UnitDef
             fromSI = [this](double d) { return d / _toSI; };
             }
     };
+
+class UnitDefs
+    {
+    private:
+        std::map<std::string, UnitDef> defs;
+    public:
+        UnitDefs() { init(); }
+        void init();
+        UnitDef& get(const std::string& key);
+        bool exists(const std::string& key) { return defs.count(key) != 0; }
+        bool isSameProperty(const Unit& u1, const Unit& u2);
+
+    };
+

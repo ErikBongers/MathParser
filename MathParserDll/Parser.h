@@ -3,6 +3,7 @@
 #include "Error.h"
 #include "Tokenizer.h"
 #include <vector>
+#include "Function.h"
 
 enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT};
 class Parser;
@@ -112,13 +113,14 @@ class Parser
     private:
         Tokenizer tok;
     public:
+        FunctionDefs& functionDefs;
         std::map<std::string, Variable> ids;
         std::vector<Statement*> statements;
         bool muteBlock = false;
         bool echoBlock = false;
         bool echoTrailingComment = false;
 
-        Parser(const char* stream) : tok(stream) { }
+        Parser(const char* stream, FunctionDefs& functionDefs);
         void parse();
         Statement* parseStatement();
         Statement* parseStatementHeader(Statement* stmt);

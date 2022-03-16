@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "OperatorDef.h"
 #include "Value.h"
-
-std::map<OperatorId, OperatorDef*> OperatorDef::operators;
+#include "Resolver.h"
 
 bool OperatorId::operator<(OperatorId const& id2) const
     {
@@ -34,24 +33,24 @@ Value OperatorDef::call(std::vector<Value>& args, unsigned int line, unsigned in
     }
 
 
-void OperatorDef::init()
+void OperatorDefs::init()
     {
-    OperatorDef::AddOperator(new OpNumPlusNum());
-    OperatorDef::AddOperator(new OpNumMinNum());
-    OperatorDef::AddOperator(new OpNumMultNum());
-    OperatorDef::AddOperator(new OpNumDivNum());
-    OperatorDef::AddOperator(new OpNumPowNum());
+    Add(new OpNumPlusNum(*this));
+    Add(new OpNumMinNum(*this));
+    Add(new OpNumMultNum(*this));
+    Add(new OpNumDivNum(*this));
+    Add(new OpNumPowNum(*this));
     }
 
-Value doTerm(const Value& v1, bool adding, const Value& v)
+Value doTerm(UnitDefs& unitDefs, const Value& v1, bool adding, const Value& v)
     {
     Value result = v1;
     result.constant = false;
     //if both values have units: convert them to SI before operation.
     if (!v1.unit.isClear() && !v.unit.isClear())
         {
-        if(UnitDef::exists(v1.unit.id.stringValue) && UnitDef::exists(v.unit.id.stringValue))
-            if (UnitDef::get(v1.unit.id.stringValue).property != UnitDef::get(v.unit.id.stringValue).property)
+        if(unitDefs.exists(v1.unit.id.stringValue) && unitDefs.exists(v.unit.id.stringValue))
+            if (unitDefs.get(v1.unit.id.stringValue).property != unitDefs.get(v.unit.id.stringValue).property)
                 {
                 result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, v1.line, v1.pos));
                 return result;
@@ -59,8 +58,8 @@ Value doTerm(const Value& v1, bool adding, const Value& v)
         double d1 = v1.toSI();
         double d2 = v.toSI();
         result.number = Number(adding ? (d1 + d2) : (d1 - d2), 0);
-        if(UnitDef::exists(v1.unit.id.stringValue))
-            result.number = Number(UnitDef::get(v1.unit.id.stringValue).fromSI(result.number.to_double()), 0); //TODO: try to keep exponent.
+        if(unitDefs.exists(v1.unit.id.stringValue))
+            result.number = Number(unitDefs.get(v1.unit.id.stringValue).fromSI(result.number.to_double()), 0); //TODO: try to keep exponent.
         }
     //if a unit is missing, just do operation.
     else 
@@ -80,12 +79,12 @@ Value doTerm(const Value& v1, bool adding, const Value& v)
 
 Value OpNumPlusNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return doTerm(args[0], true, args[1]);
+    return doTerm(defs.unitDefs, args[0], true, args[1]);
     }
 
 Value OpNumMinNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return doTerm(args[0], false, args[1]);
+    return doTerm(defs.unitDefs, args[0], false, args[1]);
     }
 
 Value OpNumMultNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)

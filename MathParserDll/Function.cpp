@@ -2,35 +2,34 @@
 #include "Function.h"
 #include "Tokenizer.h"
 #include "Unit.h"
+#include "Resolver.h"
 
-std::map<std::string, FunctionDef*> FunctionDef::functions;
-
-void FunctionDef::init()
+void FunctionDefs::init()
     {
-    FunctionDef::Add(new Int());
-    FunctionDef::Add(new Abs());
-    FunctionDef::Add(new Max());
-    FunctionDef::Add(new Min());
-    FunctionDef::Add(new Sin());
-    FunctionDef::Add(new Cos());
-    FunctionDef::Add(new Tan());
-    FunctionDef::Add(new ArcSin());
-    FunctionDef::Add(new ArcCos());
-    FunctionDef::Add(new ArcTan());
-    FunctionDef::Add(new ASin());
-    FunctionDef::Add(new ACos());
-    FunctionDef::Add(new ATan());
-    FunctionDef::Add(new Sqrt());
-    FunctionDef::Add(new Inc());
-    FunctionDef::Add(new Dec());
-    FunctionDef::Add(new Round());
-    FunctionDef::Add(new Floor());
-    FunctionDef::Add(new Ceil());
-    FunctionDef::Add(new Trunc());
+    Add(new Int(*this));
+    Add(new Abs(*this));
+    Add(new Max(*this));
+    Add(new Min(*this));
+    Add(new Sin(*this));
+    Add(new Cos(*this));
+    Add(new Tan(*this));
+    Add(new ArcSin(*this));
+    Add(new ArcCos(*this));
+    Add(new ArcTan(*this));
+    Add(new ASin(*this));
+    Add(new ACos(*this));
+    Add(new ATan(*this));
+    Add(new Sqrt(*this));
+    Add(new Inc(*this));
+    Add(new Dec(*this));
+    Add(new Round(*this));
+    Add(new Floor(*this));
+    Add(new Ceil(*this));
+    Add(new Trunc(*this));
     };
 
-FunctionDef::FunctionDef(const std::string& name, size_t minArgs, size_t maxArgs)
-    : name(name), minArgs(minArgs), maxArgs(maxArgs)
+FunctionDef::FunctionDef(FunctionDefs& functionDefs, const std::string& name, size_t minArgs, size_t maxArgs)
+    : name(name), minArgs(minArgs), maxArgs(maxArgs), functionDefs(functionDefs)
     {}
 
 bool FunctionDef::isCorrectArgCount(size_t argCnt)
@@ -41,28 +40,24 @@ bool FunctionDef::isCorrectArgCount(size_t argCnt)
 Value FunctionDef::call(std::vector<Value>& args, unsigned int line, unsigned int pos)
     { 
     if (!isCorrectArgCount(args.size()))
-        return Value({std::numeric_limits<double>::quiet_NaN(), 0}, line, pos);
+        return Value(&functionDefs.unitDefs, {std::numeric_limits<double>::quiet_NaN(), 0}, line, pos);
 
     return execute(args, line, pos); 
     }
 
-bool FunctionDef::exists(const std::string& functionName)
+bool FunctionDefs::exists(const std::string& functionName)
     {
-    if (functions.size() == 0)
-        FunctionDef::init(); //TODO: replace with injection.
     return functions.count(functionName) != 0;
     }
 
-FunctionDef* FunctionDef::get(const std::string& name)
+FunctionDef* FunctionDefs::get(const std::string& name)
     {
-    if (functions.size() == 0)
-        FunctionDef::init();
     if (functions.count(name) == 0)
         return nullptr;
     return functions[name];
     }
 
-Value minMax(std::vector<Value>& args, unsigned int line, unsigned int pos, bool max)
+Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, unsigned int line, unsigned int pos, bool max)
     {
     bool diffUnits = false;
     Value ret;
@@ -83,7 +78,7 @@ Value minMax(std::vector<Value>& args, unsigned int line, unsigned int pos, bool
             {
             ret = args[i];
             }
-        if(!UnitDef::isSameProperty(unit, args[i].unit))
+        if(!functionDefs.unitDefs.isSameProperty(unit, args[i].unit))
            diffUnits = true;
         }
     std::vector<Error> errors;
@@ -99,12 +94,12 @@ Value minMax(std::vector<Value>& args, unsigned int line, unsigned int pos, bool
 
 Value Max::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return minMax(args, line, pos, true);
+    return minMax(functionDefs, args, line, pos, true);
     }
 
 Value Min::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return minMax(args, line, pos, false);
+    return minMax(functionDefs, args, line, pos, false);
     }
 
 Value Inc::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
@@ -139,85 +134,85 @@ Value Sin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos
     {
     double arg = args[0].number.to_double();
     if (args[0].unit.id.stringValue == "deg")
-        arg = UnitDef::get("deg").toSI(arg);;
-    return Value({sin(arg), 0}, line, pos);
+        arg = functionDefs.unitDefs.get("deg").toSI(arg);;
+    return Value(&functionDefs.unitDefs, {sin(arg), 0}, line, pos);
     }
 
 Value Cos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
     if (args[0].unit.id.stringValue == "deg")
-        arg = UnitDef::get("deg").toSI(arg);
-    return Value({cos(arg), 0}, line, pos);
+        arg = functionDefs.unitDefs.get("deg").toSI(arg);
+    return Value(&functionDefs.unitDefs, {cos(arg), 0}, line, pos);
     }
 
 Value Tan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
     if (args[0].unit.id.stringValue == "deg")
-        arg = UnitDef::get("deg").toSI(arg);
-    return Value({tan(arg), 0}, line, pos);
+        arg = functionDefs.unitDefs.get("deg").toSI(arg);
+    return Value(&functionDefs.unitDefs, {tan(arg), 0}, line, pos);
     }
 
 Value ArcSin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
-    return Value({asin(arg), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {asin(arg), 0}, line, pos);
     }
 
 Value ArcCos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
-    return Value({acos(arg), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {acos(arg), 0}, line, pos);
     }
 
 Value ATan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
-    return Value({atan(arg), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {atan(arg), 0}, line, pos);
     }
 
 Value ASin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
-    return Value({asin(arg), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {asin(arg), 0}, line, pos);
     }
 
 Value ACos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
-    return Value({acos(arg), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {acos(arg), 0}, line, pos);
     }
 
 Value ArcTan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
     double arg = args[0].number.to_double();
-    return Value({atan(arg), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {atan(arg), 0}, line, pos);
     }
 
 Value Sqrt::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return Value({sqrt(args[0].number.to_double()), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {sqrt(args[0].number.to_double()), 0}, line, pos);
     }
 
 Value Round::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return Value({round(args[0].number.to_double()), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {round(args[0].number.to_double()), 0}, line, pos);
     }
 
 Value Floor::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return Value({floor(args[0].number.to_double()), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {floor(args[0].number.to_double()), 0}, line, pos);
     }
 
 Value Ceil::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return Value({ceil(args[0].number.to_double()), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {ceil(args[0].number.to_double()), 0}, line, pos);
     }
 
 Value Trunc::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return Value({trunc(args[0].number.to_double()), 0}, line, pos);
+    return Value(&functionDefs.unitDefs, {trunc(args[0].number.to_double()), 0}, line, pos);
     }
 
 

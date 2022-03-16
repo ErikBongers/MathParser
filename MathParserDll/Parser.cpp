@@ -2,6 +2,11 @@
 #include "Parser.h"
 #include "Function.h"
 
+Parser::Parser(const char* stream, FunctionDefs& functionDefs)
+    : tok(stream), functionDefs(functionDefs) 
+    {
+    }
+
 void Parser::parse()
     {
     ConstExpr* pConst = createConst();
@@ -381,7 +386,7 @@ Node* Parser::parsePrimaryExpr()
         }
     else if (t.type == TokenType::ID)
         {
-        if (FunctionDef::exists(t.stringValue))
+        if (functionDefs.exists(t.stringValue))
             {
             return parseCallExpr(t);
             }

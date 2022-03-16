@@ -1,6 +1,8 @@
 #pragma once
 #include "Parser.h"
 #include "Value.h"
+#include "Unit.h"
+#include "OperatorDef.h"
 
 class Resolver
     {
@@ -20,10 +22,12 @@ class Resolver
         Value resolveConst(const ConstExpr& constExpr);
 
     public:
-        Resolver(Parser& parser) : parser(parser) {}
+        Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDefs);
         void resolve();
         std::string formatError(const std::string errorMsg, ...);
         static int getResultLen() { return (int)result.size(); }
         static const std::string& getResult() { return result; }
+        UnitDefs& unitDefs;
+        OperatorDefs& operatorDefs;
     };
 

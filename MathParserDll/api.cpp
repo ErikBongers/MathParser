@@ -4,6 +4,7 @@
 #include <cstring>
 #include "Tokenizer.h"
 #include "Resolver.h"
+#include "OperatorDef.h"
 #include "api.h"
 #include "version.h"
 
@@ -11,9 +12,11 @@ std::string version = "1.0." + std::to_string(VERSION_BUILD);
 
 int C_DECL parse(const char* str)
     {
-    UnitDef::init(); //todo: unsafe: parser and resolver require this. use dependency injection or singleton.
-    Parser parser(str);
-    Resolver resolver(parser);
+    UnitDefs unitDefs;
+    FunctionDefs functionDefs(unitDefs);
+    OperatorDefs operatorDefs(unitDefs);
+    Parser parser(str, functionDefs);
+    Resolver resolver(parser, unitDefs, operatorDefs);
     resolver.resolve();
     return getResultLen();
     }

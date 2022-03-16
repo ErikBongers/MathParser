@@ -5,10 +5,15 @@
 #include "OperatorDef.h"
 
 std::string Resolver::result = "";
+
+Resolver::Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDefs) : parser(parser), unitDefs(unitDefs), operatorDefs(operatorDefs) 
+    {
+    }
+
 void Resolver::resolve()
     {
     variables.clear();
-    auto PI = Value(Number(M_PI, 0), 0, 0);
+    auto PI = Value(&this->unitDefs, Number(M_PI, 0), 0, 0);
     PI.constant = true;
     variables.emplace("PI", PI);
     variables.emplace("pi", PI);
@@ -53,22 +58,17 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
-        default: return Value(ErrorId::UNKNOWN_EXPR, 0, 0);
+        default: return Value(&this->unitDefs, ErrorId::UNKNOWN_EXPR, 0, 0);
         }
     }
 
 Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     {
-    //TODO TEST: get rid of this!
-    if(OperatorDef::operators.size() == 0)
-        OperatorDef::init();
-    //END TODO
-
     Value a1 = resolveNode(*addExpr.n1);
     Value a2 = resolveNode(*addExpr.n2);
     Value result;
-    
-    OperatorType opType;
+
+    OperatorType opType = OperatorType::NONE;
     switch (addExpr.op.type)
         {
         case TokenType::PLUS: opType = OperatorType::PLUS; break;
@@ -77,7 +77,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
         case TokenType::DIV: opType = OperatorType::DIV; break;
         case TokenType::POWER: opType = OperatorType::POW; break;
         }
-    OperatorDef& op = OperatorDef::get(OperatorId(ValueType::NUMBER, opType, ValueType::NUMBER, ValueType::NUMBER));
+    OperatorDef& op = operatorDefs.get(OperatorId(ValueType::NUMBER, opType, ValueType::NUMBER, ValueType::NUMBER));
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
@@ -94,11 +94,11 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
     auto result = resolveNode(*assign.expr);
     if (variables.count(assign.Id.stringValue) == 0)
         {
-        if (UnitDef::exists(assign.Id.stringValue))
+        if (unitDefs.exists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
             }
-        else if (FunctionDef::exists(assign.Id.stringValue))
+        else if (parser.functionDefs.exists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
             }
@@ -118,7 +118,7 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
 Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     {
     if (pfix.error.id != ErrorId::NONE)
-        return Value(pfix.error);
+        return Value(&this->unitDefs, pfix.error);
     auto val = resolveNode(*pfix.expr);
     if(pfix.postfixId.isNull())
         val.unit = Unit::CLEAR();
@@ -149,7 +149,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
             val = variables[prim.Id.stringValue];
             }
         else
-            return Value(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
+            return Value(&this->unitDefs, ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
         }
     else if (prim.callExpr != nullptr)
         {
@@ -157,7 +157,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         auto val = resolveCall(callExpr);
         }
     else
-        return Value(ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
+        return Value(&this->unitDefs, ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
 
     return applyUnit(prim, val);
     }
@@ -175,15 +175,15 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
 
 Value Resolver::resolveCall(const CallExpr& callExpr)
     {
-    auto fd = FunctionDef::get(callExpr.functionName.stringValue.c_str());
+    auto fd = parser.functionDefs.get(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
-        return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
+        return Value(&this->unitDefs, ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
     if (callExpr.error.id != ErrorId::NONE)
-        return Value(callExpr.error);
+        return Value(&this->unitDefs, callExpr.error);
 
     // check function arguments:
     if (!fd->isCorrectArgCount(callExpr.arguments.size()))
-        return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
+        return Value(&this->unitDefs, ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
     std::vector<Error> errors;
     std::vector<Value> args;
     for (auto arg : callExpr.arguments)
@@ -193,7 +193,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         args.push_back(argVal);
         }
     if (hasRealErrors(errors))
-        return Value(errors);
+        return Value(&this->unitDefs, errors);
 
     auto val = fd->call(args, callExpr.functionName.line, callExpr.functionName.pos);
     return applyUnit(callExpr, val);
@@ -201,13 +201,13 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
-    auto v = Value(constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
+    auto v = Value(&this->unitDefs, constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
     v.numFormat = constExpr.constNumber.numFormat;
     if (constExpr.unit.isClear())
         v.unit = Unit();
     else
         {
-        if (UnitDef::exists(v.unit.id.stringValue) == false)
+        if (unitDefs.exists(v.unit.id.stringValue) == false)
             {
             v.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.unit.id.line, v.unit.id.pos, v.unit.id.stringValue.c_str()));
             }

@@ -7,7 +7,6 @@
 #include <iomanip>
 #include <vector>
 
-
 class Value
     {
     public:
@@ -30,15 +29,16 @@ class Value
         bool constant = false;
         unsigned int line;
         unsigned int pos;
+        UnitDefs* unitDefs;
 
-        Value() : line(0), pos(0) {}
-        Value(Number n, unsigned int line, unsigned int pos);
-        Value(ErrorId errorId, unsigned int line, unsigned int pos);
-        Value(ErrorId errorId, unsigned int line, unsigned int pos, const std::string& arg1);
-        Value(Number n, const Unit u, unsigned int line, unsigned int pos);
-        Value(Token id, Number n, const Unit u, unsigned int line, unsigned int pos);
-        Value(const Error& error);
-        Value(const std::vector<Error>& errors);
+        Value() : unitDefs(nullptr), line(0), pos(0) {}
+        Value(UnitDefs* unitDefs, Number n, unsigned int line, unsigned int pos);
+        Value(UnitDefs* unitDefs, ErrorId errorId, unsigned int line, unsigned int pos);
+        Value(UnitDefs* unitDefs, ErrorId errorId, unsigned int line, unsigned int pos, const std::string& arg1);
+        Value(UnitDefs* unitDefs, Number n, const Unit u, unsigned int line, unsigned int pos);
+        Value(UnitDefs* unitDefs, Token id, Number n, const Unit u, unsigned int line, unsigned int pos);
+        Value(UnitDefs* unitDefs, const Error& error);
+        Value(UnitDefs* unitDefs, const std::vector<Error>& errors);
 
         std::string to_string();
         std::string to_string(const std::string& format);

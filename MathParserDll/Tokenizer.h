@@ -34,7 +34,6 @@ enum class TokenType
     SEMI_COLON,
     COMMA,
     DOT, //except for the decimal dot.
-    QUOTE,
     PIPE,
     ECHO,
     ECHO_COMMENT_LINE,
@@ -45,6 +44,7 @@ enum class TokenType
     MUTE_LINE,
     MUTE_START,
     MUTE_END,
+    QUOTED_STR,
 
     UNKNOWN,
     EOT,
@@ -113,5 +113,6 @@ class Tokenizer
         std::string getToEOL();
         void skipToEndOfComment();
         Token _nextToken();
+        void skipToOnLine(char c);
     };
 

@@ -77,7 +77,6 @@ Token Tokenizer::_nextToken()
         case '^': return Token(TokenType::POWER, c, getLine(), getLinePos());
         case '=': return Token(TokenType::EQ, c, getLine(), getLinePos());
         case ',': return Token(TokenType::COMMA, c, getLine(), getLinePos());
-        case '\'': return Token(TokenType::QUOTE, c, getLine(), getLinePos());
         case '|': return Token(TokenType::PIPE, c, getLine(), getLinePos());
         case '!': 
             {
@@ -186,6 +185,13 @@ Token Tokenizer::_nextToken()
                 }
             return Token(TokenType::DIV, c, getLine(), getLinePos());
             }
+        case '\'':
+            {
+            auto start= pos;
+            auto curLine = line;
+            skipToOnLine('\'');
+            return Token(TokenType::QUOTED_STR, getText(start, pos), start, curLine);
+            }
         default:
             if ((c >= '0' && c <= '9') || c == '.')
                 {
@@ -199,6 +205,7 @@ Token Tokenizer::_nextToken()
                 return Token(TokenType::UNKNOWN, c, getLine(), getLinePos());
         }
     }
+
 
 Token Tokenizer::parseId(char c)
     {
@@ -426,6 +433,19 @@ void Tokenizer::skipToEOL()
             break;
         }
     }
+
+void Tokenizer::skipToOnLine(char c)
+    {
+    char cc;
+    while ((cc = nextChar()))
+        {
+        if(cc == '\n')
+            break;
+        if(c == cc)
+            break;
+        }
+    }
+
 
 void Tokenizer::skipToEndOfComment()
     {

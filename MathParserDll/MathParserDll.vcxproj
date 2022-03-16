@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="api.h" />
+    <ClInclude Include="Date.h" />
     <ClInclude Include="Error.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Function.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Value.cpp" />
+    <ClCompile Include="ValueType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="updateBuildNo.ps1" />

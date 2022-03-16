@@ -4,6 +4,7 @@
 #include "Tokenizer.h"
 #include <vector>
 #include "Function.h"
+#include "ValueType.h"
 
 enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT};
 class Parser;
@@ -26,9 +27,10 @@ class Node
 class ConstExpr : public Node
     {
     public:
-        Token constNumber;
+        ValueType type;
+        Token value;
     private:
-        ConstExpr() : Node(NodeType::CONSTEXPR) {};
+        ConstExpr(ValueType type) : Node(NodeType::CONSTEXPR), type(type) {};
         friend class Parser;
     };
 
@@ -134,10 +136,10 @@ class Parser
         Node* parsePostFixExpr();
         Node* parseOnePostFix(Node* node, Token t);
         Node* parsePrimaryExpr();
-        ConstExpr* parseConst(bool negative);
+        ConstExpr* parseNumber(bool negative);
         CallExpr* parseCallExpr(Token functionName);
         ~Parser() { for (auto node : nodes) delete node; }
-        ConstExpr* createConst();
+        ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
         PrimaryExpr* createPrimary();
         PostfixExpr* createPostfix();
@@ -154,5 +156,6 @@ class Parser
         Token peekToken(bool includeEchoComment = false);
         Token nextToken(bool includeEchoComment = false);
         void pushBackLastToken();
+        Node* parseAbsOperator();
     };
 

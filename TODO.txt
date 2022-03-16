@@ -1,18 +1,4 @@
-﻿* Operators: avoid exception when operator does not exist.
-* Operators/Units/Functions: use injection.
-
-* How to use different value types?
-  > They interact, so separate patterns won't work.
-  > operators?
-    > yeah...
-    > how to call the right operator?
-      > check type of A and B, find operator for A and B.
-      > pfff...sounds messy.
-      > but then again...name mangling does EXACTLY the same thing!
-      > create a map with mangled names for operators?
-        > if not found: error message: can't apply operator blah to type blah and blah.
-    > yeah...sounds great!
-* npm scripts that start with a dot:
+﻿* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * implicit mult with power: precedence changes depending on order?

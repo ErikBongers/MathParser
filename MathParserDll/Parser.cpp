@@ -9,8 +9,8 @@ Parser::Parser(const char* stream, FunctionDefs& functionDefs)
 
 void Parser::parse()
     {
-    ConstExpr* pConst = createConst();
-    pConst->constNumber = Token(TokenType::NUMBER, Number(M_PI, 0), tok.getLine(), tok.getLinePos());
+    ConstExpr* pConst = createConst(ValueType::NUMBER);
+    pConst->value = Token(TokenType::NUMBER, Number(M_PI, 0), tok.getLine(), tok.getLinePos());
     ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
     while (peekToken().type != TokenType::EOT)
         {
@@ -371,59 +371,64 @@ Node* Parser::parseUnitExpr()
 Node* Parser::parsePrimaryExpr()
     {
     auto t = nextToken();
-    if (t.type == TokenType::NUMBER)
+    switch (t.type)
         {
-        return parseConst(false);
-        }
-    else if (t.type == TokenType::MIN)
-        {
-        if (peekToken().type == TokenType::NUMBER)
+        case TokenType::NUMBER:
+            return parseNumber(false);
+        case TokenType::MIN:
+            if (peekToken().type == TokenType::NUMBER)
+                {
+                nextToken();
+                return parseNumber(true);
+                }
+            //else error?
+        case TokenType::ID:
+            if (functionDefs.exists(t.stringValue))
+                {
+                return parseCallExpr(t);
+                }
+            else
+                {
+                PrimaryExpr* primExpr = createPrimary();
+                primExpr->Id = t;
+                return primExpr;
+                }
+        case TokenType::PAR_OPEN:
             {
-            nextToken();
-            return parseConst(true);
+            auto addExpr = parseAddExpr();
+            t = nextToken();
+            //if (t.type != TokenType::PAR_CLOSE)
+            //    primExpr.errorPos = 1;//todo
+            return addExpr;
             }
-        //else error?
-        }
-    else if (t.type == TokenType::ID)
-        {
-        if (functionDefs.exists(t.stringValue))
+        case TokenType::PIPE:
+            return parseAbsOperator();
+        case TokenType::QUOTED_STR:
             {
-            return parseCallExpr(t);
+            auto constExpr = createConst(ValueType::TIMEPOINT);
+            return constExpr;
             }
-        else
-            {
-            PrimaryExpr* primExpr = createPrimary();
-            primExpr->Id = t;
-            return primExpr;
-            }
-        }
-    else if (t.type == TokenType::PAR_OPEN)
-        {
-        auto addExpr = parseAddExpr();
-        t = nextToken();
-        //if (t.type != TokenType::PAR_CLOSE)
-        //    primExpr.errorPos = 1;//todo
-        return addExpr;
-        }
-    else if (t.type == TokenType::PIPE)
-        {
-        auto addExpr = parseAddExpr();
-        CallExpr* callExpr = createCall();
-        callExpr->arguments.push_back(addExpr);
-        callExpr->functionName = Token(TokenType::ID, "abs", tok.getLine(), tok.getLinePos());
-        t = nextToken();
-        //if (t.type != TokenType::PAR_CLOSE)
-        //    callExpr.errorPos = 1;//todo
-        return callExpr;
         }
     return createPrimary(); //error
     }
 
-ConstExpr* Parser::parseConst(bool negative)
+Node* Parser::parseAbsOperator()
     {
-    auto constExpr = createConst();
+    auto addExpr = parseAddExpr();
+    CallExpr* callExpr = createCall();
+    callExpr->arguments.push_back(addExpr);
+    callExpr->functionName = Token(TokenType::ID, "abs", tok.getLine(), tok.getLinePos());
+    auto t = nextToken();
+    //if (t.type != TokenType::PAR_CLOSE)
+    //    callExpr.errorPos = 1;//todo
+    return callExpr;
+    }
+
+ConstExpr* Parser::parseNumber(bool negative)
+    {
+    auto constExpr = createConst(ValueType::NUMBER);
     currentToken.numberValue.number = (negative ? -1 : 1) * currentToken.numberValue.number;
-    constExpr->constNumber = currentToken;
+    constExpr->value = currentToken;
     return constExpr;
     }
 
@@ -459,7 +464,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     return callExpr;
     }
 
-ConstExpr* Parser::createConst() { ConstExpr* p = new ConstExpr; nodes.push_back(p); return p; }
+ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
 PrimaryExpr* Parser::createPrimary() { PrimaryExpr* p = new PrimaryExpr; nodes.push_back(p); return p; }
 PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }

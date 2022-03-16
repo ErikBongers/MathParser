@@ -77,11 +77,16 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
         case TokenType::DIV: opType = OperatorType::DIV; break;
         case TokenType::POWER: opType = OperatorType::POW; break;
         }
-    OperatorDef& op = operatorDefs.get(OperatorId(ValueType::NUMBER, opType, ValueType::NUMBER, ValueType::NUMBER));
+    OperatorDef* op = operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
+    if (op == nullptr)
+        {
+        result.errors.push_back(Error(ErrorId::NO_OP, addExpr.op.line, addExpr.op.pos, addExpr.op.stringValue, to_string(a1.type), to_string(a2.type)));
+        return result;
+        }
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
-    result = op.call(args, a1.line, a1.pos);
+    result = op->call(args, a1.line, a1.pos);
     if (addExpr.error.id != ErrorId::NONE)
         result.errors.push_back(addExpr.error);
     if(!addExpr.unit.isClear())
@@ -202,20 +207,27 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
-    auto v = Value(constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
-    v.numFormat = constExpr.constNumber.numFormat;
-    if (constExpr.unit.isClear())
-        v.unit = Unit();
+    if(constExpr.type == ValueType::NUMBER)
+        {
+        auto v = Value(constExpr.value.numberValue, constExpr.unit, constExpr.value.line, constExpr.value.pos);
+        v.numFormat = constExpr.value.numFormat;
+        if (constExpr.unit.isClear())
+            v.unit = Unit();
+        else
+            {
+            if (unitDefs.exists(v.unit.id.stringValue) == false)
+                {
+                v.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.unit.id.line, v.unit.id.pos, v.unit.id.stringValue.c_str()));
+                }
+            }
+        if (constExpr.error.id != ErrorId::NONE)
+            v.errors.push_back(constExpr.error);
+        return v;
+        }
     else
         {
-        if (unitDefs.exists(v.unit.id.stringValue) == false)
-            {
-            v.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.unit.id.line, v.unit.id.pos, v.unit.id.stringValue.c_str()));
-            }
+        return Value(Date(), constExpr.value.line, constExpr.value.pos);
         }
-    if (constExpr.error.id != ErrorId::NONE)
-        v.errors.push_back(constExpr.error);
-    return v;
     }
 
 std::string Resolver::formatError(const std::string errorMsg, ...)

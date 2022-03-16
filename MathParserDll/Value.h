@@ -4,6 +4,7 @@
 #include "Error.h"
 #include "Number.h"
 #include "ValueType.h"
+#include "Date.h"
 #include <iomanip>
 #include <vector>
 
@@ -38,6 +39,7 @@ class Value
         Value(Token id, Number n, const Unit u, unsigned int line, unsigned int pos);
         Value(const Error& error);
         Value(const std::vector<Error>& errors);
+        Value(Date date, unsigned int line, unsigned int pos);
 
         std::string to_string();
         std::string to_string(const std::string& format);

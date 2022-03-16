@@ -43,6 +43,13 @@ Value::Value(Token id, Number n, const Unit u, unsigned int line, unsigned int p
     {
     }
 
+Value::Value(Date date, unsigned int line, unsigned int pos)
+    : line(0), pos(0), type(ValueType::TIMEPOINT)
+    {
+    //TODO
+    }
+
+
 std::string Value::to_string() //TODO: unused?
     {
     std::ostringstream strs;

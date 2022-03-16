@@ -5,41 +5,41 @@
 #include <bitset>
 #include "Resolver.h"
 
-Value::Value(UnitDefs* unitDefs, Number n, unsigned int line, unsigned int pos)
-    : unitDefs(unitDefs), line(line), pos(pos), type(ValueType::NUMBER), number(n)
+Value::Value(Number n, unsigned int line, unsigned int pos)
+    : line(line), pos(pos), type(ValueType::NUMBER), number(n)
     {}
 
-Value::Value(UnitDefs* unitDefs, ErrorId errorId, unsigned int line, unsigned int pos)
-    : unitDefs(unitDefs), line(line), pos(pos)
+Value::Value(ErrorId errorId, unsigned int line, unsigned int pos)
+    : line(line), pos(pos)
     {
     errors.push_back(Error(errorId, line, pos));
     }
 
-Value::Value(UnitDefs* unitDefs, ErrorId errorId, unsigned int line, unsigned int pos, const std::string& arg1)
-    : unitDefs(unitDefs), line(line), pos(pos)
+Value::Value(ErrorId errorId, unsigned int line, unsigned int pos, const std::string& arg1)
+    : line(line), pos(pos)
     {
     errors.push_back(Error(errorId, line, pos, arg1));
     }
 
-Value::Value(UnitDefs* unitDefs, const Error& error)
-    : unitDefs(unitDefs), line(error.line), pos(error.pos)
+Value::Value(const Error& error)
+    : line(error.line), pos(error.pos)
     {
     errors.push_back(error);
     }
 
-Value::Value(UnitDefs* unitDefs, const std::vector<Error>& errors)
-    : unitDefs(unitDefs), line(0), pos(0)
+Value::Value(const std::vector<Error>& errors)
+    : line(0), pos(0)
     {
     this->errors.insert(this->errors.begin(), errors.begin(), errors.end());
     }
 
-Value::Value(UnitDefs* unitDefs, Number n, const Unit u, unsigned int line, unsigned int pos)
-    : unitDefs(unitDefs), line(line), pos(pos), number(n), unit(u), type(ValueType::NUMBER)
+Value::Value(Number n, const Unit u, unsigned int line, unsigned int pos)
+    : line(line), pos(pos), number(n), unit(u), type(ValueType::NUMBER)
     {
     }
 
-Value::Value(UnitDefs* unitDefs, Token id, Number n, const Unit u, unsigned int line, unsigned int pos)
-    : unitDefs(unitDefs), line(line), pos(pos), id(id), number(n), unit(u), type(ValueType::NUMBER)
+Value::Value(Token id, Number n, const Unit u, unsigned int line, unsigned int pos)
+    : line(line), pos(pos), id(id), number(n), unit(u), type(ValueType::NUMBER)
     {
     }
 
@@ -141,7 +141,7 @@ std::string Value::to_string(const std::string& format)
     return str.str();
     }
 
-Value Value::convertToUnit(const Unit& to)
+Value Value::convertToUnit(const Unit& to, UnitDefs& unitDefs)
     {
     Value value = *this;
     double fFrom = 1;
@@ -153,34 +153,34 @@ Value Value::convertToUnit(const Unit& to)
         return value;
         }
     
-    if (unitDefs->exists(to.id.stringValue) == false)
+    if (unitDefs.exists(to.id.stringValue) == false)
         {
         value.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.id.line, to.id.pos, to.id.stringValue.c_str()));
         return value;
         }
-    if (unitDefs->get(unit.id.stringValue).property != unitDefs->get(to.id.stringValue).property)
+    if (unitDefs.get(unit.id.stringValue).property != unitDefs.get(to.id.stringValue).property)
         {
         value.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
         return value;
         }
-    value.number = Number(unitDefs->get(this->unit.id.stringValue).toSI(this->number.to_double()), 0); //from -> SI
-    value.number = Number(unitDefs->get(to.id.stringValue).fromSI(value.number.to_double()), 0);  //SI -> to
+    value.number = Number(unitDefs.get(this->unit.id.stringValue).toSI(this->number.to_double()), 0); //from -> SI
+    value.number = Number(unitDefs.get(to.id.stringValue).fromSI(value.number.to_double()), 0);  //SI -> to
     value.unit = to;
     return value;
     }
 
-double Value::toSI() const 
+double Value::toSI(UnitDefs& unitDefs) const 
     { 
-    if(unitDefs->exists(unit.id.stringValue))
-        return unitDefs->get(unit.id.stringValue).toSI(number.to_double());
+    if(unitDefs.exists(unit.id.stringValue))
+        return unitDefs.get(unit.id.stringValue).toSI(number.to_double());
     else
         return number.to_double();
     }
 
-double Value::fromSI() const 
+double Value::fromSI(UnitDefs& unitDefs) const 
     { 
-    if(unitDefs->exists(unit.id.stringValue))
-        return unitDefs->get(unit.id.stringValue).fromSI(number.to_double()); 
+    if(unitDefs.exists(unit.id.stringValue))
+        return unitDefs.get(unit.id.stringValue).fromSI(number.to_double()); 
     else
         return number.to_double();
     }

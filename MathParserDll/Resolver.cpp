@@ -13,7 +13,7 @@ Resolver::Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDef
 void Resolver::resolve()
     {
     variables.clear();
-    auto PI = Value(&this->unitDefs, Number(M_PI, 0), 0, 0);
+    auto PI = Value(Number(M_PI, 0), 0, 0);
     PI.constant = true;
     variables.emplace("PI", PI);
     variables.emplace("pi", PI);
@@ -58,7 +58,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
-        default: return Value(&this->unitDefs, ErrorId::UNKNOWN_EXPR, 0, 0);
+        default: return Value(ErrorId::UNKNOWN_EXPR, 0, 0);
         }
     }
 
@@ -85,7 +85,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     if (addExpr.error.id != ErrorId::NONE)
         result.errors.push_back(addExpr.error);
     if(!addExpr.unit.isClear())
-        result = result.convertToUnit(addExpr.unit);
+        result = result.convertToUnit(addExpr.unit, unitDefs);
     return result;
     }
 
@@ -102,12 +102,13 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
             }
-
+        variables.emplace(assign.Id.stringValue, Value()); //create var, regardless of errors.
         }
-    if(variables[assign.Id.stringValue].constant)
+    auto& var = getVar(assign.Id.stringValue);
+    if(var.constant)
         result.errors.push_back(Error(ErrorId::CONST_REDEF, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
-    variables[assign.Id.stringValue] = result; //do not store the value with the id. The value of a variable is just the value.
-    variables[assign.Id.stringValue].errors.clear(); //don't keep the errors with the variables, but only keep thew with the statement's result.
+    var = result; //do not store the value with the id. The value of a variable is just the value.
+    var.errors.clear(); //don't keep the errors with the variables, but only keep thew with the statement's result.
     result.id = assign.Id;
     if (assign.error.id != ErrorId::NONE)
         result.errors.push_back(assign.error);
@@ -118,7 +119,7 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
 Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     {
     if (pfix.error.id != ErrorId::NONE)
-        return Value(&this->unitDefs, pfix.error);
+        return Value(pfix.error);
     auto val = resolveNode(*pfix.expr);
     if(pfix.postfixId.isNull())
         val.unit = Unit::CLEAR();
@@ -129,7 +130,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     else if(pfix.postfixId.stringValue == "dec")
         val.numFormat = NumFormat::DEC;
     else
-        val = val.convertToUnit(pfix.postfixId);
+        val = val.convertToUnit(pfix.postfixId, unitDefs);
     //in case of (x.km)m, both postfixId (km) and unit (m) are filled.
     return applyUnit(pfix, val);
     }
@@ -146,10 +147,10 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         auto found = variables.find(prim.Id.stringValue);
         if (found != variables.end())
             {
-            val = variables[prim.Id.stringValue];
+            val = getVar(prim.Id.stringValue);
             }
         else
-            return Value(&this->unitDefs, ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
+            return Value(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
         }
     else if (prim.callExpr != nullptr)
         {
@@ -157,7 +158,7 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
         auto val = resolveCall(callExpr);
         }
     else
-        return Value(&this->unitDefs, ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
+        return Value(ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
 
     return applyUnit(prim, val);
     }
@@ -166,7 +167,7 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
     {
     if (!node.unit.isClear() && !val.unit.isClear())
         {
-        val = val.convertToUnit(node.unit);
+        val = val.convertToUnit(node.unit, unitDefs);
         }
     else if (!node.unit.isClear())
         val.unit = node.unit;
@@ -177,13 +178,13 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     {
     auto fd = parser.functionDefs.get(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
-        return Value(&this->unitDefs, ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
+        return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
     if (callExpr.error.id != ErrorId::NONE)
-        return Value(&this->unitDefs, callExpr.error);
+        return Value(callExpr.error);
 
     // check function arguments:
     if (!fd->isCorrectArgCount(callExpr.arguments.size()))
-        return Value(&this->unitDefs, ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
+        return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
     std::vector<Error> errors;
     std::vector<Value> args;
     for (auto arg : callExpr.arguments)
@@ -193,7 +194,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         args.push_back(argVal);
         }
     if (hasRealErrors(errors))
-        return Value(&this->unitDefs, errors);
+        return Value(errors);
 
     auto val = fd->call(args, callExpr.functionName.line, callExpr.functionName.pos);
     return applyUnit(callExpr, val);
@@ -201,7 +202,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
-    auto v = Value(&this->unitDefs, constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
+    auto v = Value(constExpr.constNumber.numberValue, constExpr.unit, constExpr.constNumber.line, constExpr.constNumber.pos);
     v.numFormat = constExpr.constNumber.numFormat;
     if (constExpr.unit.isClear())
         v.unit = Unit();
@@ -225,4 +226,9 @@ std::string Resolver::formatError(const std::string errorMsg, ...)
     snprintf(buffer, 200, errorMsg.c_str(), args);
     va_end(args);
     return buffer;
+    }
+
+Value& Resolver::getVar(const std::string& id)
+    {
+    return variables.find(id)->second;
     }

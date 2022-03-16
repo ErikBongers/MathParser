@@ -29,5 +29,6 @@ class Resolver
         static const std::string& getResult() { return result; }
         UnitDefs& unitDefs;
         OperatorDefs& operatorDefs;
+        Value& getVar(const std::string& id);
     };
 

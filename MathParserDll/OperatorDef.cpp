@@ -55,8 +55,8 @@ Value doTerm(UnitDefs& unitDefs, const Value& v1, bool adding, const Value& v)
                 result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, v1.line, v1.pos));
                 return result;
                 }
-        double d1 = v1.toSI();
-        double d2 = v.toSI();
+        double d1 = v1.toSI(unitDefs);
+        double d2 = v.toSI(unitDefs);
         result.number = Number(adding ? (d1 + d2) : (d1 - d2), 0);
         if(unitDefs.exists(v1.unit.id.stringValue))
             result.number = Number(unitDefs.get(v1.unit.id.stringValue).fromSI(result.number.to_double()), 0); //TODO: try to keep exponent.

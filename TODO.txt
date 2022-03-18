@@ -1,4 +1,8 @@
-﻿* npm scripts that start with a dot:
+﻿* implement DateTokenizer -> rename DateParser
+* test chrono with both MSVC and EMCC
+  > not everything is implemented.
+
+* npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
 
 * implicit mult with power: precedence changes depending on order?
@@ -25,6 +29,9 @@ GUI
 
 Nice to have
 ---------------
+* #define:
+  > the hash tag is no problem as it means "no output", and that's ok for defines.
+  > a define is returned in result["defines"]["date_format]...
 * units :
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html
@@ -53,8 +60,11 @@ Nice to have
           : 2022:february:last(28) -> this could be both input syntax as output syntax, with or without the (28), which could be ignored when added to the input.
           
   > Date notation
-    > '/' or '-' is not usable as it's same as MIN and DIV.
-    > string notation! We don't have string values in a math application, so we can use quotes for dates. Perhaps use single quotes, to allow double quotes for actual strings? Yeah...
+    > if dd or mon are <= 12 -> error ambiguous.
+    > always allow yyyy mm dd
+    > #define date_format MDY | DMY  (YMD is always allowed)
+    > date seperators: '/' '-' ' ' ','
+    > month can be written in number, abbrev and full.
 
   > Value is currently only numeric.
     > Dates and numbers can not be calculated with directly: now() + 5 ? Five what? days? hours?

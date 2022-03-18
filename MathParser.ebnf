@@ -49,10 +49,17 @@ primaryExpr = const |
 absExpr = '|' addExpr '|'
 
 const = {-} [0..9] unit |
-        QUOT formattedValue QUOT
-
-formattedValue = dateValue //for now, only dates.
+        QUOT dateString QUOT
 
 unit = id
 
 callExpr = funcId '(' exprList ')'
+
+dateString = dateElement dateSeparator dateElement dateSeparator dateElement
+
+dateElement = integer | 'last' | monthName | dayName | timeString
+
+dateSeparator = ' ' | '/' | '-'
+
+timeSeparator = ':'
+timeString = ...todo...

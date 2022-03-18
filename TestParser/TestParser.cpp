@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "../MathParserDll/api.h"
+#include "../MathParserDll/Date.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace nlohmann;
@@ -10,6 +11,25 @@ namespace TestParser
     {
     public:
         
+        TEST_METHOD(TestDates)
+            {
+            testDateString("2022/12/13", 13, 12, 2022);
+            testDateString("2022,12,13", 13, 12, 2022);
+            testDateString("2022-12-13", 13, 12, 2022);
+            testDateString("Jan 12, 2022", 12, 1, 2022);
+            testDateString("12 28 2022", 28, 12, 2022);
+            testDateString("28 12 2022", 28, 12, 2022);
+            testDateString("2022 12 28", 28, 12, 2022);
+            testDateString("2022 28 12", 28, 12, 2022);
+            testDateString("28 2022 12", 28, 12, 2022);
+            testDateString("12 2022 28", 28, 12, 2022);
+            testDateString("2022 2 1", 1, 2, 2022);
+            testDateString("2022 last 1", 99, 1, 2022);
+            testDateString("last 1", 99, 1, Date::EmptyYear);
+            testDateString("26 1", 26, 1, Date::EmptyYear);
+            testDateString("feb 1", 1, 2, Date::EmptyYear);
+            }
+
         TEST_METHOD(TestPrecedence)
             {
             assertResult("a=1+2*3^4;", 163);
@@ -240,5 +260,16 @@ namespace TestParser
             cls << s.c_str();
             return cls.str();
             }
+
+        void testDateString(const char* txtDate, int day = 0, int month = 0, long year = 0)
+            {
+            Date date = testDate(txtDate);
+            int mon = (char)date.month;
+            std::string msg = std::format("\"{0}\" does not match {1}/{2}/{3}.", txtDate, (int)date.day, mon, date.year);
+            if(date.day != day || ((int)date.month != month) || date.year != year)
+                Assert::Fail(toWstring(msg).c_str());
+            }
+
+
     };
 }

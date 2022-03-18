@@ -226,7 +226,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
         }
     else
         {
-        return Value(Date(), constExpr.value.line, constExpr.value.pos);
+        return Value(DateParser(constExpr.value.stringValue).parse(), constExpr.value.line, constExpr.value.pos);
         }
     }
 

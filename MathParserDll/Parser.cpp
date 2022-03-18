@@ -382,6 +382,7 @@ Node* Parser::parsePrimaryExpr()
                 return parseNumber(true);
                 }
             //else error?
+            break;
         case TokenType::ID:
             if (functionDefs.exists(t.stringValue))
                 {
@@ -406,6 +407,7 @@ Node* Parser::parsePrimaryExpr()
         case TokenType::QUOTED_STR:
             {
             auto constExpr = createConst(ValueType::TIMEPOINT);
+            constExpr->value = t;
             return constExpr;
             }
         }

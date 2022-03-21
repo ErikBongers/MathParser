@@ -4,6 +4,7 @@
 #include "Number.h"
 #include "OperatorDef.h"
 #include "trim.h"
+#include <sstream>
 
 std::string Resolver::result = "";
 
@@ -37,11 +38,16 @@ Value Resolver::resolveDefine(const Define& define)
     {
     Value result;
     std::string options = rtrim_copy(define.def.stringValue);
-    if(options  == "date_units")
-        this->unitDefs.addDateUnits();
-    else
-        result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.def.line, define.def.pos, options));
-    
+    std::istringstream iss(options);
+    std::string item;
+    while (std::getline(iss, item, ' ')) {
+        if(item == "date_units")
+            this->unitDefs.addDateUnits();
+        else if(item == "short_date_units")
+            this->unitDefs.addShortDateUnits();
+        else
+            result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.def.line, define.def.pos, options));
+        }
     return result;
     }
 

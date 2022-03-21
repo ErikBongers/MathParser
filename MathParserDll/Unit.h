@@ -58,5 +58,6 @@ class UnitDefs
         bool exists(const std::string& key) { return defs.count(key) != 0; }
         bool isSameProperty(const Unit& u1, const Unit& u2);
         void addDateUnits();
+        void addShortDateUnits();
     };
 

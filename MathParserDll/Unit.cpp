@@ -84,3 +84,14 @@ void UnitDefs::addDateUnits()
     defs.emplace("months", UnitDef("months", 60*60*24*7*30, UnitClass::DATE));
     defs.emplace("years", UnitDef("years", 60*60*24*7*30*12, UnitClass::DATE));
     }
+
+void UnitDefs::addShortDateUnits()
+    {
+    defs.emplace("s", UnitDef("s", 1, UnitClass::DATE));
+    defs.emplace("min", UnitDef("min", 60, UnitClass::DATE));
+    defs.emplace("h", UnitDef("h", 60*60, UnitClass::DATE));
+    defs.emplace("d", UnitDef("d", 60*60*24, UnitClass::DATE));
+    defs.emplace("w", UnitDef("w", 60*60*24*7, UnitClass::DATE));
+    defs.emplace("mon", UnitDef("mon", 60*60*24*7*30, UnitClass::DATE));
+    defs.emplace("y", UnitDef("y", 60*60*24*7*30*12, UnitClass::DATE));
+    }

@@ -250,8 +250,3 @@ int DateParser::countDateSlices()
     {
     return (int)slices.size();//TODO: exclude time slices.
     }
-
-Date testDate(const char* txtDate)
-    {
-    return DateParser(txtDate).parse();
-    }

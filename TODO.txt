@@ -1,7 +1,8 @@
-﻿* Duration
-  > 2y ==> a value with a unit.
-  > (2d + 5h)  ==> converted so n hours, just like normal values.
-  > chrono defines nanoseconds to years in SI seconds.
+﻿* Duration calculations work!
+  > create Date class. (don't rename to Calendar, as well probably never have a TimePoint needed?)
+  - separate fields for all fragments
+  - parser (already in progress)
+  - operators for what...works
 * myDate + 1y
   > y unit
 * test chrono with both MSVC and EMCC

@@ -15,43 +15,64 @@ void Parser::parse()
     while (peekToken().type != TokenType::EOT)
         {
         auto stmt = parseStatement();
-        if(stmt->echo)
-            stmt->text = tok.getText(statementStartPos, tok.getPos());
         statements.push_back(stmt);
-        if (peekToken(true).type == TokenType::ECHO_COMMENT_LINE
-            || (echoTrailingComment && peekToken(true).type == TokenType::COMMENT_LINE))
+        parseEchosBetweenStatements(stmt);
+        }
+    }
+
+void Parser::parseEchosBetweenStatements(Statement* stmt)
+    {
+    if (peekToken(true).type == TokenType::ECHO_COMMENT_LINE
+        || (echoTrailingComment && peekToken(true).type == TokenType::COMMENT_LINE))
+        {
+        auto t = tok.next(true);
+        if (t.isFirstOnLine)
             {
-            auto t = tok.next(true);
-            if (t.isFirstOnLine)
-                {
-                stmt = createStatement();
-                stmt->comment_line = t;
-                statements.push_back(stmt);
-                }
-            else
-                {
-                stmt->comment_line = t;
-                }
+            stmt = createStatement();
+            stmt->comment_line = t;
+            statements.push_back(stmt);
             }
-        echoTrailingComment = false;
-        while (peekToken(true).type == TokenType::ECHO_COMMENT_LINE || peekToken(true).type == TokenType::COMMENT_LINE)
+        else
             {
-            auto t = tok.next(true);
-            if(t.type == TokenType::ECHO_COMMENT_LINE)
-                {
-                stmt = createStatement();
-                stmt->comment_line = t;
-                statements.push_back(stmt);
-                }
+            stmt->comment_line = t;
             }
         }
+    echoTrailingComment = false;
+    while (peekToken(true).type == TokenType::ECHO_COMMENT_LINE || peekToken(true).type == TokenType::COMMENT_LINE)
+        {
+        auto t = tok.next(true);
+        if(t.type == TokenType::ECHO_COMMENT_LINE)
+            {
+            stmt = createStatement();
+            stmt->comment_line = t;
+            statements.push_back(stmt);
+            }
+        }
+    }
+
+Define* Parser::parseDefine()
+    {
+    auto t = peekToken();
+    if (t.type == TokenType::DEFINE || t.type == TokenType::UNDEF)
+        {
+        auto define = createDefine();
+        define->def = nextToken();//consume;
+        return define;
+        }
+    return nullptr;
     }
 
 Statement* Parser::parseStatement()
     {
     Statement* stmt = createStatement();
-    stmt = parseStatementHeader(stmt);
-    stmt->mute |= this->muteBlock;
+    stmt->define = parseDefine();
+    if(stmt->define == nullptr)
+        {
+        stmt = parseStatementHeader(stmt);
+        stmt->mute |= this->muteBlock;
+        if(stmt->echo)
+            stmt->text = tok.getText(statementStartPos, tok.getPos());
+        }
     return stmt;
     }
 
@@ -471,6 +492,7 @@ BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nod
 PrimaryExpr* Parser::createPrimary() { PrimaryExpr* p = new PrimaryExpr; nodes.push_back(p); return p; }
 PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }
 AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }
+Define* Parser::createDefine() { Define* p = new Define; nodes.push_back(p); return p; }
 Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
 CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }
 

@@ -115,6 +115,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::W_VAR_IS_UNIT, {ErrorId::W_VAR_IS_UNIT, "W_VAR_IS_UNIT", "Warning; variable {0} overrides unit with same name."}},
         {ErrorId::W_VAR_IS_FUNCTION, {ErrorId::W_VAR_IS_FUNCTION, "W_VAR_IS_FUNCTION", "Warning; variable {0} overrides function with same name."}},
         {ErrorId::NO_OP, {ErrorId::NO_OP, "NO_OP", "No operator '{0}' defined for {1} and {2}."}},
+        {ErrorId::DEFINE_NOT_DEF, {ErrorId::DEFINE_NOT_DEF, "DEFINE_NOT_DEF", "#define: option '{0}' not recognized."}},
     };
 
 bool hasRealErrors(std::vector<Error>& errors)

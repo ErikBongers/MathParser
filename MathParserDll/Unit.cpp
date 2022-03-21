@@ -73,3 +73,14 @@ bool UnitDefs::isSameProperty(const Unit& u1, const Unit& u2)
     {
     return get(u1.id.stringValue).property == get(u2.id.stringValue).property;
     }
+
+void UnitDefs::addDateUnits()
+    {
+    defs.emplace("seconds", UnitDef("seconds", 1, UnitClass::DATE));
+    defs.emplace("minutes", UnitDef("minutes", 60, UnitClass::DATE));
+    defs.emplace("hours", UnitDef("hours", 60*60, UnitClass::DATE));
+    defs.emplace("days", UnitDef("days", 60*60*24, UnitClass::DATE));
+    defs.emplace("weeks", UnitDef("weeks", 60*60*24*7, UnitClass::DATE));
+    defs.emplace("months", UnitDef("months", 60*60*24*7*30, UnitClass::DATE));
+    defs.emplace("years", UnitDef("years", 60*60*24*7*30*12, UnitClass::DATE));
+    }

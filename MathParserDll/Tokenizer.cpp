@@ -54,6 +54,17 @@ void Tokenizer::skipWhiteSpace()
         }
     }
 
+void Tokenizer::skipWhiteSpaceNoNL()
+    {
+    char c;
+    while ((c = peekChar()))
+        {
+        if (c != ' ')
+            break;
+        nextChar(); //consume
+        }
+    }
+
 Token Tokenizer::_nextToken()
     {
     if (pos >= size)
@@ -157,6 +168,14 @@ Token Tokenizer::_nextToken()
                 nextChar(); //consume
                 return Token(TokenType::MUTE_END, getLine(), getLinePos()-1);
                 }
+            else if (peekString("define"))
+                {
+                getString("define");
+                auto l = getLine();
+                auto p = getPos();
+                skipWhiteSpace();
+                return Token(TokenType::DEFINE, getToEOL(), l, p);
+                }
             return Token(TokenType::MUTE_LINE, c, getLine(), getLinePos());
         case '/':
             {
@@ -206,6 +225,12 @@ Token Tokenizer::_nextToken()
         }
     }
 
+constexpr bool isIdChar(char c) 
+    { 
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+            || c == '_'
+            || (c >= '0' && c <= '9');
+    }
 
 Token Tokenizer::parseId(char c)
     {
@@ -215,10 +240,7 @@ Token Tokenizer::parseId(char c)
 
     while ((c = peekChar()))
         {
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-            || c == '_'
-            || (c >= '0' && c <= '9')
-            )
+        if (isIdChar(c))
             {
             nextChar(); //consume
             word += c;
@@ -465,5 +487,26 @@ void Tokenizer::skipToEndOfComment()
         if(!peekChar())
             return;
         }
+    }
+
+bool Tokenizer::peekString(std::string str)
+    {
+    if(pos + str.size() >= size)
+        return false;
+    if(str.compare(0, str.size(), _stream, pos, str.size()) != 0)
+        return false;
+    if(pos + str.size() == size)
+        return true;//EOF, so ID-string matches.
+    //next char should not be an ID char
+    return !isIdChar(_stream[pos+str.size()]);
+    }
+
+bool Tokenizer::getString(std::string str)
+    {
+    if(!peekString(str))
+        return false;
+    for(int i = 0; i < str.size(); i++)
+        nextChar();//this function does some administration, so we can't just set this->pos.
+    return true;
     }
 

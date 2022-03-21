@@ -2,6 +2,8 @@
 #include "CppUnitTest.h"
 #include "../MathParserDll/api.h"
 #include "../MathParserDll/Date.h"
+#include "../MathParserDll/Parser.h"
+#include "../MathParserDll/Function.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace nlohmann;
@@ -30,9 +32,23 @@ namespace TestParser
             testDateString("feb 1", 1, 2, Date::EmptyYear);
             }
 
+        TEST_METHOD(TestDefines)
+            {
+            assertResult("#define date_units \n a=3seconds;", 3, "seconds");
+            assertError("#define sdfsdf", "DEFINE_NOT_DEF");
+            }
+
         TEST_METHOD(TestPrecedence)
             {
             assertResult("a=1+2*3^4;", 163);
+            }
+
+        TEST_METHOD(TestTheParser)
+            {
+            UnitDefs unitDefs;
+            FunctionDefs fdefs(unitDefs);
+            Parser parser("#define blah", fdefs);
+            parser.parse();
             }
 
         TEST_METHOD(TestCalls)

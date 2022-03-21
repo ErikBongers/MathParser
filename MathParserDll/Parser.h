@@ -6,7 +6,7 @@
 #include "Function.h"
 #include "ValueType.h"
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE};
 class Parser;
 
 class Node
@@ -88,11 +88,21 @@ class AssignExpr : public Node
         friend class Parser;
     };
 
+class Define : public Node
+    {
+    public:
+        Token def;
+    private:
+        Define() : Node(NodeType::DEFINE) {}
+        friend class Parser;
+    };
+
 class Statement : public Node
     {
     public:
         Node* assignExpr = nullptr;
         Node* addExpr = nullptr;
+        Node* define = nullptr;
         std::string text;
         Token comment_line;
         bool mute = false; //mute output
@@ -114,17 +124,20 @@ class Parser
     {
     private:
         Tokenizer tok;
+        bool muteBlock = false;
+        bool echoBlock = false;
+        bool echoTrailingComment = false;
     public:
         FunctionDefs& functionDefs;
         std::map<std::string, Variable> ids;
         std::vector<Statement*> statements;
-        bool muteBlock = false;
-        bool echoBlock = false;
-        bool echoTrailingComment = false;
 
         Parser(const char* stream, FunctionDefs& functionDefs);
+        ~Parser() { for (auto node : nodes) delete node; }
         void parse();
+    private:
         Statement* parseStatement();
+        Define* parseDefine();
         Statement* parseStatementHeader(Statement* stmt);
         Statement* parseStatementBody(Statement* stmt);
         Node* parseAssignExpr();
@@ -138,15 +151,14 @@ class Parser
         Node* parsePrimaryExpr();
         ConstExpr* parseNumber(bool negative);
         CallExpr* parseCallExpr(Token functionName);
-        ~Parser() { for (auto node : nodes) delete node; }
         ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
         PrimaryExpr* createPrimary();
         PostfixExpr* createPostfix();
         AssignExpr* createAssign();
+        Define* createDefine();
         CallExpr* createCall();
         Statement* createStatement();
-    private:
         std::vector<Node*> nodes;
         Token currentToken = Token::Null();
         Token lastToken = Token::Null();
@@ -157,5 +169,6 @@ class Parser
         Token nextToken(bool includeEchoComment = false);
         void pushBackLastToken();
         Node* parseAbsOperator();
+        void parseEchosBetweenStatements(Statement* stmt);
     };
 

@@ -46,6 +46,9 @@ enum class TokenType
     MUTE_END,
     QUOTED_STR,
 
+    DEFINE,
+    UNDEF,
+
     UNKNOWN,
     EOT,
     NULLPTR
@@ -95,11 +98,14 @@ class Tokenizer
         unsigned int getPos() { return pos;} //pos always contains the NEXT pos.
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
         void skipWhiteSpace();
+        void skipWhiteSpaceNoNL();
 
     private:
         char nextChar();
         inline char peekChar();
         inline char peekSecondChar();
+        bool peekString(std::string str);
+        bool getString(std::string str);
         Token parseId(char c);
 
         Number parseDecimal(char c);

@@ -179,6 +179,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="Tokenizer.h" />
+    <ClInclude Include="trim.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Value.h" />
     <ClInclude Include="ValueType.h" />

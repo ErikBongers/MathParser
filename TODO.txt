@@ -1,4 +1,11 @@
-﻿* implement DateTokenizer -> rename DateParser
+﻿* PrimaryExpr and Statement: merge assignExpr and addExpr and such...
+  > Especially Statement is really overloaded with options.
+* Duration
+  > 2y ==> a value with a unit.
+  > (2d + 5h)  ==> converted so n hours, just like normal values.
+  > chrono defines nanoseconds to years in SI seconds.
+* myDate + 1y
+  > y unit
 * test chrono with both MSVC and EMCC
   > not everything is implemented.
 
@@ -38,6 +45,10 @@ Nice to have
   > complex units.
     > if you set a unit to a var BEFORE an equation:
       > when the eq is assigned to the var, a warning should be generated if the unit changes. (this allows for checking the physical dimension of your eq.)
+  > custom units
+    : basket = 10"apples";
+    : sack = 20"pears";
+    : basket+sack; //warning: units don't match
 * dates:
   > goal: calculate age
     > age = (now()-birthdate).years; // -> subtraction is a duration.

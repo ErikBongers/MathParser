@@ -11,6 +11,7 @@ class Resolver
         static std::string result;
         std::map<std::string, Value> variables;
 
+        Value resolveDefine(const Define& define);
         Value resolveStatement(const Statement& stmt);
         Value resolveNode(const Node& node);
         Value resolveBinaryOp(const BinaryOpExpr& powerExpr);

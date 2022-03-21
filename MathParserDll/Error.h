@@ -19,6 +19,7 @@ enum class ErrorId
     W_VAR_IS_UNIT,
     W_VAR_IS_FUNCTION,
     NO_OP,
+    DEFINE_NOT_DEF,
     };
 
 

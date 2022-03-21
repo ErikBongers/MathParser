@@ -3,6 +3,7 @@
 #include "Function.h"
 #include "Number.h"
 #include "OperatorDef.h"
+#include "trim.h"
 
 std::string Resolver::result = "";
 
@@ -32,6 +33,18 @@ void Resolver::resolve()
     result = "{\"result\" : [" + result + "]}";
     }
 
+Value Resolver::resolveDefine(const Define& define)
+    {
+    Value result;
+    std::string options = rtrim_copy(define.def.stringValue);
+    if(options  == "date_units")
+        this->unitDefs.addDateUnits();
+    else
+        result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.def.line, define.def.pos, options));
+    
+    return result;
+    }
+
 Value Resolver::resolveStatement(const Statement& stmt)
     {
     Value result;
@@ -39,6 +52,8 @@ Value Resolver::resolveStatement(const Statement& stmt)
         result = resolveNode(*stmt.assignExpr);
     else if (stmt.addExpr != nullptr)
         result = resolveNode(*stmt.addExpr);
+    else if(stmt.define != nullptr)
+        result = resolveDefine(*(Define*)stmt.define);
     else
         result.onlyComment = true;
     result.text = stmt.text;

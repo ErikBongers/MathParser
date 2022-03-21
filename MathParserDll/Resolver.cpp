@@ -48,12 +48,8 @@ Value Resolver::resolveDefine(const Define& define)
 Value Resolver::resolveStatement(const Statement& stmt)
     {
     Value result;
-    if (stmt.assignExpr != nullptr)
-        result = resolveNode(*stmt.assignExpr);
-    else if (stmt.addExpr != nullptr)
-        result = resolveNode(*stmt.addExpr);
-    else if(stmt.define != nullptr)
-        result = resolveDefine(*(Define*)stmt.define);
+    if (stmt.node != nullptr)
+        result = resolveNode(*stmt.node);
     else
         result.onlyComment = true;
     result.text = stmt.text;
@@ -69,10 +65,11 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::BINARYOPEXPR: return resolveBinaryOp((const BinaryOpExpr&)node);
         case NodeType::STATEMENT: return resolveStatement((const Statement&)node);
         case NodeType::ASSIGNMENT: return resolveAssign((const AssignExpr&)node);
-        case NodeType::PRIMARYEXPR: return resolvePrim((const PrimaryExpr&)node);
+        case NodeType::IDEXPR: return resolvePrim((const IdExpr&)node);
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
+        case NodeType::DEFINE: return resolveDefine((const Define&)node);
         default: return Value(ErrorId::UNKNOWN_EXPR, 0, 0);
         }
     }
@@ -155,14 +152,10 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     return applyUnit(pfix, val);
     }
 
-Value Resolver::resolvePrim(const PrimaryExpr& prim)
+Value Resolver::resolvePrim(const IdExpr& prim)
     {
     Value val;
-    if (prim.addExpr != nullptr)
-        {
-        auto val = resolveNode(*prim.addExpr);
-        }
-    else if (prim.Id.type != TokenType::NULLPTR )
+    if (prim.Id.type != TokenType::NULLPTR )
         {
         auto found = variables.find(prim.Id.stringValue);
         if (found != variables.end())
@@ -171,11 +164,6 @@ Value Resolver::resolvePrim(const PrimaryExpr& prim)
             }
         else
             return Value(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
-        }
-    else if (prim.callExpr != nullptr)
-        {
-        auto& callExpr = *(CallExpr*)prim.callExpr;
-        auto val = resolveCall(callExpr);
         }
     else
         return Value(ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.

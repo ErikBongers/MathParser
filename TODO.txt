@@ -1,6 +1,4 @@
-﻿* PrimaryExpr and Statement: merge assignExpr and addExpr and such...
-  > Especially Statement is really overloaded with options.
-* Duration
+﻿* Duration
   > 2y ==> a value with a unit.
   > (2d + 5h)  ==> converted so n hours, just like normal values.
   > chrono defines nanoseconds to years in SI seconds.

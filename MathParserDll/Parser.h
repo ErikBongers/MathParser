@@ -6,7 +6,7 @@
 #include "Function.h"
 #include "ValueType.h"
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, PRIMARYEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE};
 class Parser;
 
 class Node
@@ -34,14 +34,12 @@ class ConstExpr : public Node
         friend class Parser;
     };
 
-class PrimaryExpr : public Node
+class IdExpr : public Node
     {
     public:
         Token Id;
-        Node* addExpr = nullptr; //TODO: get rid of this?
-        Node* callExpr = nullptr; //TODO: get rid of this
     private:
-        PrimaryExpr() : Node(NodeType::PRIMARYEXPR) {}
+        IdExpr() : Node(NodeType::IDEXPR) {}
         friend class Parser;
     };
 
@@ -100,9 +98,7 @@ class Define : public Node
 class Statement : public Node
     {
     public:
-        Node* assignExpr = nullptr;
-        Node* addExpr = nullptr;
-        Node* define = nullptr;
+        Node* node = nullptr;
         std::string text;
         Token comment_line;
         bool mute = false; //mute output
@@ -153,7 +149,7 @@ class Parser
         CallExpr* parseCallExpr(Token functionName);
         ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
-        PrimaryExpr* createPrimary();
+        IdExpr* createIdExpr();
         PostfixExpr* createPostfix();
         AssignExpr* createAssign();
         Define* createDefine();

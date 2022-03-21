@@ -65,8 +65,8 @@ Define* Parser::parseDefine()
 Statement* Parser::parseStatement()
     {
     Statement* stmt = createStatement();
-    stmt->define = parseDefine();
-    if(stmt->define == nullptr)
+    stmt->node = parseDefine();
+    if(stmt->node== nullptr)
         {
         stmt = parseStatementHeader(stmt);
         stmt->mute |= this->muteBlock;
@@ -135,9 +135,9 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
 
 Statement* Parser::parseStatementBody(Statement* stmt)
     {
-    stmt->assignExpr = parseAssignExpr();
-    if (stmt->assignExpr == nullptr)
-        stmt->addExpr = parseAddExpr();
+    stmt->node = parseAssignExpr();
+    if (stmt->node == nullptr)
+        stmt->node = parseAddExpr();
     nextToken();
     if (currentToken.type == TokenType::SEMI_COLON)
         { 
@@ -179,7 +179,7 @@ Node* Parser::parseAssignExpr()
             AssignExpr* assign = createAssign();
             assign->Id = id;
             //prepare components to fabricate the new add or mult expression.
-            PrimaryExpr* idExpr = createPrimary();
+            IdExpr* idExpr = createIdExpr();
             idExpr->Id = id;
             TokenType oper;
             switch (t.type)
@@ -354,13 +354,13 @@ Node* Parser::parseOnePostFix(Node* node, Token t)
         }
     else if (t.type == TokenType::INC || t.type == TokenType::DEC)
         {
-        if (node->type != NodeType::PRIMARYEXPR)
+        if (node->type != NodeType::IDEXPR)
             {
             node->error = Error(ErrorId::VAR_EXPECTED, tok.getLine(), tok.getLinePos());
             return node;
             }
 
-        PrimaryExpr* idExpr = (PrimaryExpr*)node;
+        IdExpr* idExpr = (IdExpr*)node;
         CallExpr* callExpr = createCall();
         callExpr->arguments.push_back(node);
         callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), tok.getLine(), tok.getLinePos());
@@ -411,9 +411,9 @@ Node* Parser::parsePrimaryExpr()
                 }
             else
                 {
-                PrimaryExpr* primExpr = createPrimary();
-                primExpr->Id = t;
-                return primExpr;
+                IdExpr* idExpr = createIdExpr();
+                idExpr->Id = t;
+                return idExpr;
                 }
         case TokenType::PAR_OPEN:
             {
@@ -432,7 +432,7 @@ Node* Parser::parsePrimaryExpr()
             return constExpr;
             }
         }
-    return createPrimary(); //error
+    return createIdExpr(); //error
     }
 
 Node* Parser::parseAbsOperator()
@@ -489,7 +489,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
 
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
-PrimaryExpr* Parser::createPrimary() { PrimaryExpr* p = new PrimaryExpr; nodes.push_back(p); return p; }
+IdExpr* Parser::createIdExpr() { IdExpr* p = new IdExpr; nodes.push_back(p); return p; }
 PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }
 AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }
 Define* Parser::createDefine() { Define* p = new Define; nodes.push_back(p); return p; }

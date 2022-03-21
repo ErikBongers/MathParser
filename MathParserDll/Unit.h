@@ -20,7 +20,7 @@ class Unit
         bool isClear() const { return id.isNull(); }
     };
 
-enum class UnitClass { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DATE, VOLUME, UNDEFINED};
+enum class UnitClass { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DURATION, VOLUME, UNDEFINED};
 
 class UnitDef
     {
@@ -55,6 +55,7 @@ class UnitDefs
         UnitDefs() { init(); }
         void init();
         UnitDef& get(const std::string& key);
+        void set(UnitDef def);
         bool exists(const std::string& key) { return defs.count(key) != 0; }
         bool isSameProperty(const Unit& u1, const Unit& u2);
         void addDateUnits();

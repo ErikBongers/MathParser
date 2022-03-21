@@ -69,6 +69,12 @@ UnitDef& UnitDefs::get(const std::string& key)
         throw std::out_of_range ("blah");
     }
 
+void UnitDefs::set(UnitDef def)
+    {
+    defs.emplace(def.id, def);
+    defs[def.id].setLambda();
+    }
+
 bool UnitDefs::isSameProperty(const Unit& u1, const Unit& u2)
     {
     return get(u1.id.stringValue).property == get(u2.id.stringValue).property;
@@ -76,22 +82,22 @@ bool UnitDefs::isSameProperty(const Unit& u1, const Unit& u2)
 
 void UnitDefs::addDateUnits()
     {
-    defs.emplace("seconds", UnitDef("seconds", 1, UnitClass::DATE));
-    defs.emplace("minutes", UnitDef("minutes", 60, UnitClass::DATE));
-    defs.emplace("hours", UnitDef("hours", 60*60, UnitClass::DATE));
-    defs.emplace("days", UnitDef("days", 60*60*24, UnitClass::DATE));
-    defs.emplace("weeks", UnitDef("weeks", 60*60*24*7, UnitClass::DATE));
-    defs.emplace("months", UnitDef("months", 60*60*24*7*30, UnitClass::DATE));
-    defs.emplace("years", UnitDef("years", 60*60*24*7*30*12, UnitClass::DATE));
+    set(UnitDef("seconds", 1, UnitClass::DURATION));
+    set(UnitDef("minutes", 60, UnitClass::DURATION));
+    set(UnitDef("hours", 60*60, UnitClass::DURATION));
+    set(UnitDef("days", 60*60*24, UnitClass::DURATION));
+    set(UnitDef("weeks", 60*60*24*7, UnitClass::DURATION));
+    set(UnitDef("months", 60*60*24*7*30, UnitClass::DURATION));
+    set(UnitDef("years", 60*60*24*7*30*12, UnitClass::DURATION));
     }
 
 void UnitDefs::addShortDateUnits()
     {
-    defs.emplace("s", UnitDef("s", 1, UnitClass::DATE));
-    defs.emplace("min", UnitDef("min", 60, UnitClass::DATE));
-    defs.emplace("h", UnitDef("h", 60*60, UnitClass::DATE));
-    defs.emplace("d", UnitDef("d", 60*60*24, UnitClass::DATE));
-    defs.emplace("w", UnitDef("w", 60*60*24*7, UnitClass::DATE));
-    defs.emplace("mon", UnitDef("mon", 60*60*24*7*30, UnitClass::DATE));
-    defs.emplace("y", UnitDef("y", 60*60*24*7*30*12, UnitClass::DATE));
+    set(UnitDef("s", 1, UnitClass::DURATION));
+    set(UnitDef("min", 60, UnitClass::DURATION));
+    set(UnitDef("h", 60*60, UnitClass::DURATION));
+    set(UnitDef("d", 60*60*24, UnitClass::DURATION));
+    set(UnitDef("w", 60*60*24*7, UnitClass::DURATION));
+    set(UnitDef("mon", 60*60*24*7*30, UnitClass::DURATION));
+    set(UnitDef("y", 60*60*24*7*30*12, UnitClass::DURATION));
     }

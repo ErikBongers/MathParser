@@ -24,7 +24,13 @@ void Resolver::resolve()
     for (auto& stmt : parser.statements)
         {
         auto result = resolveStatement(*stmt);
-        jsonRes.push_back(result.to_json());
+        if (stmt->node != nullptr)
+            {
+            if(stmt->node->type != NodeType::DEFINE || result.errors.size() != 0)
+                jsonRes.push_back(result.to_json()); //don't output a define statement unless it has errors
+            }
+        else
+            jsonRes.push_back(result.to_json());
         }
     result = "";
     for (auto& s : jsonRes)

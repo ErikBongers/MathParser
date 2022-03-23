@@ -11,7 +11,6 @@ class Date
         long year = EmptyYear;
         Month month = Month::NONE;
         char day = 0; //0 = none, 99 = last;
-        void testChrono();
         Date() = default;
     };
 

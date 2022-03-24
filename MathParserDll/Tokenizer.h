@@ -6,8 +6,6 @@
 #include "Number.h"
 #include "ValueType.h"
 
-enum class NumFormat { DEC, BIN, HEX };
-
 enum class TokenType
     {
     BRAC_OPEN,
@@ -63,18 +61,17 @@ class Token
         std::string stringValue;
 
         ValueType valueType = ValueType::NONE;
-        Number numberValue = {0,0};
+        Number numberValue = Number(0.0,0);
         //Timepoint
         //Duration
         //Calendar
 
-        NumFormat numFormat = NumFormat::DEC;
         unsigned int pos;
         unsigned int line;
         bool isFirstOnLine = false;
         Token() : Token(TokenType::NULLPTR, 0, 0) {}
         Token(TokenType type, char c, unsigned int line, unsigned int pos);
-        Token(TokenType type, Number n, unsigned int line, unsigned int pos, NumFormat numFormat = NumFormat::DEC);
+        Token(TokenType type, Number n, unsigned int line, unsigned int pos);
         Token(TokenType type, std::string str, unsigned int line, unsigned int pos);
         Token(TokenType type, unsigned int line, unsigned int pos);
     };

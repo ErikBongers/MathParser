@@ -279,7 +279,7 @@ namespace TestParser
 
         void testDateString(const char* txtDate, int day = 0, int month = 0, long year = 0)
             {
-            Date date = DateParser(txtDate).parse();
+            Date date = DateParser(txtDate, 0, 0).parse();
             int mon = (char)date.month;
             std::string msg = std::format("\"{0}\" does not match {1}/{2}/{3}.", txtDate, (int)date.day, mon, date.year);
             if(date.day != day || ((int)date.month != month) || date.year != year)

@@ -15,7 +15,7 @@ Resolver::Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDef
 void Resolver::resolve()
     {
     variables.clear();
-    auto PI = Value(Number(M_PI, 0), 0, 0);
+    auto PI = Value(Number(M_PI, 0, 0, 0));
     PI.constant = true;
     variables.emplace("PI", PI);
     variables.emplace("pi", PI);
@@ -82,7 +82,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
         case NodeType::DEFINE: return resolveDefine((const Define&)node);
-        default: return Value(ErrorId::UNKNOWN_EXPR, 0, 0);
+        default: return Value(Error(ErrorId::UNKNOWN_EXPR, 0, 0));
         }
     }
 
@@ -100,6 +100,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
         case TokenType::MULT: opType = OperatorType::MULT; break;
         case TokenType::DIV: opType = OperatorType::DIV; break;
         case TokenType::POWER: opType = OperatorType::POW; break;
+        default: break;
         }
     OperatorDef* op = operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
@@ -110,11 +111,11 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
-    result = op->call(args, a1.line, a1.pos);
+    result = op->call(args, a1.number.line, a1.number.pos);
     if (addExpr.error.id != ErrorId::NONE)
         result.errors.push_back(addExpr.error);
     if(!addExpr.unit.isClear())
-        result = result.convertToUnit(addExpr.unit, unitDefs);
+        result.number = result.number.convertToUnit(addExpr.unit, unitDefs);
     return result;
     }
 
@@ -151,15 +152,15 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
         return Value(pfix.error);
     auto val = resolveNode(*pfix.expr);
     if(pfix.postfixId.isNull())
-        val.unit = Unit::CLEAR();
+        val.number.unit = Unit::CLEAR();
     else if(pfix.postfixId.stringValue == "bin")
-        val.numFormat = NumFormat::BIN;
+        val.number.numFormat = NumFormat::BIN;
     else if(pfix.postfixId.stringValue == "hex")
-        val.numFormat = NumFormat::HEX;
+        val.number.numFormat = NumFormat::HEX;
     else if(pfix.postfixId.stringValue == "dec")
-        val.numFormat = NumFormat::DEC;
+        val.number.numFormat = NumFormat::DEC;
     else
-        val = val.convertToUnit(pfix.postfixId, unitDefs);
+        val.number = val.number.convertToUnit(pfix.postfixId.stringValue, unitDefs);
     //in case of (x.km)m, both postfixId (km) and unit (m) are filled.
     return applyUnit(pfix, val);
     }
@@ -175,22 +176,22 @@ Value Resolver::resolvePrim(const IdExpr& prim)
             val = getVar(prim.Id.stringValue);
             }
         else
-            return Value(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str());
+            return Value(Error(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str()));
         }
     else
-        return Value(ErrorId::UNKNOWN_EXPR, 0, 0); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
+        return Value(Error(ErrorId::UNKNOWN_EXPR, 0, 0)); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
 
     return applyUnit(prim, val);
     }
 
 Value& Resolver::applyUnit(const Node& node, Value& val)
     {
-    if (!node.unit.isClear() && !val.unit.isClear())
+    if (!node.unit.isClear() && !val.number.unit.isClear())
         {
-        val = val.convertToUnit(node.unit, unitDefs);
+        val.number = val.number.convertToUnit(node.unit, unitDefs);
         }
     else if (!node.unit.isClear())
-        val.unit = node.unit;
+        val.number.unit = node.unit;
     return val;
     }
 
@@ -198,13 +199,13 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     {
     auto fd = parser.functionDefs.get(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
-        return Value(ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
+        return Value(Error(ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str()));
     if (callExpr.error.id != ErrorId::NONE)
         return Value(callExpr.error);
 
     // check function arguments:
     if (!fd->isCorrectArgCount(callExpr.arguments.size()))
-        return Value(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str());
+        return Value(Error(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str()));
     std::vector<Error> errors;
     std::vector<Value> args;
     for (auto arg : callExpr.arguments)
@@ -224,15 +225,15 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
     if(constExpr.type == ValueType::NUMBER)
         {
-        auto v = Value(constExpr.value.numberValue, constExpr.unit, constExpr.value.line, constExpr.value.pos);
-        v.numFormat = constExpr.value.numFormat;
+        auto v = Value(constExpr.value.numberValue);
+        v.number.unit = constExpr.unit;
         if (constExpr.unit.isClear())
-            v.unit = Unit();
+            v.number.unit = Unit();
         else
             {
-            if (unitDefs.exists(v.unit.id.stringValue) == false)
+            if (unitDefs.exists(v.number.unit.id) == false)
                 {
-                v.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.unit.id.line, v.unit.id.pos, v.unit.id.stringValue.c_str()));
+                v.number.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.number.unit.line, v.number.unit.pos, v.number.unit.id.c_str()));
                 }
             }
         if (constExpr.error.id != ErrorId::NONE)
@@ -241,7 +242,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
         }
     else
         {
-        return Value(DateParser(constExpr.value.stringValue).parse(), constExpr.value.line, constExpr.value.pos);
+        return Value(DateParser(constExpr.value.stringValue, constExpr.value.line, constExpr.value.pos).parse());
         }
     }
 

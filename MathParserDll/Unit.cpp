@@ -1,14 +1,17 @@
 #include "pch.h"
 #include "Unit.h"
+#include <stdexcept>
+#include <iostream>
 
 std::ostream& operator<<(std::ostream& os, const Unit& u) 
     {
-    os << u.to_string(); return os;
+    os << u.id; 
+    return os;
     }
 
 const char* Unit::to_string() const
     {
-    return this->id.stringValue.c_str();
+    return this->id.c_str();
     }
 
 
@@ -77,7 +80,7 @@ void UnitDefs::set(UnitDef def)
 
 bool UnitDefs::isSameProperty(const Unit& u1, const Unit& u2)
     {
-    return get(u1.id.stringValue).property == get(u2.id.stringValue).property;
+    return get(u1.id).property == get(u2.id).property;
     }
 
 void UnitDefs::addDateUnits()

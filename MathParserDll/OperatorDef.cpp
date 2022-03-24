@@ -22,7 +22,7 @@ bool OperatorId::operator<(OperatorId const& id2) const
 
 std::string OperatorId::to_string()
     {
-    return "op " + (char)type1 + (char)op + (char)type2;
+    return std::string("op ") + (char)type1 + (char)op + (char)type2;
     }
 
 Value OperatorDef::call(std::vector<Value>& args, unsigned int line, unsigned int pos)
@@ -42,24 +42,24 @@ void OperatorDefs::init()
     Add(new OpNumPowNum(*this));
     }
 
-Value doTerm(UnitDefs& unitDefs, const Value& v1, bool adding, const Value& v)
+Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v, unsigned int line, unsigned int pos)
     {
-    Value result = v1;
-    result.constant = false;
+    Number result = v1;
+    
     //if both values have units: convert them to SI before operation.
     if (!v1.unit.isClear() && !v.unit.isClear())
         {
-        if(unitDefs.exists(v1.unit.id.stringValue) && unitDefs.exists(v.unit.id.stringValue))
-            if (unitDefs.get(v1.unit.id.stringValue).property != unitDefs.get(v.unit.id.stringValue).property)
+        if(unitDefs.exists(v1.unit.id) && unitDefs.exists(v.unit.id))
+            if (unitDefs.get(v1.unit.id).property != unitDefs.get(v.unit.id).property)
                 {
                 result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, v1.line, v1.pos));
                 return result;
                 }
         double d1 = v1.toSI(unitDefs);
         double d2 = v.toSI(unitDefs);
-        result.number = Number(adding ? (d1 + d2) : (d1 - d2), 0);
-        if(unitDefs.exists(v1.unit.id.stringValue))
-            result.number = Number(unitDefs.get(v1.unit.id.stringValue).fromSI(result.number.to_double()), 0); //TODO: try to keep exponent.
+        result = Number(adding ? (d1 + d2) : (d1 - d2), 0);
+        if(unitDefs.exists(v1.unit.id))
+            result = Number(unitDefs.get(v1.unit.id).fromSI(result.to_double()), v1.unit.id, v1.numFormat, line, pos); //TODO: try to keep exponent.
         }
     //if a unit is missing, just do operation.
     else 
@@ -74,17 +74,19 @@ Value doTerm(UnitDefs& unitDefs, const Value& v1, bool adding, const Value& v)
             }
         }
     result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());
+    result.line = line;
+    result.pos = pos;
     return result;
     }
 
 Value OpNumPlusNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return doTerm(defs.unitDefs, args[0], true, args[1]);
+    return Value(Number(doTerm(defs.unitDefs, args[0].number, true, args[1].number, line, pos)));
     }
 
 Value OpNumMinNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return doTerm(defs.unitDefs, args[0], false, args[1]);
+    return Value(Number(doTerm(defs.unitDefs, args[0].number, false, args[1].number, line, pos)));
     }
 
 Value OpNumMultNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
@@ -93,8 +95,8 @@ Value OpNumMultNum::execute(std::vector<Value>& args, unsigned int line, unsigne
     result.constant = false;
     //TODO: if both units set: unit changes to unit*unit!
     result.number = result.number * args[1].number;
-    if (args[0].unit.isClear())
-        result.unit = args[1].unit;
+    if (args[0].number.unit.isClear())
+        result.number.unit = args[1].number.unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }
@@ -105,8 +107,8 @@ Value OpNumDivNum::execute(std::vector<Value>& args, unsigned int line, unsigned
     result.constant = false;
     //TODO: if both units set: unit changes to unit/unit!
     result.number = result.number / args[1].number;
-    if (args[0].unit.isClear())
-        result.unit = args[1].unit;
+    if (args[0].number.unit.isClear())
+        result.number.unit = args[1].number.unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }
@@ -116,8 +118,8 @@ Value OpNumPowNum::execute(std::vector<Value>& args, unsigned int line, unsigned
     Value result = args[0];
     result.constant = false;
     result.number = Number(std::pow(args[0].number.to_double(), args[1].number.to_double()), 0);
-    if (!args[0].unit.isClear())
-        result.unit = args[1].unit;
+    if (!args[0].number.unit.isClear())
+        result.number.unit = args[1].number.unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }

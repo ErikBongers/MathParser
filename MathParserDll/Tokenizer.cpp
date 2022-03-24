@@ -2,19 +2,19 @@
 #include "Tokenizer.h"
 #include <algorithm>
 
-inline Token::Token(TokenType type, char c, unsigned int line, unsigned int pos)
+Token::Token(TokenType type, char c, unsigned int line, unsigned int pos)
     : line(line), pos(pos), type(type), stringValue(1, c)
     {}
 
-inline Token::Token(TokenType type, Number n, unsigned int line, unsigned int pos, NumFormat numFormat)
-    : line(line), pos(pos), numFormat(numFormat), type(type), numberValue(n), valueType(ValueType::NUMBER)
+Token::Token(TokenType type, Number n, unsigned int line, unsigned int pos)
+    : line(line), pos(pos), type(type), numberValue(n), valueType(ValueType::NUMBER)
     {}
 
-inline Token::Token(TokenType type, std::string str, unsigned int line, unsigned int pos)
+Token::Token(TokenType type, std::string str, unsigned int line, unsigned int pos)
     : line(line), pos(pos), type(type), stringValue(str)
     {}
 
-inline Token::Token(TokenType type, unsigned int line, unsigned int pos)
+Token::Token(TokenType type, unsigned int line, unsigned int pos)
     : Token(type, Number(0.0, 0), line, pos)
     {}
 
@@ -424,9 +424,9 @@ Token Tokenizer::parseNumber(char c)
     auto numPos = getLinePos();
 
     if(peekChar() == 'b' || peekChar() == 'B')
-        return Token(TokenType::NUMBER, Number(parseBinary(), 0), getLine(), numPos, NumFormat::BIN);
+        return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), getLine(), numPos);
     else if(peekChar() == 'x' || peekChar() == 'X')
-        return Token(TokenType::NUMBER, Number(parseHex(), 0), getLine(), numPos, NumFormat::HEX);
+        return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), getLine(), numPos);
     else
         return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
     }

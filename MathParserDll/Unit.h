@@ -1,23 +1,24 @@
 #pragma once
-#include "Tokenizer.h"
 #include <functional>
 
 class Unit
     {
     public:
-        Token id = Token::Null(); //a Unit is not a tokentype by itself as the same ID may be used as a variable.
+        std::string id; //same ID may be used as a variable.
+        unsigned int line;
+        unsigned int pos;
 
         //optional:
         Unit* subUnit1 = nullptr;
-        Token op;
+        std::string op;
         Unit* subUnit2 = nullptr;
 
-        Unit(const Token& id) :id(id) {}
+        Unit(const std::string& id) :id(id) {}
         Unit() {}
         const char* to_string() const;
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
-        static Unit CLEAR() { return Unit(Token::Null()); }
-        bool isClear() const { return id.isNull(); }
+        static Unit CLEAR() { return Unit(""); }
+        bool isClear() const { return id.empty(); }
     };
 
 enum class UnitClass { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DURATION, VOLUME, UNDEFINED};

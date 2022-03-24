@@ -1,4 +1,10 @@
-﻿* Duration calculations work!
+﻿* Value::to_json: split of a Number::to_json
+* a Function() returns a value.
+  > make poly.
+* create now() to produce a date.
+* create operator date - date.
+* check age of person.
+* Duration calculations work!
   > create Date class. (don't rename to Calendar, as well probably never have a TimePoint needed?)
   - separate fields for all fragments
   - parser (already in progress)
@@ -51,7 +57,6 @@ Nice to have
 * dates:
   > goal: calculate age
     > age = (now()-birthdate).years; // -> subtraction is a duration.
-      > age is a duration or just a number?
     > age before end of year = <last_day_of_this_year> - birthdate;
     > how to get last day of this year based on now()?
       > trunc(now(), 'year') + 1 year - 1 day;

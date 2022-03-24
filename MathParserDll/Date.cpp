@@ -31,6 +31,8 @@ Date DateParser::parse()
     int sliceNo = 0;
     for(auto& slice: slices)
         parseSlice(sliceNo++, date, slice);
+    date.line = line;
+    date.pos = pos;
     return date;
     }
 

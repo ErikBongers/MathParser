@@ -382,7 +382,7 @@ Node* Parser::parseUnitExpr()
         if (ids.count(t.stringValue) != 0)
             pushBackLastToken(); //a known id: assuming an implicit mult, here.
         else
-            node->unit = t; //no known id: assuming a unit.
+            node->unit = t.stringValue; //no known id: assuming a unit.
         }
     else
         pushBackLastToken();
@@ -431,6 +431,7 @@ Node* Parser::parsePrimaryExpr()
             constExpr->value = t;
             return constExpr;
             }
+        default: break;
         }
     return createIdExpr(); //error
     }

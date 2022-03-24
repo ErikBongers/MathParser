@@ -12,6 +12,9 @@ class Date
         Month month = Month::NONE;
         char day = 0; //0 = none, 99 = last;
         Date() = default;
+        unsigned int line;
+        unsigned int pos;
+
     };
 
 class DateParser
@@ -19,10 +22,11 @@ class DateParser
     private:
         std::string _stream;
         std::vector<std::string> slices;
+        unsigned int line;
+        unsigned int pos;
     public:
-        int pos=0;
         bool ymdFormat = false;
-        DateParser(const std::string& str) : _stream(str) {}
+        DateParser(const std::string& str, unsigned line, unsigned pos) : _stream(str), line(line), pos(pos) {}
         Date parse();
         void parseSlice(int sliceNo, Date& date, const std::string& slice);
         bool hasYearSlice();

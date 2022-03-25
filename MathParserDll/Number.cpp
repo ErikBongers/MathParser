@@ -1,18 +1,21 @@
 #include "pch.h"
 #include "Number.h"
+#include <sstream>
+#include <bitset>
+#include <iomanip>
 
 Number& Number::operator++(int)
     {
-    number = to_double();
-    number++;
+    significand = to_double();
+    significand++;
     exponent = 0;
     return *this;
     }
 
 Number& Number::operator--(int)
     {
-    number = to_double();
-    number--;
+    significand = to_double();
+    significand--;
     exponent = 0;
     return *this;
     }
@@ -22,7 +25,7 @@ Number Number::operator+(const Number& number2) const
     int maxExponent = std::max(exponent, number2.exponent);
     Number n1 = this->convertToExponent(maxExponent);
     Number n2 = number2.convertToExponent(maxExponent);
-    n1.number += n2.number;
+    n1.significand += n2.significand;
     return n1;
     }
 
@@ -31,20 +34,20 @@ Number Number::operator-(const Number& number2) const
     int maxExponent = std::max(exponent, number2.exponent);
     Number n1 = this->convertToExponent(maxExponent);
     Number n2 = number2.convertToExponent(maxExponent);
-    n1.number -= n2.number;
+    n1.significand -= n2.significand;
     return n1;
     }
 
 Number Number::operator*(const Number& n2) const
     {
-    Number n = Number(number*n2.number, exponent+n2.exponent);
+    Number n = Number(significand*n2.significand, exponent+n2.exponent);
     n.unit = this->unit;
     return n;
     }
 
 Number Number::operator/(const Number& n2) const
     {
-    Number n = Number(number/n2.number, exponent-n2.exponent);
+    Number n = Number(significand/n2.significand, exponent-n2.exponent);
     n.unit = this->unit;
     return n;
     }
@@ -55,12 +58,12 @@ Number Number::convertToExponent(int e) const
     while (result.exponent < e)
         {
         result.exponent++;
-        result.number /=10;
+        result.significand /=10;
         }
     while (result.exponent > e)
         {
         result.exponent--;
-        result.number *=10;
+        result.significand *=10;
         }
     return result;
     }
@@ -109,3 +112,64 @@ double Number::fromSI(UnitDefs& unitDefs) const
         return to_double();
     }
 
+std::string Number::to_json()
+    {
+    std::ostringstream sstr;
+    sstr << "{";
+
+
+    std::ostringstream numval;
+    if (isnan(significand))
+        numval << "NaN";
+    else
+        {
+        numval << std::fixed
+            << std::setprecision(20)
+            << to_double();
+        }
+    sstr << "\"value\" : \"" << numval.str() << "\"";
+
+    numval = std::ostringstream();
+    if (isnan(significand))
+        numval << "NaN";
+    else
+        {
+        numval << std::fixed
+            << std::setprecision(20)
+            << significand;
+        }
+    sstr << ", \"significand\" : \"" << numval.str() << "\"";
+
+
+    sstr << ", \"unit\" : \"" << unit << "\"";
+
+    std::string format = "DEC";
+    if(numFormat == NumFormat::BIN)
+        format = "BIN";
+    else if(numFormat == NumFormat::HEX)
+        format = "HEX";
+    sstr << ", \"format\" : \"" << format << "\"";
+
+    std::string formatted;
+    if (numFormat == NumFormat::BIN)
+        {
+        formatted = std::bitset<64>((long)to_double()).to_string();
+        formatted.erase(0, formatted.find_first_not_of('0'));
+        formatted = "0b" + formatted;
+        }
+    else if (numFormat == NumFormat::HEX)
+        {
+        std::ostringstream oss;
+        oss << std::hex << (long)to_double();
+        formatted = "0x"+oss.str();
+        }
+
+    sstr << ", \"formatted\" : \""
+        << formatted
+        << "\"";
+
+    sstr << ", \"exponent\" : " << exponent;
+
+    sstr << "}";
+    return sstr.str();
+    }

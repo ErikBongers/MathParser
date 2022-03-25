@@ -451,7 +451,7 @@ Node* Parser::parseAbsOperator()
 ConstExpr* Parser::parseNumber(bool negative)
     {
     auto constExpr = createConst(ValueType::NUMBER);
-    currentToken.numberValue.number = (negative ? -1 : 1) * currentToken.numberValue.number;
+    currentToken.numberValue.significand = (negative ? -1 : 1) * currentToken.numberValue.significand;
     constExpr->value = currentToken;
     return constExpr;
     }

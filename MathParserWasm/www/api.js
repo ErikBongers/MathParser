@@ -16,6 +16,33 @@ Module.onRuntimeInitialized = async _ => {
       return hint;
 	};
 
+	Module.resultToString = function (line) {
+		if (line.onlyComment == true) {
+			return "//" + line.comment;
+		}
+		let strComment = "";
+		if (line.comment != "")
+			strComment = " //" + line.comment;
+		let strNL = "";
+		let strErrors = "";
+		for (e of line.errors) {
+			strErrors += "  " + e.message;
+			Module.parserErrors.push(Module.convertErrorToCodeMirror(e, cm.editor.state.doc));
+		}
+		let strText = "";
+		if (line.text != "")
+			strText = " " + line.text;
+		let strLine = "";
+		let strFormatted = Module.formatFloatString(line.number.significand, line.number.exponent);
+		if (line.number.format != "DEC")
+			strFormatted = line.number.formatted;
+		if (line.mute == false || line.errors.length > 0)
+			strLine += (line.id === "#result#" ? "" : line.id + "=") + strFormatted + line.number.unit;
+		strLine += strText + (strErrors === "" ? "" : "  <<<" + strErrors);
+		strLine += strComment;
+		return strLine;
+	};
+
 	Module.parseAfterChange = function(){
 		Module.parserErrors = [];
 		localStorage.savedCode = cm.editor.state.doc.toString();
@@ -23,39 +50,13 @@ Module.onRuntimeInitialized = async _ => {
 		Module.log(result);
 		result = JSON.parse(result);
 		var strOutput = "";
-		for(line of result.result)
-			{
-			if(line.onlyComment == true)
-			{
-				strOutput += "//" + line.comment + "\n";
-				continue;
-			}
-			let strComment = "";
-			if(line.comment != "")
-				strComment = " //" + line.comment;
-			let strNL = "";
-			let strErrors = "";
-			for(e of line.errors)
-				{
-				strErrors += "  " + e.message;
-				Module.parserErrors.push(Module.convertErrorToCodeMirror(e, cm.editor.state.doc));
-				}
-			let strText = "";
-			if(line.text != "")
-			  	strText = " " + line.text;
-			let strLine = "";
-			let strFormatted = Module.formatFloatString(line.number, line.exponent);
-			if (line.format != "DEC")
-				strFormatted = line.formatted;
-			if(line.mute == false || line.errors.length > 0)
-				strLine += (line.id==="#result#" ? "" : line.id + "=")  + strFormatted + line.unit;
-			strLine += strText + (strErrors === ""? "" : "  <<<" + strErrors);
-			strLine += strComment;
-			if(strLine.length > 0)
-				strOutput+= strLine + "\n";
-			}
-			let transaction = cm.cmOutput.state.update({changes: {from: 0, to: cm.cmOutput.state.doc.length, insert: strOutput}});
-			cm.cmOutput.update([transaction]);
+		for(line of result.result) {
+			let strLine = Module.resultToString(line);
+			if (strLine.length > 0)
+				strOutput += strLine + "\n";
+		}
+		let transaction = cm.cmOutput.state.update({changes: {from: 0, to: cm.cmOutput.state.doc.length, insert: strOutput}});
+		cm.cmOutput.update([transaction]);
 	};
 
 	cm.setLintSource((view) => {

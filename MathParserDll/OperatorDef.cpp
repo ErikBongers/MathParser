@@ -64,7 +64,7 @@ Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v
     //if a unit is missing, just do operation.
     else 
         {
-        result.number = adding ? (v1.number + v.number) : (v1.number - v.number);
+        result = adding ? (v1 + v) : (v1 - v);
         //if one unit is set, use it but give a warning
         if (!v1.unit.isClear() || !v.unit.isClear())
             {

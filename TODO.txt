@@ -1,4 +1,6 @@
-﻿* Value::to_json: split of a Number::to_json
+﻿* bugs:
+  : a=1; a b; >>> should give error b not defined or invalid expression, but not 1.b where b is interpreted as a unit?
+  : x=1; a x; >>> interpreted as implicit mult. Is ok? But should give errr: ""A not defined" rather than "operator* not found".
 * a Function() returns a value.
   > make poly.
 * create now() to produce a date.

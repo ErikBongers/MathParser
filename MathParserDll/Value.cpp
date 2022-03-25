@@ -39,54 +39,8 @@ std::string Value::to_json()
         sstr << "\"id\" : \"" << id.stringValue << "\"";
     else
         sstr << "\"id\" : \"#result#\"";
-    std::ostringstream numval;
-    if (isnan(number.number))
-        numval << "NaN";
-    else
-        {
-        numval << std::fixed
-            << std::setprecision(20)
-            << number.to_double();
-        }
-    sstr << ", \"value\" : \"" << numval.str() << "\"";
-    numval = std::ostringstream();
-    if (isnan(number.number))
-        numval << "NaN";
-    else
-        {
-        numval << std::fixed
-            << std::setprecision(20)
-            << number.number;
-        }
-    sstr << ", \"number\" : \"" << numval.str() << "\"";
-    sstr << ", \"unit\" : \"" << number.unit << "\""; //TODO: move unit under number.
-
-    std::string format = "DEC";
-    if(number.numFormat == NumFormat::BIN) //TODO: move numFormat under number.
-        format = "BIN";
-    else if(number.numFormat == NumFormat::HEX)
-        format = "HEX";
-    sstr << ", \"format\" : \"" << format << "\"";
-
-    std::string formatted;
-    if (number.numFormat == NumFormat::BIN)
-        {
-        formatted = std::bitset<64>((long)number.to_double()).to_string();
-        formatted.erase(0, formatted.find_first_not_of('0'));
-        formatted = "0b" + formatted;
-        }
-    else if (number.numFormat == NumFormat::HEX)
-        {
-        std::ostringstream oss;
-        oss << std::hex << (long)number.to_double();
-        formatted = "0x"+oss.str();
-        }
-
-    sstr << ", \"formatted\" : \""
-        << formatted
-        << "\"";
-
-    sstr << ", \"exponent\" : " << number.exponent;
+    sstr << ", \"number\" : ";
+    sstr << number.to_json();
 
     sstr << ", \"errors\" : [";
     std::string comma = "";

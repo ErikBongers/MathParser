@@ -196,30 +196,31 @@ namespace TestParser
                 msg = std::format("\"{0}\" did not report error: {1}", stmt, errorId);
                 Assert::Fail(toWstring(msg).c_str());
                 }
-            if(result["exponent"]== 0)
+            json number = result["number"];
+            if(number["exponent"] == 0)
                 {
                 //value
-                std::string value = result["value"];
+                std::string value = number["value"];
                 double d = std::stod(value);
                 Assert::AreEqual(std::round(expectedResult*10000)/10000, std::round(d*10000)/10000);
                 }
             else
                 {
                 //number
-                std::string value = result["number"];
-                double d = std::stod(value);
+                std::string significand = number["significand"];
+                double d = std::stod(significand);
                 Assert::AreEqual(expectedResult, d);
                 //exponent
-                int e = result["exponent"];
-                msg = std::format("\"{0}\" has incorrect exponent {1}, which should be {2}", stmt, (int)result["exponent"], expectedExponent);
-                Assert::AreEqual(expectedExponent, (int)result["exponent"], toWstring(msg).c_str());
+                int e = number["exponent"];
+                msg = std::format("\"{0}\" has incorrect exponent {1}, which should be {2}", stmt, (int)number["exponent"], expectedExponent);
+                Assert::AreEqual(expectedExponent, (int)number["exponent"], toWstring(msg).c_str());
                 }
             //unit
-            msg = std::format("\"{0}\" has incorrect unit {1}, which should be {2}", stmt, (const std::string)result["unit"], expectedUnit);
-            Assert::AreEqual(expectedUnit, (const std::string)result["unit"], toWstring(msg).c_str());
+            msg = std::format("\"{0}\" has incorrect unit {1}, which should be {2}", stmt, (const std::string)number["unit"], expectedUnit);
+            Assert::AreEqual(expectedUnit, (const std::string)number["unit"], toWstring(msg).c_str());
             //format
-            msg = std::format("\"{0}\" has incorrect format {1}, which should be {2}", stmt, (const std::string)result["format"], expectedFormat);
-            Assert::AreEqual(expectedFormat, (const std::string)result["format"], toWstring(msg).c_str());
+            msg = std::format("\"{0}\" has incorrect format {1}, which should be {2}", stmt, (const std::string)number["format"], expectedFormat);
+            Assert::AreEqual(expectedFormat, (const std::string)number["format"], toWstring(msg).c_str());
             return result;
             }
 

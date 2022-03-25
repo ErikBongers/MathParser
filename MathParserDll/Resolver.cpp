@@ -111,11 +111,11 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
-    result = op->call(args, a1.number.line, a1.number.pos);
+    result = op->call(args, a1.getNumber().line, a1.getNumber().pos);
     if (addExpr.error.id != ErrorId::NONE)
         result.errors.push_back(addExpr.error);
     if(!addExpr.unit.isClear())
-        result.number = result.number.convertToUnit(addExpr.unit, unitDefs);
+        result.setNumber(result.getNumber().convertToUnit(addExpr.unit, unitDefs));
     return result;
     }
 
@@ -152,15 +152,15 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
         return Value(pfix.error);
     auto val = resolveNode(*pfix.expr);
     if(pfix.postfixId.isNull())
-        val.number.unit = Unit::CLEAR();
+        val.getNumber().unit = Unit::CLEAR();
     else if(pfix.postfixId.stringValue == "bin")
-        val.number.numFormat = NumFormat::BIN;
+        val.getNumber().numFormat = NumFormat::BIN;
     else if(pfix.postfixId.stringValue == "hex")
-        val.number.numFormat = NumFormat::HEX;
+        val.getNumber().numFormat = NumFormat::HEX;
     else if(pfix.postfixId.stringValue == "dec")
-        val.number.numFormat = NumFormat::DEC;
+        val.getNumber().numFormat = NumFormat::DEC;
     else
-        val.number = val.number.convertToUnit(pfix.postfixId.stringValue, unitDefs);
+        val.getNumber ()= val.getNumber().convertToUnit(pfix.postfixId.stringValue, unitDefs);
     //in case of (x.km)m, both postfixId (km) and unit (m) are filled.
     return applyUnit(pfix, val);
     }
@@ -186,12 +186,12 @@ Value Resolver::resolvePrim(const IdExpr& prim)
 
 Value& Resolver::applyUnit(const Node& node, Value& val)
     {
-    if (!node.unit.isClear() && !val.number.unit.isClear())
+    if (!node.unit.isClear() && !val.getNumber().unit.isClear())
         {
-        val.number = val.number.convertToUnit(node.unit, unitDefs);
+        val.getNumber ()= val.getNumber().convertToUnit(node.unit, unitDefs);
         }
     else if (!node.unit.isClear())
-        val.number.unit = node.unit;
+        val.getNumber().unit = node.unit;
     return val;
     }
 
@@ -226,14 +226,14 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
     if(constExpr.type == ValueType::NUMBER)
         {
         auto v = Value(constExpr.value.numberValue);
-        v.number.unit = constExpr.unit;
+        v.getNumber().unit = constExpr.unit;
         if (constExpr.unit.isClear())
-            v.number.unit = Unit();
+            v.getNumber().unit = Unit();
         else
             {
-            if (unitDefs.exists(v.number.unit.id) == false)
+            if (unitDefs.exists(v.getNumber().unit.id) == false)
                 {
-                v.number.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.number.unit.line, v.number.unit.pos, v.number.unit.id.c_str()));
+                v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.line, v.getNumber().unit.pos, v.getNumber().unit.id.c_str()));
                 }
             }
         if (constExpr.error.id != ErrorId::NONE)

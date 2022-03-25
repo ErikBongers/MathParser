@@ -81,12 +81,12 @@ Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v
 
 Value OpNumPlusNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return Value(Number(doTerm(defs.unitDefs, args[0].number, true, args[1].number, line, pos)));
+    return Value(Number(doTerm(defs.unitDefs, args[0].getNumber(), true, args[1].getNumber(), line, pos)));
     }
 
 Value OpNumMinNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
     {
-    return Value(Number(doTerm(defs.unitDefs, args[0].number, false, args[1].number, line, pos)));
+    return Value(Number(doTerm(defs.unitDefs, args[0].getNumber(), false, args[1].getNumber(), line, pos)));
     }
 
 Value OpNumMultNum::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
@@ -94,9 +94,9 @@ Value OpNumMultNum::execute(std::vector<Value>& args, unsigned int line, unsigne
     Value result = args[0];
     result.constant = false;
     //TODO: if both units set: unit changes to unit*unit!
-    result.number = result.number * args[1].number;
-    if (args[0].number.unit.isClear())
-        result.number.unit = args[1].number.unit;
+    result.setNumber(result.getNumber() * args[1].getNumber());
+    if (args[0].getNumber().unit.isClear())
+        result.getNumber().unit = args[1].getNumber().unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }
@@ -106,9 +106,9 @@ Value OpNumDivNum::execute(std::vector<Value>& args, unsigned int line, unsigned
     Value result = args[0];
     result.constant = false;
     //TODO: if both units set: unit changes to unit/unit!
-    result.number = result.number / args[1].number;
-    if (args[0].number.unit.isClear())
-        result.number.unit = args[1].number.unit;
+    result.setNumber(result.getNumber() / args[1].getNumber());
+    if (args[0].getNumber().unit.isClear())
+        result.getNumber().unit = args[1].getNumber().unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }
@@ -117,9 +117,9 @@ Value OpNumPowNum::execute(std::vector<Value>& args, unsigned int line, unsigned
     {
     Value result = args[0];
     result.constant = false;
-    result.number = Number(std::pow(args[0].number.to_double(), args[1].number.to_double()), 0);
-    if (!args[0].number.unit.isClear())
-        result.number.unit = args[1].number.unit;
+    result.setNumber(Number(std::pow(args[0].getNumber().to_double(), args[1].getNumber().to_double()), 0));
+    if (!args[0].getNumber().unit.isClear())
+        result.getNumber().unit = args[1].getNumber().unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }

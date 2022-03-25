@@ -6,8 +6,10 @@
 #include "Resolver.h"
 
 Value::Value(Number n)
-    : type(ValueType::NUMBER), number(n)
-    {}
+    : type(ValueType::NUMBER)
+    {
+    data = n;
+    }
 
 Value::Value(const Error& error)
     {
@@ -20,14 +22,15 @@ Value::Value(const std::vector<Error>& errors)
     }
 
 Value::Value(Token id, Number n)
-    : id(id), number(n), type(ValueType::NUMBER)
+    : id(id), type(ValueType::NUMBER)
     {
+    data = n;
     }
 
 Value::Value(Date date)
     : type(ValueType::TIMEPOINT)
     {
-    //TODO
+    data = date;
     }
 
 
@@ -40,7 +43,7 @@ std::string Value::to_json()
     else
         sstr << "\"id\" : \"#result#\"";
     sstr << ", \"number\" : ";
-    sstr << number.to_json();
+    sstr << std::get<Number>(data).to_json();
 
     sstr << ", \"errors\" : [";
     std::string comma = "";
@@ -49,7 +52,7 @@ std::string Value::to_json()
         sstr << comma << error.to_json();
         comma = ",";
         }
-    for (auto& error : number.errors)
+    for (auto& error : std::get<Number>(data).errors)
         {
         sstr << comma << error.to_json();
         comma = ",";

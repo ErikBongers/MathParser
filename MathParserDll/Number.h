@@ -11,9 +11,9 @@ struct Number
     Unit unit;
     NumFormat numFormat = NumFormat::DEC;
     std::vector<Error> errors;
-    unsigned int line;
-    unsigned int pos;
-
+    unsigned int line = 0;
+    unsigned int pos = 0;
+    Number() {}
     Number(double d, int e, NumFormat numFormat = NumFormat::DEC) : significand(d), exponent(e), numFormat(numFormat) {}
     Number(double d, int e, unsigned line, unsigned pos) : significand(d), exponent(e), line(line), pos(pos) {}
     Number(double d, const Unit& unit, NumFormat numFormat, unsigned line, unsigned pos) : significand(d), unit(unit), numFormat(numFormat), line(line), pos(pos) {}

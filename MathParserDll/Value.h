@@ -6,19 +6,16 @@
 #include "Date.h"
 #include <iomanip>
 #include <vector>
-
+#include <variant>
 class Value
     {
     public:
         Token id = Token::Null(); //optional, in case of a variable.
         ValueType type = ValueType::NONE;
         
-        //possible values:
-        Number number = {0,0};
-        //Timepoint
-        //Duration
-        //Calendar
-
+    private:
+        std::variant<Number, Date> data;
+    public:
         std::vector<Error> errors;
         std::string text;
         std::string comment_line;
@@ -34,6 +31,7 @@ class Value
         Value(Date date);
 
         std::string to_json();
-
+        Number& getNumber() { return std::get<Number>(data); }
+        void setNumber(const Number& n) { data = n;}
     };
 

@@ -33,11 +33,16 @@ Module.onRuntimeInitialized = async _ => {
 		if (line.text != "")
 			strText = " " + line.text;
 		let strLine = "";
-		let strFormatted = Module.formatFloatString(line.number.significand, line.number.exponent);
-		if (line.number.format != "DEC")
-			strFormatted = line.number.formatted;
+		let strFormatted = "";
+		if (line.type == "NUMBER") {
+			strFormatted = Module.formatFloatString(line.number.significand, line.number.exponent);
+			if (line.number.format != "DEC")
+				strFormatted = line.number.formatted + line.number.unit;
+        }
+		else if (line.type == "TIMEPOINT")
+			strFormatted = line.date.formatted;
 		if (line.mute == false || line.errors.length > 0)
-			strLine += (line.id === "#result#" ? "" : line.id + "=") + strFormatted + line.number.unit;
+			strLine += (line.id === "#result#" ? "" : line.id + "=") + strFormatted;
 		strLine += strText + (strErrors === "" ? "" : "  <<<" + strErrors);
 		strLine += strComment;
 		return strLine;

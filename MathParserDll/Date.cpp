@@ -2,6 +2,8 @@
 #include "Date.h"
 #include <chrono>
 #include <algorithm>
+#include <sstream>
+#include <iomanip>
 
 constexpr bool isDateSeparator(char c) { return c == ' ' || c == '/' || c == ',' || c == '-' ;}
 
@@ -236,4 +238,47 @@ int DateParser::parseInt(const std::string& str)
 int DateParser::countDateSlices()
     {
     return (int)slices.size();//TODO: exclude time slices.
+    }
+
+std::string monthToString(Month m)
+    {
+    switch (m)
+        {
+        case Month::JAN: return "01";
+        case Month::FEB: return "02";
+        case Month::MAR: return "03";
+        case Month::APR: return "04";
+        case Month::MAY: return "05";
+        case Month::JUN: return "06";
+        case Month::JUL: return "07";
+        case Month::AUG: return "08";
+        case Month::SEP: return "09";
+        case Month::OKT: return "10";
+        case Month::NOV: return "11";
+        case Month::DEC: return "12";
+        default: return "??";
+        }
+    }
+
+
+std::string Date::to_json()
+    {
+    std::ostringstream sstr;
+    sstr << "{";
+
+    sstr << "\"formatted\" : ";
+
+    sstr << std::setfill('0') 
+        << "\""
+        << std::setw(4) 
+        << (year == Date::EmptyYear ? 0 : year)
+        << "/"
+        << std::setw(2) 
+        << monthToString(month)
+        << "/"
+        << static_cast<int>(day)
+        << "\"";
+
+    sstr << "}";
+    return sstr.str();
     }

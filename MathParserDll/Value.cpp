@@ -42,8 +42,20 @@ std::string Value::to_json()
         sstr << "\"id\" : \"" << id.stringValue << "\"";
     else
         sstr << "\"id\" : \"#result#\"";
-    sstr << ", \"number\" : ";
-    sstr << std::get<Number>(data).to_json();
+    sstr << ", \"type\" : \"" << to_string(type) << "\"";
+    std::vector<Error>* pErrors = nullptr;
+    if(type == ValueType::NUMBER)
+        {
+        sstr << ", \"number\" : ";
+        sstr << std::get<Number>(data).to_json();
+        pErrors = &std::get<Number>(data).errors;
+        }
+    else if (type == ValueType::TIMEPOINT)
+        {
+        sstr << ", \"date\": ";
+        sstr << std::get<Date>(data).to_json();
+        //pErrors = &std::get<Date>(data).errors;
+        }
 
     sstr << ", \"errors\" : [";
     std::string comma = "";
@@ -52,10 +64,13 @@ std::string Value::to_json()
         sstr << comma << error.to_json();
         comma = ",";
         }
-    for (auto& error : std::get<Number>(data).errors)
+    if(pErrors != nullptr)
         {
-        sstr << comma << error.to_json();
-        comma = ",";
+        for (auto& error : *pErrors)
+            {
+            sstr << comma << error.to_json();
+            comma = ",";
+            }
         }
     sstr << "]";
     sstr << ", \"text\" : \""

@@ -7,16 +7,15 @@ public class JsonResults
 public class Result
     {
     public string id { get; set; }
-    public string value { get; set; }
-    public string format { get; set; }
-    public string formatted { get; set; }
-    public string unit { get; set; }
+    public string type { get; set; }
+    public Number number { get; set; }
+    public Date date { get; set; }
     public Error[] errors { get; set; }
     public string text { get; set; }
     public string comment { get; set; }
     public bool onlyComment { get; set; }
     public bool mute { get; set; }
-}
+    }
 
 public class Error
     {
@@ -24,4 +23,19 @@ public class Error
     public string message { get; set; }
     public int line { get; set; }
     public int pos { get; set; }
+    }
+
+public class Number
+    {
+    public string value { get; set; }
+    public string significand { get; set; }
+    public double exponent { get; set; }
+    public string format { get; set; }
+    public string formatted { get; set; }
+    public string unit { get; set; }
+    }
+
+public class Date
+{
+    public string formatted { get; set; }
 }

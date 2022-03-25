@@ -14,7 +14,7 @@ class Date
         Date() = default;
         unsigned int line;
         unsigned int pos;
-
+        std::string to_json();
     };
 
 class DateParser

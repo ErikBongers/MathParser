@@ -74,22 +74,31 @@ namespace MathParserWPF
                 string strComment = "";
                 if (result.comment.Length != 0)
                     strComment = "//" + result.comment;
-                double number;
-                bool isNum = double.TryParse(result.value, out number);
+
                 string strResult = "";
                 if (!result.mute || result.errors.Length > 0)
                     {
-                    string numval;
-                    if (isNum)
+                    string resultVal = "";
+                    if (result.type == "NUMBER")
                         {
-                        if (result.format == "BIN" || result.format == "HEX")
-                            numval = result.formatted;
+                        double number;
+                        bool isNum = double.TryParse(result.number.value, out number);
+                        if (isNum)
+                            {
+                            if (result.number.format == "BIN" || result.number.format == "HEX")
+                                resultVal = result.number.formatted;
+                            else
+                                resultVal = number.ToString("0.#######");
+                            }
                         else
-                            numval = number.ToString("0.#######");
+                            resultVal = result.number.value;
+                        resultVal += result.number.unit;
                         }
-                    else
-                        numval = result.value;
-                    strResult = (result.id == "#result#" ? "" : result.id + "=") + numval + result.unit;
+                    else if(result.type == "TIMEPOINT")
+                        {
+                        resultVal = result.date.formatted;
+                        }
+                    strResult = (result.id == "#result#" ? "" : result.id + "=") + resultVal;
 
                     }
                 if (result.errors.Length > 0)

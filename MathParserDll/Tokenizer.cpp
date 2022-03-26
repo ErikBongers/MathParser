@@ -208,8 +208,9 @@ Token Tokenizer::_nextToken()
             {
             auto start= pos;
             auto curLine = line;
+            auto curLinePos = linePos;
             skipToOnLine('\'');
-            return Token(TokenType::QUOTED_STR, getText(start, std::max(start, pos-1)), start, curLine);
+            return Token(TokenType::QUOTED_STR, getText(start, std::max(start, pos-1)), curLine, curLinePos);
             }
         default:
             if ((c >= '0' && c <= '9') || c == '.')

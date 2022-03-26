@@ -32,7 +32,11 @@ Date DateParser::parse()
     
     int sliceNo = 0;
     for(auto& slice: slices)
+        {
         parseSlice(sliceNo++, date, slice);
+        if(hasRealErrors(date.errors))
+            break;
+        }
     date.line = line;
     date.pos = pos;
     return date;
@@ -83,7 +87,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
     if (slice == "last")
         {
         if(date.day != 0)
-            ;//error!
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for day."));
         else
             date.day = Date::Last;
         return;
@@ -98,17 +102,20 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
             return;
             }
         else
-            ;//error: month is already filled.
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for month."));
         }
     //from here on, it should be all numbers.
     int n = parseInt(slice);
     if(n < 0)
-        return;//error in number;
+        {
+        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "invalid numeric value."));
+        return;
+        }
     //what number do we have?
     if (n > 31)
         {
         if(date.year != Date::EmptyYear)
-            ;//error
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for year."));
         else
             {
             date.year = n;
@@ -119,9 +126,15 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
     else if (n > 12) //not a month, could be day or year.
         {
         if (countDateSlices() >= 3 && !hasYearSlice())
-            return;//error: could be day or year.
+            {
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "values could be month or year."));
+            return;
+            }
         if(date.day != 0)
-            return ;//error: day already filled.
+            {
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for day."));
+            return;
+            }
         date.day = n;
         }
     else //n <= 12
@@ -133,14 +146,31 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                 {
                 if (hasMonthSlice())
                     {
-                    date.day = n;
+                    if(date.day == 0)
+                        date.day = n;
+                    else
+                        {
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
+                        }
                     return;
                     }
                 if (hasDaySlice())
                     {
+                    if(date.month == Month::NONE)
+                        date.month = (Month)n;//should not fail as n <= 12
+                    else
+                        {
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
+                        }
+                    return;
+                    }
+                if (countSameDateValues(n) >=2)
+                    {
+                    date.day = n;
                     date.month = (Month)n;
                     return;
                     }
+                date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
                 }
             if(ymdFormat)
                 {
@@ -150,21 +180,30 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                     if(date.year == Date::EmptyYear)
                         date.year = n;
                     else
-                        ;//error: assuming ymd format, but day is already filled.
+                        {
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "assuming ymd format, but day is already filled."));
+                        return;
+                        }
                     }
                 else if (sliceNo == 1)
                     {
                     if(date.month == Month::NONE)
                         date.month = (Month)n;//should not fail as n <= 12
                     else
-                        ;//error: assuming ymd but month is already filled.
+                        {
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "assuming ymd but month is already filled."));
+                        return;
+                        }
                     }
                 else if(sliceNo == 2)
                     {
                     if(date.day == 0)
                         date.day = n;
                     else
-                        ;//error: assuming ymd format, but day is already filled.
+                        {
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "assuming ymd format, but day is already filled."));
+                        return;
+                        }
                     }
                 }
             }
@@ -181,7 +220,10 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                 return;
                 }
             else
-                return; //error: slice could be day or month
+                {
+                date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
+                return;
+                }
             }
         }
     }
@@ -221,6 +263,18 @@ bool DateParser::hasMonthSlice()
             return true;
         }
     return false;
+    }
+
+int DateParser::countSameDateValues(int valueToCount)
+    {
+    int i = 0;
+    for (auto& slice : slices)
+        {
+        int n = parseInt(slice);
+        if(n == valueToCount)
+            i++;
+        }
+    return i;
     }
 
 int DateParser::parseInt(const std::string& str)

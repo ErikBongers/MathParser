@@ -54,7 +54,7 @@ std::string Value::to_json()
         {
         sstr << ", \"date\": ";
         sstr << std::get<Date>(data).to_json();
-        //pErrors = &std::get<Date>(data).errors;
+        pErrors = &std::get<Date>(data).errors;
         }
 
     sstr << ", \"errors\" : [";

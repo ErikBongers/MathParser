@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Error.h"
 
 enum class  Month : unsigned char {JAN = 1, FEB = 2, MAR = 3, APR = 4, MAY = 5, JUN = 6, JUL = 7, AUG = 8, SEP = 9, OKT = 10, NOV = 11, DEC = 12, NONE = 0};
 
@@ -15,6 +16,7 @@ class Date
         unsigned int line;
         unsigned int pos;
         std::string to_json();
+        std::vector<Error> errors;
     };
 
 class DateParser
@@ -32,6 +34,7 @@ class DateParser
         bool hasYearSlice();
         bool hasDaySlice();
         bool hasMonthSlice();
+        int countSameDateValues(int valueToCount);
         int parseInt(const std::string& str);
         int countDateSlices();
     };

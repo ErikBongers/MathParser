@@ -20,6 +20,7 @@ enum class ErrorId
     W_VAR_IS_FUNCTION,
     NO_OP,
     DEFINE_NOT_DEF,
+    INV_DATE_STR,
     };
 
 

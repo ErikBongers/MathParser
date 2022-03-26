@@ -5,8 +5,8 @@ class Unit
     {
     public:
         std::string id; //same ID may be used as a variable.
-        unsigned int line;
-        unsigned int pos;
+        unsigned int line = 0;
+        unsigned int pos = 0;
 
         //optional:
         Unit* subUnit1 = nullptr;

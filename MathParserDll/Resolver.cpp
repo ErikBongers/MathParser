@@ -191,7 +191,12 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
         val.getNumber ()= val.getNumber().convertToUnit(node.unit, unitDefs);
         }
     else if (!node.unit.isClear())
-        val.getNumber().unit = node.unit;
+        {
+        if (unitDefs.exists(node.unit.id))
+            val.getNumber().unit = node.unit;
+        else
+            val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.line, node.unit.pos, node.unit.id.c_str()));
+        }
     return val;
     }
 

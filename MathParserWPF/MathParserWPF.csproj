@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MathParserDll\MathParserDll.vcxproj" />
-    <ProjectReference Include="..\MathParserLib\MathParserLib.csproj" />
   </ItemGroup>
 
 </Project>

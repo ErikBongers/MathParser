@@ -6,7 +6,7 @@
 #include "Function.h"
 #include "ValueType.h"
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, NONE};
 class Parser;
 
 class Node
@@ -150,6 +150,7 @@ class Parser
         ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
         IdExpr* createIdExpr();
+        Node* createNoneExpr();
         PostfixExpr* createPostfix();
         AssignExpr* createAssign();
         Define* createDefine();

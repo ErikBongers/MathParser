@@ -433,7 +433,7 @@ Node* Parser::parsePrimaryExpr()
             }
         default: break;
         }
-    return createIdExpr(); //error
+    return createNoneExpr(); //error
     }
 
 Node* Parser::parseAbsOperator()
@@ -472,7 +472,9 @@ CallExpr* Parser::parseCallExpr(Token functionName)
         {
         if (peekToken().type == TokenType::SEMI_COLON)
             break; //allow parsing of next statement
-        callExpr->arguments.push_back(parseAddExpr());
+        auto expr = parseAddExpr();
+        if(!expr->is(NodeType::NONE))
+            callExpr->arguments.push_back(expr);
         auto t = nextToken();
         if (t.type == TokenType::PAR_CLOSE)
             {
@@ -488,6 +490,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     return callExpr;
     }
 
+Node* Parser::createNoneExpr() { Node* p = new Node(NodeType::NONE); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
 IdExpr* Parser::createIdExpr() { IdExpr* p = new IdExpr; nodes.push_back(p); return p; }

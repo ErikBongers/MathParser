@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathParserLib", "MathParserLib\MathParserLib.csproj", "{F0E28897-3BDE-4203-8A31-254D61612054}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathParserWPF", "MathParserWPF\MathParserWPF.csproj", "{994839D5-FF96-4281-993B-B46D43802B00}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathParserLibTests", "MathParserLibTests\MathParserLibTests.csproj", "{E59E8FBD-12B3-4394-B222-5E2B67763116}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathParserDll", "MathParserDll\MathParserDll.vcxproj", "{820702AC-C1D3-455A-AAEF-6B44E063D77A}"
 EndProject
@@ -53,18 +49,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Debug|x64.Build.0 = Debug|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Debug|x86.Build.0 = Debug|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Release|x64.ActiveCfg = Release|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Release|x64.Build.0 = Release|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Release|x86.ActiveCfg = Release|Any CPU
-		{F0E28897-3BDE-4203-8A31-254D61612054}.Release|x86.Build.0 = Release|Any CPU
 		{994839D5-FF96-4281-993B-B46D43802B00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{994839D5-FF96-4281-993B-B46D43802B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{994839D5-FF96-4281-993B-B46D43802B00}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -77,18 +61,6 @@ Global
 		{994839D5-FF96-4281-993B-B46D43802B00}.Release|x64.Build.0 = Release|Any CPU
 		{994839D5-FF96-4281-993B-B46D43802B00}.Release|x86.ActiveCfg = Release|Any CPU
 		{994839D5-FF96-4281-993B-B46D43802B00}.Release|x86.Build.0 = Release|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Debug|x64.Build.0 = Debug|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Debug|x86.Build.0 = Debug|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Release|x64.ActiveCfg = Release|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Release|x64.Build.0 = Release|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Release|x86.ActiveCfg = Release|Any CPU
-		{E59E8FBD-12B3-4394-B222-5E2B67763116}.Release|x86.Build.0 = Release|Any CPU
 		{820702AC-C1D3-455A-AAEF-6B44E063D77A}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{820702AC-C1D3-455A-AAEF-6B44E063D77A}.Debug|x64.ActiveCfg = Debug|x64
 		{820702AC-C1D3-455A-AAEF-6B44E063D77A}.Debug|x64.Build.0 = Debug|x64

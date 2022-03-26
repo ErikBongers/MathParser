@@ -1,4 +1,4 @@
-﻿using MathParserLib;
+﻿//using MathParserLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -113,24 +113,25 @@ namespace MathParserWPF
                 }
             }
 
-        private static void parseWithCSharp(string formula, MainWindow wnd)
-            {
-            //Tokenizer tok = new Tokenizer(formula);
-            Parser parser = new Parser(formula);
-            var statements = parser.parse();
-            Resolver resolver = new Resolver(parser);
-            statements.ForEach(stmt =>
-            {
-                var result = resolver.resolve(stmt);
-                if (result.id != null)
-                    wnd.Output += result.id.StringValue + "=";
-                if (result.number == Double.NaN)
-                    wnd.Output = "NaN";
-                else
-                    wnd.Output += result.ToString("0.#######");
-                wnd.Output += "\n";
-            });
-            }
+        //private static void parseWithCSharp(string formula, MainWindow wnd)
+        //    {
+        //    //Tokenizer tok = new Tokenizer(formula);
+        //    Parser parser = new Parser(formula);
+        //    var statements = parser.parse();
+        //    Resolver resolver = new Resolver(parser);
+        //    statements.ForEach(stmt =>
+        //    {
+        //        var result = resolver.resolve(stmt);
+        //        if (result.id != null)
+        //            wnd.Output += result.id.StringValue + "=";
+        //        if (result.number == Double.NaN)
+        //            wnd.Output = "NaN";
+        //        else
+        //            wnd.Output += result.ToString("0.#######");
+        //        wnd.Output += "\n";
+        //    });
+        //    }
+        
         const string localStorageFileName = "localstorage.txt";
         public MainWindow()
             {

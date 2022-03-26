@@ -37,6 +37,13 @@ class FunctionDefs
         UnitDefs& unitDefs;
     };
 
+class Now: public FunctionDef
+    {
+    public:
+        Now(FunctionDefs& functionDefs) : FunctionDef(functionDefs, "now", 0, 0) {}
+        Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+    };
+
 class Inc : public FunctionDef
     {
     public:

@@ -116,12 +116,13 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                 ymdFormat = true;
             }
         }
-    else if (n > 12)
+    else if (n > 12) //not a month, could be day or year.
         {
+        if (countDateSlices() >= 3 && !hasYearSlice())
+            return;//error: could be day or year.
         if(date.day != 0)
-            ;//error
-        else
-            date.day = n;
+            return ;//error: day already filled.
+        date.day = n;
         }
     else //n <= 12
         {
@@ -180,7 +181,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                 return;
                 }
             else
-                ; //error: slice could be day or month
+                return; //error: slice could be day or month
             }
         }
     }

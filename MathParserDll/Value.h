@@ -32,6 +32,8 @@ class Value
 
         std::string to_json();
         Number& getNumber() { return std::get<Number>(data); }
-        void setNumber(const Number& n) { data = n;}
+        Date& getDate() { return std::get<Date>(data); }
+        void setNumber(const Number& n) { type = ValueType::NUMBER; data = n;}
+        void setDate(const Date& d) { type = ValueType::TIMEPOINT; data = d;}
     };
 

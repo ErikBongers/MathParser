@@ -3,9 +3,12 @@
 #include "Tokenizer.h"
 #include "Unit.h"
 #include "Resolver.h"
+#include <chrono>
+#include "Date.h"
 
 void FunctionDefs::init()
     {
+    Add(new Now(*this));
     Add(new Int(*this));
     Add(new Abs(*this));
     Add(new Max(*this));
@@ -55,6 +58,24 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     if (functions.count(name) == 0)
         return nullptr;
     return functions[name];
+    }
+
+namespace c = std::chrono;
+using time_point = c::system_clock::time_point;
+using year_month_day = c::year_month_day;
+using namespace std::chrono_literals;
+
+Value Now::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    Value now;
+    time_point tpNow = c::system_clock::now();
+    year_month_day ymd{ c::floor<std::chrono::days>(tpNow) };
+    Date date;
+    date.day = static_cast<unsigned>(ymd.day());
+    date.month = (Month)static_cast<unsigned>(ymd.month());
+    date.year =  static_cast<int>(ymd.year());
+    now.setDate(date);
+    return now;
     }
 
 Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, unsigned int line, unsigned int pos, bool max)

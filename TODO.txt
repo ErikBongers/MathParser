@@ -2,7 +2,6 @@
   - return the errors.
   - return warnings if assumptions (ymd?) are being made.
 * bugs:
-  : a=1; a b; >>> should give error b not defined or invalid expression, but not 1.b where b is interpreted as a unit?
   : x=1; a x; >>> interpreted as implicit mult. Is ok? But should give errr: ""A not defined" rather than "operator* not found".
 * create operator date - date.
 * check age of person.

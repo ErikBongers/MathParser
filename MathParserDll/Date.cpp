@@ -141,6 +141,13 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
         {
         if(countDateSlices() == 3)
             {
+            if (countSameDateValues(n) == 3)
+                {
+                date.day = n;
+                date.month = (Month)n;
+                date.year = n;
+                return;
+                }
             //slice could be day, month, year
             if (hasYearSlice())
                 {

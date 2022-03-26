@@ -81,6 +81,23 @@ Hot.=C; //Does the same as the above line.
 ### Constants
 Currently only PI. (also in lower case)
 
+### Dates
+Date values can be written between single quotes.
+Math Parser will try to parse any date format, as long as it's not ambiguous.
+```
+a='01/jan/2022'; 
+a='2022/22/11'; 
+a='2022/11/22'; 
+
+meh='11/11/11'; //this works.
+duh='1/1/2022'; //still works...
+really='11/2022/11'; //yep, just fine...
+
+a='2022/12/11'; //ambiguous
+a='2/1/2022'; //ambiguous
+```
+[TODO]: allow access to date parts and date calculations, enforce a strict date format. Implement time.
+
 ## Technical
 The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (I think) with 1 look-ahead and 1 push-back.
 Parser errors are handled gracefully.

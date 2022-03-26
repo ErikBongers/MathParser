@@ -15,6 +15,7 @@ namespace TestParser
         
         TEST_METHOD(TestDates)
             {
+            testDateString("11/11/11", 11, 11, 11);
             testDateString("2022/12/13", 13, 12, 2022);
             testDateString("2022,12,13", 13, 12, 2022);
             testDateString("2022-12-13", 13, 12, 2022);
@@ -25,11 +26,12 @@ namespace TestParser
             testDateString("2022 28 12", 28, 12, 2022);
             testDateString("28 2022 12", 28, 12, 2022);
             testDateString("12 2022 28", 28, 12, 2022);
-            testDateString("2022 2 1", 1, 2, 2022);
             testDateString("2022 last 1", 99, 1, 2022);
             testDateString("last 1", 99, 1, Date::EmptyYear);
             testDateString("26 1", 26, 1, Date::EmptyYear);
             testDateString("feb 1", 1, 2, Date::EmptyYear);
+            
+            assertError("'2022 2 1'", "INV_DATE_STR");
             }
 
         TEST_METHOD(TestDefines)
@@ -131,6 +133,7 @@ namespace TestParser
             assertResult("  (PI)kg                  ", 3.14159265358979311600, "kg");
             assertResult("  1m*2                    ", 2, "m");
             assertResult("  1*2m                    ", 2, "m");
+            assertError("   a=1; a b;               ", "UNIT_NOT_DEF");
             }
 
         struct Error

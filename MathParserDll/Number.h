@@ -6,7 +6,7 @@ enum class NumFormat { DEC, BIN, HEX };
 
 struct Number
     {
-    double significand;
+    double significand=0;
     int exponent = 0;
     Unit unit;
     NumFormat numFormat = NumFormat::DEC;

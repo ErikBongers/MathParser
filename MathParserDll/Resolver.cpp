@@ -92,6 +92,10 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     Value a2 = resolveNode(*addExpr.n2);
     Value result;
 
+    result.errors.insert(result.errors.begin(), a1.errors.begin(), a1.errors.end());
+    result.errors.insert(result.errors.begin(), a2.errors.begin(), a2.errors.end());
+    if(hasRealErrors(result.errors))
+        return result;
     OperatorType opType = OperatorType::NONE;
     switch (addExpr.op.type)
         {

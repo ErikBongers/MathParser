@@ -1,8 +1,6 @@
 ﻿* Date parsing;
   - return the errors.
   - return warnings if assumptions (ymd?) are being made.
-* bugs:
-  : x=1; a x; >>> interpreted as implicit mult. Is ok? But should give errr: ""A not defined" rather than "operator* not found".
 * create operator date - date.
 * check age of person.
 * Duration calculations work!

@@ -38,9 +38,13 @@ Module.onRuntimeInitialized = async _ => {
 			strFormatted = Module.formatFloatString(line.number.significand, line.number.exponent);
 			if (line.number.format != "DEC")
 				strFormatted = line.number.formatted + line.number.unit;
-        }
+		}
 		else if (line.type == "TIMEPOINT")
 			strFormatted = line.date.formatted;
+		else if (line.type == "DURATION") {
+			strFormatted = line.duration.years + " years, " + line.duration.months + " months, " + line.duration.days + " days";
+        }
+
 		if (line.mute == false || line.errors.length > 0)
 			strLine += (line.id === "#result#" ? "" : line.id + "=") + strFormatted;
 		strLine += strText + (strErrors === "" ? "" : "  <<<" + strErrors);

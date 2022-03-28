@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Parser.h"
 #include "Function.h"
-#include <numbers>
 
 Parser::Parser(const char* stream, FunctionDefs& functionDefs)
     : tok(stream), functionDefs(functionDefs) 

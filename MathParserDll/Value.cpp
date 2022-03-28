@@ -33,6 +33,11 @@ Value::Value(Date date)
     data = date;
     }
 
+Value::Value(Duration duration)
+    : type(ValueType::DURATION)
+    {
+    data = duration;
+    }
 
 std::string Value::to_json()
     {
@@ -55,6 +60,11 @@ std::string Value::to_json()
         sstr << ", \"date\": ";
         sstr << std::get<Date>(data).to_json();
         pErrors = &std::get<Date>(data).errors;
+        }
+    else if (type == ValueType::DURATION)
+        {
+        sstr << ", \"duration\": ";
+        sstr << std::get<Duration>(data).to_json();
         }
 
     sstr << ", \"errors\" : [";

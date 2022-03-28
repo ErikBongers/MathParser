@@ -40,6 +40,7 @@ void OperatorDefs::init()
     Add(new OpNumMultNum(*this));
     Add(new OpNumDivNum(*this));
     Add(new OpNumPowNum(*this));
+    Add(new OpDateMinDate(*this));
     }
 
 Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v, unsigned int line, unsigned int pos)
@@ -124,3 +125,11 @@ Value OpNumPowNum::execute(std::vector<Value>& args, unsigned int line, unsigned
     return result;
     }
 
+Value OpDateMinDate::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+    {
+    Date d1 = args[0].getDate();
+    Date d2 = args[1].getDate();
+    auto dd = d1 - d2;
+    dd.normalize();
+    return dd;
+    }

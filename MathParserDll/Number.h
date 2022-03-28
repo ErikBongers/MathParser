@@ -19,7 +19,7 @@ struct Number
     Number(double d, const Unit& unit, NumFormat numFormat, unsigned line, unsigned pos) : significand(d), unit(unit), numFormat(numFormat), line(line), pos(pos) {}
     Number& operator++(int);
     Number& operator--(int);
-    double to_double() const { return significand * std::pow(10, exponent); }
+    double to_double() const;
     Number operator+(const Number& n2) const;
     Number operator-(const Number& n2) const;
     Number operator*(const Number& n2) const;

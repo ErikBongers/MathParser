@@ -14,6 +14,7 @@ const char* Unit::to_string() const
     return this->id.c_str();
     }
 
+# define M_PIl          3.141592653589793238462643383279502884L
 
 void UnitDefs::init()
     {
@@ -22,7 +23,7 @@ void UnitDefs::init()
             {"", UnitDef("", 1, UnitClass::UNDEFINED)}, //dummy unit for convenience.
 
             {"rad", UnitDef("rad", 1, UnitClass::ANGLE)},
-            {"deg", UnitDef("deg", M_PI / 180, UnitClass::ANGLE)},
+            {"deg", UnitDef("deg", M_PIl / 180.0L, UnitClass::ANGLE)},
 
             {"m", UnitDef("m", 1, UnitClass::LENGTH)},
             { "cm", UnitDef("cm", 0.01, UnitClass::LENGTH)},

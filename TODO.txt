@@ -1,8 +1,6 @@
-﻿* Date parsing;
-  - return the errors.
+﻿* unary minus (prefix)
+* Date parsing;
   - return warnings if assumptions (ymd?) are being made.
-* create operator date - date.
-* check age of person.
 * Duration calculations work!
   > create Date class. (don't rename to Calendar, as well probably never have a TimePoint needed?)
   - separate fields for all fragments

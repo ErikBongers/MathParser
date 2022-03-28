@@ -115,10 +115,10 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
-    result = op->call(args, a1.getNumber().line, a1.getNumber().pos);
+    result = op->call(args, addExpr.op.line, addExpr.op.pos);
     if (addExpr.error.id != ErrorId::NONE)
         result.errors.push_back(addExpr.error);
-    if(!addExpr.unit.isClear())
+    if(result.type ==ValueType::NUMBER && !addExpr.unit.isClear())
         result.setNumber(result.getNumber().convertToUnit(addExpr.unit, unitDefs));
     return result;
     }
@@ -190,6 +190,8 @@ Value Resolver::resolvePrim(const IdExpr& prim)
 
 Value& Resolver::applyUnit(const Node& node, Value& val)
     {
+    if(val.type != ValueType::NUMBER)
+        return val;
     if (!node.unit.isClear() && !val.getNumber().unit.isClear())
         {
         val.getNumber ()= val.getNumber().convertToUnit(node.unit, unitDefs);

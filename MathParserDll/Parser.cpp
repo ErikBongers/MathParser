@@ -1,16 +1,17 @@
 #include "pch.h"
 #include "Parser.h"
 #include "Function.h"
+#include <numbers>
 
 Parser::Parser(const char* stream, FunctionDefs& functionDefs)
     : tok(stream), functionDefs(functionDefs) 
     {
     }
-
+# define M_PIl          3.141592653589793238462643383279502884L
 void Parser::parse()
     {
     ConstExpr* pConst = createConst(ValueType::NUMBER);
-    pConst->value = Token(TokenType::NUMBER, Number(M_PI, 0), tok.getLine(), tok.getLinePos());
+    pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), tok.getLine(), tok.getLinePos());
     ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
     while (peekToken().type != TokenType::EOT)
         {
@@ -468,7 +469,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
         return callExpr;
         }
     //loop arguments
-    while (peekToken().type != TokenType::EOT)
+    while (peekToken().type != TokenType::EOT && peekToken().type != TokenType::PAR_CLOSE)
         {
         if (peekToken().type == TokenType::SEMI_COLON)
             break; //allow parsing of next statement
@@ -478,6 +479,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
         auto t = nextToken();
         if (t.type == TokenType::PAR_CLOSE)
             {
+            pushBackLastToken();
             break;
             }
         if (t.type != TokenType::COMMA)
@@ -487,6 +489,9 @@ CallExpr* Parser::parseCallExpr(Token functionName)
             }
         }
 
+    t = nextToken();
+    if (t.type != TokenType::PAR_CLOSE)
+        pushBackLastToken();
     return callExpr;
     }
 

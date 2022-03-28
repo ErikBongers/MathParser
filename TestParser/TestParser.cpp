@@ -56,6 +56,8 @@ namespace TestParser
         TEST_METHOD(TestCalls)
             {
             assertResult("sin(30deg)", 0.5);
+            assertResult("sin(30deg)+1", 1.5);
+            assertResult("abs(-sin(30deg))", 0.5);
             }
 
         TEST_METHOD(TestEcho)

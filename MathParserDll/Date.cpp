@@ -344,3 +344,12 @@ std::string Date::to_json()
     sstr << "}";
     return sstr.str();
     }
+
+Duration Date::operator-(const Date& d2)
+    {
+    Duration dd;
+    dd.years = this->year - d2.year;
+    dd.months = (char)this->month - (char)d2.month;
+    dd.days = this->day - d2.day;
+    return dd;
+    }

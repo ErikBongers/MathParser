@@ -77,3 +77,10 @@ class OpNumPowNum : public OperatorDef
         OpNumPowNum(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::NUMBER, OperatorType::POW, ValueType::NUMBER, ValueType::NUMBER)) {}
         virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
     };
+
+class OpDateMinDate : public OperatorDef
+    {
+    public:
+        OpDateMinDate(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::TIMEPOINT, OperatorType::MIN, ValueType::TIMEPOINT, ValueType::DURATION)) {}
+        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+    };

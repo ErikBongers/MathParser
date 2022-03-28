@@ -4,9 +4,11 @@
 #include "Number.h"
 #include "ValueType.h"
 #include "Date.h"
+#include "Duration.h"
 #include <iomanip>
 #include <vector>
 #include <variant>
+
 class Value
     {
     public:
@@ -14,7 +16,7 @@ class Value
         ValueType type = ValueType::NONE;
         
     private:
-        std::variant<Number, Date> data;
+        std::variant<Number, Date, Duration> data;
     public:
         std::vector<Error> errors;
         std::string text;
@@ -29,11 +31,14 @@ class Value
         Value(const Error& error);
         Value(const std::vector<Error>& errors);
         Value(Date date);
+        Value(Duration duration);
 
         std::string to_json();
         Number& getNumber() { return std::get<Number>(data); }
         Date& getDate() { return std::get<Date>(data); }
+        Duration& getDuration() { return std::get<Duration>(data); }
         void setNumber(const Number& n) { type = ValueType::NUMBER; data = n;}
         void setDate(const Date& d) { type = ValueType::TIMEPOINT; data = d;}
+        void setDuration(const Duration& d) { type = ValueType::TIMEPOINT; data = d;}
     };
 

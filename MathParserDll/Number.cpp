@@ -20,6 +20,14 @@ Number& Number::operator--(int)
     return *this;
     }
 
+double Number::to_double() const 
+    { 
+    if(isnan(significand))
+        return significand;
+    else
+        return significand * std::pow(10, exponent); 
+    }
+
 Number Number::operator+(const Number& number2) const
     {
     int maxExponent = std::max(exponent, number2.exponent);
@@ -119,27 +127,17 @@ std::string Number::to_json()
 
 
     std::ostringstream numval;
-    if (isnan(significand))
-        numval << "NaN";
-    else
-        {
-        numval << std::fixed
-            << std::setprecision(20)
-            << to_double();
-        }
+    numval << std::fixed
+        << std::setprecision(20)
+        << to_double();
     sstr << "\"value\" : \"" << numval.str() << "\"";
 
     numval = std::ostringstream();
-    if (isnan(significand))
-        numval << "NaN";
-    else
-        {
-        numval << std::fixed
-            << std::setprecision(20)
-            << significand;
-        }
+    numval << std::fixed
+        << std::setprecision(20)
+        << significand;
     sstr << ", \"significand\" : \"" << numval.str() << "\"";
-
+    sstr << ", \"exponent\" : " << exponent;
 
     sstr << ", \"unit\" : \"" << unit << "\"";
 
@@ -167,8 +165,6 @@ std::string Number::to_json()
     sstr << ", \"formatted\" : \""
         << formatted
         << "\"";
-
-    sstr << ", \"exponent\" : " << exponent;
 
     sstr << "}";
     return sstr.str();

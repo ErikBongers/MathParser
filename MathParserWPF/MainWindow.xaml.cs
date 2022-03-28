@@ -98,6 +98,10 @@ namespace MathParserWPF
                         {
                         resultVal = result.date.formatted;
                         }
+                    else if(result.type == "DURATION")
+                        {
+                        resultVal = result.duration.years + " years, " + result.duration.months + " months, " + result.duration.days + " days";
+                        }
                     strResult = (result.id == "#result#" ? "" : result.id + "=") + resultVal;
 
                     }

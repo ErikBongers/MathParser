@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Error.h"
+#include "Duration.h"
 
 enum class  Month : unsigned char {JAN = 1, FEB = 2, MAR = 3, APR = 4, MAY = 5, JUN = 6, JUL = 7, AUG = 8, SEP = 9, OKT = 10, NOV = 11, DEC = 12, NONE = 0};
 
@@ -17,6 +18,7 @@ class Date
         unsigned int pos;
         std::string to_json();
         std::vector<Error> errors;
+        Duration operator-(const Date& d2);
     };
 
 class DateParser

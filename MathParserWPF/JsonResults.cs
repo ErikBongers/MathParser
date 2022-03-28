@@ -10,6 +10,7 @@ public class Result
     public string type { get; set; }
     public Number number { get; set; }
     public Date date { get; set; }
+    public Duration duration{ get; set; }
     public Error[] errors { get; set; }
     public string text { get; set; }
     public string comment { get; set; }
@@ -39,3 +40,10 @@ public class Date
 {
     public string formatted { get; set; }
 }
+
+public class Duration
+    {
+    public string years { get; set; }
+    public string months{ get; set; }
+    public string days { get; set; }
+    }

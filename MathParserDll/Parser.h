@@ -6,7 +6,7 @@
 #include "Function.h"
 #include "ValueType.h"
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, NONE};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, NONE};
 class Parser;
 
 class Node
@@ -76,6 +76,16 @@ class BinaryOpExpr : public Node
         friend class Parser;
     };
 
+class UnaryOpExpr : public Node
+    {
+    public:
+        Token op;
+        Node* n = nullptr;
+    private:
+        UnaryOpExpr() : Node(NodeType::UNARYOPEXPR) {}
+        friend class Parser;
+    };
+
 class AssignExpr : public Node
     {
     public: 
@@ -140,6 +150,7 @@ class Parser
         Node* parseAddExpr();
         Node* parseMultExpr();
         Node* parsePowerExpr();
+        Node* parseUnaryExpr();
         Node* parseImplicitMult();
         Node* parseUnitExpr();
         Node* parsePostFixExpr();
@@ -149,6 +160,7 @@ class Parser
         CallExpr* parseCallExpr(Token functionName);
         ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
+        UnaryOpExpr* createUnaryOp();
         IdExpr* createIdExpr();
         Node* createNoneExpr();
         PostfixExpr* createPostfix();

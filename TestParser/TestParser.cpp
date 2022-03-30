@@ -45,6 +45,14 @@ namespace TestParser
             assertResult("a=1+2*3^4;", 163);
             }
 
+        TEST_METHOD(TestUnary)
+            {
+            assertResult("a=-1;", -1); //not really a unary, but for completeness sake
+            assertResult("a=-(1);", -1);
+            assertResult("a=-sin(30deg);", -0.5);
+            assertResult("a=1; a=-a;", -1);
+            }
+
         TEST_METHOD(TestTheParser)
             {
             UnitDefs unitDefs;

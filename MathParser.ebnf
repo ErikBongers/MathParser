@@ -31,12 +31,17 @@ multExpr = powerExpr |
            multExpr ("*" | "/") powerExpr |
            impliedMultExpr
 
-impliedMultExpr = const id |
-                  multExpr '(' |
-                  '(' addExpr ')' (id | const)
+powerExpr = impliedMultExpr |
+            powerExpr "^" impliedMultExpr
 
-powerExpr = postFixExpr |
-           powerExpr "^" postFixExpr
+impliedMultExpr = unaryExpr |
+                  unaryExpr (id | 
+                             const | 
+                             ( '(' postFixExpr ')' )
+                            )
+
+unaryExpr = postFixExpr |
+            ("-" | "+") postFixExpr
 
 postFixExpr = unitExpr |
             postFixExpr '.' ( "dec" | "hex" | "bin") |

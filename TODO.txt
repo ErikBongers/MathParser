@@ -1,5 +1,4 @@
-﻿* unary minus (prefix)
-* Date parsing;
+﻿* Date parsing;
   - return warnings if assumptions (ymd?) are being made.
 * Duration calculations work!
   > create Date class. (don't rename to Calendar, as well probably never have a TimePoint needed?)

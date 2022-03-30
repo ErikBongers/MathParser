@@ -75,6 +75,7 @@ Value Resolver::resolveNode(const Node& node)
     switch (node.type)
         {
         case NodeType::BINARYOPEXPR: return resolveBinaryOp((const BinaryOpExpr&)node);
+        case NodeType::UNARYOPEXPR: return resolveUnaryOp((const UnaryOpExpr&)node);
         case NodeType::STATEMENT: return resolveStatement((const Statement&)node);
         case NodeType::ASSIGNMENT: return resolveAssign((const AssignExpr&)node);
         case NodeType::IDEXPR: return resolvePrim((const IdExpr&)node);
@@ -86,10 +87,10 @@ Value Resolver::resolveNode(const Node& node)
         }
     }
 
-Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
+Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
     {
-    Value a1 = resolveNode(*addExpr.n1);
-    Value a2 = resolveNode(*addExpr.n2);
+    Value a1 = resolveNode(*expr.n1);
+    Value a2 = resolveNode(*expr.n2);
     Value result;
 
     result.errors.insert(result.errors.begin(), a1.errors.begin(), a1.errors.end());
@@ -97,7 +98,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     if(hasRealErrors(result.errors))
         return result;
     OperatorType opType = OperatorType::NONE;
-    switch (addExpr.op.type)
+    switch (expr.op.type)
         {
         case TokenType::PLUS: opType = OperatorType::PLUS; break;
         case TokenType::MIN: opType = OperatorType::MIN; break;
@@ -109,18 +110,31 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& addExpr)
     OperatorDef* op = operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
         {
-        result.errors.push_back(Error(ErrorId::NO_OP, addExpr.op.line, addExpr.op.pos, addExpr.op.stringValue, to_string(a1.type), to_string(a2.type)));
+        result.errors.push_back(Error(ErrorId::NO_OP, expr.op.line, expr.op.pos, expr.op.stringValue, to_string(a1.type), to_string(a2.type)));
         return result;
         }
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
-    result = op->call(args, addExpr.op.line, addExpr.op.pos);
-    if (addExpr.error.id != ErrorId::NONE)
-        result.errors.push_back(addExpr.error);
-    if(result.type ==ValueType::NUMBER && !addExpr.unit.isClear())
-        result.setNumber(result.getNumber().convertToUnit(addExpr.unit, unitDefs));
+    result = op->call(args, expr.op.line, expr.op.pos);
+    if (expr.error.id != ErrorId::NONE)
+        result.errors.push_back(expr.error);
+    if(result.type ==ValueType::NUMBER && !expr.unit.isClear())
+        result.setNumber(result.getNumber().convertToUnit(expr.unit, unitDefs));
     return result;
+    }
+
+Value Resolver::resolveUnaryOp(const UnaryOpExpr& expr)
+    {
+    Value a1 = resolveNode(*expr.n);
+    if (expr.op.type == TokenType::MIN)
+        {
+        if (a1.type == ValueType::NUMBER)
+            {
+            a1.getNumber().significand = -a1.getNumber().significand;
+            }
+        }
+    return a1;
     }
 
 Value Resolver::resolveAssign(const AssignExpr& assign)

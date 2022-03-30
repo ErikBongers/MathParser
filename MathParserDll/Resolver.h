@@ -14,7 +14,8 @@ class Resolver
         Value resolveDefine(const Define& define);
         Value resolveStatement(const Statement& stmt);
         Value resolveNode(const Node& node);
-        Value resolveBinaryOp(const BinaryOpExpr& powerExpr);
+        Value resolveBinaryOp(const BinaryOpExpr& expr);
+        Value resolveUnaryOp(const UnaryOpExpr& expr);
         Value resolveAssign(const AssignExpr& assignExpr);
         Value resolvePrim(const IdExpr& primExpr);
         Value& applyUnit(const Node& node, Value& val);

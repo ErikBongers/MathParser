@@ -302,7 +302,7 @@ Node* Parser::parsePowerExpr()
 
 Node* Parser::parseImplicitMult()
     {
-    Node* n1 = parsePostFixExpr();
+    Node* n1 = parseUnaryExpr();
     auto t = nextToken();
     while ((t.type == TokenType::ID
             || t.type == TokenType::NUMBER)
@@ -319,6 +319,20 @@ Node* Parser::parseImplicitMult()
         }
     pushBackLastToken();
     return n1;
+    }
+
+Node* Parser::parseUnaryExpr()
+    {
+    auto t = peekToken();
+    if (t.type == TokenType::MIN)
+        {
+        nextToken();
+        auto node = createUnaryOp();
+        node->op = t;
+        node->n = parsePostFixExpr();
+        return node;
+        }
+    return parsePostFixExpr();
     }
 
 Node* Parser::parsePostFixExpr()
@@ -497,6 +511,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
 Node* Parser::createNoneExpr() { Node* p = new Node(NodeType::NONE); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
+UnaryOpExpr* Parser::createUnaryOp() { UnaryOpExpr* p = new UnaryOpExpr; nodes.push_back(p); return p; }
 IdExpr* Parser::createIdExpr() { IdExpr* p = new IdExpr; nodes.push_back(p); return p; }
 PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }
 AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }

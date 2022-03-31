@@ -10,5 +10,6 @@ std::string to_string(ValueType type)
         case ValueType::CALENDAR: return "CALENDAR";
         case ValueType::DURATION: return "DURATION";
         case ValueType::NONE: return "NONE";
+        default: return "?VALUETYPE?";
         }
     }

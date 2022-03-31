@@ -26,8 +26,8 @@ void Duration::normalize()
     {
     double months_in_days = std::floor(days/30.0);
     days = (days+30)%30;
-    months+=months_in_days;
+    months+=(long)months_in_days;
     double years_in_months = std::floor(months/12.0);
     months = (months+12)%12;
-    years +=years_in_months;
+    years +=(long)years_in_months;
     }

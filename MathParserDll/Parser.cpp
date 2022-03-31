@@ -445,7 +445,9 @@ Node* Parser::parsePrimaryExpr()
             constExpr->value = t;
             return constExpr;
             }
-        default: break;
+        default: 
+            pushBackLastToken();
+            break;
         }
     return createNoneExpr(); //error
     }

@@ -45,7 +45,9 @@ unaryExpr = postFixExpr |
 
 postFixExpr = unitExpr |
             postFixExpr '.' ( "dec" | "hex" | "bin") |
-            postFixExpr '.' [ id ] |
+            postFixExpr '.'             // clear unit
+            postFixExpr '.'  id  |
+            postFixExpr '.' ("day" | "year" | "month")
             primaryExpr ("++" | "--")
             
 unitExpr = primaryExpr [unit]

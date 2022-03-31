@@ -1,7 +1,6 @@
 ﻿* Date parsing;
   - return warnings if assumptions (ymd?) are being made.
 * Duration calculations work!
-  > create Date class. (don't rename to Calendar, as well probably never have a TimePoint needed?)
   - separate fields for all fragments
   - parser (already in progress)
   - operators for what...works

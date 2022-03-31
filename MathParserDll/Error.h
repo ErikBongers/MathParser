@@ -21,6 +21,8 @@ enum class ErrorId
     NO_OP,
     DEFINE_NOT_DEF,
     INV_DATE_STR,
+    DATE_FRAG_NO_DATE,
+    DATE_INV_FRAG,
     };
 
 

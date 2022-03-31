@@ -150,8 +150,8 @@ Statement* Parser::parseStatementBody(Statement* stmt)
                 stmt->text.erase(0, 1);
             }
         }
-    else
-        pushBackLastToken();//continue, although what follows is an error
+    //else
+    //   don't  pushBackLastToken --> risk of dead loop
     if(echoBlock)
         stmt->echo = true;
     return stmt;
@@ -391,7 +391,7 @@ Node* Parser::parseUnitExpr()
     {
     Node* node = parsePrimaryExpr();
     auto t = nextToken();
-    if (t.type == TokenType::ID) //TODO: is never gonna happen because already parsed by parsePostFix() ???
+    if (t.type == TokenType::ID)
         {
         if (ids.count(t.stringValue) != 0)
             pushBackLastToken(); //a known id: assuming an implicit mult, here.

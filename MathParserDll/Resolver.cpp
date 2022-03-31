@@ -163,6 +163,16 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
     return result;
     }
 
+constexpr uint32_t hash(const char* data) noexcept{
+    uint32_t hash = 5381;
+
+    int i = 0;
+    while(data[i] != 0)
+        hash = ((hash << 5) + hash) + data[i++];
+
+    return hash;
+    }
+
 //wrapper to parse postfixExpressions
 Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     {
@@ -171,14 +181,27 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     auto val = resolveNode(*pfix.expr);
     if(pfix.postfixId.isNull())
         val.getNumber().unit = Unit::CLEAR();
-    else if(pfix.postfixId.stringValue == "bin")
-        val.getNumber().numFormat = NumFormat::BIN;
-    else if(pfix.postfixId.stringValue == "hex")
-        val.getNumber().numFormat = NumFormat::HEX;
-    else if(pfix.postfixId.stringValue == "dec")
-        val.getNumber().numFormat = NumFormat::DEC;
-    else
-        val.getNumber ()= val.getNumber().convertToUnit(pfix.postfixId.stringValue, unitDefs);
+    else 
+        switch(hash(pfix.postfixId.stringValue.c_str()))
+            {
+            case hash("bin"):
+                val.getNumber().numFormat = NumFormat::BIN; break;
+            case hash("hex"):
+                val.getNumber().numFormat = NumFormat::HEX; break;
+            case hash("dec"):
+                val.getNumber().numFormat = NumFormat::DEC; break;
+            case hash("day"):
+            case hash("month"):
+            case hash("year"):
+                val = resolveDateFragment(val, pfix.postfixId);
+                break;
+            default:
+                if(val.type == ValueType::NUMBER)
+                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId.stringValue, unitDefs);
+                else
+                    ; //TODO: error: unknown postfix
+                break;
+            }
     //in case of (x.km)m, both postfixId (km) and unit (m) are filled.
     return applyUnit(pfix, val);
     }
@@ -269,6 +292,26 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
         {
         return Value(DateParser(constExpr.value.stringValue, constExpr.value.line, constExpr.value.pos).parse());
         }
+    }
+
+Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)
+    {
+    Value newValue;
+    if(val.type != ValueType::TIMEPOINT)
+        return Value(Error(ErrorId::DATE_FRAG_NO_DATE, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+    const Date date = val.getDate();
+    switch (hash(fragmentId.stringValue.c_str()))
+        {
+        case hash("day"):
+            newValue = Value(Number(date.day, 0)); break;
+        case hash("month"):
+            newValue = Value(Number((double)date.month, 0)); break;
+        case hash("year"):
+            newValue = Value(Number(date.year, 0)); break;
+        default:
+            return Value(Error(ErrorId::DATE_INV_FRAG, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+        }
+    return newValue;
     }
 
 std::string Resolver::formatError(const std::string errorMsg, ...)

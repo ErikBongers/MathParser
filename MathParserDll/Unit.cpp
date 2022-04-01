@@ -81,6 +81,11 @@ void UnitDefs::set(UnitDef def)
 
 bool UnitDefs::isSameProperty(const Unit& u1, const Unit& u2)
     {
+    if(!exists(u1.id))
+        return false;
+    if(!exists(u2.id))
+        return false;
+
     return get(u1.id).property == get(u2.id).property;
     }
 

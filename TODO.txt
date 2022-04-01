@@ -1,4 +1,22 @@
-﻿* Date parsing;
+﻿* create dates with expressions
+  : now().year, month_var, 2;
+  > this is a list: a, b, c !!!
+  > allow tuples (but call them list)
+
+* Lists:
+  1. A list is a comma-separated list of expressions.
+  2. A list cannot contain a semi-colon
+  3. A list outputs "[value, value, value]"
+  4. A list can be assigned to a date, but not to a general variable?
+    > that is, when assigning a list, a date is assumed.
+    > any other possible uses for lists?
+      > yes: aggregate functions: max, sum, avg,...
+    > actually, lists are already parsed: see function arguments!!
+
+
+* date fragment as hls should give error
+    : today.year = 2022; //error!
+* Date parsing;
   - return warnings if assumptions (ymd?) are being made.
 * Duration calculations work!
   - separate fields for all fragments

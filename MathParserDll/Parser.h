@@ -158,6 +158,7 @@ class Parser
         Node* parsePrimaryExpr();
         ConstExpr* parseNumber(bool negative);
         CallExpr* parseCallExpr(Token functionName);
+        std::vector<Node*> parseListExpr();
         ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
         UnaryOpExpr* createUnaryOp();

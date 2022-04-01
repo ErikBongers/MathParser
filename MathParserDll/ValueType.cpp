@@ -9,6 +9,7 @@ std::string to_string(ValueType type)
         case ValueType::TIMEPOINT: return "TIMEPOINT";
         case ValueType::CALENDAR: return "CALENDAR";
         case ValueType::DURATION: return "DURATION";
+        case ValueType::LIST: return "LIST";
         case ValueType::NONE: return "NONE";
         default: return "?VALUETYPE?";
         }

@@ -483,14 +483,24 @@ CallExpr* Parser::parseCallExpr(Token functionName)
         pushBackLastToken();
         return callExpr;
         }
-    //loop arguments
-    while (peekToken().type != TokenType::EOT && peekToken().type != TokenType::PAR_CLOSE)
+    callExpr->arguments = parseListExpr();
+    t = nextToken();
+    if (t.type != TokenType::PAR_CLOSE)
+        pushBackLastToken();
+    return callExpr;
+    }
+
+std::vector<Node*> Parser::parseListExpr()
+    {
+    std::vector<Node*> list;
+    while (true)
         {
-        if (peekToken().type == TokenType::SEMI_COLON)
-            break; //allow parsing of next statement
+        //if (peekToken().type == TokenType::SEMI_COLON)
+        //    break; //allow parsing of next statement
         auto expr = parseAddExpr();
-        if(!expr->is(NodeType::NONE))
-            callExpr->arguments.push_back(expr);
+        if(expr->is(NodeType::NONE))
+            break;
+        list.push_back(expr);
         auto t = nextToken();
         if (t.type == TokenType::PAR_CLOSE)
             {
@@ -503,12 +513,9 @@ CallExpr* Parser::parseCallExpr(Token functionName)
             break;
             }
         }
-
-    t = nextToken();
-    if (t.type != TokenType::PAR_CLOSE)
-        pushBackLastToken();
-    return callExpr;
+    return list;
     }
+
 
 Node* Parser::createNoneExpr() { Node* p = new Node(NodeType::NONE); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }

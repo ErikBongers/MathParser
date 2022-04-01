@@ -16,7 +16,7 @@ class Value
         ValueType type = ValueType::NONE;
         
     private:
-        std::variant<Number, Date, Duration> data;
+        std::variant<Number, Date, Duration, std::vector<Value>> data;
     public:
         std::vector<Error> errors;
         std::string text;
@@ -30,9 +30,9 @@ class Value
         Value(Token id, Number n);
         Value(const Error& error);
         Value(const std::vector<Error>& errors);
-        Value(Date date);
+        Value(const Date date);
         Value(Duration duration);
-
+        Value(const std::vector<Value>& list);
         std::string to_json();
         Number& getNumber() { return std::get<Number>(data); }
         Date& getDate() { return std::get<Date>(data); }
@@ -41,5 +41,7 @@ class Value
         void setNumber(const Number& n) { type = ValueType::NUMBER; data = n;}
         void setDate(const Date& d) { type = ValueType::TIMEPOINT; data = d;}
         void setDuration(const Duration& d) { type = ValueType::TIMEPOINT; data = d;}
+        void setList(const std::vector<Value>& l) { type = ValueType::LIST; data = l;}
+        std::vector<Value> getList() { return std::get<std::vector<Value>>(data); }
     };
 

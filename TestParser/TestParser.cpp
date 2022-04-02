@@ -17,6 +17,8 @@ namespace TestParser
             {
             testDateString("11/11/11", 11, 11, 11);
             testDateString("2022/12/13", 13, 12, 2022);
+            assertDate("'2022/12/13'", 13, 12, 2022);
+            assertDate("d = 13, 12, 2022", 13, 12, 2022);
             testDateString("2022,12,13", 13, 12, 2022);
             testDateString("2022-12-13", 13, 12, 2022);
             testDateString("Jan 12, 2022", 12, 1, 2022);
@@ -51,14 +53,6 @@ namespace TestParser
             assertResult("a=-(1);", -1);
             assertResult("a=-sin(30deg);", -0.5);
             assertResult("a=1; a=-a;", -1);
-            }
-
-        TEST_METHOD(TestTheParser)
-            {
-            UnitDefs unitDefs;
-            FunctionDefs fdefs(unitDefs);
-            Parser parser("#define blah", fdefs);
-            parser.parse();
             }
 
         TEST_METHOD(TestCalls)
@@ -182,13 +176,9 @@ namespace TestParser
             Assert::AreEqual(comment, (const std::string)result["comment"], toWstring(msg).c_str());
             }
 
-        json assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
+        void assertErrors(const json& result, const char* stmt, const std::string errorId = "")
             {
             std::string msg;
-
-            auto result = parseSingleResult(stmt);
-            logJson(result);
-            //errors
             if(hasErrors(result))
                 {
                 if (errorId == "")
@@ -210,6 +200,31 @@ namespace TestParser
                 msg = std::format("\"{0}\" did not report error: {1}", stmt, errorId);
                 Assert::Fail(toWstring(msg).c_str());
                 }
+            }
+
+        void assertDate(const char* stmt, int day = 0, int month = 0, long year = 0, const std::string errorId = "")
+            {
+            std::string msg;
+
+            auto result = parseSingleResult(stmt);
+            logJson(result);
+            assertErrors(result, stmt, errorId);
+            json date = result["date"];
+            std::string strDay = date["day"]; int d = std::stoi(strDay);
+            std::string strMonth = date["month"]; int m = std::stoi(strMonth);
+            std::string strYear = date["year"]; long y = std::stol(strYear);
+            Assert::AreEqual(d, day);
+            Assert::AreEqual(m, month);
+            Assert::AreEqual(y, year);
+            }
+            
+        json assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
+            {
+            std::string msg;
+
+            auto result = parseSingleResult(stmt);
+            logJson(result);
+            assertErrors(result, stmt, errorId);
             json number = result["number"];
             if(number["exponent"] == 0)
                 {
@@ -282,7 +297,7 @@ namespace TestParser
             getResult(result, resLen);
             json j = json::parse(result);
             delete[] result;
-            return j["result"].back();
+            return j["result"].back(); //back = last element, as opposed to front()
             }
 
         std::wstring toWstring(const std::string& s)

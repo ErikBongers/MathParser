@@ -22,7 +22,7 @@ statement = ('!' | '#') statementBody ( ';' | EOF ) |
 statementBody = addExpr |
             assignment
 
-assignment = id '=' (addExpr | listExpr)
+assignment = id '=' listExpr
 
 addExpr = multExpr |  
           addExpr ("+" | "-") multExpr 
@@ -67,7 +67,7 @@ unit = id
 
 callExpr = funcId '(' listExpr ')'
 
-listExpr = 
+listExpr = addExpr [ ',' addExpr ]
 
 dateString = dateElement dateSeparator dateElement dateSeparator dateElement
 

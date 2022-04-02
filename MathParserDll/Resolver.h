@@ -17,6 +17,7 @@ class Resolver
         Value resolveBinaryOp(const BinaryOpExpr& expr);
         Value resolveUnaryOp(const UnaryOpExpr& expr);
         Value resolveAssign(const AssignExpr& assignExpr);
+        Value resolveList(const ListExpr& listExpr);
         Value resolvePrim(const IdExpr& primExpr);
         Value& applyUnit(const Node& node, Value& val);
         Value resolvePostfix(const PostfixExpr& postfixExpr);

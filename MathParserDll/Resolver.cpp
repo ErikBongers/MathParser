@@ -78,6 +78,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::UNARYOPEXPR: return resolveUnaryOp((const UnaryOpExpr&)node);
         case NodeType::STATEMENT: return resolveStatement((const Statement&)node);
         case NodeType::ASSIGNMENT: return resolveAssign((const AssignExpr&)node);
+        case NodeType::LIST: return resolveList((const ListExpr&)node);
         case NodeType::IDEXPR: return resolvePrim((const IdExpr&)node);
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
@@ -163,6 +164,25 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
     return result;
     }
 
+Value Resolver::resolveList(const ListExpr& listExpr)
+    {
+    //just a minimal implementation for now...
+    if(listExpr.list.size() != 3)
+        return Value();
+    
+    auto val1 = resolveNode(*listExpr.list[0]);
+    auto val2 = resolveNode(*listExpr.list[1]);
+    auto val3 = resolveNode(*listExpr.list[2]);
+    Date date;
+    if(val1.type != ValueType::NUMBER) return Value();
+    if(val2.type != ValueType::NUMBER) return Value();
+    if(val3.type != ValueType::NUMBER) return Value();
+    date.day = (char)val1.getNumber().to_double();
+    date.month = (Month)val2.getNumber().to_double();
+    date.year = (long)val3.getNumber().to_double();
+    return Value(date);
+    }
+
 constexpr uint32_t hash(const char* data) noexcept{
     uint32_t hash = 5381;
 
@@ -179,7 +199,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     if (pfix.error.id != ErrorId::NONE)
         return Value(pfix.error);
     auto val = resolveNode(*pfix.expr);
-    if(pfix.postfixId.isNull())
+    if(pfix.postfixId.isNull() && val.type == ValueType::NUMBER)
         val.getNumber().unit = Unit::CLEAR();
     else 
         switch(hash(pfix.postfixId.stringValue.c_str()))

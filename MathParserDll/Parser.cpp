@@ -169,7 +169,16 @@ Node* Parser::parseAssignExpr()
             nextToken();//consume the EQ
             AssignExpr* assign = createAssign();
             assign->Id = id;
-            assign->expr = parseAddExpr();
+            auto list = parseListExpr();
+            if(list.size() == 1)
+                assign->expr = list[0];
+            else
+                {
+                auto listExpr = createList();
+                listExpr->list = list;
+                assign->expr = listExpr;
+                }
+
             ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
             }
@@ -524,6 +533,7 @@ UnaryOpExpr* Parser::createUnaryOp() { UnaryOpExpr* p = new UnaryOpExpr; nodes.p
 IdExpr* Parser::createIdExpr() { IdExpr* p = new IdExpr; nodes.push_back(p); return p; }
 PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }
 AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }
+ListExpr* Parser::createList() { ListExpr* p = new ListExpr; nodes.push_back(p); return p; }
 Define* Parser::createDefine() { Define* p = new Define; nodes.push_back(p); return p; }
 Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
 CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }

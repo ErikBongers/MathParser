@@ -6,7 +6,7 @@
 #include "Function.h"
 #include "ValueType.h"
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, NONE};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE};
 class Parser;
 
 class Node
@@ -96,6 +96,15 @@ class AssignExpr : public Node
         friend class Parser;
     };
 
+class ListExpr : public Node
+    {
+    public: 
+        std::vector<Node*> list;
+    private:
+        ListExpr() : Node(NodeType::LIST) {}
+        friend class Parser;
+    };
+
 class Define : public Node
     {
     public:
@@ -166,6 +175,7 @@ class Parser
         Node* createNoneExpr();
         PostfixExpr* createPostfix();
         AssignExpr* createAssign();
+        ListExpr* createList();
         Define* createDefine();
         CallExpr* createCall();
         Statement* createStatement();

@@ -72,16 +72,27 @@ Hot.=C; //Does the same as the above line.
 
 ### Functions
 * Trigonometry: `sin, cos, tan, asin, acos, atan`
-* Other: `max(val1, val2,...), min(val1,val2,...), round, abs`
+* Other: `max(val1, val2,...), min(val1,val2,...), round, floor, ceil, trunc, abs`
 * `|x|` is the same as `abs(x)`
-
+* Dates: `now()`
 * [TODO]: round() and abs() in combination with units.
-* [TODO]: make min and max varargs?
+
 
 ### Constants
 Currently only PI. (also in lower case)
 
 ### Dates
+#### Concepts
+Math Parser follows to some extend the chrono library concepts.
+* A **date** is a point in time. It has no length or duration. It has the members: day, month, year.
+* A **duration** is a length of time. You can add and multiply them. It has the members: days, months, years. Note the plural form.
+#### Calculations [TODO]
+```
+date - date ==> duration
+date + duration ==> date
+duration * x ==> duration // or any other arithmetic
+```
+#### Dates (points in time)
 Date values can be written between single quotes.
 Math Parser will try to parse any date format, as long as it's not ambiguous.
 ```
@@ -96,11 +107,25 @@ really='11/2022/11'; //yep, just fine...
 a='2022/12/11'; //ambiguous
 a='2/1/2022'; //ambiguous
 ```
+Or, dates can be created by assigning a comma-separated list of values:
+```
+#define dmy; // or ymd or mdy
+day = 23;
+month = 12;
+date=day, month/2, now().year;
+```
+The parts of a date can be referenced, but not assigned to:
+```
+thisMonth = now().month;
+myDate.year=2022; //error: can't assign to a date
+```
+Thus, allowing for calculated values.
+Note that you must `#define` a strict date format, since changes in calculations could lead to the values suddenly being interpreted in a different order than what you intended.
 [TODO]: allow access to date parts and date calculations, enforce a strict date format. Implement time.
 
 ## Technical
-The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser (I think) with 1 look-ahead and 1 push-back.
-Parser errors are handled gracefully.
+The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser with 2 look-aheads. Advantages of this parser type are that it's intuitive to read and mimicks the grammar definition (EBNF).
+
 ### Projects
 * **MathParserDll** main parser project.
 * **MathParserWASM** is a web project that compiles the dll into a WASM file. It is the main user interface.

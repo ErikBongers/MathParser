@@ -1,4 +1,14 @@
-﻿* date fragment as hls should give error
+﻿* Reduce pushbacks and peeks
+  > refactor tok.peek()
+    > store tok.state in separate struct push it, read next token and pop it.
+  > same for tok.peekSecond()
+    > push tok.state, next() = next(), pull tok.state
+  BUT: to avoid tokenizing the stream multiple times, include the currently read token in the STATE!
+* bug
+  : x=; //should give error
+* date via list: only allow a preset date format as var values can differ and thus the interpretation of the values could switch if the vars hold different values!!!
+
+* date fragment as hls should give error
     : today.year = 2022; //error!
 * Date parsing;
   - return warnings if assumptions (ymd?) are being made.

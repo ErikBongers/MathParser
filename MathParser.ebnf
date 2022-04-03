@@ -22,7 +22,8 @@ statement = ('!' | '#') statementBody ( ';' | EOF ) |
 statementBody = addExpr |
             assignment
 
-assignment = id '=' listExpr
+assignment = id '=' listExpr |
+            id ('+=' | '-=' | '*=' | '/=') addExpr 
 
 addExpr = multExpr |  
           addExpr ("+" | "-") multExpr 

@@ -159,11 +159,11 @@ Statement* Parser::parseStatementBody(Statement* stmt)
 
 Node* Parser::parseAssignExpr()
     {
-    nextToken();
-    if (currentToken.type == TokenType::ID)
+    auto t = peekToken();
+    if (t.type == TokenType::ID)
         {
-        auto id = currentToken;
-        auto t = peekToken();
+        auto id = nextToken();
+        t = peekToken();
         if (t.type == TokenType::EQ)
             {
             nextToken();//consume the EQ
@@ -215,15 +215,15 @@ Node* Parser::parseAssignExpr()
                 pfix->expr = idExpr;
                 assign->Id = id;
                 assign->expr = pfix;
-                auto t = nextToken();
+                auto t = peekToken();
                 if (t.type == TokenType::ID)
                     {
+                    nextToken();
                     pfix->postfixId = t;
                     }
                 else
                     { //valid syntax: clear the unit, if any.
                     pfix->postfixId = Token::Null();
-                    pushBackLastToken();
                     }
                 }
             return assign;
@@ -236,7 +236,6 @@ Node* Parser::parseAssignExpr()
         }
     else
         {
-        pushBackLastToken();
         return nullptr;
         }
     }
@@ -244,26 +243,27 @@ Node* Parser::parseAssignExpr()
 Node* Parser::parseAddExpr()
     {
     Node* node = parseMultExpr();
-    auto t = nextToken();
+    auto t = peekToken();
     while (t.type == TokenType::PLUS || t.type == TokenType::MIN)
         {
+        nextToken();
         BinaryOpExpr* addExpr = createBinaryOp();
         addExpr->n1 = node;
         addExpr->op = t;
         addExpr->n2 = parseMultExpr();
         node = addExpr;
-        t = nextToken();
+        t = peekToken();
         }
-    pushBackLastToken();
     return node;
     }
 
 Node* Parser::parseMultExpr()
     {
     Node* node = parsePowerExpr();
-    auto t = nextToken();
+    auto t = peekToken();
     while (t.type == TokenType::MULT || t.type == TokenType::DIV)
         {
+        nextToken();
         BinaryOpExpr* multExpr = createBinaryOp();
         multExpr->n1 = node;
         multExpr->op = t;
@@ -281,18 +281,18 @@ Node* Parser::parseMultExpr()
                     }
                 }
             }
-        t = nextToken();
+        t = peekToken();
         }
-    pushBackLastToken();
     return node;
     }
 
 Node* Parser::parsePowerExpr()
     {
     Node* node = parseImplicitMult();
-    auto t = nextToken();
+    auto t = peekToken();
     while (t.type == TokenType::POWER)
         {
+        nextToken();
         BinaryOpExpr* powerExpr = createBinaryOp();
         powerExpr->n1 = node;
         powerExpr->op = t;
@@ -303,30 +303,28 @@ Node* Parser::parsePowerExpr()
             {
             powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT, tok.getLine(), tok.getLinePos());
             }
-        t = nextToken();
+        t = peekToken();
         }
-    pushBackLastToken();
     return node;
     }
 
 Node* Parser::parseImplicitMult()
     {
     Node* n1 = parseUnaryExpr();
-    auto t = nextToken();
+    auto t = peekToken();
     while ((t.type == TokenType::ID
             || t.type == TokenType::NUMBER)
            || t.type == TokenType::PAR_OPEN)
         {
-        pushBackLastToken();
+        //don't consume the token yet...
         auto m = createBinaryOp();
         m->n1 = n1;
         m->op = Token(TokenType::MULT, '*', tok.getLine(), tok.getLinePos());
         m->n2 = parsePostFixExpr();
         m->implicitMult = true;
         n1 = m;
-        t = nextToken();
+        t = peekToken();
         }
-    pushBackLastToken();
     return n1;
     }
 
@@ -347,36 +345,38 @@ Node* Parser::parseUnaryExpr()
 Node* Parser::parsePostFixExpr()
     {
     Node* node = parseUnitExpr();
-    auto t = nextToken();
+    auto t = peekToken();
     while (t.type == TokenType::DOT || t.type == TokenType::INC || t.type == TokenType::DEC)
         {
-        node = parseOnePostFix(node, t);
-        t = nextToken();
+        node = parseOnePostFix(node);
+        t = peekToken();
         }
-    pushBackLastToken();
     return node;
     }
 
-Node* Parser::parseOnePostFix(Node* node, Token t)
+Node* Parser::parseOnePostFix(Node* node)
     {
+    auto t = peekToken();
     if (t.type == TokenType::DOT)
         {
-        t = nextToken();
+        nextToken();
+        t = peekToken();
         auto postfixExpr = createPostfix();
         postfixExpr->expr = node;
         node = postfixExpr;
         if (t.type == TokenType::ID)
             {
+            nextToken();
             postfixExpr->postfixId = t;
             }
         else
             { //valid syntax: clear the unit, if any.
             postfixExpr->postfixId = Token::Null();
-            pushBackLastToken();
             }
         }
     else if (t.type == TokenType::INC || t.type == TokenType::DEC)
         {
+        nextToken();
         if (node->type != NodeType::IDEXPR)
             {
             node->error = Error(ErrorId::VAR_EXPECTED, tok.getLine(), tok.getLinePos());
@@ -399,27 +399,25 @@ Node* Parser::parseOnePostFix(Node* node, Token t)
 Node* Parser::parseUnitExpr()
     {
     Node* node = parsePrimaryExpr();
-    auto t = nextToken();
-    if (t.type == TokenType::ID)
+    auto t = peekToken();
+    if (t.type == TokenType::ID && ids.count(t.stringValue) == 0)
         {
-        if (ids.count(t.stringValue) != 0)
-            pushBackLastToken(); //a known id: assuming an implicit mult, here.
-        else
-            node->unit = t.stringValue; //no known id: assuming a unit.
+        nextToken();
+        node->unit = t.stringValue; //no known id: assuming a unit.
         }
-    else
-        pushBackLastToken();
     return node;
     }
 
 Node* Parser::parsePrimaryExpr()
     {
-    auto t = nextToken();
+    auto t = peekToken();
     switch (t.type)
         {
         case TokenType::NUMBER:
+            nextToken();
             return parseNumber(false);
         case TokenType::MIN:
+            nextToken();
             if (peekToken().type == TokenType::NUMBER)
                 {
                 nextToken();
@@ -428,6 +426,7 @@ Node* Parser::parsePrimaryExpr()
             //else error?
             break;
         case TokenType::ID:
+            nextToken();
             if (functionDefs.exists(t.stringValue))
                 {
                 return parseCallExpr(t);
@@ -440,6 +439,7 @@ Node* Parser::parsePrimaryExpr()
                 }
         case TokenType::PAR_OPEN:
             {
+            nextToken();
             auto addExpr = parseAddExpr();
             t = nextToken();
             //if (t.type != TokenType::PAR_CLOSE)
@@ -447,15 +447,16 @@ Node* Parser::parsePrimaryExpr()
             return addExpr;
             }
         case TokenType::PIPE:
+            nextToken();
             return parseAbsOperator();
         case TokenType::QUOTED_STR:
             {
+            nextToken();
             auto constExpr = createConst(ValueType::TIMEPOINT);
             constExpr->value = t;
             return constExpr;
             }
         default: 
-            pushBackLastToken();
             break;
         }
     return createNoneExpr(); //error
@@ -485,17 +486,18 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     {
     CallExpr* callExpr = createCall();
     callExpr->functionName = functionName;
-    auto t = nextToken();
+    auto t = peekToken();
     if (t.type != TokenType::PAR_OPEN)
         {
-        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, tok.getLine(), tok.getLinePos(), functionName.stringValue.c_str());
-        pushBackLastToken();
+        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, t.line, t.pos, functionName.stringValue.c_str());
         return callExpr;
         }
+    nextToken();
     callExpr->arguments = parseListExpr();
-    t = nextToken();
-    if (t.type != TokenType::PAR_CLOSE)
-        pushBackLastToken();
+    t = peekToken();
+    if (t.type == TokenType::PAR_CLOSE)
+        nextToken();
+    //else: error?
     return callExpr;
     }
 
@@ -504,23 +506,13 @@ std::vector<Node*> Parser::parseListExpr()
     std::vector<Node*> list;
     while (true)
         {
-        //if (peekToken().type == TokenType::SEMI_COLON)
-        //    break; //allow parsing of next statement
         auto expr = parseAddExpr();
         if(expr->is(NodeType::NONE))
             break;
         list.push_back(expr);
-        auto t = nextToken();
-        if (t.type == TokenType::PAR_CLOSE)
-            {
-            pushBackLastToken();
+        if (peekToken().type != TokenType::COMMA)
             break;
-            }
-        if (t.type != TokenType::COMMA)
-            {
-            pushBackLastToken();
-            break;
-            }
+        nextToken();
         }
     return list;
     }

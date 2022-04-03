@@ -44,7 +44,16 @@ namespace TestParser
 
         TEST_METHOD(TestPrecedence)
             {
-            assertResult("a=1+2*3^4;", 163);
+            assertResult("1+2*3^4;", 163);
+            assertResult("4-3-2+1;", 0);
+            assertResult("12/3*2;", 8);
+            }
+
+        TEST_METHOD(TestImplicitMult)
+            {
+            assertResult("a=2; 3 a;", 6);
+            assertResult("a=2; 3(4a);", 24);
+            assertResult("a=2; a(3(4a));", 48);
             }
 
         TEST_METHOD(TestUnary)
@@ -138,6 +147,7 @@ namespace TestParser
             assertResult("  (PI)kg                  ", 3.14159265358979311600, "kg");
             assertResult("  1m*2                    ", 2, "m");
             assertResult("  1*2m                    ", 2, "m");
+            assertResult("  a=2; a.=m;              ", 2, "m");
             assertError("   a=1; a b;               ", "UNIT_NOT_DEF");
             }
 

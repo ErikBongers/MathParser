@@ -175,6 +175,9 @@ Node* Parser::parseAssignExpr()
                 assign->expr = list[0];
             else
                 {
+                if (list.size() == 0)
+                    assign->error = Error(ErrorId::UNKNOWN_EXPR, tok.getLine(), tok.getLinePos()+1);
+
                 auto listExpr = createList();
                 listExpr->list = list;
                 assign->expr = listExpr;

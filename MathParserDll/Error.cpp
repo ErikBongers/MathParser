@@ -119,6 +119,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::INV_DATE_STR, {ErrorId::INV_DATE_STR, "INV_DATE_STR", "Invalid date string: '{0}'"}},
         {ErrorId::DATE_FRAG_NO_DATE, {ErrorId::DATE_FRAG_NO_DATE, "DATE_FRAG_NO_DATE", "Cannot get '{0}' fragment. Value is not a date."}},
         {ErrorId::DATE_INV_FRAG, {ErrorId::DATE_INV_FRAG, "DATE_INV_FRAG", "Invalid fragment '{0}' for date."}},
+        {ErrorId::EXPECTED, {ErrorId::EXPECTED, "EXPECTED", "Expected '{0}'."}},
     };
 
 bool hasRealErrors(std::vector<Error>& errors)

@@ -23,6 +23,7 @@ enum class ErrorId
     INV_DATE_STR,
     DATE_FRAG_NO_DATE,
     DATE_INV_FRAG,
+    EXPECTED,
     };
 
 

@@ -150,8 +150,8 @@ Statement* Parser::parseStatementBody(Statement* stmt)
                 stmt->text.erase(0, 1);
             }
         }
-    //else
-    //   don't  pushBackLastToken --> risk of dead loop
+    else
+        stmt->error = Error(ErrorId::EXPECTED, tok.getLine(), tok.getLinePos(), ";");
     if(echoBlock)
         stmt->echo = true;
     return stmt;

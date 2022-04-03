@@ -18,7 +18,7 @@ namespace TestParser
             testDateString("11/11/11", 11, 11, 11);
             testDateString("2022/12/13", 13, 12, 2022);
             assertDate("'2022/12/13'", 13, 12, 2022);
-            assertDate("d = 13, 12, 2022", 13, 12, 2022);
+
             testDateString("2022,12,13", 13, 12, 2022);
             testDateString("2022-12-13", 13, 12, 2022);
             testDateString("Jan 12, 2022", 12, 1, 2022);
@@ -34,6 +34,14 @@ namespace TestParser
             testDateString("feb 1", 1, 2, Date::EmptyYear);
             
             assertError("'2022 2 1'", "INV_DATE_STR");
+
+            // date via lists:
+            assertDate("d = 2022,12,13", 13, 12, 2022);
+            assertDate("#define dmy\n d = 13, 12, 2022", 13, 12, 2022);
+            assertDate("#define mdy\n d = 12, 13, 2022", 13, 12, 2022);
+            assertDate("d = 2022,12,13", 13, 12, 2022);
+            assertError("d = 13, 12, 2022", "INV_DATE_VALUE");
+
             }
 
         TEST_METHOD(TestDefines)

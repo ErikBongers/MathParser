@@ -4,6 +4,7 @@
 #include "Number.h"
 #include "OperatorDef.h"
 #include "trim.h"
+#include "tools.h"
 #include <sstream>
 
 std::string Resolver::result = "";
@@ -47,12 +48,26 @@ Value Resolver::resolveDefine(const Define& define)
     std::istringstream iss(options);
     std::string item;
     while (std::getline(iss, item, ' ')) {
-        if(item == "date_units")
-            this->unitDefs.addDateUnits();
-        else if(item == "short_date_units")
-            this->unitDefs.addShortDateUnits();
-        else
-            result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.def.line, define.def.pos, options));
+        switch(hash(item.c_str()))
+            {
+            case hash("date_units"):
+                this->unitDefs.addDateUnits(); 
+                break;
+            case hash("short_date_units"):
+                this->unitDefs.addShortDateUnits(); 
+                break;
+            case hash("ymd"):
+                dateFormat = DateFormat::YMD;
+                break;
+            case hash("dmy"):
+                dateFormat = DateFormat::DMY;
+                break;
+            case hash("mdy"):
+                dateFormat = DateFormat::MDY;
+                break;
+            default:
+                result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.def.line, define.def.pos, options));
+            }
         }
     return result;
     }
@@ -169,28 +184,37 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     //just a minimal implementation for now...
     if(listExpr.list.size() != 3)
         return Value();
-    
-    auto val1 = resolveNode(*listExpr.list[0]);
-    auto val2 = resolveNode(*listExpr.list[1]);
-    auto val3 = resolveNode(*listExpr.list[2]);
+    int iDay = 0, iMonth = 0, iYear = 0;
+    using enum DateFormat;
+    switch (dateFormat)
+        {
+        case YMD:
+            iYear = 0; iMonth = 1; iDay = 2; break;
+        case DMY:
+            iDay = 0; iMonth = 1; iYear = 2; break;
+        case MDY:
+            iMonth = 0; iDay = 1; iYear = 2; break;
+        }
+    auto day = resolveNode(*listExpr.list[iDay]);
+    auto month = resolveNode(*listExpr.list[iMonth]);
+    auto year = resolveNode(*listExpr.list[iYear]);
     Date date;
-    if(val1.type != ValueType::NUMBER) return Value();
-    if(val2.type != ValueType::NUMBER) return Value();
-    if(val3.type != ValueType::NUMBER) return Value();
-    date.day = (char)val1.getNumber().to_double();
-    date.month = (Month)val2.getNumber().to_double();
-    date.year = (long)val3.getNumber().to_double();
+    if(day.type != ValueType::NUMBER) 
+        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, "?", "day")); //TODO: postion
+    if(month.type != ValueType::NUMBER) 
+        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, "?", "month"));
+    if(year.type != ValueType::NUMBER) 
+        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, "?", "year"));
+
+    date.day = (char)day.getNumber().to_double();
+    date.month = (Month)month.getNumber().to_double();
+    date.year = (long)year.getNumber().to_double();
+
+    if(date.day < 1 || date.day > 31)
+        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, std::to_string((int)date.day), "day")); //TODO: postion
+    if((char)date.month < 1 || (char)date.month > 12)
+        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, std::to_string((int)date.month), "month")); //TODO: postion
     return Value(date);
-    }
-
-constexpr uint32_t hash(const char* data) noexcept{
-    uint32_t hash = 5381;
-
-    int i = 0;
-    while(data[i] != 0)
-        hash = ((hash << 5) + hash) + data[i++];
-
-    return hash;
     }
 
 //wrapper to parse postfixExpressions

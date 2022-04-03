@@ -11,6 +11,9 @@ class Resolver
         static std::string result;
         std::map<std::string, Value> variables;
 
+        enum class DateFormat { YMD, DMY, MDY };
+        DateFormat dateFormat = DateFormat::YMD;
+
         Value resolveDefine(const Define& define);
         Value resolveStatement(const Statement& stmt);
         Value resolveNode(const Node& node);

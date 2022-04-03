@@ -19,3 +19,14 @@ std::string numberToString(T value, T NaN_value)
         }
     return numval.str();
     }
+
+constexpr uint32_t hash(const char* data) noexcept{
+    uint32_t hash = 5381;
+
+    int i = 0;
+    while(data[i] != 0)
+        hash = ((hash << 5) + hash) + data[i++];
+
+    return hash;
+    }
+

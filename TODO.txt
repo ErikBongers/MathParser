@@ -1,5 +1,8 @@
-﻿* bug
-  : x=; //should give error
+﻿* positions:
+  - Every Token has a position and length (or end)
+  - Every Node can calculate it's position and length, based on the underlying tree.
+  - Same for Value
+
 * date via list: only allow a preset date format as var values can differ and thus the interpretation of the values could switch if the vars hold different values!!!
 
 * date fragment as hls should give error

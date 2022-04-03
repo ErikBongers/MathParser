@@ -165,7 +165,7 @@ class Parser
         Node* parsePostFixExpr();
         Node* parseOnePostFix(Node* node);
         Node* parsePrimaryExpr();
-        ConstExpr* parseNumber(bool negative);
+        ConstExpr* parseNumber(Token currentToken, bool negative);
         CallExpr* parseCallExpr(Token functionName);
         std::vector<Node*> parseListExpr();
         ConstExpr* createConst(ValueType type);
@@ -180,14 +180,8 @@ class Parser
         CallExpr* createCall();
         Statement* createStatement();
         std::vector<Node*> nodes;
-        Token currentToken = Token::Null();
-        Token lastToken = Token::Null();
-        Token peekedToken = Token::Null();
         unsigned int statementStartPos = 0;
 
-        Token peekToken(bool includeEchoComment = false);
-        Token nextToken(bool includeEchoComment = false);
-        void pushBackLastToken();
         Node* parseAbsOperator();
         void parseEchosBetweenStatements(Statement* stmt);
     };

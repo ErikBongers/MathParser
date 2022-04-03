@@ -12,7 +12,7 @@ void Parser::parse()
     ConstExpr* pConst = createConst(ValueType::NUMBER);
     pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), tok.getLine(), tok.getLinePos());
     ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
-    while (peekToken().type != TokenType::EOT)
+    while (tok.peek().type != TokenType::EOT)
         {
         auto stmt = parseStatement();
         statements.push_back(stmt);
@@ -22,8 +22,8 @@ void Parser::parse()
 
 void Parser::parseEchosBetweenStatements(Statement* stmt)
     {
-    if (peekToken(true).type == TokenType::ECHO_COMMENT_LINE
-        || (echoTrailingComment && peekToken(true).type == TokenType::COMMENT_LINE))
+    if (tok.peek(true).type == TokenType::ECHO_COMMENT_LINE
+        || (echoTrailingComment && tok.peek(true).type == TokenType::COMMENT_LINE))
         {
         auto t = tok.next(true);
         if (t.isFirstOnLine)
@@ -38,7 +38,7 @@ void Parser::parseEchosBetweenStatements(Statement* stmt)
             }
         }
     echoTrailingComment = false;
-    while (peekToken(true).type == TokenType::ECHO_COMMENT_LINE || peekToken(true).type == TokenType::COMMENT_LINE)
+    while (tok.peek(true).type == TokenType::ECHO_COMMENT_LINE || tok.peek(true).type == TokenType::COMMENT_LINE)
         {
         auto t = tok.next(true);
         if(t.type == TokenType::ECHO_COMMENT_LINE)
@@ -52,11 +52,11 @@ void Parser::parseEchosBetweenStatements(Statement* stmt)
 
 Define* Parser::parseDefine()
     {
-    auto t = peekToken();
+    auto t = tok.peek();
     if (t.type == TokenType::DEFINE || t.type == TokenType::UNDEF)
         {
         auto define = createDefine();
-        define->def = nextToken();//consume;
+        define->def = tok.next();//consume;
         return define;
         }
     return nullptr;
@@ -78,53 +78,53 @@ Statement* Parser::parseStatement()
 
 Statement* Parser::parseStatementHeader(Statement* stmt)
     {
-    if(peekToken().type == TokenType::ECHO)
+    if(tok.peek().type == TokenType::ECHO)
         {
-        nextToken(); //consume ECHO
+        tok.next(); //consume ECHO
         stmt->echo = true;
         return parseStatementHeader(stmt);
         }
-    if(peekToken().type == TokenType::ECHO_DOUBLE)
+    if(tok.peek().type == TokenType::ECHO_DOUBLE)
         {
-        nextToken(); //consume ECHO
+        tok.next(); //consume ECHO
         stmt->echo = true;
         echoTrailingComment = true;
         return parseStatementHeader(stmt);
         }
-    if(peekToken().type == TokenType::ECHO_COMMENT_LINE)
+    if(tok.peek().type == TokenType::ECHO_COMMENT_LINE)
         {
-        auto t = nextToken(); //consume ECHO
+        auto t = tok.next(); //consume ECHO
         stmt = createStatement();
         stmt->comment_line = t;
         return stmt;
         }
-    if(peekToken().type == TokenType::MUTE_LINE)
+    if(tok.peek().type == TokenType::MUTE_LINE)
         {
-        nextToken(); //consume MUTE
+        tok.next(); //consume MUTE
         stmt->mute = true;
         return parseStatementHeader(stmt);
         }
-    if(peekToken().type == TokenType::MUTE_START)
+    if(tok.peek().type == TokenType::MUTE_START)
         {
-        nextToken(); //consume MUTE
+        tok.next(); //consume MUTE
         this->muteBlock = true;
         return parseStatementHeader(stmt);
         }
-    if(peekToken().type == TokenType::MUTE_END)
+    if(tok.peek().type == TokenType::MUTE_END)
         {
-        nextToken(); //consume MUTE
+        tok.next(); //consume MUTE
         this->muteBlock = false;
         return parseStatementHeader(stmt);
         }
-    if(peekToken().type == TokenType::ECHO_START)
+    if(tok.peek().type == TokenType::ECHO_START)
         {
-        nextToken(); //consume ECHO
+        tok.next(); //consume ECHO
         this->echoBlock = true;
         return parseStatementHeader(stmt);
         }
-    if(peekToken().type == TokenType::ECHO_END)
+    if(tok.peek().type == TokenType::ECHO_END)
         {
-        nextToken(); //consume ECHO
+        tok.next(); //consume ECHO
         this->echoBlock = false;
         return parseStatementHeader(stmt);
         }
@@ -138,12 +138,12 @@ Statement* Parser::parseStatementBody(Statement* stmt)
     stmt->node = parseAssignExpr();
     if (stmt->node == nullptr)
         stmt->node = parseAddExpr();
-    nextToken();
-    if (currentToken.type == TokenType::SEMI_COLON)
+    auto t = tok.next();
+    if (t.type == TokenType::SEMI_COLON)
         { 
         if(stmt->echo)
             {
-            stmt->text = currentToken.stringValue;
+            stmt->text = t.stringValue;
             if(stmt->text.starts_with("\r\n"))
                 stmt->text.erase(0, 2);
             else if(stmt->text.starts_with("\n"))
@@ -159,14 +159,15 @@ Statement* Parser::parseStatementBody(Statement* stmt)
 
 Node* Parser::parseAssignExpr()
     {
-    auto t = peekToken();
+    auto t = tok.peek();
     if (t.type == TokenType::ID)
         {
-        auto id = nextToken();
-        t = peekToken();
+        auto id = t;
+        t = tok.peekSecond();
         if (t.type == TokenType::EQ)
             {
-            nextToken();//consume the EQ
+            tok.next();//consume ID
+            tok.next();//consume EQ
             AssignExpr* assign = createAssign();
             assign->Id = id;
             auto list = parseListExpr();
@@ -184,7 +185,8 @@ Node* Parser::parseAssignExpr()
             }
         else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
             {
-            nextToken();//consume the EQ
+            tok.next(); //consume ID
+            tok.next();//consume EQ
             AssignExpr* assign = createAssign();
             assign->Id = id;
             //prepare components to fabricate the new add or mult expression.
@@ -215,10 +217,10 @@ Node* Parser::parseAssignExpr()
                 pfix->expr = idExpr;
                 assign->Id = id;
                 assign->expr = pfix;
-                auto t = peekToken();
+                auto t = tok.peek();
                 if (t.type == TokenType::ID)
                     {
-                    nextToken();
+                    tok.next();
                     pfix->postfixId = t;
                     }
                 else
@@ -230,7 +232,6 @@ Node* Parser::parseAssignExpr()
             }
         else
             {
-            pushBackLastToken(); //pushing back the ID, not the EQ!
             return nullptr;
             }
         }
@@ -243,16 +244,16 @@ Node* Parser::parseAssignExpr()
 Node* Parser::parseAddExpr()
     {
     Node* node = parseMultExpr();
-    auto t = peekToken();
+    auto t = tok.peek();
     while (t.type == TokenType::PLUS || t.type == TokenType::MIN)
         {
-        nextToken();
+        tok.next();
         BinaryOpExpr* addExpr = createBinaryOp();
         addExpr->n1 = node;
         addExpr->op = t;
         addExpr->n2 = parseMultExpr();
         node = addExpr;
-        t = peekToken();
+        t = tok.peek();
         }
     return node;
     }
@@ -260,10 +261,10 @@ Node* Parser::parseAddExpr()
 Node* Parser::parseMultExpr()
     {
     Node* node = parsePowerExpr();
-    auto t = peekToken();
+    auto t = tok.peek();
     while (t.type == TokenType::MULT || t.type == TokenType::DIV)
         {
-        nextToken();
+        tok.next();
         BinaryOpExpr* multExpr = createBinaryOp();
         multExpr->n1 = node;
         multExpr->op = t;
@@ -281,7 +282,7 @@ Node* Parser::parseMultExpr()
                     }
                 }
             }
-        t = peekToken();
+        t = tok.peek();
         }
     return node;
     }
@@ -289,10 +290,10 @@ Node* Parser::parseMultExpr()
 Node* Parser::parsePowerExpr()
     {
     Node* node = parseImplicitMult();
-    auto t = peekToken();
+    auto t = tok.peek();
     while (t.type == TokenType::POWER)
         {
-        nextToken();
+        tok.next();
         BinaryOpExpr* powerExpr = createBinaryOp();
         powerExpr->n1 = node;
         powerExpr->op = t;
@@ -303,7 +304,7 @@ Node* Parser::parsePowerExpr()
             {
             powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT, tok.getLine(), tok.getLinePos());
             }
-        t = peekToken();
+        t = tok.peek();
         }
     return node;
     }
@@ -311,7 +312,7 @@ Node* Parser::parsePowerExpr()
 Node* Parser::parseImplicitMult()
     {
     Node* n1 = parseUnaryExpr();
-    auto t = peekToken();
+    auto t = tok.peek();
     while ((t.type == TokenType::ID
             || t.type == TokenType::NUMBER)
            || t.type == TokenType::PAR_OPEN)
@@ -323,17 +324,17 @@ Node* Parser::parseImplicitMult()
         m->n2 = parsePostFixExpr();
         m->implicitMult = true;
         n1 = m;
-        t = peekToken();
+        t = tok.peek();
         }
     return n1;
     }
 
 Node* Parser::parseUnaryExpr()
     {
-    auto t = peekToken();
+    auto t = tok.peek();
     if (t.type == TokenType::MIN)
         {
-        nextToken();
+        tok.next();
         auto node = createUnaryOp();
         node->op = t;
         node->n = parsePostFixExpr();
@@ -345,28 +346,28 @@ Node* Parser::parseUnaryExpr()
 Node* Parser::parsePostFixExpr()
     {
     Node* node = parseUnitExpr();
-    auto t = peekToken();
+    auto t = tok.peek();
     while (t.type == TokenType::DOT || t.type == TokenType::INC || t.type == TokenType::DEC)
         {
         node = parseOnePostFix(node);
-        t = peekToken();
+        t = tok.peek();
         }
     return node;
     }
 
 Node* Parser::parseOnePostFix(Node* node)
     {
-    auto t = peekToken();
+    auto t = tok.peek();
     if (t.type == TokenType::DOT)
         {
-        nextToken();
-        t = peekToken();
+        tok.next();
+        t = tok.peek();
         auto postfixExpr = createPostfix();
         postfixExpr->expr = node;
         node = postfixExpr;
         if (t.type == TokenType::ID)
             {
-            nextToken();
+            tok.next();
             postfixExpr->postfixId = t;
             }
         else
@@ -376,7 +377,7 @@ Node* Parser::parseOnePostFix(Node* node)
         }
     else if (t.type == TokenType::INC || t.type == TokenType::DEC)
         {
-        nextToken();
+        tok.next();
         if (node->type != NodeType::IDEXPR)
             {
             node->error = Error(ErrorId::VAR_EXPECTED, tok.getLine(), tok.getLinePos());
@@ -399,10 +400,10 @@ Node* Parser::parseOnePostFix(Node* node)
 Node* Parser::parseUnitExpr()
     {
     Node* node = parsePrimaryExpr();
-    auto t = peekToken();
+    auto t = tok.peek();
     if (t.type == TokenType::ID && ids.count(t.stringValue) == 0)
         {
-        nextToken();
+        tok.next();
         node->unit = t.stringValue; //no known id: assuming a unit.
         }
     return node;
@@ -410,23 +411,21 @@ Node* Parser::parseUnitExpr()
 
 Node* Parser::parsePrimaryExpr()
     {
-    auto t = peekToken();
+    auto t = tok.peek();
     switch (t.type)
         {
         case TokenType::NUMBER:
-            nextToken();
-            return parseNumber(false);
+            return parseNumber(tok.next(), false);
         case TokenType::MIN:
-            nextToken();
-            if (peekToken().type == TokenType::NUMBER)
+            tok.next();
+            if (tok.peek().type == TokenType::NUMBER)
                 {
-                nextToken();
-                return parseNumber(true);
+                return parseNumber(tok.next(), true);
                 }
             //else error?
             break;
         case TokenType::ID:
-            nextToken();
+            tok.next();
             if (functionDefs.exists(t.stringValue))
                 {
                 return parseCallExpr(t);
@@ -439,19 +438,19 @@ Node* Parser::parsePrimaryExpr()
                 }
         case TokenType::PAR_OPEN:
             {
-            nextToken();
+            tok.next();
             auto addExpr = parseAddExpr();
-            t = nextToken();
+            t = tok.next();
             //if (t.type != TokenType::PAR_CLOSE)
             //    primExpr.errorPos = 1;//todo
             return addExpr;
             }
         case TokenType::PIPE:
-            nextToken();
+            tok.next();
             return parseAbsOperator();
         case TokenType::QUOTED_STR:
             {
-            nextToken();
+            tok.next();
             auto constExpr = createConst(ValueType::TIMEPOINT);
             constExpr->value = t;
             return constExpr;
@@ -468,13 +467,13 @@ Node* Parser::parseAbsOperator()
     CallExpr* callExpr = createCall();
     callExpr->arguments.push_back(addExpr);
     callExpr->functionName = Token(TokenType::ID, "abs", tok.getLine(), tok.getLinePos());
-    auto t = nextToken();
+    auto t = tok.next();
     //if (t.type != TokenType::PAR_CLOSE)
     //    callExpr.errorPos = 1;//todo
     return callExpr;
     }
 
-ConstExpr* Parser::parseNumber(bool negative)
+ConstExpr* Parser::parseNumber(Token currentToken, bool negative)
     {
     auto constExpr = createConst(ValueType::NUMBER);
     currentToken.numberValue.significand = (negative ? -1 : 1) * currentToken.numberValue.significand;
@@ -486,17 +485,17 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     {
     CallExpr* callExpr = createCall();
     callExpr->functionName = functionName;
-    auto t = peekToken();
+    auto t = tok.peek();
     if (t.type != TokenType::PAR_OPEN)
         {
         callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, t.line, t.pos, functionName.stringValue.c_str());
         return callExpr;
         }
-    nextToken();
+    tok.next();
     callExpr->arguments = parseListExpr();
-    t = peekToken();
+    t = tok.peek();
     if (t.type == TokenType::PAR_CLOSE)
-        nextToken();
+        tok.next();
     //else: error?
     return callExpr;
     }
@@ -510,9 +509,9 @@ std::vector<Node*> Parser::parseListExpr()
         if(expr->is(NodeType::NONE))
             break;
         list.push_back(expr);
-        if (peekToken().type != TokenType::COMMA)
+        if (tok.peek().type != TokenType::COMMA)
             break;
-        nextToken();
+        tok.next();
         }
     return list;
     }
@@ -529,34 +528,3 @@ ListExpr* Parser::createList() { ListExpr* p = new ListExpr; nodes.push_back(p);
 Define* Parser::createDefine() { Define* p = new Define; nodes.push_back(p); return p; }
 Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
 CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }
-
-Token Parser::peekToken(bool includeEchoComment)
-    {
-    if (lastToken.type != TokenType::NULLPTR)
-        return lastToken;
-    else
-        return tok.peek(includeEchoComment);
-    }
-
-Token Parser::nextToken(bool includeEchoComment)
-    {
-    if (lastToken.type != TokenType::NULLPTR)
-        {
-        currentToken = lastToken;
-        lastToken = Token::Null();
-        }
-    else
-        {
-        currentToken = tok.next(includeEchoComment);
-        }
-    return currentToken;
-    }
-
-void Parser::pushBackLastToken()
-    {
-#ifndef __WASM__
-    if (lastToken.type != TokenType::NULLPTR)
-        throw new std::exception("Cannot push back a second token.");
-#endif
-    lastToken = currentToken;
-    }

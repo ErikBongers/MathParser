@@ -18,29 +18,39 @@ Token::Token(TokenType type, unsigned int line, unsigned int pos)
     : Token(type, Number(0.0, 0), line, pos)
     {}
 
-Token Tokenizer::peek(bool includeComment)
+Token Tokenizer::peek(bool includeComment) 
     {
-    auto savedPos = pos;
-    auto savedLine = line;
-    auto savedLinePos = linePos;
-    auto t = next(includeComment);
-    pos = savedPos;
-    line = savedLine;
-    linePos = savedLinePos;
+    if(!peekedState.isNull()) //TODO: when peek()-ing a 2nd time, it could be that includeComment is different from the previous peek()
+        return peekedState.currentToken;
+    State tmpState = state;
+    next(includeComment);
+    peekedState = state;
+    state = tmpState;
+    return peekedState.currentToken;
+    }
+
+Token Tokenizer::peekSecond(bool includeComment) 
+    {
+    State tmpState = state;
+    next(includeComment);
+    peekedState = state;
+    auto t = next(includeComment);//second peek(), don't store this state. (yet?)
+    state = tmpState;
     return t;
     }
 
 Token Tokenizer::next(bool includeComment)
     {
-    auto t = _nextToken();
+    peekedState.clear();
+    state.currentToken = _nextToken();
     if(includeComment == false)
         {
-        while(t.type == TokenType::ECHO_COMMENT_LINE || t.type == TokenType::COMMENT_LINE)
-            t = _nextToken();
+        while(state.currentToken.type == TokenType::ECHO_COMMENT_LINE || state.currentToken.type == TokenType::COMMENT_LINE)
+            state.currentToken = _nextToken();
         }
-    t.isFirstOnLine = newLineStarted;
-    newLineStarted = false;
-    return t;
+    state.currentToken.isFirstOnLine = state.newLineStarted;
+    state.newLineStarted = false;
+    return state.currentToken;
     }
 
 void Tokenizer::skipWhiteSpace()
@@ -67,7 +77,7 @@ void Tokenizer::skipWhiteSpaceNoNL()
 
 Token Tokenizer::_nextToken()
     {
-    if (pos >= size)
+    if (state.pos >= size)
         return Token(TokenType::EOT, getLine(), getLinePos());
 
     skipWhiteSpace();
@@ -206,11 +216,11 @@ Token Tokenizer::_nextToken()
             }
         case '\'':
             {
-            auto start= pos;
-            auto curLine = line;
-            auto curLinePos = linePos;
+            auto start= state.pos;
+            auto curLine = state.line;
+            auto curLinePos = state.linePos;
             skipToOnLine('\'');
-            return Token(TokenType::QUOTED_STR, getText(start, std::max(start, pos-1)), curLine, curLinePos);
+            return Token(TokenType::QUOTED_STR, getText(start, std::max(start, state.pos-1)), curLine, curLinePos);
             }
         default:
             if ((c >= '0' && c <= '9') || c == '.')
@@ -259,31 +269,31 @@ Token Tokenizer::parseId(char c)
 
 char Tokenizer::nextChar()
     {
-    if(pos >= size)
+    if(state.pos >= size)
         return 0; //EOF
-    if(_stream[pos] == '\n')
+    if(_stream[state.pos] == '\n')
         {
-        line++;
-        linePos = 0;
-        newLineStarted = true;
+        state.line++;
+        state.linePos = 0;
+        state.newLineStarted = true;
         }
     else
-        linePos++;
-    return _stream[pos++];
+        state.linePos++;
+    return _stream[state.pos++];
     }
 
 char Tokenizer::peekChar()
     {
-    if(pos >= size)
+    if(state.pos >= size)
         return 0; //EOF
-    return _stream[pos];
+    return _stream[state.pos];
     }
 
 char Tokenizer::peekSecondChar()
     {
-    if((pos+1) >= size)
+    if((state.pos+1) >= size)
         return 0; //EOF
-    return _stream[pos+1];
+    return _stream[state.pos+1];
     }
 
 
@@ -492,14 +502,14 @@ void Tokenizer::skipToEndOfComment()
 
 bool Tokenizer::peekString(std::string str)
     {
-    if(pos + str.size() >= size)
+    if(state.pos + str.size() >= size)
         return false;
-    if(str.compare(0, str.size(), _stream, pos, str.size()) != 0)
+    if(str.compare(0, str.size(), _stream, state.pos, str.size()) != 0)
         return false;
-    if(pos + str.size() == size)
+    if(state.pos + str.size() == size)
         return true;//EOF, so ID-string matches.
     //next char should not be an ID char
-    return !isIdChar(_stream[pos+str.size()]);
+    return !isIdChar(_stream[state.pos+str.size()]);
     }
 
 bool Tokenizer::getString(std::string str)

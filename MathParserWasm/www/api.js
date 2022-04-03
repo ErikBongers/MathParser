@@ -35,9 +35,11 @@ Module.onRuntimeInitialized = async _ => {
 		let strLine = "";
 		let strFormatted = "";
 		if (line.type == "NUMBER") {
-			strFormatted = Module.formatFloatString(line.number.significand, line.number.exponent);
-			if (line.number.format != "DEC")
-				strFormatted = line.number.formatted + line.number.unit;
+			if (line.number.format == "DEC")
+				strFormatted = Module.formatFloatString(line.number.significand, line.number.exponent);
+			else
+				strFormatted = line.number.formatted;
+			strFormatted += line.number.unit;
 		}
 		else if (line.type == "TIMEPOINT")
 			strFormatted = line.date.formatted;

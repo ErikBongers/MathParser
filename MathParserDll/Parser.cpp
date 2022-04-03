@@ -56,7 +56,7 @@ Define* Parser::parseDefine()
     if (t.type == TokenType::DEFINE || t.type == TokenType::UNDEF)
         {
         auto define = createDefine();
-        define->def = tok.next();//consume;
+        define->def = tok.next();//token contains the full define string. PArsing of that string ins delayed to the Resolver.
         return define;
         }
     return nullptr;

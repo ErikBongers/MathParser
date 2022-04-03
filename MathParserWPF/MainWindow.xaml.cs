@@ -48,6 +48,7 @@ namespace MathParserWPF
             {
             MainWindow wnd = d as MainWindow;
             wnd.Output = "";
+            File.WriteAllText(localStorageFileName, wnd.Formula);
             ParseFormula(wnd.Formula, wnd);
             }
 

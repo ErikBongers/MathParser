@@ -71,7 +71,7 @@ Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v
             {
             if (v1.unit.isClear())
                 result.unit = v.unit;
-            result.errors.push_back(Error(ErrorId::W_ASSUMING_UNIT, v1.line, v1.pos));
+            result.errors.push_back(Error(ErrorId::W_ASSUMING_UNIT, line, pos));
             }
         }
     result.errors.insert(result.errors.end(), v.errors.begin(), v.errors.end());

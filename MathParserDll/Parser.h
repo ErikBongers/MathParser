@@ -29,7 +29,8 @@ class Node
 class NoneExpr : public Node
     {
     public:
-        Range range() const { return Range(); }
+        Token token;
+        Range range() const { return Range(token); }
     private:
         NoneExpr() : Node(NodeType::NONE) {};
         friend class Parser;

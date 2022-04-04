@@ -8,10 +8,6 @@
       : age.days
       : vacation=10Days?
 * Error() on INV_DATE_VALUE: mention the current dateformat.
-* positions:
-  - Every Token has a position and length (or end)
-  - Every Node can calculate it's position and length, based on the underlying tree.
-  - Same for Value
 
 * date fragment as hls should give error
     : today.year = 2022; //error!

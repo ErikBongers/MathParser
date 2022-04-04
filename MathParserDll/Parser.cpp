@@ -462,6 +462,7 @@ Node* Parser::parsePrimaryExpr()
             break;
         }
     auto none = createNoneExpr();
+    none->token = t;
     return none;
     }
 

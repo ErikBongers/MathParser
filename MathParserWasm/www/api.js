@@ -6,12 +6,13 @@ Module.onRuntimeInitialized = async _ => {
 
 	window.document.title = "Math Parser " + Module.api.getMathVersion();
 	Module.convertErrorToCodeMirror = function(e, doc){
-		let pos = doc.line(e.line+1).from + e.pos;
+		let start = doc.line(e.range.startLine + 1).from + e.range.startPos;
+		let end = doc.line(e.range.endLine + 1).from + e.range.endPos;
 		var hint = {
             message: e.message,
             severity: "error", //"warning"
-            from: pos,
-            to: pos+1
+            from: start,
+            to: end
           };
       return hint;
 	};

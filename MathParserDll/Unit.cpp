@@ -114,6 +114,7 @@ void UnitDefs::addShortDateUnits()
 
 Unit::Unit(const Token& idToken)
     {
+    this->id = idToken.stringValue;
     this->range = idToken;
     }
 

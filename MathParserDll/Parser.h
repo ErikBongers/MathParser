@@ -26,6 +26,15 @@ class Node
         friend class Parser;
     };
 
+class NoneExpr : public Node
+    {
+    public:
+        Range range() const { return Range(); }
+    private:
+        NoneExpr() : Node(NodeType::NONE) {};
+        friend class Parser;
+    };
+
 class ConstExpr : public Node
     {
     public:
@@ -180,6 +189,8 @@ class Parser
         ConstExpr* parseNumber(Token currentToken, bool negative);
         CallExpr* parseCallExpr(Token functionName);
         std::vector<Node*> parseListExpr();
+
+        NoneExpr* createNoneExpr();
         ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
         UnaryOpExpr* createUnaryOp();

@@ -461,10 +461,7 @@ Node* Parser::parsePrimaryExpr()
         default: 
             break;
         }
-    //TODO: test tok.next(); //consume or not?
-    auto none = createConst(ValueType::NONE);
-    none->value = t;
-    none->error = Error(ErrorId::UNKNOWN_EXPR, Range(t));
+    auto none = createNoneExpr();
     return none;
     }
 
@@ -524,6 +521,7 @@ std::vector<Node*> Parser::parseListExpr()
     }
 
 
+NoneExpr* Parser::createNoneExpr() { NoneExpr* p = new NoneExpr(); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
 UnaryOpExpr* Parser::createUnaryOp() { UnaryOpExpr* p = new UnaryOpExpr; nodes.push_back(p); return p; }

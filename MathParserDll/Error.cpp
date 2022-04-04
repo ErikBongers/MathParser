@@ -8,8 +8,8 @@
 #include <cassert>
 #endif
 
-Error::Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1)
-    : line(line), pos(pos)
+Error::Error(ErrorId id, const Range& range, const std::string& arg1)
+    : range(range)
     {
     this->id = id;
 #ifdef _MSC_VER
@@ -24,8 +24,8 @@ Error::Error(ErrorId id, unsigned int line, unsigned int pos, const std::string&
     this->errorMsg = buffer.c_str();
     }
 
-Error::Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1, const std::string& arg2)
-    : line(line), pos(pos)
+Error::Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2)
+    : range(range)
     {
     this->id = id;
 #ifdef _MSC_VER
@@ -46,8 +46,8 @@ Error::Error(ErrorId id, unsigned int line, unsigned int pos, const std::string&
     this->errorMsg = buffer.c_str();
     }
 
-Error::Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1, const std::string& arg2, const std::string& arg3)
-    : line(line), pos(pos)
+Error::Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2, const std::string& arg3)
+    : range(range)
     {
     this->id = id;
 #ifdef _MSC_VER
@@ -72,8 +72,8 @@ Error::Error(ErrorId id, unsigned int line, unsigned int pos, const std::string&
     this->errorMsg = buffer.c_str();
     }
 
-Error::Error(ErrorId id, unsigned int line, unsigned int pos)
-    : line(line), pos(pos)
+Error::Error(ErrorId id, const Range& range)
+    : range(range)
     {
     this->id = id;
     this->errorMsg = ErrorDefs::get(id).message;
@@ -88,7 +88,7 @@ const std::string Error::to_json()
     sstr << "\"id\" : \"" << ed.name << "\", \"message\" : \"" + escape_json(errorMsg) + "\"";
     isWarning = ed.name[0] == 'W';
     sstr << ", \"isWarning\": " << (isWarning ? "true":"false");
-    sstr << ", \"line\": " << line << ", \"pos\": " << pos;
+    sstr << ", \"range\": " << range.to_json();
     sstr << "}";
     return sstr.str();
     }

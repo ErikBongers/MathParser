@@ -37,8 +37,6 @@ Date DateParser::parse()
         if(hasRealErrors(date.errors))
             break;
         }
-    date.line = line;
-    date.pos = pos;
     return date;
     }
 
@@ -87,7 +85,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
     if (slice == "last")
         {
         if(date.day != 0)
-            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for day."));
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "multiple values for day."));
         else
             date.day = Date::Last;
         return;
@@ -102,20 +100,20 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
             return;
             }
         else
-            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for month."));
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "multiple values for month."));
         }
     //from here on, it should be all numbers.
     int n = parseInt(slice);
     if(n < 0)
         {
-        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "invalid numeric value."));
+        date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "invalid numeric value."));
         return;
         }
     //what number do we have?
     if (n > 31)
         {
         if(date.year != Date::EmptyYear)
-            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for year."));
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "multiple values for year."));
         else
             {
             date.year = n;
@@ -127,12 +125,12 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
         {
         if (countDateSlices() >= 3 && !hasYearSlice())
             {
-            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "values could be month or year."));
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "values could be month or year."));
             return;
             }
         if(date.day != 0)
             {
-            date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "multiple values for day."));
+            date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "multiple values for day."));
             return;
             }
         date.day = n;
@@ -157,7 +155,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                         date.day = n;
                     else
                         {
-                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "not clear which value is day or month."));
                         }
                     return;
                     }
@@ -167,7 +165,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                         date.month = (Month)n;//should not fail as n <= 12
                     else
                         {
-                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "not clear which value is day or month."));
                         }
                     return;
                     }
@@ -177,7 +175,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                     date.month = (Month)n;
                     return;
                     }
-                date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
+                date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "not clear which value is day or month."));
                 }
             if(ymdFormat)
                 {
@@ -188,7 +186,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                         date.year = n;
                     else
                         {
-                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "assuming ymd format, but day is already filled."));
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "assuming ymd format, but day is already filled."));
                         return;
                         }
                     }
@@ -198,7 +196,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                         date.month = (Month)n;//should not fail as n <= 12
                     else
                         {
-                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "assuming ymd but month is already filled."));
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "assuming ymd but month is already filled."));
                         return;
                         }
                     }
@@ -208,7 +206,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                         date.day = n;
                     else
                         {
-                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "assuming ymd format, but day is already filled."));
+                        date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "assuming ymd format, but day is already filled."));
                         return;
                         }
                     }
@@ -228,7 +226,7 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
                 }
             else
                 {
-                date.errors.push_back(Error(ErrorId::INV_DATE_STR, line, pos, "not clear which value is day or month."));
+                date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "not clear which value is day or month."));
                 return;
                 }
             }

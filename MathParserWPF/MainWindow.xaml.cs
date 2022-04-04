@@ -110,7 +110,7 @@ namespace MathParserWPF
                     {
                     strResult += " <<< ";
                     foreach (var err in result.errors)
-                        strResult += $"[{err.line}, {err.pos}] {err.message}";
+                        strResult += $"[{err.range.startLine}, {err.range.startPos}, {err.range.endLine}, {err.range.endPos}] {err.message}";
                     }
                 strResult += $" {result.text} {strComment}";
                 if (strResult.Length > 0)

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Unit.h"
+#include "Token.h"
 #include <stdexcept>
 #include <iostream>
 
@@ -109,4 +110,14 @@ void UnitDefs::addShortDateUnits()
     set(UnitDef("w", 60*60*24*7, UnitClass::DURATION));
     set(UnitDef("mon", 60*60*24*7*30, UnitClass::DURATION));
     set(UnitDef("y", 60*60*24*7*30*12, UnitClass::DURATION));
+    }
+
+Unit::Unit(const Token& idToken)
+    {
+    this->range = idToken;
+    }
+
+Unit Unit::CLEAR() 
+    { 
+    return Unit(Token::Null()); 
     }

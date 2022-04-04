@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Range.h"
 
 enum class ErrorId
     {
@@ -52,14 +53,13 @@ class Error
     public:
         ErrorId id = ErrorId::NONE;
         std::string errorMsg;
-        unsigned int line = -1;
-        unsigned int pos = -1;
+        Range range;
 
         Error() {}
-        Error(ErrorId id, unsigned int line, unsigned int pos);
-        Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1);
-        Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1, const std::string& arg2);
-        Error(ErrorId id, unsigned int line, unsigned int pos, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+        Error(ErrorId id, const Range& range);
+        Error(ErrorId id, const Range& range, const std::string& arg1);
+        Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2);
+        Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2, const std::string& arg3);
         const std::string to_json();
         bool isWarning();
     };

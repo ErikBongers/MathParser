@@ -151,7 +151,7 @@ Statement* Parser::parseStatementBody(Statement* stmt)
             }
         }
     else
-        stmt->error = Error(ErrorId::EXPECTED, tok.getLine(), tok.getLinePos(), ";");
+        stmt->error = Error(ErrorId::EXPECTED, Range(t), ";");
     if(echoBlock)
         stmt->echo = true;
     return stmt;
@@ -176,7 +176,7 @@ Node* Parser::parseAssignExpr()
             else
                 {
                 if (list.size() == 0)
-                    assign->error = Error(ErrorId::UNKNOWN_EXPR, tok.getLine(), tok.getLinePos()+1);
+                    assign->error = Error(ErrorId::UNKNOWN_EXPR, Range(t));
 
                 auto listExpr = createList();
                 listExpr->list = list;
@@ -281,7 +281,7 @@ Node* Parser::parseMultExpr()
                 BinaryOpExpr* n2 = static_cast<BinaryOpExpr*>(multExpr->n2);
                 if (n2->implicitMult)
                     {
-                    multExpr->error = Error(ErrorId::W_DIV_IMPL_MULT, tok.getLine(), tok.getLinePos());
+                    multExpr->error = Error(ErrorId::W_DIV_IMPL_MULT, node->range());
                     }
                 }
             }
@@ -305,7 +305,7 @@ Node* Parser::parsePowerExpr()
         if ((powerExpr->n1->is(NodeType::BINARYOPEXPR) && static_cast<BinaryOpExpr*>(powerExpr->n1)->implicitMult)
             || (powerExpr->n2->is(NodeType::BINARYOPEXPR) && static_cast<BinaryOpExpr*>(powerExpr->n2)->implicitMult))
             {
-            powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT, tok.getLine(), tok.getLinePos());
+            powerExpr->error = Error(ErrorId::W_POW_IMPL_MULT, node->range());
             }
         t = tok.peek();
         }
@@ -383,7 +383,7 @@ Node* Parser::parseOnePostFix(Node* node)
         tok.next();
         if (node->type != NodeType::IDEXPR)
             {
-            node->error = Error(ErrorId::VAR_EXPECTED, tok.getLine(), tok.getLinePos());
+            node->error = Error(ErrorId::VAR_EXPECTED, node->range());
             return node;
             }
 
@@ -407,7 +407,7 @@ Node* Parser::parseUnitExpr()
     if (t.type == TokenType::ID && ids.count(t.stringValue) == 0)
         {
         tok.next();
-        node->unit = t.stringValue; //no known id: assuming a unit.
+        node->unit = t; //no known id: assuming a unit.
         }
     return node;
     }
@@ -461,7 +461,11 @@ Node* Parser::parsePrimaryExpr()
         default: 
             break;
         }
-    return createNoneExpr(); //error
+    //TODO: test tok.next(); //consume or not?
+    auto none = createConst(ValueType::NONE);
+    none->value = t;
+    none->error = Error(ErrorId::UNKNOWN_EXPR, Range(t));
+    return none;
     }
 
 Node* Parser::parseAbsOperator()
@@ -491,7 +495,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     auto t = tok.peek();
     if (t.type != TokenType::PAR_OPEN)
         {
-        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, t.line, t.pos, functionName.stringValue.c_str());
+        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, Range(t), functionName.stringValue.c_str());
         return callExpr;
         }
     tok.next();
@@ -520,7 +524,6 @@ std::vector<Node*> Parser::parseListExpr()
     }
 
 
-Node* Parser::createNoneExpr() { Node* p = new Node(NodeType::NONE); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
 UnaryOpExpr* Parser::createUnaryOp() { UnaryOpExpr* p = new UnaryOpExpr; nodes.push_back(p); return p; }
@@ -531,3 +534,70 @@ ListExpr* Parser::createList() { ListExpr* p = new ListExpr; nodes.push_back(p);
 Define* Parser::createDefine() { Define* p = new Define; nodes.push_back(p); return p; }
 Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
 CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }
+
+Range ConstExpr::range() const
+    {
+    return Range(value.line, value.pos, value.line, value.pos + (unsigned)value.stringValue.size());
+    }
+
+Range IdExpr::range() const
+    {
+    return {Id.line, Id.pos, Id.line, Id.pos + (unsigned)Id.stringValue.size()};
+    }
+
+Range PostfixExpr::range() const
+    {
+    Range r = {postfixId.line, postfixId.pos, postfixId.line, postfixId.pos + (unsigned)postfixId.stringValue.size()};
+    if(expr != nullptr)
+        r += expr->range();
+    return r;
+    }
+
+Range CallExpr::range() const
+    {
+    Range r = Range(functionName);
+    if(!arguments.empty())
+        r += arguments.back()->range();
+    return r;
+    }
+
+Range BinaryOpExpr::range() const
+    {
+    Range r = Range(n1->range());
+    r += Range(n2->range());
+    return r;
+    }
+
+Range UnaryOpExpr::range() const
+    {
+    Range r = Range(n->range());
+    r += Range(op);
+    return r;
+    }
+
+Range AssignExpr::range() const
+    {
+    Range r = Range(Id);
+    if(expr != nullptr)
+        r += Range(expr->range());
+    return r;
+    }
+
+Range ListExpr::range() const
+    {
+    Range r = Range(list.front()->range());
+    r += list.back()->range();
+    return r;
+    }
+
+Range Define::range() const
+    {
+    return Range(def);
+    }
+
+Range Statement::range() const
+    {
+    if(node != nullptr)
+        return node->range();
+    return Range(comment_line);
+    }

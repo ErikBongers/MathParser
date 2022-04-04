@@ -40,12 +40,12 @@ bool FunctionDef::isCorrectArgCount(size_t argCnt)
     return argCnt >= minArgs && argCnt <= maxArgs;
     }
 
-Value FunctionDef::call(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value FunctionDef::call(std::vector<Value>& args, const Range& range)
     { 
     if (!isCorrectArgCount(args.size()))
-        return Value(Number(std::numeric_limits<double>::quiet_NaN(), 0, line, pos));
+        return Value(Number(std::numeric_limits<double>::quiet_NaN(), 0, range));
 
-    return execute(args, line, pos); 
+    return execute(args, range); 
     }
 
 bool FunctionDefs::exists(const std::string& functionName)
@@ -65,7 +65,7 @@ using time_point = c::system_clock::time_point;
 using year_month_day = c::year_month_day;
 using namespace std::chrono_literals;
 
-Value Now::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Now::execute(std::vector<Value>& args, const Range& range)
     {
     Value now;
     time_point tpNow = c::system_clock::now();
@@ -78,7 +78,7 @@ Value Now::execute(std::vector<Value>& args, unsigned int line, unsigned int pos
     return now;
     }
 
-Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, unsigned int line, unsigned int pos, bool max)
+Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, const Range& range, bool max)
     {
     bool diffUnits = false;
     double val0;
@@ -107,132 +107,132 @@ Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, unsigned int 
         errors.insert(errors.begin(), arg.errors.begin(), arg.errors.end());
         }
     if(diffUnits)
-        errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
+        errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, range));
     ret.errors = errors;
     return ret;
     }
 
-Value Max::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Max::execute(std::vector<Value>& args, const Range& range)
     {
-    return minMax(functionDefs, args, line, pos, true);
+    return minMax(functionDefs, args, range, true);
     }
 
-Value Min::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Min::execute(std::vector<Value>& args, const Range& range)
     {
-    return minMax(functionDefs, args, line, pos, false);
+    return minMax(functionDefs, args, range, false);
     }
 
-Value Inc::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Inc::execute(std::vector<Value>& args, const Range& range)
     {
     Value arg = args[0];
     arg.getNumber()++;
     return arg;
     }
 
-Value Dec::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Dec::execute(std::vector<Value>& args, const Range& range)
     {
     Value arg = args[0];
     arg.getNumber()--;
     return arg;
     }
 
-Value Int::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Int::execute(std::vector<Value>& args, const Range& range)
     {
     Value arg = args[0];
     arg.getNumber ()= {trunc(arg.getNumber().to_double()), 0};
     return arg;
     }
 
-Value Abs::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Abs::execute(std::vector<Value>& args, const Range& range)
     {
     Value arg = args[0];
     arg.getNumber ()= {abs(arg.getNumber().to_double()), 0};
     return arg;
     }
 
-Value Sin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Sin::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
         arg = functionDefs.unitDefs.get("deg").toSI(arg);;
-    return Value(Number(sin(arg), 0, line, pos));
+    return Value(Number(sin(arg), 0, range));
     }
 
-Value Cos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Cos::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
         arg = functionDefs.unitDefs.get("deg").toSI(arg);
-    return Value(Number(cos(arg), 0, line, pos));
+    return Value(Number(cos(arg), 0, range));
     }
 
-Value Tan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Tan::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
         arg = functionDefs.unitDefs.get("deg").toSI(arg);
-    return Value(Number(tan(arg), 0, line, pos));
+    return Value(Number(tan(arg), 0, range));
     }
 
-Value ArcSin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value ArcSin::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(asin(arg), 0, line, pos));
+    return Value(Number(asin(arg), 0, range));
     }
 
-Value ArcCos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value ArcCos::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(acos(arg), 0, line, pos));
+    return Value(Number(acos(arg), 0, range));
     }
 
-Value ATan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value ATan::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(atan(arg), 0, line, pos));
+    return Value(Number(atan(arg), 0, range));
     }
 
-Value ASin::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value ASin::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(asin(arg), 0, line, pos));
+    return Value(Number(asin(arg), 0, range));
     }
 
-Value ACos::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value ACos::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(acos(arg), 0, line, pos));
+    return Value(Number(acos(arg), 0, range));
     }
 
-Value ArcTan::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value ArcTan::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(atan(arg), 0, line, pos));
+    return Value(Number(atan(arg), 0, range));
     }
 
-Value Sqrt::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Sqrt::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(sqrt(args[0].getNumber().to_double()), 0, line, pos));
+    return Value(Number(sqrt(args[0].getNumber().to_double()), 0, range));
     }
 
-Value Round::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Round::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(round(args[0].getNumber().to_double()), 0, line, pos));
+    return Value(Number(round(args[0].getNumber().to_double()), 0, range));
     }
 
-Value Floor::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Floor::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(floor(args[0].getNumber().to_double()), 0, line, pos));
+    return Value(Number(floor(args[0].getNumber().to_double()), 0, range));
     }
 
-Value Ceil::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Ceil::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(ceil(args[0].getNumber().to_double()), 0, line, pos));
+    return Value(Number(ceil(args[0].getNumber().to_double()), 0, range));
     }
 
-Value Trunc::execute(std::vector<Value>& args, unsigned int line, unsigned int pos)
+Value Trunc::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(trunc(args[0].getNumber().to_double()), 0, line, pos));
+    return Value(Number(trunc(args[0].getNumber().to_double()), 0, range));
     }
 
 

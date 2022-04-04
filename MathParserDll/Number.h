@@ -11,12 +11,11 @@ struct Number
     Unit unit;
     NumFormat numFormat = NumFormat::DEC;
     std::vector<Error> errors;
-    unsigned int line = 0;
-    unsigned int pos = 0;
+    Range range;
     Number() {}
     Number(double d, int e, NumFormat numFormat = NumFormat::DEC) : significand(d), exponent(e), numFormat(numFormat) {}
-    Number(double d, int e, unsigned line, unsigned pos) : significand(d), exponent(e), line(line), pos(pos) {}
-    Number(double d, const Unit& unit, NumFormat numFormat, unsigned line, unsigned pos) : significand(d), unit(unit), numFormat(numFormat), line(line), pos(pos) {}
+    Number(double d, int e, const Range& range) : significand(d), exponent(e), range(range) {}
+    Number(double d, const Unit& unit, NumFormat numFormat, const Range& range) : significand(d), unit(unit), numFormat(numFormat), range(range) {}
     Number& operator++(int);
     Number& operator--(int);
     double to_double() const;

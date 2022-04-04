@@ -22,8 +22,7 @@ public class Error
     {
     public string id { get; set; }
     public string message { get; set; }
-    public int line { get; set; }
-    public int pos { get; set; }
+    public Range range { get; set; }
     }
 
 public class Number
@@ -46,4 +45,12 @@ public class Duration
     public string years { get; set; }
     public string months{ get; set; }
     public string days { get; set; }
+    }
+
+public class Range
+    {
+    public long startLine { get; set; }
+    public long startPos { get; set; }
+    public long endLine { get; set; }
+    public long endPos { get; set; }
     }

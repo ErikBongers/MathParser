@@ -90,12 +90,12 @@ Number Number::convertToUnit(const Unit& to, UnitDefs& unitDefs)
     
     if (unitDefs.exists(to.id) == false)
         {
-        num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.line, to.pos, to.id.c_str()));
+        num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.range, to.id.c_str()));
         return num;
         }
     if (unitDefs.get(unit.id).property != unitDefs.get(to.id).property)
         {
-        num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, line, pos));
+        num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, range));
         return num;
         }
     num = Number(unitDefs.get(this->unit.id).toSI(this->to_double()), 0); //from -> SI

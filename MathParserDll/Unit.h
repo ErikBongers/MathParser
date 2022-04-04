@@ -1,23 +1,25 @@
 #pragma once
 #include <functional>
+#include "Range.h"
 
+class Token;
 class Unit
     {
     public:
         std::string id; //same ID may be used as a variable.
-        unsigned int line = 0;
-        unsigned int pos = 0;
+        Range range;
 
         //optional:
         Unit* subUnit1 = nullptr;
         std::string op;
         Unit* subUnit2 = nullptr;
 
-        Unit(const std::string& id) :id(id) {}
+        //Unit(const std::string& id) :id(id) {}
+        Unit(const Token& idToken);
         Unit() {}
         const char* to_string() const;
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
-        static Unit CLEAR() { return Unit(""); }
+        static Unit CLEAR();
         bool isClear() const { return id.empty(); }
     };
 

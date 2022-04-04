@@ -16,7 +16,7 @@ Resolver::Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDef
 void Resolver::resolve()
     {
     variables.clear();
-    auto PI = Value(Number(M_PI, 0, 0, 0));
+    auto PI = Value(Number(M_PI, 0, Range()));
     PI.constant = true;
     variables.emplace("PI", PI);
     variables.emplace("pi", PI);
@@ -66,7 +66,7 @@ Value Resolver::resolveDefine(const Define& define)
                 dateFormat = DateFormat::MDY;
                 break;
             default:
-                result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.def.line, define.def.pos, options));
+                result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), options));
             }
         }
     return result;
@@ -99,7 +99,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
         case NodeType::DEFINE: return resolveDefine((const Define&)node);
-        default: return Value(Error(ErrorId::UNKNOWN_EXPR, 0, 0));
+        default: return Value(Error(ErrorId::UNKNOWN_EXPR, node.range()));
         }
     }
 
@@ -126,13 +126,13 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
     OperatorDef* op = operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
         {
-        result.errors.push_back(Error(ErrorId::NO_OP, expr.op.line, expr.op.pos, expr.op.stringValue, to_string(a1.type), to_string(a2.type)));
+        result.errors.push_back(Error(ErrorId::NO_OP, Range(expr.op), expr.op.stringValue, to_string(a1.type), to_string(a2.type)));
         return result;
         }
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
-    result = op->call(args, expr.op.line, expr.op.pos);
+    result = op->call(args, expr.op);
     if (expr.error.id != ErrorId::NONE)
         result.errors.push_back(expr.error);
     if(result.type ==ValueType::NUMBER && !expr.unit.isClear())
@@ -160,17 +160,17 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
         {
         if (unitDefs.exists(assign.Id.stringValue))
             {
-            result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
+            result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, Range(assign.Id), assign.Id.stringValue));
             }
         else if (parser.functionDefs.exists(assign.Id.stringValue))
             {
-            result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
+            result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, Range(assign.Id), assign.Id.stringValue));
             }
         variables.emplace(assign.Id.stringValue, Value()); //create var, regardless of errors.
         }
     auto& var = getVar(assign.Id.stringValue);
     if(var.constant)
-        result.errors.push_back(Error(ErrorId::CONST_REDEF, assign.Id.line, assign.Id.pos, assign.Id.stringValue));
+        result.errors.push_back(Error(ErrorId::CONST_REDEF, Range(assign.Id), assign.Id.stringValue));
     var = result; //do not store the value with the id. The value of a variable is just the value.
     var.errors.clear(); //don't keep the errors with the variables, but only keep thew with the statement's result.
     result.id = assign.Id;
@@ -201,20 +201,20 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     auto year = resolveNode(*listExpr.list[iYear]);
     Date date;
     if(day.type != ValueType::NUMBER) 
-        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, "?", "day")); //TODO: postion
+        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iDay]->range(), "?", "day"));
     if(month.type != ValueType::NUMBER) 
-        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, "?", "month"));
+        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iMonth]->range(), "?", "month"));
     if(year.type != ValueType::NUMBER) 
-        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, "?", "year"));
+        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iYear]->range(), "?", "year"));
 
     date.day = (char)day.getNumber().to_double();
     date.month = (Month)month.getNumber().to_double();
     date.year = (long)year.getNumber().to_double();
 
     if(date.day < 1 || date.day > 31)
-        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, std::to_string((int)date.day), "day")); //TODO: postion
+        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iDay]->range(), std::to_string((int)date.day), "day"));
     if((char)date.month < 1 || (char)date.month > 12)
-        return Value(Error(ErrorId::INV_DATE_VALUE, 0, 0, std::to_string((int)date.month), "month")); //TODO: postion
+        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iMonth]->range(), std::to_string((int)date.month), "month"));
     return Value(date);
     }
 
@@ -247,7 +247,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                 break;
             default:
                 if(val.type == ValueType::NUMBER)
-                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId.stringValue, unitDefs);
+                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, unitDefs);
                 else
                     ; //TODO: error: unknown postfix
                 break;
@@ -267,10 +267,10 @@ Value Resolver::resolvePrim(const IdExpr& prim)
             val = getVar(prim.Id.stringValue);
             }
         else
-            return Value(Error(ErrorId::VAR_NOT_DEF, prim.Id.line, prim.Id.pos, prim.Id.stringValue.c_str()));
+            return Value(Error(ErrorId::VAR_NOT_DEF, Range(prim.Id), prim.Id.stringValue.c_str()));
         }
     else
-        return Value(Error(ErrorId::UNKNOWN_EXPR, 0, 0)); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
+        return Value(Error(ErrorId::UNKNOWN_EXPR, prim.range())); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
 
     return applyUnit(prim, val);
     }
@@ -288,7 +288,7 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
         if (unitDefs.exists(node.unit.id))
             val.getNumber().unit = node.unit;
         else
-            val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.line, node.unit.pos, node.unit.id.c_str()));
+            val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.range, node.unit.id.c_str()));
         }
     return val;
     }
@@ -297,13 +297,13 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     {
     auto fd = parser.functionDefs.get(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
-        return Value(Error(ErrorId::FUNC_NOT_DEF, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str()));
+        return Value(Error(ErrorId::FUNC_NOT_DEF, Range(callExpr.functionName), callExpr.functionName.stringValue.c_str()));
     if (callExpr.error.id != ErrorId::NONE)
         return Value(callExpr.error);
 
     // check function arguments:
     if (!fd->isCorrectArgCount(callExpr.arguments.size()))
-        return Value(Error(ErrorId::FUNC_ARG_MIS, callExpr.functionName.line, callExpr.functionName.pos, callExpr.functionName.stringValue.c_str()));
+        return Value(Error(ErrorId::FUNC_ARG_MIS, Range(callExpr.functionName), callExpr.functionName.stringValue.c_str()));
     std::vector<Error> errors;
     std::vector<Value> args;
     for (auto arg : callExpr.arguments)
@@ -315,7 +315,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     if (hasRealErrors(errors))
         return Value(errors);
 
-    auto val = fd->call(args, callExpr.functionName.line, callExpr.functionName.pos);
+    auto val = fd->call(args, callExpr.functionName);
     return applyUnit(callExpr, val);
     }
 
@@ -331,7 +331,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
             {
             if (unitDefs.exists(v.getNumber().unit.id) == false)
                 {
-                v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.line, v.getNumber().unit.pos, v.getNumber().unit.id.c_str()));
+                v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.range, v.getNumber().unit.id.c_str()));
                 }
             }
         if (constExpr.error.id != ErrorId::NONE)
@@ -340,7 +340,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
         }
     else
         {
-        return Value(DateParser(constExpr.value.stringValue, constExpr.value.line, constExpr.value.pos).parse());
+        return Value(DateParser(constExpr.value.stringValue, constExpr.range()).parse());
         }
     }
 
@@ -348,7 +348,7 @@ Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)
     {
     Value newValue;
     if(val.type != ValueType::TIMEPOINT)
-        return Value(Error(ErrorId::DATE_FRAG_NO_DATE, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+        return Value(Error(ErrorId::DATE_FRAG_NO_DATE, fragmentId, fragmentId.stringValue));
     const Date date = val.getDate();
     switch (hash(fragmentId.stringValue.c_str()))
         {
@@ -359,7 +359,7 @@ Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)
         case hash("year"):
             newValue = Value(Number(date.year, 0)); break;
         default:
-            return Value(Error(ErrorId::DATE_INV_FRAG, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+            return Value(Error(ErrorId::DATE_INV_FRAG, fragmentId, fragmentId.stringValue));
         }
     return newValue;
     }
@@ -368,7 +368,7 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
     {
     Value newValue;
     if(val.type != ValueType::DURATION)
-        return Value(Error(ErrorId::DATE_FRAG_NO_DURATION, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+        return Value(Error(ErrorId::DATE_FRAG_NO_DURATION, fragmentId, fragmentId.stringValue));
     const auto dur = val.getDuration();
     switch (hash(fragmentId.stringValue.c_str()))
         {
@@ -379,7 +379,7 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
         case hash("years"):
             newValue = Value(Number(dur.years, 0)); break;
         default:
-            return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+            return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId, fragmentId.stringValue));
         }
     return newValue;
     }

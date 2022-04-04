@@ -25,10 +25,10 @@ class OperatorDef
         OperatorDefs& defs;
         OperatorId id;
         OperatorDef(OperatorDefs& defs, OperatorId id) : defs(defs), id(id) {}
-        Value call(std::vector<Value>& args, unsigned int line, unsigned int pos);
+        Value call(std::vector<Value>& args, const Range& range);
 
     private:
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) = 0;
+        virtual Value execute(std::vector<Value>& args, const Range& range) = 0;
     };
 
 class Resolver;
@@ -47,40 +47,40 @@ class OpNumPlusNum : public OperatorDef
     {
     public:
         OpNumPlusNum(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::NUMBER, OperatorType::PLUS, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+        virtual Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
 class OpNumMinNum : public OperatorDef
     {
     public:
         OpNumMinNum(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::NUMBER, OperatorType::MIN, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+        virtual Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
 class OpNumMultNum : public OperatorDef
     {
     public:
         OpNumMultNum(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::NUMBER, OperatorType::MULT, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+        virtual Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
 class OpNumDivNum : public OperatorDef
     {
     public:
         OpNumDivNum(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::NUMBER, OperatorType::DIV, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+        virtual Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
 class OpNumPowNum : public OperatorDef
     {
     public:
         OpNumPowNum(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::NUMBER, OperatorType::POW, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+        virtual Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
 class OpDateMinDate : public OperatorDef
     {
     public:
         OpDateMinDate(OperatorDefs& defs) : OperatorDef(defs, OperatorId(ValueType::TIMEPOINT, OperatorType::MIN, ValueType::TIMEPOINT, ValueType::DURATION)) {}
-        virtual Value execute(std::vector<Value>& args, unsigned int line, unsigned int pos) override;
+        virtual Value execute(std::vector<Value>& args, const Range& range) override;
     };

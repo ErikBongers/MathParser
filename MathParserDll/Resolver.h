@@ -27,6 +27,7 @@ class Resolver
         Value resolveCall(const CallExpr& callExpr);
         Value resolveConst(const ConstExpr& constExpr);
         Value resolveDateFragment(const Value&val, const Token& fragmentId);
+        Value resolveDurationFragment(const Value&val, const Token& fragmentId);
 
     public:
         Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDefs);

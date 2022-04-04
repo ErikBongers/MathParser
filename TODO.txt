@@ -1,9 +1,17 @@
-﻿* positions:
+﻿* Date and Duration: units?
+  > chrono has "days" as unit for the fragment days.
+    > conflict in mathparser! Is "days" a unit or a fragment or both?
+    > in principle:
+      : DURATION.days -> fragment
+      : NUMBER.days -> unit.
+    > Use capital?
+      : age.days
+      : vacation=10Days?
+* Error() on INV_DATE_VALUE: mention the current dateformat.
+* positions:
   - Every Token has a position and length (or end)
   - Every Node can calculate it's position and length, based on the underlying tree.
   - Same for Value
-
-* date via list: only allow a preset date format as var values can differ and thus the interpretation of the values could switch if the vars hold different values!!!
 
 * date fragment as hls should give error
     : today.year = 2022; //error!

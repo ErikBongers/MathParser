@@ -38,6 +38,7 @@ class Value
         Date& getDate() { return std::get<Date>(data); }
         const Date& getDate() const { return std::get<Date>(data); } 
         Duration& getDuration() { return std::get<Duration>(data); }
+        const Duration& getDuration() const { return std::get<Duration>(data); }
         void setNumber(const Number& n) { type = ValueType::NUMBER; data = n;}
         void setDate(const Date& d) { type = ValueType::TIMEPOINT; data = d;}
         void setDuration(const Duration& d) { type = ValueType::TIMEPOINT; data = d;}

@@ -118,7 +118,9 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::DEFINE_NOT_DEF, {ErrorId::DEFINE_NOT_DEF, "DEFINE_NOT_DEF", "#define: option '{0}' not recognized."}},
         {ErrorId::INV_DATE_STR, {ErrorId::INV_DATE_STR, "INV_DATE_STR", "Invalid date string: '{0}'"}},
         {ErrorId::DATE_FRAG_NO_DATE, {ErrorId::DATE_FRAG_NO_DATE, "DATE_FRAG_NO_DATE", "Cannot get '{0}' fragment. Value is not a date."}},
+        {ErrorId::DATE_FRAG_NO_DURATION, {ErrorId::DATE_FRAG_NO_DURATION, "DATE_FRAG_NO_DURATION", "Cannot get '{0}' fragment. Value is not a duration."}},
         {ErrorId::DATE_INV_FRAG, {ErrorId::DATE_INV_FRAG, "DATE_INV_FRAG", "Invalid fragment '{0}' for date."}},
+        {ErrorId::DUR_INV_FRAG, {ErrorId::DUR_INV_FRAG, "DUR_INV_FRAG", "Invalid fragment '{0}' for duration."}},
         {ErrorId::EXPECTED, {ErrorId::EXPECTED, "EXPECTED", "Expected '{0}'."}},
         {ErrorId::INV_DATE_VALUE, {ErrorId::INV_DATE_VALUE, "INV_DATE_VALUE", "Invalid date value '{0}' for {1}."}},
     };

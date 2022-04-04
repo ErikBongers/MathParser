@@ -123,6 +123,12 @@ Thus, allowing for calculated values.
 Note that you must `#define` a strict date format, since changes in calculations could lead to the values suddenly being interpreted in a different order than what you intended.
 [TODO]: allow access to date parts and date calculations, enforce a strict date format. Implement time.
 
+#### Durations (lenght of time)
+A typical duration would be my age:
+```
+birthday=1968, 7, 30;
+age=now()-birthday;
+```
 ## Technical
 The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser with 2 look-aheads. Advantages of this parser type are that it's intuitive to read and mimicks the grammar definition (EBNF).
 

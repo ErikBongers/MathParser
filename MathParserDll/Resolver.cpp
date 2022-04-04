@@ -185,9 +185,10 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     if(listExpr.list.size() != 3)
         return Value();
     int iDay = 0, iMonth = 0, iYear = 0;
-    using enum DateFormat;
+
     switch (dateFormat)
         {
+        using enum DateFormat;
         case YMD:
             iYear = 0; iMonth = 1; iDay = 2; break;
         case DMY:
@@ -238,6 +239,11 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
             case hash("month"):
             case hash("year"):
                 val = resolveDateFragment(val, pfix.postfixId);
+                break;
+            case hash("days"):
+            case hash("months"):
+            case hash("years"):
+                val = resolveDurationFragment(val, pfix.postfixId);
                 break;
             default:
                 if(val.type == ValueType::NUMBER)
@@ -354,6 +360,26 @@ Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)
             newValue = Value(Number(date.year, 0)); break;
         default:
             return Value(Error(ErrorId::DATE_INV_FRAG, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+        }
+    return newValue;
+    }
+
+Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentId)
+    {
+    Value newValue;
+    if(val.type != ValueType::DURATION)
+        return Value(Error(ErrorId::DATE_FRAG_NO_DURATION, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
+    const auto dur = val.getDuration();
+    switch (hash(fragmentId.stringValue.c_str()))
+        {
+        case hash("days"):
+            newValue = Value(Number(dur.days, 0)); break;
+        case hash("months"):
+            newValue = Value(Number((double)dur.months, 0)); break;
+        case hash("years"):
+            newValue = Value(Number(dur.years, 0)); break;
+        default:
+            return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId.line, fragmentId.pos, fragmentId.stringValue));
         }
     return newValue;
     }

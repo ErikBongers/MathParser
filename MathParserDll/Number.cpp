@@ -120,6 +120,26 @@ double Number::fromSI(UnitDefs& unitDefs) const
         return to_double();
     }
 
+std::string formatDouble(double d)
+    {
+    std::ostringstream numval;
+    numval << std::fixed
+        << std::setprecision(20)
+        << d;
+    std::string str = numval.str();
+    if(str.find('.') != std::string::npos)
+        {
+        // Remove trailing zeroes
+        str = str.substr(0, str.find_last_not_of('0')+1);
+        // If the decimal point is now the last character, remove that as well
+        if(str.find('.') == str.size()-1)
+            {
+            str = str.substr(0, str.size()-1);
+            }
+        }
+    return str;
+    }
+
 std::string Number::to_json()
     {
     std::ostringstream sstr;
@@ -127,15 +147,11 @@ std::string Number::to_json()
 
 
     std::ostringstream numval;
-    numval << std::fixed
-        << std::setprecision(20)
-        << to_double();
+    numval << formatDouble(to_double());
     sstr << "\"value\" : \"" << numval.str() << "\"";
 
     numval = std::ostringstream();
-    numval << std::fixed
-        << std::setprecision(20)
-        << significand;
+    numval << formatDouble(significand);
     sstr << ", \"significand\" : \"" << numval.str() << "\"";
     sstr << ", \"exponent\" : " << exponent;
 

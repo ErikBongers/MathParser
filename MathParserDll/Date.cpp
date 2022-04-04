@@ -339,9 +339,9 @@ std::string Date::to_json()
         << static_cast<int>(day)
         << "\"";
 
-    sstr << ", \"day\" : \"" << (int)day << "\"";
-    sstr << ", \"month\" : \"" << (int)month<< "\"";
-    sstr << ", \"year\" : \"" << year<< "\"";
+    sstr << ",\"day\":\"" << (int)day << "\"";
+    sstr << ",\"month\":\"" << (int)month<< "\"";
+    sstr << ",\"year\":\"" << year<< "\"";
 
     sstr << "}";
     return sstr.str();

@@ -9,13 +9,13 @@ std::string Duration::to_json()
     std::ostringstream sstr;
     sstr << "{";
 
-    sstr << "\"years\" : ";
+    sstr << "\"years\":";
     sstr << "\"" << numberToString(years, EmptyYears) << "\"";
 
-    sstr << ", \"months\" : ";
+    sstr << ",\"months\":";
     sstr << "\"" << numberToString(months, EmptyMonths) << "\"";
 
-    sstr << ", \"days\" : ";
+    sstr << ",\"days\":";
     sstr << "\"" << numberToString(days, EmptyDays) << "\"";
 
     sstr << "}";

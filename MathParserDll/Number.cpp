@@ -148,21 +148,21 @@ std::string Number::to_json()
 
     std::ostringstream numval;
     numval << formatDouble(to_double());
-    sstr << "\"value\" : \"" << numval.str() << "\"";
+    sstr << "\"value\":\"" << numval.str() << "\"";
 
     numval = std::ostringstream();
     numval << formatDouble(significand);
-    sstr << ", \"significand\" : \"" << numval.str() << "\"";
-    sstr << ", \"exponent\" : " << exponent;
+    sstr << ",\"significand\":\"" << numval.str() << "\"";
+    sstr << ",\"exponent\":" << exponent;
 
-    sstr << ", \"unit\" : \"" << unit << "\"";
+    sstr << ",\"unit\":\"" << unit << "\"";
 
     std::string format = "DEC";
     if(numFormat == NumFormat::BIN)
         format = "BIN";
     else if(numFormat == NumFormat::HEX)
         format = "HEX";
-    sstr << ", \"format\" : \"" << format << "\"";
+    sstr << ",\"format\":\"" << format << "\"";
 
     std::string formatted;
     if (numFormat == NumFormat::BIN)
@@ -178,7 +178,7 @@ std::string Number::to_json()
         formatted = "0x"+oss.str();
         }
 
-    sstr << ", \"formatted\" : \""
+    sstr << ",\"formatted\":\""
         << formatted
         << "\"";
 

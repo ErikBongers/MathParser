@@ -85,10 +85,10 @@ const std::string Error::to_json()
     bool isWarning = false;
     sstr << "{";
     auto& ed = ErrorDefs::get(id);
-    sstr << "\"id\" : \"" << ed.name << "\", \"message\" : \"" + escape_json(errorMsg) + "\"";
+    sstr << "\"id\":\"" << ed.name << "\",\"message\":\"" + escape_json(errorMsg) + "\"";
     isWarning = ed.name[0] == 'W';
-    sstr << ", \"isWarning\": " << (isWarning ? "true":"false");
-    sstr << ", \"range\": " << range.to_json();
+    sstr << ",\"isWarning\":" << (isWarning ? "true":"false");
+    sstr << ",\"range\":" << range.to_json();
     sstr << "}";
     return sstr.str();
     }

@@ -50,30 +50,30 @@ std::string Value::to_json()
     std::ostringstream sstr;
     sstr << "{";
     if (id.type != TokenType::NULLPTR)
-        sstr << "\"id\" : \"" << id.stringValue << "\"";
+        sstr << "\"id\":\"" << id.stringValue << "\"";
     else
-        sstr << "\"id\" : \"_\"";
-    sstr << ", \"type\" : \"" << to_string(type) << "\"";
+        sstr << "\"id\":\"_\"";
+    sstr << ",\"type\":\"" << to_string(type) << "\"";
     std::vector<Error>* pErrors = nullptr;
     if(type == ValueType::NUMBER)
         {
-        sstr << ", \"number\" : ";
+        sstr << ",\"number\":";
         sstr << std::get<Number>(data).to_json();
         pErrors = &std::get<Number>(data).errors;
         }
     else if (type == ValueType::TIMEPOINT)
         {
-        sstr << ", \"date\": ";
+        sstr << ",\"date\":";
         sstr << std::get<Date>(data).to_json();
         pErrors = &std::get<Date>(data).errors;
         }
     else if (type == ValueType::DURATION)
         {
-        sstr << ", \"duration\": ";
+        sstr << ",\"duration\":";
         sstr << std::get<Duration>(data).to_json();
         }
 
-    sstr << ", \"errors\" : [";
+    sstr << ",\"errors\":[";
     std::string comma = "";
     for (auto& error : errors)
         {
@@ -89,13 +89,13 @@ std::string Value::to_json()
             }
         }
     sstr << "]";
-    sstr << ", \"text\" : \""
+    sstr << ",\"text\":\""
         << escape_json(text)
         << "\"";
-    sstr << ", \"comment\" : ";
+    sstr << ",\"comment\":";
     sstr <<  "\"" << escape_json(make_one_line(comment_line)) << "\"";
-    sstr << ", \"onlyComment\": " << (onlyComment?"true":"false");
-    sstr << ", \"mute\": " << (mute?"true":"false");
+    sstr << ",\"onlyComment\": " << (onlyComment?"true":"false");
+    sstr << ",\"mute\":" << (mute?"true":"false");
     sstr << "}";
     return sstr.str();
     }

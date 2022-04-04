@@ -34,10 +34,10 @@ const std::string Range::to_json()
     {
     std::ostringstream sstr;
     sstr << "{";
-    sstr << "\"startLine\": " << startLine;
-    sstr << ", \"startPos\": " << startPos;
-    sstr << ", \"endLine\": " << endLine;
-    sstr << ", \"endPos\": " << endPos;
+    sstr << "\"startLine\":" << startLine;
+    sstr << ",\"startPos\":" << startPos;
+    sstr << ",\"endLine\":" << endLine;
+    sstr << ",\"endPos\":" << endPos;
     sstr << "}";
     return sstr.str();
     }

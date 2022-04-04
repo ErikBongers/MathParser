@@ -2,7 +2,8 @@
 #include <emscripten/emscripten.h>
 #include "api.h"
 
-char _result[10000];
+const int BUFLEN = 100000;
+char _result[BUFLEN];
 char _version[10];
 
 #ifdef __cplusplus
@@ -13,7 +14,7 @@ EMSCRIPTEN_KEEPALIVE
 const char* parseMath(const char* str)
 	{
 	parse(str);
-	getResult(_result, 10000);
+	getResult(_result, BUFLEN);
 	return _result;
 	}
 

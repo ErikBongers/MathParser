@@ -103,7 +103,7 @@ namespace MathParserWPF
                         {
                         resultVal = result.duration.years + " years, " + result.duration.months + " months, " + result.duration.days + " days";
                         }
-                    strResult = (result.id == "#result#" ? "" : result.id + "=") + resultVal;
+                    strResult = (result.id == "_" ? "" : result.id + "=") + resultVal;
 
                     }
                 if (result.errors.Length > 0)

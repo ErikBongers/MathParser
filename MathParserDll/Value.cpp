@@ -52,7 +52,7 @@ std::string Value::to_json()
     if (id.type != TokenType::NULLPTR)
         sstr << "\"id\" : \"" << id.stringValue << "\"";
     else
-        sstr << "\"id\" : \"#result#\"";
+        sstr << "\"id\" : \"_\"";
     sstr << ", \"type\" : \"" << to_string(type) << "\"";
     std::vector<Error>* pErrors = nullptr;
     if(type == ValueType::NUMBER)

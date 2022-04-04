@@ -49,7 +49,7 @@ Module.onRuntimeInitialized = async _ => {
         }
 
 		if (line.mute == false || line.errors.length > 0)
-			strLine += (line.id === "#result#" ? "" : line.id + "=") + strFormatted;
+			strLine += (line.id === "_" ? "" : line.id + "=") + strFormatted;
 		strLine += strText + (strErrors === "" ? "" : "  <<<" + strErrors);
 		strLine += strComment;
 		return strLine;

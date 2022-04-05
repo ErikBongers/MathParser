@@ -99,7 +99,7 @@ Number Number::convertToUnit(const Unit& to, UnitDefs& unitDefs)
         }
     if (unitDefs.get(unit.id).property != unitDefs.get(to.id).property)
         {
-        num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, range));
+        num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, to.range));
         return num;
         }
     num = Number(unitDefs.get(this->unit.id).toSI(this->to_double()), 0); //from -> SI

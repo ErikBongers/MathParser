@@ -53,7 +53,7 @@ Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v
         if(unitDefs.exists(v1.unit.id) && unitDefs.exists(v.unit.id))
             if (unitDefs.get(v1.unit.id).property != unitDefs.get(v.unit.id).property)
                 {
-                result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, v1.range));
+                result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, range));
                 return result;
                 }
         double d1 = v1.toSI(unitDefs);

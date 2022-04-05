@@ -49,9 +49,6 @@ GUI
 
 Nice to have
 ---------------
-* #define:
-  > the hash tag is no problem as it means "no output", and that's ok for defines.
-  > a define is returned in result["defines"]["date_format]...
 * units :
   > mathlab not compact enough:
     https://nl.mathworks.com/help/symbolic/units-of-measurement-tutorial.html

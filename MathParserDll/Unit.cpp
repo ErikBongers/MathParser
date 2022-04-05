@@ -54,7 +54,14 @@ void UnitDefs::init()
             { "t", UnitDef("t", 1000, UnitClass::MASS_WEIGHT)},
             { "lb", UnitDef("lb", 0.45359, UnitClass::MASS_WEIGHT)},
             { "lbs", UnitDef("lbs", 0.45359, UnitClass::MASS_WEIGHT)},
-            { "oz", UnitDef("oz", 1/ 35.2739619496, UnitClass::MASS_WEIGHT)}
+            { "oz", UnitDef("oz", 1/ 35.2739619496, UnitClass::MASS_WEIGHT)},
+
+            { "seconds", UnitDef("seconds", 1, UnitClass::DURATION)},
+            { "minutes", UnitDef("minutes", 60, UnitClass::DURATION)},
+            { "hours", UnitDef("hours", 3600, UnitClass::DURATION)},
+            { "days", UnitDef("days", 86400, UnitClass::DURATION)},
+            { "months", UnitDef("months", 2629746, UnitClass::DURATION)},
+            { "years", UnitDef("years", 31556952, UnitClass::DURATION)}
         };
 
 

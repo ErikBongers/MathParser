@@ -88,6 +88,10 @@ Number Number::convertToUnit(const Unit& to, UnitDefs& unitDefs)
         return num;
         }
     
+    if (unitDefs.exists(unit.id) == false)
+        {
+        return num; //invalid unit should already have been detected. Don't report the error again.
+        }
     if (unitDefs.exists(to.id) == false)
         {
         num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.range, to.id.c_str()));

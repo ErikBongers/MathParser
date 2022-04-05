@@ -243,8 +243,12 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
             case hash("days"):
             case hash("months"):
             case hash("years"):
-                val = resolveDurationFragment(val, pfix.postfixId);
-                break;
+                if(val.type == ValueType::DURATION)
+                    {
+                    val = resolveDurationFragment(val, pfix.postfixId);
+                    break;
+                    }
+                //else fallthrough...
             default:
                 if(val.type == ValueType::NUMBER)
                     val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, unitDefs);

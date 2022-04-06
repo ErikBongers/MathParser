@@ -36,12 +36,11 @@ class Tokenizer
 
         bool peekComments = false;
     private:
-        void _doPeek();
+        void getNextState();
         char nextChar();
         inline char peekChar();
         inline char peekSecondChar();
-        bool peekString(std::string str);
-        bool getString(std::string str);
+        bool peekWord(std::string str);
         Token parseId(char c);
 
         Number parseDecimal(char c);
@@ -54,7 +53,9 @@ class Tokenizer
         void skipToEOL();
         std::string getToEOL();
         void skipToEndOfComment();
-        Token _nextToken();
+        Token getNextToken();
         void skipToOnLine(char c);
+        bool match(char c);
+        bool matchWord(const std::string& str);
     };
 

@@ -82,6 +82,8 @@ Value Resolver::resolveStatement(const Statement& stmt)
     result.text = stmt.text;
     result.comment_line = stmt.comment_line.stringValue;
     result.mute = stmt.mute;
+    if (stmt.error.id != ErrorId::NONE)
+        result.errors.push_back(stmt.error);
     return result;
     }
 

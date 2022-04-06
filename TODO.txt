@@ -1,12 +1,18 @@
-﻿* Date and Duration: units?
-  > chrono has "days" as unit for the fragment days.
-    > conflict in mathparser! Is "days" a unit or a fragment or both?
-    > in principle:
-      : DURATION.days -> fragment
-      : NUMBER.days -> unit.
-    > Use capital?
-      : age.days
-      : vacation=10Days?
+﻿* var.fragment=x; --> gives error: unexpected ';'. Should be "can't assign to..."
+
+* Ambiguous:
+  : DURATION.days -> fragment?
+  : DURATION.days -> conversion?
+  > do conversion another way?
+    > DURATION -> NUMBER = seconds
+    > How? Syntax?
+      : to_days(DURATION)
+      : DURATION->days
+      : DURATION.as_days <<< my preferred solution. Just use fragments. No new notation. only as_days and as_seconds. Other resolutions can be derived via units.
+      : (days)DURATION
+      : Duration.s ? But duration will have a DURATION.seconds fragment...difference between .seconds and .s is confusing - too subtle.
+
+
 * Error() on INV_DATE_VALUE: mention the current dateformat.
 
 * date fragment as hls should give error

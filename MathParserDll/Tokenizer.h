@@ -13,29 +13,30 @@ class Tokenizer
         const char* _stream;
         size_t size = -1;
         struct State{
-            Token currentToken;
+            Token token;
             unsigned int pos = 0; //pos at which to read next token.
             unsigned int line = 0;
             unsigned int linePos = 0;
             bool newLineStarted = true;
-            void clear() { currentToken = Token::Null(); }
-            bool isNull() { return currentToken.isNull(); }
+            void clear() { token = Token::Null(); }
+            bool isNull() { return token.isNull(); }
             };
-        State state;
         State peekedState;
     public:
-        Tokenizer(const char* stream) : _stream(stream) { size = strlen(stream); }
-        Token peek(bool includeComment = false);
-        Token peekSecond(bool includeComment = false);
-        Token next(bool includeComment = false);
-        unsigned int getLine() { return state.line;}
-        unsigned int getLinePos() { return state.linePos-1;} //linePos always contains the NEXT pos.
-        unsigned int getPos() { return state.pos;} //pos always contains the NEXT pos.
+        Tokenizer(const char* stream);
+        Token peek();
+        Token peekSecond();
+        Token next();
+        unsigned int getLine() { return peekedState.line;}
+        unsigned int getLinePos() { return peekedState.linePos-1;} //linePos always contains the NEXT pos.
+        unsigned int getPos() { return peekedState.pos;} //pos always contains the NEXT pos.
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
         void skipWhiteSpace();
         void skipWhiteSpaceNoNL();
 
+        bool peekComments = false;
     private:
+        void _doPeek();
         char nextChar();
         inline char peekChar();
         inline char peekSecondChar();

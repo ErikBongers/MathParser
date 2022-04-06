@@ -22,10 +22,10 @@ void Parser::parse()
 
 void Parser::parseEchosBetweenStatements(Statement* stmt)
     {
-    if (tok.peek(true).type == TokenType::ECHO_COMMENT_LINE
-        || (echoTrailingComment && tok.peek(true).type == TokenType::COMMENT_LINE))
+    if (tok.peek().type == TokenType::ECHO_COMMENT_LINE
+        || (echoTrailingComment && tok.peek().type == TokenType::COMMENT_LINE))
         {
-        auto t = tok.next(true);
+        auto t = tok.next();
         if (t.isFirstOnLine)
             {
             stmt = createStatement();
@@ -38,9 +38,9 @@ void Parser::parseEchosBetweenStatements(Statement* stmt)
             }
         }
     echoTrailingComment = false;
-    while (tok.peek(true).type == TokenType::ECHO_COMMENT_LINE || tok.peek(true).type == TokenType::COMMENT_LINE)
+    while (tok.peek().type == TokenType::ECHO_COMMENT_LINE || tok.peek().type == TokenType::COMMENT_LINE)
         {
-        auto t = tok.next(true);
+        auto t = tok.next();
         if(t.type == TokenType::ECHO_COMMENT_LINE)
             {
             stmt = createStatement();
@@ -48,6 +48,7 @@ void Parser::parseEchosBetweenStatements(Statement* stmt)
             statements.push_back(stmt);
             }
         }
+    tok.peekComments = false;
     }
 
 Define* Parser::parseDefine()
@@ -138,9 +139,11 @@ Statement* Parser::parseStatementBody(Statement* stmt)
     stmt->node = parseAssignExpr();
     if (stmt->node == nullptr)
         stmt->node = parseAddExpr();
-    auto t = tok.next();
+    auto t = tok.peek();
     if (t.type == TokenType::SEMI_COLON)
-        { 
+        {
+        tok.peekComments = true;//from here on, include comments in the next peek! Must be set BEFORE next(), as next() will already peek.
+        tok.next(); //consume
         if(stmt->echo)
             {
             stmt->text = t.stringValue;
@@ -150,8 +153,15 @@ Statement* Parser::parseStatementBody(Statement* stmt)
                 stmt->text.erase(0, 1);
             }
         }
+    else if (t.type == TokenType::EOT)
+        {
+        //ignore
+        }
     else
+        {
+        tok.next();
         stmt->error = Error(ErrorId::EXPECTED, Range(t), ";");
+        }
     if(echoBlock)
         stmt->echo = true;
     return stmt;

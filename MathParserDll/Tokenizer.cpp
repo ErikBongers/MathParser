@@ -2,39 +2,45 @@
 #include "Tokenizer.h"
 #include <algorithm>
 
-Token Tokenizer::peek(bool includeComment) 
-    {
-    if(!peekedState.isNull()) //TODO: when peek()-ing a 2nd time, it could be that includeComment is different from the previous peek()
-        return peekedState.currentToken;
-    State tmpState = state;
-    next(includeComment);
-    peekedState = state;
-    state = tmpState;
-    return peekedState.currentToken;
+Tokenizer::Tokenizer(const char* stream) 
+    : _stream(stream) 
+    { 
+    size = strlen(stream); 
+    _doPeek(); //assuming false for first peek.
     }
 
-Token Tokenizer::peekSecond(bool includeComment) 
+void Tokenizer::_doPeek()
     {
-    State tmpState = state;
-    next(includeComment);
-    peekedState = state;
-    auto t = next(includeComment);//second peek(), don't store this state. (yet?)
-    state = tmpState;
+    peekedState.token = _nextToken();
+    if(peekComments == false)
+        { 
+        //skip comments
+        while(peekedState.token.type == TokenType::ECHO_COMMENT_LINE || peekedState.token.type == TokenType::COMMENT_LINE)
+            peekedState.token = _nextToken();
+        }
+    peekedState.token.isFirstOnLine = peekedState.newLineStarted;
+    peekedState.newLineStarted = false;
+    }
+
+Token Tokenizer::peek()
+    {
+    return peekedState.token;
+    }
+
+Token Tokenizer::peekSecond() 
+    {
+    State tmpState = peekedState;
+    _doPeek();
+    auto t = peekedState.token;
+    peekedState = tmpState;
     return t;
     }
 
-Token Tokenizer::next(bool includeComment)
+Token Tokenizer::next()
     {
-    peekedState.clear();
-    state.currentToken = _nextToken();
-    if(includeComment == false)
-        {
-        while(state.currentToken.type == TokenType::ECHO_COMMENT_LINE || state.currentToken.type == TokenType::COMMENT_LINE)
-            state.currentToken = _nextToken();
-        }
-    state.currentToken.isFirstOnLine = state.newLineStarted;
-    state.newLineStarted = false;
-    return state.currentToken;
+    Token t = peekedState.token;
+    _doPeek();
+    return t;
     }
 
 void Tokenizer::skipWhiteSpace()
@@ -61,7 +67,7 @@ void Tokenizer::skipWhiteSpaceNoNL()
 
 Token Tokenizer::_nextToken()
     {
-    if (state.pos >= size)
+    if (peekedState.pos >= size)
         return Token(TokenType::EOT, getLine(), getLinePos());
 
     skipWhiteSpace();
@@ -200,11 +206,11 @@ Token Tokenizer::_nextToken()
             }
         case '\'':
             {
-            auto start= state.pos;
-            auto curLine = state.line;
-            auto curLinePos = state.linePos;
+            auto start= peekedState.pos;
+            auto curLine = peekedState.line;
+            auto curLinePos = peekedState.linePos;
             skipToOnLine('\'');
-            return Token(TokenType::QUOTED_STR, getText(start, std::max(start, state.pos-1)), curLine, curLinePos);
+            return Token(TokenType::QUOTED_STR, getText(start, std::max(start, peekedState.pos-1)), curLine, curLinePos);
             }
         default:
             if ((c >= '0' && c <= '9') || c == '.')
@@ -220,280 +226,280 @@ Token Tokenizer::_nextToken()
         }
     }
 
-constexpr bool isIdChar(char c) 
-    { 
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+    constexpr bool isIdChar(char c) 
+        { 
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
             || c == '_'
             || (c >= '0' && c <= '9');
-    }
-
-Token Tokenizer::parseId(char c)
-    {
-    std::string word = "";
-    auto wordPos = getLinePos();
-    word += c;
-
-    while ((c = peekChar()))
-        {
-        if (isIdChar(c))
-            {
-            nextChar(); //consume
-            word += c;
-            }
-        else
-            {
-            break;
-            }
         }
-    std::string lower;
-    lower.resize(word.length());
-    std::transform(word.begin(), word.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
-    return Token(TokenType::ID, word, getLine(), wordPos);
-    }
 
-char Tokenizer::nextChar()
-    {
-    if(state.pos >= size)
-        return 0; //EOF
-    if(_stream[state.pos] == '\n')
+    Token Tokenizer::parseId(char c)
         {
-        state.line++;
-        state.linePos = 0;
-        state.newLineStarted = true;
-        }
-    else
-        state.linePos++;
-    return _stream[state.pos++];
-    }
+        std::string word = "";
+        auto wordPos = getLinePos();
+        word += c;
 
-char Tokenizer::peekChar()
-    {
-    if(state.pos >= size)
-        return 0; //EOF
-    return _stream[state.pos];
-    }
-
-char Tokenizer::peekSecondChar()
-    {
-    if((state.pos+1) >= size)
-        return 0; //EOF
-    return _stream[state.pos+1];
-    }
-
-
-Number Tokenizer::parseDecimal(char c)
-    {
-    //we already have the first digit
-    double d = 0;
-    int e = 0;
-    double decimalDivider = 1;
-    if (c == '.')
-        decimalDivider = 10;
-    else
-        d = c - '0';
-
-    while ((c = peekChar()))
-        {
-        if (c >= '0' && c <= '9')
+        while ((c = peekChar()))
             {
-            nextChar(); //consume
-            if (decimalDivider == 1)
-                d = d * 10 + (c - '0');
+            if (isIdChar(c))
+                {
+                nextChar(); //consume
+                word += c;
+                }
             else
-                {
-                d += (c - '0') / decimalDivider;
-                decimalDivider *= 10;
-                }
-            }
-        else if (c == '.')
-            {
-            char cc = peekSecondChar();
-            if (cc >= '0' && cc <= '9')
-                {
-                nextChar(); //consume DOT
-                decimalDivider = 10;
-                }
-            else//dot has other meaning
                 {
                 break;
                 }
             }
-        else if (c == '_')
+        std::string lower;
+        lower.resize(word.length());
+        std::transform(word.begin(), word.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
+        return Token(TokenType::ID, word, getLine(), wordPos);
+        }
+
+    char Tokenizer::nextChar()
+        {
+        if(peekedState.pos >= size)
+            return 0; //EOF
+        if(_stream[peekedState.pos] == '\n')
             {
-            nextChar();
-            continue;
+            peekedState.line++;
+            peekedState.linePos = 0;
+            peekedState.newLineStarted = true;
             }
         else
-            {
-            break;
-            }
-        }
-    if (peekChar() == 'e' || peekChar() == 'E')
-        {
-        nextChar();//consume 'E'
-        e = parseInteger();
-        }
-    return Number(d, e);
-    }
-
-int Tokenizer::parseInteger()
-    {
-    int i = 0;
-    char c;
-    int factor = 1;
-    if (peekChar() == '-')
-        {
-        nextChar();
-        factor = -1;
-        }
-    else if (peekChar() == '+')
-        {
-        nextChar();
+            peekedState.linePos++;
+        return _stream[peekedState.pos++];
         }
 
-    while ((c = peekChar()))
+    char Tokenizer::peekChar()
         {
-        if (c >= '0' && c <= '9')
+        if(peekedState.pos >= size)
+            return 0; //EOF
+        return _stream[peekedState.pos];
+        }
+
+    char Tokenizer::peekSecondChar()
+        {
+        if((peekedState.pos+1) >= size)
+        return 0; //EOF
+    return _stream[peekedState.pos+1];
+        }
+
+
+    Number Tokenizer::parseDecimal(char c)
+        {
+        //we already have the first digit
+        double d = 0;
+        int e = 0;
+        double decimalDivider = 1;
+        if (c == '.')
+            decimalDivider = 10;
+        else
+            d = c - '0';
+
+        while ((c = peekChar()))
             {
-            nextChar(); //consume
-            i = i * 10 + (c - '0');
+            if (c >= '0' && c <= '9')
+                {
+                nextChar(); //consume
+                if (decimalDivider == 1)
+                    d = d * 10 + (c - '0');
+                else
+                    {
+                    d += (c - '0') / decimalDivider;
+                    decimalDivider *= 10;
+                    }
+                }
+            else if (c == '.')
+                {
+                char cc = peekSecondChar();
+                if (cc >= '0' && cc <= '9')
+                    {
+                    nextChar(); //consume DOT
+                    decimalDivider = 10;
+                    }
+                else//dot has other meaning
+                    {
+                    break;
+                    }
+                }
+            else if (c == '_')
+                {
+                nextChar();
+                continue;
+                }
+            else
+                {
+                break;
+                }
             }
-        else if (c == '_')
+        if (peekChar() == 'e' || peekChar() == 'E')
+            {
+            nextChar();//consume 'E'
+            e = parseInteger();
+            }
+        return Number(d, e);
+        }
+
+    int Tokenizer::parseInteger()
+        {
+        int i = 0;
+        char c;
+        int factor = 1;
+        if (peekChar() == '-')
             {
             nextChar();
-            continue;
+            factor = -1;
             }
-        else
+        else if (peekChar() == '+')
             {
-            break;
+            nextChar();
             }
+
+        while ((c = peekChar()))
+            {
+            if (c >= '0' && c <= '9')
+                {
+                nextChar(); //consume
+                i = i * 10 + (c - '0');
+                }
+            else if (c == '_')
+                {
+                nextChar();
+                continue;
+                }
+            else
+                {
+                break;
+                }
+            }
+        return i*factor;
         }
-    return i*factor;
-    }
 
-double Tokenizer::parseBinary()
-    {
-    nextChar(); //consume 'b'
-    unsigned long bin = 0;
-
-    while(peekChar() == '0' || peekChar() == '1' || peekChar() == '_')
+    double Tokenizer::parseBinary()
         {
-        char c = nextChar();
-        if(c == '_')
-            continue;
+        nextChar(); //consume 'b'
+        unsigned long bin = 0;
 
-        bin <<=1;
-        if(c == '1')
-            bin++;
+        while(peekChar() == '0' || peekChar() == '1' || peekChar() == '_')
+            {
+            char c = nextChar();
+            if(c == '_')
+                continue;
+
+            bin <<=1;
+            if(c == '1')
+                bin++;
+            }
+        return bin;
         }
-    return bin;
-    }
 
-double Tokenizer::parseHex()
-    {
-    nextChar(); //consume 'x'
-    unsigned long hex = 0;
-
-    while((peekChar() >= '0' && peekChar() <= '9') 
-          || (peekChar() >= 'a' && peekChar() <= 'f') 
-          || (peekChar() >= 'A' && peekChar() <= 'F') 
-          || peekChar() == '_')
+    double Tokenizer::parseHex()
         {
-        char c = nextChar();
-        if(c == '_')
-            continue;
+        nextChar(); //consume 'x'
+        unsigned long hex = 0;
 
-        hex *=16;
-        if(c >= '0' && c <= '9')
-            hex += c - '0';
-        else if( (c >= 'a' && c <= 'f'))
-            hex += 10 + c - 'a';
-        else if( (c >= 'A' && c <= 'F'))
-            hex += 10 + c - 'A';
+        while((peekChar() >= '0' && peekChar() <= '9') 
+              || (peekChar() >= 'a' && peekChar() <= 'f') 
+              || (peekChar() >= 'A' && peekChar() <= 'F') 
+              || peekChar() == '_')
+            {
+            char c = nextChar();
+            if(c == '_')
+                continue;
+
+            hex *=16;
+            if(c >= '0' && c <= '9')
+                hex += c - '0';
+            else if( (c >= 'a' && c <= 'f'))
+                hex += 10 + c - 'a';
+            else if( (c >= 'A' && c <= 'F'))
+                hex += 10 + c - 'A';
+            }
+        return hex;
         }
-    return hex;
-    }
 
-Token Tokenizer::parseNumber(char c)
-    {
-    auto numPos = getLinePos();
-
-    if(peekChar() == 'b' || peekChar() == 'B')
-        return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), getLine(), numPos);
-    else if(peekChar() == 'x' || peekChar() == 'X')
-        return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), getLine(), numPos);
-    else
-        return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
-    }
-
-std::string Tokenizer::getToEOL()
-    {
-    std::string buf;
-    char c;
-    while ((c = peekChar())) 
+    Token Tokenizer::parseNumber(char c)
         {
-        if(c == '\n')
-            break; //don't eat newLine yet. The nextToken should be marked as firstOnNewLine.
-        nextChar();
-        if(c != '\r')
-            buf += c;
-        }
-    return buf;
-    }
+        auto numPos = getLinePos();
 
-void Tokenizer::skipToEOL()
-    {
-    char c;
-    while ((c = nextChar()))
+        if(peekChar() == 'b' || peekChar() == 'B')
+            return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), getLine(), numPos);
+        else if(peekChar() == 'x' || peekChar() == 'X')
+            return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), getLine(), numPos);
+        else
+            return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
+        }
+
+    std::string Tokenizer::getToEOL()
         {
-        if(c == '\n')
-            break;
+        std::string buf;
+        char c;
+        while ((c = peekChar())) 
+            {
+            if(c == '\n')
+                break; //don't eat newLine yet. The nextToken should be marked as firstOnNewLine.
+            nextChar();
+            if(c != '\r')
+                buf += c;
+            }
+        return buf;
         }
-    }
 
-void Tokenizer::skipToOnLine(char c)
-    {
-    char cc;
-    while ((cc = nextChar()))
-        {
-        if(cc == '\n')
-            break;
-        if(c == cc)
-            break;
-        }
-    }
-
-
-void Tokenizer::skipToEndOfComment()
-    {
-    while(true)
+    void Tokenizer::skipToEOL()
         {
         char c;
         while ((c = nextChar()))
             {
-            if(c == '*')
+            if(c == '\n')
                 break;
             }
-        if (peekChar() == '/')
-            {
-            nextChar(); //consume
-            return;
-            }
-        if(!peekChar())
-            return;
         }
-    }
 
-bool Tokenizer::peekString(std::string str)
-    {
-    if(state.pos + str.size() >= size)
+    void Tokenizer::skipToOnLine(char c)
+        {
+        char cc;
+        while ((cc = nextChar()))
+            {
+            if(cc == '\n')
+                break;
+            if(c == cc)
+                break;
+            }
+        }
+
+
+    void Tokenizer::skipToEndOfComment()
+        {
+        while(true)
+            {
+            char c;
+            while ((c = nextChar()))
+                {
+                if(c == '*')
+                    break;
+                }
+            if (peekChar() == '/')
+                {
+                nextChar(); //consume
+                return;
+                }
+            if(!peekChar())
+                return;
+            }
+        }
+
+    bool Tokenizer::peekString(std::string str)
+        {
+        if(peekedState.pos + str.size() >= size)
         return false;
-    if(str.compare(0, str.size(), _stream, state.pos, str.size()) != 0)
+    if(str.compare(0, str.size(), _stream, peekedState.pos, str.size()) != 0)
         return false;
-    if(state.pos + str.size() == size)
+    if(peekedState.pos + str.size() == size)
         return true;//EOF, so ID-string matches.
-    //next char should not be an ID char
-    return !isIdChar(_stream[state.pos+str.size()]);
+                    //next char should not be an ID char
+    return !isIdChar(_stream[peekedState.pos+str.size()]);
     }
 
 bool Tokenizer::getString(std::string str)

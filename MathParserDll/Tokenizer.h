@@ -14,8 +14,6 @@ class Tokenizer : public BaseTokenizer<Token>
         Tokenizer(const char* stream);
         Token peekSecond();
         Token next();
-        void skipWhiteSpace();
-        void skipWhiteSpaceNoNL();
 
         bool peekComments = false;
     private:

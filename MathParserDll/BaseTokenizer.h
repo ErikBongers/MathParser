@@ -23,17 +23,6 @@ class BaseTokenizer
             };
         State peekedState;
     public:
-/*
-        BaseTokenizer(const char* stream);
-        inline char peekChar();
-        inline char peekSecondChar();
-        char nextChar();
-        bool match(char c);
-        Token peek();
-        void skipToEOL();
-        void skipToWithinLine(char c);
-        std::string getToEOL();
-*/
         unsigned int getLine() { return peekedState.line;}
         unsigned int getLinePos() { return peekedState.linePos-1;} //linePos always contains the NEXT pos.
         unsigned int getPos() { return peekedState.pos;} //pos always contains the NEXT pos.
@@ -43,6 +32,28 @@ class BaseTokenizer
             : _stream(stream) 
             { 
             size = strlen(stream); 
+            }
+
+        void skipWhiteSpace()
+            {
+            char c;
+            while ((c = peekChar()))
+                {
+                if (c != ' ' && c != '\t' && c != '\n' && c != '\r')
+                    break;
+                nextChar(); //consume
+                }
+            }
+
+        void skipWhiteSpaceNoNL()
+            {
+            char c;
+            while ((c = peekChar()))
+                {
+                if (c != ' ' && c != '\t')
+                    break;
+                nextChar(); //consume
+                }
             }
 
         char peekChar()

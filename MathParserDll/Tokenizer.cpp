@@ -24,28 +24,6 @@ Token Tokenizer::next()
     return t;
     }
 
-void Tokenizer::skipWhiteSpace()
-    {
-    char c;
-    while ((c = peekChar()))
-        {
-        if (c != ' ' && c != '\n' && c != '\r')
-            break;
-        nextChar(); //consume
-        }
-    }
-
-void Tokenizer::skipWhiteSpaceNoNL()
-    {
-    char c;
-    while ((c = peekChar()))
-        {
-        if (c != ' ')
-            break;
-        nextChar(); //consume
-        }
-    }
-
 void Tokenizer::getNextState()
     {
     peekedState.token = getNextToken();

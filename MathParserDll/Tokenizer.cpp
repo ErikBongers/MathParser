@@ -194,9 +194,6 @@ Token Tokenizer::parseId(char c)
             break;
             }
         }
-    std::string lower;
-    lower.resize(word.length());
-    std::transform(word.begin(), word.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
     return Token(TokenType::ID, word, getLine(), wordPos);
     }
 

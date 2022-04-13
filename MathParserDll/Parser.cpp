@@ -20,7 +20,7 @@ void Parser::parse()
         }
     }
 
-void Parser::parseEchosBetweenStatements(Statement* stmt)
+void Parser::parseEchosBetweenStatements(Statement* lastStmt)
     {
     if (tok.peek().type == TokenType::ECHO_COMMENT_LINE
         || (echoTrailingComment && tok.peek().type == TokenType::COMMENT_LINE))
@@ -28,13 +28,13 @@ void Parser::parseEchosBetweenStatements(Statement* stmt)
         auto t = tok.next();
         if (t.isFirstOnLine)
             {
-            stmt = createStatement();
+            auto stmt = createStatement();
             stmt->comment_line = t;
             statements.push_back(stmt);
             }
         else
             {
-            stmt->comment_line = t;
+            lastStmt->comment_line = t;
             }
         }
     echoTrailingComment = false;
@@ -43,7 +43,7 @@ void Parser::parseEchosBetweenStatements(Statement* stmt)
         auto t = tok.next();
         if(t.type == TokenType::ECHO_COMMENT_LINE)
             {
-            stmt = createStatement();
+            auto stmt = createStatement();
             stmt->comment_line = t;
             statements.push_back(stmt);
             }
@@ -57,7 +57,7 @@ Define* Parser::parseDefine()
     if (t.type == TokenType::DEFINE || t.type == TokenType::UNDEF)
         {
         auto define = createDefine();
-        define->def = tok.next();//token contains the full define string. PArsing of that string ins delayed to the Resolver.
+        define->def = tok.next();//token contains the full define string. PArsing of that string is delayed to the Resolver.
         return define;
         }
     return nullptr;
@@ -384,7 +384,7 @@ Node* Parser::parseOnePostFix(Node* node)
             postfixExpr->postfixId = t;
             }
         else
-            { //valid syntax: clear the unit, if any.
+            { //a dot followed by nothing is valid syntax: clear the unit, if any.
             postfixExpr->postfixId = Token::Null();
             }
         }
@@ -453,9 +453,14 @@ Node* Parser::parsePrimaryExpr()
             {
             tok.next();
             auto addExpr = parseAddExpr();
-            t = tok.next();
-            //if (t.type != TokenType::PAR_CLOSE)
-            //    primExpr.errorPos = 1;//todo
+            t = tok.peek();
+            if (t.type == TokenType::PAR_CLOSE)
+                tok.next();
+            else
+                {
+                if(addExpr->error.id == ErrorId::NONE)
+                    addExpr->error = Error(ErrorId::EXPECTED, addExpr->range(), ")");
+                }
             return addExpr;
             }
         case TokenType::PIPE:
@@ -482,9 +487,14 @@ Node* Parser::parseAbsOperator()
     CallExpr* callExpr = createCall();
     callExpr->arguments.push_back(addExpr);
     callExpr->functionName = Token(TokenType::ID, "abs", tok.getLine(), tok.getLinePos());
-    auto t = tok.next();
-    //if (t.type != TokenType::PAR_CLOSE)
-    //    callExpr.errorPos = 1;//todo
+    auto t = tok.peek();
+    if (t.type == TokenType::PIPE)
+        tok.next();
+    else
+        {
+        if(callExpr->error.id == ErrorId::NONE)
+            callExpr->error = Error(ErrorId::EXPECTED, callExpr->range(), "|");
+        }
     return callExpr;
     }
 
@@ -511,7 +521,11 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     t = tok.peek();
     if (t.type == TokenType::PAR_CLOSE)
         tok.next();
-    //else: error?
+    else
+        {
+        if(callExpr->error.id == ErrorId::NONE)
+            callExpr->error = Error(ErrorId::EXPECTED, callExpr->range(), ")");
+        }
     return callExpr;
     }
 

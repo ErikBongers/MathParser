@@ -206,6 +206,6 @@ class Parser
         unsigned int statementStartPos = 0;
 
         Node* parseAbsOperator();
-        void parseEchosBetweenStatements(Statement* stmt);
+        void parseEchosBetweenStatements(Statement* lastStmt);
     };
 

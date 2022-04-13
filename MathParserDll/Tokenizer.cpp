@@ -3,15 +3,9 @@
 #include <algorithm>
 
 Tokenizer::Tokenizer(const char* stream) 
-    : _stream(stream) 
+    : BaseTokenizer(stream) 
     { 
-    size = strlen(stream); 
     getNextState();
-    }
-
-Token Tokenizer::peek()
-    {
-    return peekedState.token;
     }
 
 Token Tokenizer::peekSecond() 
@@ -180,7 +174,7 @@ Token Tokenizer::getNextToken()
             auto start= peekedState.pos;
             auto curLine = peekedState.line;
             auto curLinePos = peekedState.linePos;
-            skipToOnLine('\'');
+            skipToWithinLine('\'');
             return Token(QUOTED_STR, getText(start, std::max(start, peekedState.pos-1)), curLine, curLinePos);
             }
         default:
@@ -227,36 +221,6 @@ Token Tokenizer::parseId(char c)
     std::transform(word.begin(), word.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
     return Token(TokenType::ID, word, getLine(), wordPos);
     }
-
-char Tokenizer::nextChar()
-    {
-    if(peekedState.pos >= size)
-        return 0; //EOF
-    if(_stream[peekedState.pos] == '\n')
-        {
-        peekedState.line++;
-        peekedState.linePos = 0;
-        peekedState.newLineStarted = true;
-        }
-    else
-        peekedState.linePos++;
-    return _stream[peekedState.pos++];
-    }
-
-char Tokenizer::peekChar()
-    {
-    if(peekedState.pos >= size)
-        return 0; //EOF
-    return _stream[peekedState.pos];
-    }
-
-char Tokenizer::peekSecondChar()
-    {
-    if((peekedState.pos+1) >= size)
-    return 0; //EOF
-return _stream[peekedState.pos+1];
-    }
-
 
 Number Tokenizer::parseDecimal(char c)
     {
@@ -403,42 +367,6 @@ Token Tokenizer::parseNumber(char c)
         return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
     }
 
-std::string Tokenizer::getToEOL()
-    {
-    std::string buf;
-    char c;
-    while ((c = peekChar())) 
-        {
-        if(c == '\n')
-            break; //don't eat newLine yet. The nextToken should be marked as firstOnNewLine.
-        nextChar();
-        if(c != '\r')
-            buf += c;
-        }
-    return buf;
-    }
-
-void Tokenizer::skipToEOL()
-    {
-    char c;
-    while ((c = nextChar()))
-        {
-        if(c == '\n')
-            break;
-        }
-    }
-
-void Tokenizer::skipToOnLine(char c)
-    {
-    char cc;
-    while ((cc = nextChar()))
-        {
-        if(cc == '\n')
-            break;
-        if(c == cc)
-            break;
-        }
-    }
 
 void Tokenizer::skipToEndOfComment()
     {
@@ -472,16 +400,6 @@ bool Tokenizer::peekWord(std::string str)
     return !isIdChar(_stream[peekedState.pos+str.size()]);
     }
 
-bool Tokenizer::match(char c)
-    {
-    if (peekChar() == c)
-        {
-        nextChar();
-        return true;
-        }
-    return false;
-    }
-
 bool Tokenizer::matchWord(const std::string& str)
     {
     if (peekWord(str))
@@ -492,3 +410,4 @@ bool Tokenizer::matchWord(const std::string& str)
         }
     return false;
     }
+

@@ -1,4 +1,8 @@
-﻿* var.fragment=x; --> gives error: unexpected ';'. Should be "can't assign to..."
+﻿* create prime() function -> prime factorisation.
+  > Can MathParser solve : https://www.youtube.com/watch?v=vhc4FceGjC8
+
+* Move project from WPF folder to C++ folder.
+* var.fragment=x; --> gives error: unexpected ';'. Should be "can't assign to..."
 
 * Ambiguous:
   : DURATION.days -> fragment?

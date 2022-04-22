@@ -37,6 +37,7 @@ void UnitDefs::init()
             { "mi", UnitDef("mi", 1609.344, UnitClass::LENGTH)},
             { "micron", UnitDef("micron", 0.000001, UnitClass::LENGTH)},
             { "um", UnitDef("um", 0.000001, UnitClass::LENGTH)},
+            { "ly", UnitDef("ly", 9460730472580800, UnitClass::LENGTH)},
 
             { "C", UnitDef("C", 0.000001, UnitClass::TEMP)},
             { "K", UnitDef("K", 1, UnitClass::TEMP)},

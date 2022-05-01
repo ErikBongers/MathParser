@@ -19,9 +19,17 @@ Token Tokenizer::peekSecond()
 
 Token Tokenizer::next()
     {
-    Token t = peekedState.token;
+    currentState = peekedState;
+    Token t = currentState.token;
     getNextState();
     return t;
+    }
+
+void Tokenizer::tokenizeComments(bool comments) 
+    { 
+    peekComments = comments;
+    peekedState = currentState; //rollback last peek, and peek again.
+    getNextState();
     }
 
 void Tokenizer::getNextState()

@@ -207,5 +207,6 @@ class Parser
 
         Node* parseAbsOperator();
         void parseEchosBetweenStatements(Statement* lastStmt);
+        void parseEchoLines();
     };
 

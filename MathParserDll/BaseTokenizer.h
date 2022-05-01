@@ -22,6 +22,7 @@ class BaseTokenizer
             bool isNull() { return token.isNull(); }
             };
         State peekedState;
+        State currentState;
     public:
         unsigned int getLine() { return peekedState.line;}
         unsigned int getLinePos() { return peekedState.linePos-1;} //linePos always contains the NEXT pos.

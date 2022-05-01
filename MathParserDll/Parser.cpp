@@ -12,6 +12,7 @@ void Parser::parse()
     ConstExpr* pConst = createConst(ValueType::NUMBER);
     pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), tok.getLine(), tok.getLinePos());
     ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
+    parseEchoLines();
     while (tok.peek().type != TokenType::EOT)
         {
         auto stmt = parseStatement();
@@ -38,6 +39,12 @@ void Parser::parseEchosBetweenStatements(Statement* lastStmt)
             }
         }
     echoTrailingComment = false;
+    parseEchoLines();
+    }
+
+void Parser::parseEchoLines()
+    {
+    tok.tokenizeComments(true);
     while (tok.peek().type == TokenType::ECHO_COMMENT_LINE || tok.peek().type == TokenType::COMMENT_LINE)
         {
         auto t = tok.next();
@@ -48,7 +55,7 @@ void Parser::parseEchosBetweenStatements(Statement* lastStmt)
             statements.push_back(stmt);
             }
         }
-    tok.peekComments = false;
+    tok.tokenizeComments(false);
     }
 
 Define* Parser::parseDefine()
@@ -136,13 +143,14 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
 
 Statement* Parser::parseStatementBody(Statement* stmt)
     {
+    tok.tokenizeComments(false);
     stmt->node = parseAssignExpr();
     if (stmt->node == nullptr)
         stmt->node = parseAddExpr();
     auto t = tok.peek();
     if (t.type == TokenType::SEMI_COLON)
         {
-        tok.peekComments = true;//from here on, include comments in the next peek! Must be set BEFORE next(), as next() will already peek.
+        tok.tokenizeComments(true);//from here on, include comments in the next peek! Must be set BEFORE next(), as next() will already peek.
         tok.next(); //consume
         if(stmt->echo)
             {

@@ -14,9 +14,10 @@ class Tokenizer : public BaseTokenizer<Token>
         Tokenizer(const char* stream);
         Token peekSecond();
         Token next();
+        void tokenizeComments(bool comments);
 
-        bool peekComments = false;
     private:
+        bool peekComments = false;
         void getNextState();
         bool peekWord(std::string str);
         Token parseId(char c);

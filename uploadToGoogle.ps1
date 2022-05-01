@@ -1,1 +1,0 @@
-gsutil rsync -r www gs://mathparser/

@@ -191,12 +191,13 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     switch (dateFormat)
         {
         using enum DateFormat;
-        case YMD:
-            iYear = 0; iMonth = 1; iDay = 2; break;
         case DMY:
             iDay = 0; iMonth = 1; iYear = 2; break;
         case MDY:
             iMonth = 0; iDay = 1; iYear = 2; break;
+        case YMD:
+        case UNDEFINED: //fall through
+            iYear = 0; iMonth = 1; iDay = 2; break;
         }
     auto day = resolveNode(*listExpr.list[iDay]);
     auto month = resolveNode(*listExpr.list[iMonth]);
@@ -346,7 +347,9 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
         }
     else
         {
-        return Value(DateParser(constExpr.value.stringValue, constExpr.range()).parse());
+        DateParser parser;
+        parser.dateFormat = this->dateFormat;
+        return Value(parser.parse(constExpr.value.stringValue, constExpr.range()));
         }
     }
 

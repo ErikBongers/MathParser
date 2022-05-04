@@ -6,6 +6,7 @@
 
 enum class  Month : unsigned char {JAN = 1, FEB = 2, MAR = 3, APR = 4, MAY = 5, JUN = 6, JUL = 7, AUG = 8, SEP = 9, OKT = 10, NOV = 11, DEC = 12, NONE = 0};
 
+enum class DateFormat { YMD, DMY, MDY, UNDEFINED};
 class Date
     {
     public:
@@ -26,15 +27,19 @@ class DateParser
         std::string _stream;
         std::vector<std::string> slices;
         Range range;
-    public:
+        void parseForFormat(Date& date);
         bool ymdFormat = false;
-        DateParser(const std::string& str, const Range& range) : _stream(str), range(range) {}
-        Date parse();
-        void parseSlice(int sliceNo, Date& date, const std::string& slice);
+        bool parseDay(Date& date, const std::string& slice);
+        bool parseMonth(Date& date, const std::string& slice);
+        bool parseYear(Date& date, const std::string& slice);
+        bool parseInt(const std::string& str, int& result);
+    public:
+        DateFormat dateFormat = DateFormat::UNDEFINED;
+        Date parse(const std::string& str, const Range& range);
+        void parseAnySlice(int sliceNo, Date& date, const std::string& slice);
         bool hasYearSlice();
         bool hasDaySlice();
         bool hasMonthSlice();
         int countSameDateValues(int valueToCount);
-        int parseInt(const std::string& str);
         int countDateSlices();
     };

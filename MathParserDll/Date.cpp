@@ -7,8 +7,10 @@
 
 constexpr bool isDateSeparator(char c) { return c == ' ' || c == '/' || c == ',' || c == '-' ;}
 
-Date DateParser::parse()
+Date DateParser::parse(const std::string& str, const Range& range)
     {
+    _stream = str;
+    this->range = range;
     Date date;
     //TODO: check if a preference has been set for day first or month first...
     int pos = 0;
@@ -33,11 +35,47 @@ Date DateParser::parse()
     int sliceNo = 0;
     for(auto& slice: slices)
         {
-        parseSlice(sliceNo++, date, slice);
+        parseAnySlice(sliceNo++, date, slice);
         if(hasRealErrors(date.errors))
+            {
+            parseForFormat(date);
             break;
+            }
         }
     return date;
+    }
+
+void DateParser::parseForFormat(Date& date)
+    {
+    if(slices.size() != 3)
+        return;
+        //assuming slices already made.
+    int daySlice=0;
+    int monthSlice=0;
+    int yearSlice=0;
+    switch (dateFormat)
+        {
+        using enum DateFormat;
+        case YMD:
+            yearSlice = 0; monthSlice = 1; daySlice = 2; break;
+        case MDY:
+            monthSlice = 0; daySlice = 1; yearSlice = 2; break;
+        case DMY:
+            daySlice = 0; monthSlice = 1; yearSlice = 2; break;
+        case UNDEFINED: 
+            return;
+        }
+    
+    Date tmpDate;
+    if(!parseYear(tmpDate, slices[yearSlice]))
+        tmpDate.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "invalid date for format."));
+    if(!parseMonth(tmpDate, slices[monthSlice]))
+        tmpDate.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "invalid date for format."));
+    if(!parseDay(tmpDate, slices[daySlice]))
+        tmpDate.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "invalid date for format."));
+    if(hasRealErrors(tmpDate.errors))
+       return;
+    date = tmpDate;
     }
 
 //Note: only works for ASCII and probably not very efficient.
@@ -80,7 +118,55 @@ Month toMonth(const std::string& str)
     return Month::NONE;
     }
 
-void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
+bool DateParser::parseDay(Date& date, const std::string& slice)
+    {
+    if(slice == "last")
+        {
+        date.day = Date::Last;
+        return true;
+        }
+    int n;
+    if(!parseInt(slice, n))
+        return false;
+    if (n > 0 && n <= 31)
+        {
+        date.day = n;
+        return true;
+        }
+    return false;
+    }
+
+bool DateParser::parseMonth(Date& date, const std::string& slice)
+    {
+    std::string lowSlice = lower(slice);
+    Month month = toMonth(lowSlice);
+    if(month != Month::NONE)
+        {
+        date.month = month;
+        return true;
+        }
+    int n;
+    if(!parseInt(slice, n))
+        return false;
+    if (n > 0 && n <= 12)
+        {
+        date.month = (Month)n;
+        return true;
+        }
+    return false;
+    }
+
+bool DateParser::parseYear(Date& date, const std::string& slice)
+    {
+    int n;
+    if(!parseInt(slice, n))
+        return false;
+    date.year = n;
+    return true;
+    }
+
+
+void DateParser::parseAnySlice(int sliceNo, Date& date, const std::string& slice)
     {
     if (slice == "last")
         {
@@ -103,7 +189,12 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
             date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "multiple values for month."));
         }
     //from here on, it should be all numbers.
-    int n = parseInt(slice);
+    int n;
+    if(!parseInt(slice, n))
+        {
+        date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "invalid numeric value."));
+        return;
+        }
     if(n < 0)
         {
         date.errors.push_back(Error(ErrorId::INV_DATE_STR, range, "invalid numeric value."));
@@ -233,13 +324,15 @@ void DateParser::parseSlice(int sliceNo, Date& date, const std::string& slice)
         }
     }
 
+
 bool DateParser::hasYearSlice()
     {
     for (auto& slice : slices)
         {
-        int n = parseInt(slice);
-        if(n > 31)
-            return true;
+        int n;
+        if(parseInt(slice, n))
+            if(n > 31)
+                return true;
         }
     return false;
     }
@@ -251,9 +344,10 @@ bool DateParser::hasDaySlice()
         {
         if(slice == "last")
             return true;
-        int n = parseInt(slice);
-        if(n > 12 && n <= 31)
-            return true;
+        int n;
+        if(parseInt(slice, n))
+            if(n > 12 && n <= 31)
+                return true;
         i++;
         }
     return false;
@@ -275,14 +369,15 @@ int DateParser::countSameDateValues(int valueToCount)
     int i = 0;
     for (auto& slice : slices)
         {
-        int n = parseInt(slice);
+        int n;
+        parseInt(slice, n); //TODO: test return value?
         if(n == valueToCount)
             i++;
         }
     return i;
     }
 
-int DateParser::parseInt(const std::string& str)
+bool DateParser::parseInt(const std::string& str, int& result)
     {
     int n = 0;
     for (auto& c : str)
@@ -290,15 +385,17 @@ int DateParser::parseInt(const std::string& str)
         if(c >= '0' && c <= '9')
             n = n*10 + c-'0';
         else
-            return -1;
+            return false;
         }
-    return n;
+    result = n;
+    return true;
     }
 
 int DateParser::countDateSlices()
     {
     return (int)slices.size();//TODO: exclude time slices.
     }
+
 
 std::string monthToString(Month m)
     {

@@ -34,6 +34,7 @@ namespace TestParser
             testDateString("feb 1", 1, 2, Date::EmptyYear);
             
             assertError("'2022 2 1'", "INV_DATE_STR");
+            assertDate("#define ymd\n '2022 2 1'", 1, 2, 2022);
 
             // date via lists:
             assertDate("d = 2022,12,13", 13, 12, 2022);
@@ -41,7 +42,7 @@ namespace TestParser
             assertDate("#define mdy\n d = 12, 13, 2022", 13, 12, 2022);
             assertDate("d = 2022,12,13", 13, 12, 2022);
             assertError("d = 13, 12, 2022", "INV_DATE_VALUE");
-
+            
             }
 
         TEST_METHOD(TestDefines)
@@ -327,7 +328,8 @@ namespace TestParser
 
         void testDateString(const char* txtDate, int day = 0, int month = 0, long year = 0)
             {
-            Date date = DateParser(txtDate, Range()).parse();
+            DateParser parser;
+            Date date = parser.parse(txtDate, Range());
             int mon = (char)date.month;
             std::string msg = std::format("\"{0}\" does not match {1}/{2}/{3}.", txtDate, (int)date.day, mon, date.year);
             if(date.day != day || ((int)date.month != month) || date.year != year)

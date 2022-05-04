@@ -1,5 +1,14 @@
-﻿* allow #define to end with a ; instead of a newline
-* list to date: units of list elements ignored: date=12km,5, 2022;
+﻿* list to date: units of list elements ignored: date=12km,5, 2022;
+* custom functions:
+  > just groups of statements, essentially macros.
+  > params have no type
+  > return value is...last result?
+  > vars have local scope!
+  > external vars are not visible in function!
+* startup script
+  > runs before every other run.
+  > could contain functions and defs of vars,...
+
 * create prime() function -> prime factorisation.
   > Can MathParser solve : https://www.youtube.com/watch?v=vhc4FceGjC8
 

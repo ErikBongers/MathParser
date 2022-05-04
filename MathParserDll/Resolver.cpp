@@ -44,11 +44,9 @@ void Resolver::resolve()
 Value Resolver::resolveDefine(const Define& define)
     {
     Value result;
-    std::string options = rtrim_copy(define.def.stringValue);
-    std::istringstream iss(options);
-    std::string item;
-    while (std::getline(iss, item, ' ')) {
-        switch(hash(item.c_str()))
+    for(auto& t: define.defs) 
+        {
+        switch(hash(t.stringValue.c_str()))
             {
             case hash("date_units"):
                 this->unitDefs.addDateUnits(); 
@@ -66,7 +64,7 @@ Value Resolver::resolveDefine(const Define& define)
                 dateFormat = DateFormat::MDY;
                 break;
             default:
-                result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), options));
+                result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), t.stringValue));
             }
         }
     return result;

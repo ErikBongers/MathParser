@@ -64,7 +64,18 @@ Define* Parser::parseDefine()
     if (t.type == TokenType::DEFINE || t.type == TokenType::UNDEF)
         {
         auto define = createDefine();
-        define->def = tok.next();//token contains the full define string. PArsing of that string is delayed to the Resolver.
+        tok.tokenizeNewlines(true);
+        while (tok.peek().type != TokenType::EOT)
+            {
+            Token t = tok.peek();
+            if (t.type == TokenType::NEWLINE || t.type == TokenType::SEMI_COLON)
+                {
+                tok.next();
+                break;
+                }
+            define->defs.push_back(tok.next());
+            }
+        tok.tokenizeNewlines(false);
         return define;
         }
     return nullptr;
@@ -623,7 +634,9 @@ Range ListExpr::range() const
 
 Range Define::range() const
     {
-    return Range(def);
+    Range r = defs.front();
+    r += defs.back();
+    return r;
     }
 
 Range Statement::range() const

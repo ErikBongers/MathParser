@@ -39,6 +39,7 @@ enum class TokenType
     MUTE_START,
     MUTE_END,
     QUOTED_STR,
+    NEWLINE,
 
     DEFINE,
     UNDEF,

@@ -35,6 +35,7 @@ namespace TestParser
             
             assertError("'2022 2 1'", "INV_DATE_STR");
             assertDate("#define ymd\n '2022 2 1'", 1, 2, 2022);
+            assertDate("#define ymd; '2022 2 1'", 1, 2, 2022); //#define ends with either a NL or a ;
 
             // date via lists:
             assertDate("d = 2022,12,13", 13, 12, 2022);

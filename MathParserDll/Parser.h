@@ -128,7 +128,7 @@ class ListExpr : public Node
 class Define : public Node
     {
     public:
-        Token def;
+        std::vector<Token> defs;
         Range range() const;
     private:
         Define() : Node(NodeType::DEFINE) {}

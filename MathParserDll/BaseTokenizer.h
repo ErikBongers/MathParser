@@ -23,12 +23,12 @@ class BaseTokenizer
             };
         State peekedState;
         State currentState;
+        bool newlineIsToken = false;
     public:
         unsigned int getLine() { return peekedState.line;}
         unsigned int getLinePos() { return peekedState.linePos-1;} //linePos always contains the NEXT pos.
         unsigned int getPos() { return peekedState.pos;} //pos always contains the NEXT pos.
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
-
         BaseTokenizer(const char* stream) 
             : _stream(stream) 
             { 
@@ -40,6 +40,12 @@ class BaseTokenizer
             char c;
             while ((c = peekChar()))
                 {
+                if(c == '\n')
+                    {
+                    peekedState.newLineStarted = true;
+                    if(newlineIsToken)
+                        break;
+                    }
                 if (c != ' ' && c != '\t' && c != '\n' && c != '\r')
                     break;
                 nextChar(); //consume
@@ -137,17 +143,6 @@ class BaseTokenizer
                 }
             return buf;
             }
-
-
-
-
-
-
-
-
-
-
-
 
 
     };

@@ -32,6 +32,13 @@ void Tokenizer::tokenizeComments(bool comments)
     getNextState();
     }
 
+void Tokenizer::tokenizeNewlines(bool set) 
+    { 
+    newlineIsToken = set;
+    peekedState = currentState; //rollback last peek, and peek again.
+    getNextState();
+    }
+
 void Tokenizer::getNextState()
     {
     peekedState.token = getNextToken();
@@ -60,6 +67,7 @@ Token Tokenizer::getNextToken()
     switch (c)
         {
         using enum TokenType;
+        case '\n': return Token(NEWLINE, c, getLine(), getLinePos());
         case '{': return Token(CURL_OPEN, c, getLine(), getLinePos());
         case '}': return Token(CURL_CLOSE, c, getLine(), getLinePos());
         case '(': return Token(PAR_OPEN, c, getLine(), getLinePos());
@@ -124,8 +132,7 @@ Token Tokenizer::getNextToken()
                 {
                 auto l = getLine();
                 auto p = getPos();
-                skipWhiteSpace();
-                return Token(DEFINE, getToEOL(), l, p);
+                return Token(DEFINE, "#define", l, p);
                 }
             return Token(MUTE_LINE, c, getLine(), getLinePos());
         case '/':

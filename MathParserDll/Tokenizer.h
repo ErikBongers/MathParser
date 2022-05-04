@@ -15,6 +15,7 @@ class Tokenizer : public BaseTokenizer<Token>
         Token peekSecond();
         Token next();
         void tokenizeComments(bool comments);
+        void tokenizeNewlines(bool set);
 
     private:
         bool peekComments = false;

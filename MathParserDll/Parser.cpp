@@ -63,6 +63,7 @@ Define* Parser::parseDefine()
     auto t = tok.peek();
     if (t.type == TokenType::DEFINE || t.type == TokenType::UNDEF)
         {
+        tok.next();
         auto define = createDefine();
         tok.tokenizeNewlines(true);
         while (tok.peek().type != TokenType::EOT)

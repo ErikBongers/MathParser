@@ -1,4 +1,7 @@
-﻿* list to date: units of list elements ignored: date=12km,5, 2022;
+﻿
+* Add range to statement's output.
+
+* list to date: units of list elements ignored: date=12km,5, 2022;
 * custom functions:
   > just groups of statements, essentially macros.
   > params have no type

@@ -24,6 +24,7 @@ class Value
         bool onlyComment = false;
         bool mute = false;
         bool constant = false;
+        Range stmtRange;
 
         Value() {}
         Value(Number n);

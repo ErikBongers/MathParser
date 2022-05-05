@@ -82,6 +82,7 @@ Value Resolver::resolveStatement(const Statement& stmt)
     result.mute = stmt.mute;
     if (stmt.error.id != ErrorId::NONE)
         result.errors.push_back(stmt.error);
+    result.stmtRange = stmt.range();
     return result;
     }
 

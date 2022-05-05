@@ -96,6 +96,7 @@ std::string Value::to_json()
     sstr <<  "\"" << escape_json(make_one_line(comment_line)) << "\"";
     sstr << ",\"onlyComment\": " << (onlyComment?"true":"false");
     sstr << ",\"mute\":" << (mute?"true":"false");
+    sstr <<  ",\"range\":" << stmtRange.to_json();
     sstr << "}";
     return sstr.str();
     }

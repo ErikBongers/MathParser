@@ -59,13 +59,13 @@ Token Tokenizer::getNextToken()
 
     skipWhiteSpace();
 
+    if(matchWord("function"))
+        return Token(TokenType::FUNCTION, "function", getLine(), getLinePos());
+
     char c;
     c = nextChar();
     if (!c)
         return Token(TokenType::EOT, getLine(), getLinePos());
-
-    if(matchWord("function"))
-        return Token(TokenType::FUNCTION, "function", getLine(), getLinePos());
 
     switch (c)
         {

@@ -1,8 +1,4 @@
-﻿
-* Add range to statement's output.
-
-* list to date: units of list elements ignored: date=12km,5, 2022;
-* custom functions:
+﻿* custom functions:
   > just groups of statements, essentially macros.
   > params have no type
   > return value is...last result?
@@ -29,9 +25,6 @@
       : DURATION.as_days <<< my preferred solution. Just use fragments. No new notation. only as_days and as_seconds. Other resolutions can be derived via units.
       : (days)DURATION
       : Duration.s ? But duration will have a DURATION.seconds fragment...difference between .seconds and .s is confusing - too subtle.
-
-
-* Error() on INV_DATE_VALUE: mention the current dateformat.
 
 * date fragment as hls should give error
     : today.year = 2022; //error!

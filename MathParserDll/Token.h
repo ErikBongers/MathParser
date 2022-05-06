@@ -40,6 +40,7 @@ enum class TokenType
     MUTE_END,
     QUOTED_STR,
     NEWLINE,
+    FUNCTION,
 
     DEFINE,
     UNDEF,

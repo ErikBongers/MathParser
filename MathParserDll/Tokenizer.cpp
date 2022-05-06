@@ -64,6 +64,9 @@ Token Tokenizer::getNextToken()
     if (!c)
         return Token(TokenType::EOT, getLine(), getLinePos());
 
+    if(matchWord("function"))
+        return Token(TokenType::FUNCTION, "function", getLine(), getLinePos());
+
     switch (c)
         {
         using enum TokenType;

@@ -217,6 +217,9 @@ Value Resolver::resolveList(const ListExpr& listExpr)
         return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iDay]->range(), std::to_string((int)date.day), "day"));
     if((char)date.month < 1 || (char)date.month > 12)
         return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iMonth]->range(), std::to_string((int)date.month), "month"));
+    date.errors.insert(date.errors.end(), day.getNumber().errors.begin(), day.getNumber().errors.end());
+    date.errors.insert(date.errors.end(), month.getNumber().errors.begin(), month.getNumber().errors.end());
+    date.errors.insert(date.errors.end(), year.getNumber().errors.begin(), year.getNumber().errors.end());
     return Value(date);
     }
 

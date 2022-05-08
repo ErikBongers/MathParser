@@ -85,15 +85,75 @@ Define* Parser::parseDefine()
 Statement* Parser::parseStatement()
     {
     Statement* stmt = createStatement();
+
     stmt->node = parseDefine();
-    if(stmt->node== nullptr)
-        {
-        stmt = parseStatementHeader(stmt);
-        stmt->mute |= this->muteBlock;
-        if(stmt->echo)
-            stmt->text = tok.getText(statementStartPos, tok.getPos());
-        }
+    if(stmt->node != nullptr)
+        return stmt;
+
+    stmt->node = parseFunctionDef();
+    if (stmt->node != nullptr)
+        return stmt;
+
+    stmt = parseStatementHeader(stmt);
+    stmt->mute |= this->muteBlock;
+    if(stmt->echo)
+        stmt->text = tok.getText(statementStartPos, tok.getPos());
     return stmt;
+    }
+
+bool Parser::match(TokenType tt)
+    {
+    if (tok.peek().type != tt)
+        return false;
+
+    tok.next();
+    return true;
+    }
+
+Node* Parser::parseFunctionDef()
+    {
+    if(!match(TokenType::FUNCTION))
+        return nullptr;
+    
+    if (!peek(TokenType::ID))
+        return createErrorExpr(Error(ErrorId::EXPECTED_ID, tok.peek()));
+    auto id = tok.next();
+
+    if (!match(TokenType::PAR_OPEN))
+        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "("));
+
+    std::vector<Token> paramDefs;
+    while (tok.peek().type == TokenType::ID)
+        {
+        paramDefs.push_back(tok.next());
+        if (match(TokenType::COMMA))
+            continue;
+        if(peek(TokenType::PAR_CLOSE))
+           break;
+        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ",' or ')"));
+        }
+
+    if (!match(TokenType::PAR_CLOSE))
+        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ")"));
+
+    if (!match(TokenType::CURL_OPEN))
+        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "{"));
+
+    while (!peek(TokenType::CURL_CLOSE))
+        {
+        auto stmt = parseStatement();
+        if(stmt == nullptr)
+            break;
+        statements.push_back(stmt);
+        }
+
+    if (!match(TokenType::CURL_CLOSE))
+        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "}"));
+    auto funcDef = createFunctionDef();
+    funcDef->id = id;
+    funcDef->params = paramDefs;
+    funcDef->statements = statements;
+    return funcDef;
     }
 
 Statement* Parser::parseStatementHeader(Statement* stmt)
@@ -150,10 +210,10 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         }
     tok.skipWhiteSpace();
     statementStartPos = tok.getPos();
-    return parseStatementBody(stmt);
+    return parseExprStatement(stmt);
     }
 
-Statement* Parser::parseStatementBody(Statement* stmt)
+Statement* Parser::parseExprStatement(Statement* stmt)
     {
     tok.tokenizeComments(false);
     stmt->node = parseAssignExpr();
@@ -566,6 +626,15 @@ std::vector<Node*> Parser::parseListExpr()
     }
 
 
+NoneExpr* Parser::createErrorExpr(Error error)
+    { 
+    NoneExpr* p = new NoneExpr(); 
+    nodes.push_back(p); 
+    p->error = error;
+    return p; 
+    }
+
+CustomFunctionDef* Parser::createFunctionDef() { CustomFunctionDef* p = new CustomFunctionDef(); nodes.push_back(p); return p; }
 NoneExpr* Parser::createNoneExpr() { NoneExpr* p = new NoneExpr(); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
@@ -645,4 +714,12 @@ Range Statement::range() const
     if(node != nullptr)
         return node->range();
     return Range(comment_line);
+    }
+
+Range CustomFunctionDef::range() const
+    {
+    Range r = id;
+    if(!statements.empty())
+        r += statements.back()->range();
+    return r;
     }

@@ -7,7 +7,7 @@
 #include "ValueType.h"
 #include "Range.h"
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE};
+enum class NodeType {FUNCTIONDEF, CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE};
 class Parser;
 
 class Node
@@ -149,6 +149,18 @@ class Statement : public Node
         friend class Parser;
     };
 
+class CustomFunctionDef : public Node
+    {
+    private:
+        CustomFunctionDef() : Node(NodeType::FUNCTIONDEF) {}
+        friend class Parser;
+    public:
+        Token id;
+        std::vector<Token> params;
+        std::vector<Statement*> statements;
+        Range range() const;
+    };
+
 class Variable
     {
     public:
@@ -176,7 +188,8 @@ class Parser
         Statement* parseStatement();
         Define* parseDefine();
         Statement* parseStatementHeader(Statement* stmt);
-        Statement* parseStatementBody(Statement* stmt);
+        Statement* parseExprStatement(Statement* stmt);
+        Node* parseFunctionDef();
         Node* parseAssignExpr();
         Node* parseAddExpr();
         Node* parseMultExpr();
@@ -191,6 +204,8 @@ class Parser
         CallExpr* parseCallExpr(Token functionName);
         std::vector<Node*> parseListExpr();
 
+        CustomFunctionDef* createFunctionDef();
+        NoneExpr* createErrorExpr(Error error);
         NoneExpr* createNoneExpr();
         ConstExpr* createConst(ValueType type);
         BinaryOpExpr* createBinaryOp();
@@ -208,5 +223,8 @@ class Parser
         Node* parseAbsOperator();
         void parseEchosBetweenStatements(Statement* lastStmt);
         void parseEchoLines();
+        bool match(TokenType tt);
+        bool peek(TokenType tt) { return tok.peek().type == tt; }
+
     };
 

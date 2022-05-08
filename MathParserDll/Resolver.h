@@ -13,6 +13,7 @@ class Resolver
 
         DateFormat dateFormat = DateFormat::UNDEFINED;
 
+        Value resolveNone(const NoneExpr& expr);
         Value resolveDefine(const Define& define);
         Value resolveStatement(const Statement& stmt);
         Value resolveNode(const Node& node);
@@ -27,6 +28,7 @@ class Resolver
         Value resolveConst(const ConstExpr& constExpr);
         Value resolveDateFragment(const Value&val, const Token& fragmentId);
         Value resolveDurationFragment(const Value&val, const Token& fragmentId);
+        Value resolveFunctionDef(const CustomFunctionDef& expr);
 
     public:
         Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDefs);

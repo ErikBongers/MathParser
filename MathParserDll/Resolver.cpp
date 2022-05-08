@@ -100,8 +100,25 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
         case NodeType::DEFINE: return resolveDefine((const Define&)node);
+        case NodeType::NONE: return resolveNone((const NoneExpr&)node);
+        case NodeType::FUNCTIONDEF: return resolveFunctionDef((const CustomFunctionDef&)node);
         default: return Value(Error(ErrorId::UNKNOWN_EXPR, node.range()));
         }
+    }
+
+
+
+Value Resolver::resolveFunctionDef(const CustomFunctionDef& expr)
+    {
+    return Value(Number(-123456, 0, expr.range()));
+    }
+
+Value Resolver::resolveNone(const NoneExpr& expr)
+    {
+    Value v;
+    if(expr.error.id != ErrorId::NONE)
+        v.errors.push_back(expr.error);
+    return v;
     }
 
 Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)

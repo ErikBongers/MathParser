@@ -122,6 +122,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::DATE_INV_FRAG, {ErrorId::DATE_INV_FRAG, "DATE_INV_FRAG", "Invalid fragment '{0}' for date."}},
         {ErrorId::DUR_INV_FRAG, {ErrorId::DUR_INV_FRAG, "DUR_INV_FRAG", "Invalid fragment '{0}' for duration."}},
         {ErrorId::EXPECTED, {ErrorId::EXPECTED, "EXPECTED", "Expected '{0}'."}},
+        {ErrorId::EXPECTED_ID, {ErrorId::EXPECTED_ID, "EXPECTED_ID", "Expected identifier."}},
         {ErrorId::INV_DATE_VALUE, {ErrorId::INV_DATE_VALUE, "INV_DATE_VALUE", "Invalid date value '{0}' for {1}."}},
     };
 

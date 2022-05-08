@@ -2,6 +2,7 @@
 EBNF of C++ : http://www.externsoft.ch/download/cpp-iso.html
 left or right associativity: https://stackoverflow.com/questions/41784524/preferred-way-of-removing-left-recursion-of-ebnf
 
+program = statements
 
 define = ('#define' | '#undef'} <define options> EOL
 
@@ -11,15 +12,20 @@ echoComment = '!//' rest_of_line
 
 comment = '//' rest_of_line
 
+functionDef = 'function' id '(' [functionParamDefs] ')' '{' statementBlock '}' [';']
+
+functionParamDefs = id [ ',' id ]
+
 statements = '/#' statementsBlock '#/' |
              '/!' statementsBlock '!/'
 
 statementsBlock = { statement }
 
-statement = ('!' | '#') statementBody ( ';' | EOF ) |
-            define
+statement = ('!' | '#') exprStatement ( ';' | EOF ) |
+            define |
+            functionDef
 
-statementBody = addExpr |
+exprStatement = addExpr |
             assignment
 
 assignment = id '=' listExpr |

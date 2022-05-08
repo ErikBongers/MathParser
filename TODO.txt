@@ -1,4 +1,9 @@
-﻿* custom functions:
+﻿* use Parser match() and peek(type) whereever possible.
+* custom functions:
+  > are #define-s allowed in a function?
+    > Yes, because a certain constant may be needed within a function.
+  > are functions alloweed in a function? Yes!!
+  >...therefor, a function is just a statement.
   > just groups of statements, essentially macros.
   > params have no type
   > return value is...last result?

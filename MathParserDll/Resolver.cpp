@@ -226,14 +226,15 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     if(year.type != ValueType::NUMBER) 
         return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iYear]->range(), "?", "year"));
 
+    if(day.getNumber().to_double() < 1 || day.getNumber().to_double() > 31)// don't check date.day as it might have been truncated!
+        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iDay]->range(), std::to_string(day.getNumber().to_double()), "day"));
+    if(month.getNumber().to_double() < 1 || month.getNumber().to_double() > 12)
+        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iMonth]->range(), std::to_string(month.getNumber().to_double()), "month"));
+
     date.day = (char)day.getNumber().to_double();
     date.month = (Month)month.getNumber().to_double();
     date.year = (long)year.getNumber().to_double();
 
-    if(date.day < 1 || date.day > 31)
-        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iDay]->range(), std::to_string((int)date.day), "day"));
-    if((char)date.month < 1 || (char)date.month > 12)
-        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iMonth]->range(), std::to_string((int)date.month), "month"));
     date.errors.insert(date.errors.end(), day.getNumber().errors.begin(), day.getNumber().errors.end());
     date.errors.insert(date.errors.end(), month.getNumber().errors.begin(), month.getNumber().errors.end());
     date.errors.insert(date.errors.end(), year.getNumber().errors.begin(), year.getNumber().errors.end());

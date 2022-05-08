@@ -13,7 +13,7 @@ void Parser::parse()
     pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), tok.getLine(), tok.getLinePos());
     ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", tok.getLine(), tok.getLinePos()), pConst});
     parseEchoLines();
-    while (tok.peek().type != TokenType::EOT)
+    while (!peek(TokenType::EOT))
         {
         auto stmt = parseStatement();
         statements.push_back(stmt);
@@ -23,8 +23,8 @@ void Parser::parse()
 
 void Parser::parseEchosBetweenStatements(Statement* lastStmt)
     {
-    if (tok.peek().type == TokenType::ECHO_COMMENT_LINE
-        || (echoTrailingComment && tok.peek().type == TokenType::COMMENT_LINE))
+    if (peek(TokenType::ECHO_COMMENT_LINE)
+        || (echoTrailingComment && peek(TokenType::COMMENT_LINE)))
         {
         auto t = tok.next();
         if (t.isFirstOnLine)
@@ -45,7 +45,7 @@ void Parser::parseEchosBetweenStatements(Statement* lastStmt)
 void Parser::parseEchoLines()
     {
     tok.tokenizeComments(true);
-    while (tok.peek().type == TokenType::ECHO_COMMENT_LINE || tok.peek().type == TokenType::COMMENT_LINE)
+    while (peek(TokenType::ECHO_COMMENT_LINE) || peek(TokenType::COMMENT_LINE))
         {
         auto t = tok.next();
         if(t.type == TokenType::ECHO_COMMENT_LINE)
@@ -66,7 +66,7 @@ Define* Parser::parseDefine()
         tok.next();
         auto define = createDefine();
         tok.tokenizeNewlines(true);
-        while (tok.peek().type != TokenType::EOT)
+        while (!peek(TokenType::EOT))
             {
             Token t = tok.peek();
             if (t.type == TokenType::NEWLINE || t.type == TokenType::SEMI_COLON)
@@ -158,53 +158,46 @@ Node* Parser::parseFunctionDef()
 
 Statement* Parser::parseStatementHeader(Statement* stmt)
     {
-    if(tok.peek().type == TokenType::ECHO)
+    if(match(TokenType::ECHO))
         {
-        tok.next(); //consume ECHO
         stmt->echo = true;
         return parseStatementHeader(stmt);
         }
-    if(tok.peek().type == TokenType::ECHO_DOUBLE)
+    if(match(TokenType::ECHO_DOUBLE))
         {
-        tok.next(); //consume ECHO
         stmt->echo = true;
         echoTrailingComment = true;
         return parseStatementHeader(stmt);
         }
-    if(tok.peek().type == TokenType::ECHO_COMMENT_LINE)
+    if(peek(TokenType::ECHO_COMMENT_LINE))
         {
         auto t = tok.next(); //consume ECHO
         stmt = createStatement();
         stmt->comment_line = t;
         return stmt;
         }
-    if(tok.peek().type == TokenType::MUTE_LINE)
+    if(match(TokenType::MUTE_LINE))
         {
-        tok.next(); //consume MUTE
         stmt->mute = true;
         return parseStatementHeader(stmt);
         }
-    if(tok.peek().type == TokenType::MUTE_START)
+    if(match(TokenType::MUTE_START))
         {
-        tok.next(); //consume MUTE
         this->muteBlock = true;
         return parseStatementHeader(stmt);
         }
-    if(tok.peek().type == TokenType::MUTE_END)
+    if(match(TokenType::MUTE_END))
         {
-        tok.next(); //consume MUTE
         this->muteBlock = false;
         return parseStatementHeader(stmt);
         }
-    if(tok.peek().type == TokenType::ECHO_START)
+    if(match(TokenType::ECHO_START))
         {
-        tok.next(); //consume ECHO
         this->echoBlock = true;
         return parseStatementHeader(stmt);
         }
-    if(tok.peek().type == TokenType::ECHO_END)
+    if(match(TokenType::ECHO_END))
         {
-        tok.next(); //consume ECHO
         this->echoBlock = false;
         return parseStatementHeader(stmt);
         }
@@ -533,10 +526,7 @@ Node* Parser::parsePrimaryExpr()
             {
             tok.next();
             auto addExpr = parseAddExpr();
-            t = tok.peek();
-            if (t.type == TokenType::PAR_CLOSE)
-                tok.next();
-            else
+            if (!match(TokenType::PAR_CLOSE))
                 {
                 if(addExpr->error.id == ErrorId::NONE)
                     addExpr->error = Error(ErrorId::EXPECTED, addExpr->range(), ")");
@@ -568,9 +558,7 @@ Node* Parser::parseAbsOperator()
     callExpr->arguments.push_back(addExpr);
     callExpr->functionName = Token(TokenType::ID, "abs", tok.getLine(), tok.getLinePos());
     auto t = tok.peek();
-    if (t.type == TokenType::PIPE)
-        tok.next();
-    else
+    if (!match(TokenType::PIPE))
         {
         if(callExpr->error.id == ErrorId::NONE)
             callExpr->error = Error(ErrorId::EXPECTED, callExpr->range(), "|");
@@ -598,10 +586,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
         }
     tok.next();
     callExpr->arguments = parseListExpr();
-    t = tok.peek();
-    if (t.type == TokenType::PAR_CLOSE)
-        tok.next();
-    else
+    if (!match(TokenType::PAR_CLOSE))
         {
         if(callExpr->error.id == ErrorId::NONE)
             callExpr->error = Error(ErrorId::EXPECTED, callExpr->range(), ")");
@@ -691,15 +676,19 @@ Range AssignExpr::range() const
     {
     Range r = Range(Id);
     if(expr != nullptr)
-        r += Range(expr->range());
+        r += expr->range();
     return r;
     }
 
 Range ListExpr::range() const
     {
-    Range r = Range(list.front()->range());
-    r += list.back()->range();
-    return r;
+    if(!list.empty())
+        {
+        Range r = Range(list.front()->range());
+        r += list.back()->range();
+        return r;
+        }
+    return Range();//TODO???
     }
 
 Range Define::range() const

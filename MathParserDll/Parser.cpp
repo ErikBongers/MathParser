@@ -139,12 +139,13 @@ Node* Parser::parseFunctionDef()
     if (!match(TokenType::CURL_OPEN))
         return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "{"));
 
-    while (!peek(TokenType::CURL_CLOSE))
+    std::vector<Statement*> functionStmts;
+    while (!peek(TokenType::CURL_CLOSE) && !peek(TokenType::EOT))
         {
         auto stmt = parseStatement();
         if(stmt == nullptr)
             break;
-        statements.push_back(stmt);
+        functionStmts.push_back(stmt);
         }
 
     if (!match(TokenType::CURL_CLOSE))
@@ -152,7 +153,11 @@ Node* Parser::parseFunctionDef()
     auto funcDef = createFunctionDef();
     funcDef->id = id;
     funcDef->params = paramDefs;
-    funcDef->statements = statements;
+    funcDef->statements = std::move(functionStmts);
+
+    auto fd = new CustomFunction(*funcDef, functionDefs);
+
+    functionDefs.Add(fd);
     return funcDef;
     }
 
@@ -619,7 +624,7 @@ NoneExpr* Parser::createErrorExpr(Error error)
     return p; 
     }
 
-CustomFunctionDef* Parser::createFunctionDef() { CustomFunctionDef* p = new CustomFunctionDef(); nodes.push_back(p); return p; }
+FunctionDefExpr* Parser::createFunctionDef() { FunctionDefExpr* p = new FunctionDefExpr(); nodes.push_back(p); return p; }
 NoneExpr* Parser::createNoneExpr() { NoneExpr* p = new NoneExpr(); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
@@ -705,7 +710,7 @@ Range Statement::range() const
     return Range(comment_line);
     }
 
-Range CustomFunctionDef::range() const
+Range FunctionDefExpr::range() const
     {
     Range r = id;
     if(!statements.empty())

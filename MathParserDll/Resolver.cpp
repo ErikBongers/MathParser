@@ -9,14 +9,14 @@
 
 std::string Resolver::result = "";
 
-Resolver::Resolver(std::vector<Statement*>& statements, FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs) 
+Resolver::Resolver(std::vector<Statement*>& statements, FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables) 
     : statements(statements), functionDefs(functionDefs), unitDefs(unitDefs), operatorDefs(operatorDefs)
     {
+    this->variables = variables;
     }
 
 void Resolver::resolve()
     {
-    variables.clear();
     auto PI = Value(Number(M_PI, 0, Range()));
     PI.constant = true;
     variables.emplace("PI", PI);
@@ -101,16 +101,20 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
         case NodeType::DEFINE: return resolveDefine((const Define&)node);
         case NodeType::NONE: return resolveNone((const NoneExpr&)node);
-        case NodeType::FUNCTIONDEF: return resolveFunctionDef((const CustomFunctionDef&)node);
+        case NodeType::FUNCTIONDEF: return resolveFunctionDef((const FunctionDefExpr&)node);
         default: return Value(Error(ErrorId::UNKNOWN_EXPR, node.range()));
         }
     }
 
-
-
-Value Resolver::resolveFunctionDef(const CustomFunctionDef& expr)
+Value Resolver::resolveFunctionDef(const FunctionDefExpr& expr)
     {
-    return Value(Number(-123456, 0, expr.range()));
+    CustomFunction* f = dynamic_cast<CustomFunction*>(functionDefs.get(expr.id.stringValue));
+    //TODO: these should be dependencies.
+    f->operatorDefs = &operatorDefs;
+    f->unitDefs = &unitDefs;
+    f->dateFormat = dateFormat;
+    //TODO: properly ignore a FunctionDef as it doesn't calculate anything.
+    return Value(); //NONE
     }
 
 Value Resolver::resolveNone(const NoneExpr& expr)

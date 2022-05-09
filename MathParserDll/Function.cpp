@@ -60,9 +60,30 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     return functions[name];
     }
 
+CustomFunction::CustomFunction(FunctionDefExpr& functionDef, FunctionDefs& functionDefs)
+    : functionDef(functionDef), FunctionDef(functionDefs, functionDef.id.stringValue, functionDef.params.size(), functionDef.params.size()) 
+    {}
+
 Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     {
     Value result;
+    std::map<std::string, Value> paramVariables;
+
+    //args.size and params.size should be equal.
+    for (size_t i = 0; i < args.size(); i++)
+        {
+        paramVariables.emplace(functionDef.params[i].stringValue, args[i]);
+        }
+
+    Resolver resolver(functionDef.statements, functionDefs, *unitDefs, *operatorDefs, paramVariables); //TODO: remove statements from constructor and move it to resolve() function. It's not used here, but in loop below!
+    resolver.dateFormat = dateFormat; //TODO: put defines in some resolver.State thing.
+    std::vector<Error> errors;
+    for(auto stmt : functionDef.statements)
+        {
+        result = resolver.resolveStatement(*stmt);
+        errors.insert(errors.end(), result.errors.begin(), result.errors.end());
+        }
+    result.errors = std::move(errors);
     return result;
     }
 

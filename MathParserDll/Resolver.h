@@ -12,11 +12,8 @@ class Resolver
         static std::string result;
         std::map<std::string, Value> variables;
 
-        DateFormat dateFormat = DateFormat::UNDEFINED;
-
         Value resolveNone(const NoneExpr& expr);
         Value resolveDefine(const Define& define);
-        Value resolveStatement(const Statement& stmt);
         Value resolveNode(const Node& node);
         Value resolveBinaryOp(const BinaryOpExpr& expr);
         Value resolveUnaryOp(const UnaryOpExpr& expr);
@@ -29,16 +26,18 @@ class Resolver
         Value resolveConst(const ConstExpr& constExpr);
         Value resolveDateFragment(const Value&val, const Token& fragmentId);
         Value resolveDurationFragment(const Value&val, const Token& fragmentId);
-        Value resolveFunctionDef(const CustomFunctionDef& expr);
+        Value resolveFunctionDef(const FunctionDefExpr& expr);
 
     public:
-        Resolver(std::vector<Statement*>& statements, FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs);
+        Resolver(std::vector<Statement*>& statements, FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables);
         void resolve();
+        Value resolveStatement(const Statement& stmt);
         std::string formatError(const std::string errorMsg, ...);
         static int getResultLen() { return (int)result.size(); }
         static const std::string& getResult() { return result; }
         UnitDefs& unitDefs;
         OperatorDefs& operatorDefs;
+        DateFormat dateFormat = DateFormat::UNDEFINED;
         Value& getVar(const std::string& id);
     };
 

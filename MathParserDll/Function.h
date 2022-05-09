@@ -37,11 +37,20 @@ class FunctionDefs
         UnitDefs& unitDefs;
     };
 
+class Statement;
+class OperatorDefs;
+class FunctionDefExpr;
 class CustomFunction: public FunctionDef
     {
+    private:
+        FunctionDefExpr& functionDef;
+
     public:
-        CustomFunction(FunctionDefs& functionDefs, const std::string& name, size_t minArgs, size_t maxArgs)
-            : FunctionDef(functionDefs, name, minArgs, maxArgs) {}
+        UnitDefs* unitDefs;
+        OperatorDefs* operatorDefs;
+        DateFormat dateFormat = DateFormat::UNDEFINED;
+
+        CustomFunction(FunctionDefExpr& functionDef, FunctionDefs& functionDefs);
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 

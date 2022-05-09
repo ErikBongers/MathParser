@@ -17,7 +17,8 @@ int C_DECL parse(const char* str)
     OperatorDefs operatorDefs(unitDefs);
     Parser parser(str, functionDefs);
     parser.parse();
-    Resolver resolver(parser.statements, functionDefs, unitDefs, operatorDefs);
+    std::map<std::string, Value> nada;
+    Resolver resolver(parser.statements, functionDefs, unitDefs, operatorDefs, nada);
     resolver.resolve();
     return getResultLen();
     }

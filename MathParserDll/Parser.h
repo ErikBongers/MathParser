@@ -149,10 +149,10 @@ class Statement : public Node
         friend class Parser;
     };
 
-class CustomFunctionDef : public Node
+class FunctionDefExpr : public Node
     {
     private:
-        CustomFunctionDef() : Node(NodeType::FUNCTIONDEF) {}
+        FunctionDefExpr() : Node(NodeType::FUNCTIONDEF) {}
         friend class Parser;
     public:
         Token id;
@@ -204,7 +204,7 @@ class Parser
         CallExpr* parseCallExpr(Token functionName);
         std::vector<Node*> parseListExpr();
 
-        CustomFunctionDef* createFunctionDef();
+        FunctionDefExpr* createFunctionDef();
         NoneExpr* createErrorExpr(Error error);
         NoneExpr* createNoneExpr();
         ConstExpr* createConst(ValueType type);

@@ -60,6 +60,12 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     return functions[name];
     }
 
+Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
+    {
+    Value result;
+    return result;
+    }
+
 namespace c = std::chrono;
 using time_point = c::system_clock::time_point;
 using year_month_day = c::year_month_day;

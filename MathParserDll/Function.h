@@ -37,6 +37,14 @@ class FunctionDefs
         UnitDefs& unitDefs;
     };
 
+class CustomFunction: public FunctionDef
+    {
+    public:
+        CustomFunction(FunctionDefs& functionDefs, const std::string& name, size_t minArgs, size_t maxArgs)
+            : FunctionDef(functionDefs, name, minArgs, maxArgs) {}
+        Value execute(std::vector<Value>& args, const Range& range) override;
+    };
+
 class Now: public FunctionDef
     {
     public:

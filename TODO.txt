@@ -1,4 +1,5 @@
-﻿* use Parser match() and peek(type) whereever possible.
+﻿* CustomFuncDef: Parser should add the function to funcDefs list.
+  > how to differentiate between standard funcs and user funcs?
 * custom functions:
   > are #define-s allowed in a function?
     > Yes, because a certain constant may be needed within a function.

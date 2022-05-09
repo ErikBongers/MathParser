@@ -16,7 +16,8 @@ int C_DECL parse(const char* str)
     FunctionDefs functionDefs(unitDefs);
     OperatorDefs operatorDefs(unitDefs);
     Parser parser(str, functionDefs);
-    Resolver resolver(parser, unitDefs, operatorDefs);
+    parser.parse();
+    Resolver resolver(parser.statements, functionDefs, unitDefs, operatorDefs);
     resolver.resolve();
     return getResultLen();
     }

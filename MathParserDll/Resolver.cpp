@@ -9,7 +9,8 @@
 
 std::string Resolver::result = "";
 
-Resolver::Resolver(Parser& parser, UnitDefs& unitDefs, OperatorDefs& operatorDefs) : parser(parser), unitDefs(unitDefs), operatorDefs(operatorDefs) 
+Resolver::Resolver(std::vector<Statement*>& statements, FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs) 
+    : statements(statements), functionDefs(functionDefs), unitDefs(unitDefs), operatorDefs(operatorDefs)
     {
     }
 
@@ -21,8 +22,7 @@ void Resolver::resolve()
     variables.emplace("PI", PI);
     variables.emplace("pi", PI);
     std::vector<std::string> jsonRes;
-    parser.parse();
-    for (auto& stmt : parser.statements)
+    for (auto& stmt : statements)
         {
         auto result = resolveStatement(*stmt);
         if (stmt->node != nullptr)
@@ -180,7 +180,7 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, Range(assign.Id), assign.Id.stringValue));
             }
-        else if (parser.functionDefs.exists(assign.Id.stringValue))
+        else if (functionDefs.exists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, Range(assign.Id), assign.Id.stringValue));
             }
@@ -322,7 +322,7 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
 
 Value Resolver::resolveCall(const CallExpr& callExpr)
     {
-    auto fd = parser.functionDefs.get(callExpr.functionName.stringValue.c_str());
+    auto fd = functionDefs.get(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
         return Value(Error(ErrorId::FUNC_NOT_DEF, Range(callExpr.functionName), callExpr.functionName.stringValue.c_str()));
     if (callExpr.error.id != ErrorId::NONE)

@@ -79,18 +79,17 @@ Error::Error(ErrorId id, const Range& range)
     this->errorMsg = ErrorDefs::get(id).message;
     }
 
-const std::string Error::to_json()
+void Error::to_json(std::ostringstream& sstr) const
     {
-    std::ostringstream sstr;
     bool isWarning = false;
     sstr << "{";
     auto& ed = ErrorDefs::get(id);
     sstr << "\"id\":\"" << ed.name << "\",\"message\":\"" + escape_json(errorMsg) + "\"";
     isWarning = ed.name[0] == 'W';
     sstr << ",\"isWarning\":" << (isWarning ? "true":"false");
-    sstr << ",\"range\":" << range.to_json();
+    sstr << ",\"range\":";
+    range.to_json(sstr);
     sstr << "}";
-    return sstr.str();
     }
 
 bool Error::isWarning()

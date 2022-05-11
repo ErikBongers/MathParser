@@ -34,7 +34,7 @@ class Value
         Value(const Date date);
         Value(Duration duration);
         Value(const std::vector<Value>& list);
-        std::string to_json();
+        void to_json(std::ostringstream& sstr) const;
         Number& getNumber() { return std::get<Number>(data); }
         Date& getDate() { return std::get<Date>(data); }
         const Date& getDate() const { return std::get<Date>(data); } 

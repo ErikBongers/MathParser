@@ -4,9 +4,8 @@
 #include <iomanip>
 #include "tools.h"
 
-std::string Duration::to_json()
+void Duration::to_json(std::ostringstream& sstr) const
     {
-    std::ostringstream sstr;
     sstr << "{";
 
     sstr << "\"years\":";
@@ -19,7 +18,6 @@ std::string Duration::to_json()
     sstr << "\"" << numberToString(days, EmptyDays) << "\"";
 
     sstr << "}";
-    return sstr.str();
     }
 
 void Duration::normalize()

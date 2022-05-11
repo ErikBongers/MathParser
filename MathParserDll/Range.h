@@ -12,6 +12,6 @@ struct Range
     Range() {};
     Range(const Token& t);
     Range(unsigned i1, unsigned i2, unsigned i3, unsigned i4) : startLine(i1), startPos(i2), endLine(i3), endPos(i4) {}
-    const std::string to_json();
+    void to_json(std::ostringstream& sstr) const;
     };
 

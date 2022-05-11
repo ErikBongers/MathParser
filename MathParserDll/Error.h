@@ -61,7 +61,7 @@ class Error
         Error(ErrorId id, const Range& range, const std::string& arg1);
         Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2);
         Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2, const std::string& arg3);
-        const std::string to_json();
+        void to_json(std::ostringstream& sstr) const;
         bool isWarning();
     };
 

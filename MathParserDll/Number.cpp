@@ -144,9 +144,8 @@ std::string formatDouble(double d)
     return str;
     }
 
-std::string Number::to_json()
+void Number::to_json(std::ostringstream& sstr) const
     {
-    std::ostringstream sstr;
     sstr << "{";
 
 
@@ -187,5 +186,4 @@ std::string Number::to_json()
         << "\"";
 
     sstr << "}";
-    return sstr.str();
     }

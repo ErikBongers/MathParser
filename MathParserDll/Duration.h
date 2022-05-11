@@ -11,7 +11,7 @@ class Duration
         long months = EmptyMonths;
         long days = EmptyDays;
 
-        std::string to_json();
+        void to_json(std::ostringstream& sstr) const;
         void normalize();
     };
 

@@ -30,14 +30,12 @@ Range::Range(const Token& t)
     endPos = t.pos + (unsigned)t.stringValue.size();
     }
 
-const std::string Range::to_json()
+void Range::to_json(std::ostringstream& sstr) const
     {
-    std::ostringstream sstr;
     sstr << "{";
     sstr << "\"startLine\":" << startLine;
     sstr << ",\"startPos\":" << startPos;
     sstr << ",\"endLine\":" << endLine;
     sstr << ",\"endPos\":" << endPos;
     sstr << "}";
-    return sstr.str();
     }

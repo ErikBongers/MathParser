@@ -27,6 +27,6 @@ struct Number
     Number convertToUnit(const Unit& to, UnitDefs& unitDefs);
     double toSI(UnitDefs& unitDefs) const;
     double fromSI(UnitDefs& unitDefs) const;
-    std::string to_json();
+    void to_json(std::ostringstream& sstr) const;
     };
 

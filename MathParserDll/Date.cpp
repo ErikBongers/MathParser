@@ -418,9 +418,8 @@ std::string monthToString(Month m)
     }
 
 
-std::string Date::to_json()
+void Date::to_json(std::ostringstream& sstr) const
     {
-    std::ostringstream sstr;
     sstr << "{";
 
     sstr << "\"formatted\" : ";
@@ -441,7 +440,6 @@ std::string Date::to_json()
     sstr << ",\"year\":\"" << year<< "\"";
 
     sstr << "}";
-    return sstr.str();
     }
 
 Duration Date::operator-(const Date& d2)

@@ -16,7 +16,7 @@ class Date
         Month month = Month::NONE;
         char day = 0; //0 = none, 99 = last;
         Date() = default;
-        std::string to_json();
+        void to_json(std::ostringstream& sstr) const;
         std::vector<Error> errors;
         Duration operator-(const Date& d2);
     };

@@ -22,20 +22,25 @@ void Resolver::resolve()
     variables.emplace("PI", PI);
     variables.emplace("pi", PI);
     std::vector<std::string> jsonRes;
+    std::ostringstream sstr;
     for (auto& stmt : statements)
         {
         auto result = resolveStatement(*stmt);
         if (stmt->node != nullptr)
             {
             if(stmt->node->type != NodeType::DEFINE || result.errors.size() != 0)
-                jsonRes.push_back(result.to_json()); //don't output a define statement unless it has errors
+                {
+                result.to_json(sstr);
+                sstr << ",";
+                }
             }
         else
-            jsonRes.push_back(result.to_json());
+            {
+            result.to_json(sstr);
+            sstr << ",";
+            }
         }
-    result = "";
-    for (auto& s : jsonRes)
-        result += s + ",";
+    result = sstr.str();
     if(result.size() > 0)
         result.resize(result.size()-1); //remove last comma;
     result = "{\"result\" : [" + result + "]}";

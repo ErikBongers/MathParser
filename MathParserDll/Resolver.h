@@ -8,7 +8,6 @@ class Resolver
     {
     private:
         FunctionDefs& functionDefs;
-        std::vector<Statement *>& statements;
         static std::string result;
         std::map<std::string, Value> variables;
 
@@ -29,8 +28,8 @@ class Resolver
         Value resolveFunctionDef(const FunctionDefExpr& expr);
 
     public:
-        Resolver(std::vector<Statement*>& statements, FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables);
-        void resolve();
+        Resolver(FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables);
+        void resolve(std::vector<Statement*>& statements);
         Value resolveStatement(const Statement& stmt);
         std::string formatError(const std::string errorMsg, ...);
         static int getResultLen() { return (int)result.size(); }

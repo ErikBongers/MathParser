@@ -9,13 +9,13 @@
 
 std::string Resolver::result = "";
 
-Resolver::Resolver(std::vector<Statement*>& statements, FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables) 
-    : statements(statements), functionDefs(functionDefs), unitDefs(unitDefs), operatorDefs(operatorDefs)
+Resolver::Resolver(FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables) 
+    : functionDefs(functionDefs), unitDefs(unitDefs), operatorDefs(operatorDefs)
     {
     this->variables = variables;
     }
 
-void Resolver::resolve()
+void Resolver::resolve(std::vector<Statement*>& statements)
     {
     auto PI = Value(Number(M_PI, 0, Range()));
     PI.constant = true;

@@ -75,7 +75,7 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
         paramVariables.emplace(functionDef.params[i].stringValue, args[i]);
         }
 
-    Resolver resolver(functionDef.statements, functionDefs, *unitDefs, *operatorDefs, paramVariables); //TODO: remove statements from constructor and move it to resolve() function. It's not used here, but in loop below!
+    Resolver resolver(functionDefs, *unitDefs, *operatorDefs, paramVariables);
     resolver.dateFormat = dateFormat; //TODO: put defines in some resolver.State thing.
     std::vector<Error> errors;
     for(auto stmt : functionDef.statements)

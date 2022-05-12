@@ -220,7 +220,7 @@ class Parser
         std::vector<Node*> nodes;
         unsigned int statementStartPos = 0;
 
-        Node* parseAbsOperator();
+        Node* parseAbsOperator(const Token& currentToken);
         void parseEchosBetweenStatements(Statement* lastStmt);
         void parseEchoLines();
         bool match(TokenType tt);

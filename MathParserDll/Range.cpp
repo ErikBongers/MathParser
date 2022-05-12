@@ -5,37 +5,44 @@
 
 Range& Range::operator+=(const Range& r)
     {
-    if (r.startLine < startLine)
+    if(r.start.line < 0) //means that r is empty
+        return *this;
+    if (r.start.line < start.line)
         {
-        startLine = r.startLine;
-        startPos = r.startPos;
+        start = r.start;
         }
-    else if(r.startLine == startLine)
-        startPos = std::min(startPos, r.startPos);
+    else if(r.start.line == start.line)
+        {
+        start.linePos = std::min(start.linePos, r.start.linePos);
+        start.cursorPos = std::min(start.cursorPos, r.start.cursorPos);
+        }
 
-    if (r.endLine > endLine)
+    if (r.end.line > end.line)
         {
-        endLine = r.endLine;
-        endPos = r.endPos;
+        end = r.end;
         }
-    else if (r.endLine == endLine)
-        endPos = std::max(endPos, r.endPos);
+    else if (r.end.line == end.line)
+        {
+        end.linePos = std::max(end.linePos, r.end.linePos);
+        end.cursorPos = std::max(end.cursorPos, r.end.cursorPos);
+        }
     return *this;
     }
 
 Range::Range(const Token& t)
     {
-    startLine = endLine = t.line; //TODO: assuming token on ONE line.
-    startPos = t.pos;
-    endPos = t.pos + (unsigned)t.stringValue.size();
+    start = t.pos;
+    end = t.pos;
+    end.cursorPos += (unsigned)t.stringValue.size();
+    end.linePos += (unsigned)t.stringValue.size();
     }
 
 void Range::to_json(std::ostringstream& sstr) const
     {
     sstr << "{";
-    sstr << "\"startLine\":" << startLine;
-    sstr << ",\"startPos\":" << startPos;
-    sstr << ",\"endLine\":" << endLine;
-    sstr << ",\"endPos\":" << endPos;
+    sstr << "\"startLine\":" << start.line;
+    sstr << ",\"startPos\":" << start.linePos;
+    sstr << ",\"endLine\":" << end.line;
+    sstr << ",\"endPos\":" << end.linePos;
     sstr << "}";
     }

@@ -54,34 +54,34 @@ void Tokenizer::getNextState()
 
 Token Tokenizer::getNextToken()
     {
-    if (peekedState.pos >= size)
-        return Token(TokenType::EOT, getLine(), getLinePos());
+    if (peekedState.nextPos.cursorPos >= size)
+        return Token(TokenType::EOT, peekedState.nextPos);
 
     skipWhiteSpace();
 
     if(matchWord("function"))
-        return Token(TokenType::FUNCTION, "function", getLine(), getLinePos());
+        return Token(TokenType::FUNCTION, "function", peekedState.nextPos);
 
     char c;
     c = nextChar();
     if (!c)
-        return Token(TokenType::EOT, getLine(), getLinePos());
+        return Token(TokenType::EOT, peekedState.nextPos);
 
     switch (c)
         {
         using enum TokenType;
-        case '\n': return Token(NEWLINE, c, getLine(), getLinePos());
-        case '{': return Token(CURL_OPEN, c, getLine(), getLinePos());
-        case '}': return Token(CURL_CLOSE, c, getLine(), getLinePos());
-        case '(': return Token(PAR_OPEN, c, getLine(), getLinePos());
-        case ')': return Token(PAR_CLOSE, c, getLine(), getLinePos());
-        case '[': return Token(BRAC_OPEN, c, getLine(), getLinePos());
-        case ']': return Token(BRAC_CLOSE, c, getLine(), getLinePos());
-        case '^': return Token(POWER, c, getLine(), getLinePos());
-        case '=': return Token(EQ, c, getLine(), getLinePos());
-        case ',': return Token(COMMA, c, getLine(), getLinePos());
-        case '|': return Token(PIPE, c, getLine(), getLinePos());
-        case ';': return Token(SEMI_COLON, c, getLine(), getLinePos());
+        case '\n': return Token(NEWLINE, c, peekedState.nextPos);
+        case '{': return Token(CURL_OPEN, c, peekedState.nextPos);
+        case '}': return Token(CURL_CLOSE, c, peekedState.nextPos);
+        case '(': return Token(PAR_OPEN, c, peekedState.nextPos);
+        case ')': return Token(PAR_CLOSE, c, peekedState.nextPos);
+        case '[': return Token(BRAC_OPEN, c, peekedState.nextPos);
+        case ']': return Token(BRAC_CLOSE, c, peekedState.nextPos);
+        case '^': return Token(POWER, c, peekedState.nextPos);
+        case '=': return Token(EQ, c, peekedState.nextPos);
+        case ',': return Token(COMMA, c, peekedState.nextPos);
+        case '|': return Token(PIPE, c, peekedState.nextPos);
+        case ';': return Token(SEMI_COLON, c, peekedState.nextPos);
         case '!': 
             {
             if (peekChar() == '/' && peekSecondChar() == '/')
@@ -89,55 +89,53 @@ Token Tokenizer::getNextToken()
                 nextChar(); //consume
                 nextChar(); //consume
                 auto comment = getToEOL();
-                return Token(ECHO_COMMENT_LINE, comment, getLine(), getLinePos());
+                return Token(ECHO_COMMENT_LINE, comment, peekedState.nextPos);
                 }
             else if (match('/'))
-                return Token(ECHO_END, "!/", getLine(), getLinePos()-1);
+                return Token(ECHO_END, "!/", peekedState.nextPos.offset(-1));
             else if (match('!'))
-                return Token(ECHO_DOUBLE, "!", getLine(), getLinePos()-1);
-            return Token(ECHO, c, getLine(), getLinePos());
+                return Token(ECHO_DOUBLE, "!", peekedState.nextPos.offset(-1));
+            return Token(ECHO, c, peekedState.nextPos);
             }
         case '.': 
             if (match('='))
-                return Token(EQ_UNIT, getLine(), getLinePos()-1);
+                return Token(EQ_UNIT, peekedState.nextPos.offset(-1));
             else
-                return Token(DOT, c, getLine(), getLinePos());
+                return Token(DOT, c, peekedState.nextPos);
         case '+':
             if (match('='))
                 {
-                return Token(EQ_PLUS, getLine(), getLinePos()-1);
+                return Token(EQ_PLUS, peekedState.nextPos.offset(-1));
                 }
             else if (match('+'))
                 {
-                return Token(INC, getLine(), getLinePos()-1);
+                return Token(INC, peekedState.nextPos.offset(-1));
                 }
-            return Token(PLUS, c, getLine(), getLinePos());
+            return Token(PLUS, c, peekedState.nextPos);
         case '-':
             if (match('='))
                 {
-                return Token(EQ_MIN, getLine(), getLinePos()-1);
+                return Token(EQ_MIN, peekedState.nextPos.offset(-1));
                 }
             else if (match('-'))
                 {
-                return Token(DEC, getLine(), getLinePos()-1);
+                return Token(DEC, peekedState.nextPos.offset(-1));
                 }
-            return Token(MIN, c, getLine(), getLinePos());
+            return Token(MIN, c, peekedState.nextPos);
         case '*':
             if (match('='))
-                return Token(EQ_MULT, getLine(), getLinePos()-1);
-            return Token(MULT, c, getLine(), getLinePos());
+                return Token(EQ_MULT, peekedState.nextPos.offset(-1));
+            return Token(MULT, c, peekedState.nextPos);
         case '#':
             if (match('/'))
                 {
-                return Token(MUTE_END, getLine(), getLinePos()-1);
+                return Token(MUTE_END, peekedState.nextPos.offset(-1));
                 }
             else if (matchWord("define"))
                 {
-                auto l = getLine();
-                auto p = getPos();
-                return Token(DEFINE, "#define", l, p);
+                return Token(DEFINE, "#define", peekedState.nextPos);
                 }
-            return Token(MUTE_LINE, c, getLine(), getLinePos());
+            return Token(MUTE_LINE, c, peekedState.nextPos);
         case '/':
             {
             auto cc = peekChar();
@@ -145,12 +143,12 @@ Token Tokenizer::getNextToken()
                 {
                 case '=':
                     nextChar(); //consume
-                    return Token(EQ_DIV, getLine(), getLinePos()-1);
+                    return Token(EQ_DIV, peekedState.nextPos.offset(-1));
                 case '/':
                     {
                     nextChar(); //consume
                     auto comment = getToEOL();
-                    return Token(COMMENT_LINE, comment, getLine(), getLinePos());
+                    return Token(COMMENT_LINE, comment, peekedState.nextPos);
                     }
                 case '*':
                     nextChar(); //consume
@@ -158,20 +156,18 @@ Token Tokenizer::getNextToken()
                     return getNextToken();
                 case '#':
                     nextChar(); //consume
-                    return Token(MUTE_START, getLine(), getLinePos()-1);
+                    return Token(MUTE_START, peekedState.nextPos.offset(-1));
                 case '!':
                     nextChar(); //consume
-                    return Token(ECHO_START, getLine(), getLinePos()-1);
+                    return Token(ECHO_START, peekedState.nextPos.offset(-1));
                 }
-            return Token(DIV, c, getLine(), getLinePos());
+            return Token(DIV, c, peekedState.nextPos);
             }
         case '\'':
             {
-            auto start= peekedState.pos;
-            auto curLine = peekedState.line;
-            auto curLinePos = peekedState.linePos;
+            auto start= peekedState.nextPos;
             skipToWithinLine('\'');
-            return Token(QUOTED_STR, getText(start, std::max(start, peekedState.pos-1)), curLine, curLinePos);
+            return Token(QUOTED_STR, getText(start.cursorPos, std::max(start.cursorPos, peekedState.nextPos.cursorPos-1)), start);
             }
         default:
             if ((c >= '0' && c <= '9') || c == '.')
@@ -183,7 +179,7 @@ Token Tokenizer::getNextToken()
                 return parseId(c);
                 }
             else
-                return Token(UNKNOWN, c, getLine(), getLinePos());
+                return Token(UNKNOWN, c, peekedState.nextPos);
         }
     }
 
@@ -197,7 +193,7 @@ constexpr bool isIdChar(char c)
 Token Tokenizer::parseId(char c)
     {
     std::string word = "";
-    auto wordPos = getLinePos();
+    auto wordPos = peekedState.nextPos;
     word += c;
 
     while ((c = peekChar()))
@@ -212,7 +208,7 @@ Token Tokenizer::parseId(char c)
             break;
             }
         }
-    return Token(TokenType::ID, word, getLine(), wordPos);
+    return Token(TokenType::ID, word, wordPos);
     }
 
 Number Tokenizer::parseDecimal(char c)
@@ -350,16 +346,14 @@ double Tokenizer::parseHex()
 
 Token Tokenizer::parseNumber(char c)
     {
-    auto numPos = getLinePos();
-
+    auto curPos = peekedState.nextPos;
     if(peekChar() == 'b' || peekChar() == 'B')
-        return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), getLine(), numPos);
+        return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), curPos);
     else if(peekChar() == 'x' || peekChar() == 'X')
-        return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), getLine(), numPos);
+        return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), curPos);
     else
-        return Token(TokenType::NUMBER, parseDecimal(c), getLine(), numPos);
+        return Token(TokenType::NUMBER, parseDecimal(c), curPos);
     }
-
 
 void Tokenizer::skipToEndOfComment()
     {
@@ -383,14 +377,14 @@ void Tokenizer::skipToEndOfComment()
 
 bool Tokenizer::peekWord(std::string str)
     {
-    if(peekedState.pos + str.size() >= size)
+    if(peekedState.nextPos.cursorPos + str.size() >= size)
         return false;
-    if(str.compare(0, str.size(), _stream, peekedState.pos, str.size()) != 0)
+    if(str.compare(0, str.size(), _stream, peekedState.nextPos.cursorPos, str.size()) != 0)
         return false;
-    if(peekedState.pos + str.size() == size)
+    if(peekedState.nextPos.cursorPos + str.size() == size)
         return true;//EOF, so ID-string matches.
     //looking for WORD, so next char should not be an ID char
-    return !isIdChar(_stream[peekedState.pos+str.size()]);
+    return !isIdChar(_stream[peekedState.nextPos.cursorPos+str.size()]);
     }
 
 bool Tokenizer::matchWord(const std::string& str)

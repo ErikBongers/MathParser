@@ -1,5 +1,5 @@
 #pragma once
-
+#include "TokenPos.h"
 /*
 Token is a class that must implement following functions:
     static Token Null();
@@ -14,9 +14,7 @@ class BaseTokenizer
         size_t size = -1;
         struct State{
             Token token;
-            unsigned int pos = 0; //pos at which to read next token.
-            unsigned int line = 0;
-            unsigned int linePos = 0;
+            TokenPos nextPos = 0;
             bool newLineStarted = true;
             void clear() { token = Token::Null(); }
             bool isNull() { return token.isNull(); }
@@ -24,10 +22,11 @@ class BaseTokenizer
         State peekedState;
         State currentState;
         bool newlineIsToken = false;
+        unsigned int getLine() { return peekedState.nextPos.line;}
+        unsigned int getLinePos() { return peekedState.nextPos.linePos-1;}
     public:
-        unsigned int getLine() { return peekedState.line;}
-        unsigned int getLinePos() { return peekedState.linePos-1;} //linePos always contains the NEXT pos.
-        unsigned int getPos() { return peekedState.pos;} //pos always contains the NEXT pos.
+        unsigned int getPos() { return peekedState.nextPos.cursorPos;}
+        const Token& getCurrentToken() const { return currentState.token; }
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
         BaseTokenizer(const char* stream) 
             : _stream(stream) 
@@ -65,31 +64,31 @@ class BaseTokenizer
 
         char peekChar()
             {
-            if(peekedState.pos >= size)
+            if(peekedState.nextPos.cursorPos >= size)
                 return 0; //EOF
-            return _stream[peekedState.pos];
+            return _stream[peekedState.nextPos.cursorPos];
             }
 
         char peekSecondChar()
             {
-            if((peekedState.pos+1) >= size)
+            if((peekedState.nextPos.cursorPos+1) >= size)
                 return 0; //EOF
-            return _stream[peekedState.pos+1];
+            return _stream[peekedState.nextPos.cursorPos+1];
             }
 
         char nextChar()
             {
-            if(peekedState.pos >= size)
+            if(peekedState.nextPos.cursorPos >= size)
                 return 0; //EOF
-            if(_stream[peekedState.pos] == '\n')
+            if(_stream[peekedState.nextPos.cursorPos] == '\n')
                 {
-                peekedState.line++;
-                peekedState.linePos = 0;
+                peekedState.nextPos.line++;
+                peekedState.nextPos.linePos = 0;
                 peekedState.newLineStarted = true;
                 }
             else
-                peekedState.linePos++;
-            return _stream[peekedState.pos++];
+                peekedState.nextPos.linePos++;
+            return _stream[peekedState.nextPos.cursorPos++];
             }
 
         bool match(char c)

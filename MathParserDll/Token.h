@@ -1,6 +1,7 @@
 #pragma once
 #include "ValueType.h"
 #include "Number.h"
+#include "TokenPos.h"
 
 enum class TokenType
     {
@@ -53,7 +54,7 @@ enum class TokenType
 class Token
     {
     public:
-        static Token Null() { return Token(TokenType::NULLPTR, 0, 0); }
+        static Token Null() { return Token(TokenType::NULLPTR, {0, 0, 0}); }
         bool isNull() const { return type == TokenType::NULLPTR;}
         TokenType type;
         std::string stringValue;
@@ -64,14 +65,13 @@ class Token
         //Duration
         //Calendar
 
-        unsigned int pos;
-        unsigned int line;
+        TokenPos pos;
         bool isFirstOnLine = false;
-        Token() : Token(TokenType::NULLPTR, 0, 0) {}
-        Token(TokenType type, char c, unsigned int line, unsigned int pos);
-        Token(TokenType type, Number n, unsigned int line, unsigned int pos);
-        Token(TokenType type, std::string str, unsigned int line, unsigned int pos);
-        Token(TokenType type, unsigned int line, unsigned int pos);
+        Token() : Token(TokenType::NULLPTR, {0, 0, 0}) {}
+        Token(TokenType type, char c, TokenPos pos);
+        Token(TokenType type, Number n, TokenPos pos);
+        Token(TokenType type, std::string str, TokenPos pos);
+        Token(TokenType type, TokenPos pos);
     };
 
 

@@ -183,6 +183,7 @@
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="Tokenizer.h" />
+    <ClInclude Include="TokenPos.h" />
     <ClInclude Include="tools.h" />
     <ClInclude Include="trim.h" />
     <ClInclude Include="Unit.h" />

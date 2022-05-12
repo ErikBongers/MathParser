@@ -79,6 +79,8 @@ namespace TestParser
             assertResult("sin(30deg)", 0.5);
             assertResult("sin(30deg)+1", 1.5);
             assertResult("abs(-sin(30deg))", 0.5);
+            assertResult("|-sin(30deg)|", 0.5);
+            assertResult("a=-123;|a|", 123);
             assertResult("max(-sin(30deg), 3, 9999)", 9999);
             }
 

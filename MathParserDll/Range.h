@@ -1,17 +1,16 @@
 #pragma once
+#include "TokenPos.h"
 
 class Token;
 struct Range
     {
-    unsigned startLine;
-    unsigned startPos;
+    TokenPos start;
 
-    unsigned endLine;
-    unsigned endPos;
+    TokenPos end;
     Range& operator+=(const Range& r);
-    Range() {};
+    Range() : start({ -1, -1, -1}) {}
     Range(const Token& t);
-    Range(unsigned i1, unsigned i2, unsigned i3, unsigned i4) : startLine(i1), startPos(i2), endLine(i3), endPos(i4) {}
+    Range(TokenPos start, TokenPos end) : start(start), end(end) {}
     void to_json(std::ostringstream& sstr) const;
     };
 

@@ -39,12 +39,6 @@ Value::Value(Duration duration)
     data = duration;
     }
 
-Value::Value(const std::vector<Value>& list) //TODO: move constructor
-    : type(ValueType::LIST)
-    {
-    data = list;
-    }
-
 void Value::to_json(std::ostringstream& sstr) const
     {
     sstr << "{";

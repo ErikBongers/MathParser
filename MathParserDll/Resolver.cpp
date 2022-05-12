@@ -118,8 +118,7 @@ Value Resolver::resolveFunctionDef(const FunctionDefExpr& expr)
     f->operatorDefs = &operatorDefs;
     f->unitDefs = &unitDefs;
     f->dateFormat = dateFormat;
-    //TODO: properly ignore a FunctionDef as it doesn't calculate anything.
-    return Value(); //NONE
+    return Value(); //none
     }
 
 Value Resolver::resolveNone(const NoneExpr& expr)

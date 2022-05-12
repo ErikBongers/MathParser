@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "pch.hpp"
 #include "Tokenizer.h"
 #include <algorithm>
 
@@ -55,33 +55,33 @@ void Tokenizer::getNextState()
 Token Tokenizer::getNextToken()
     {
     if (peekedState.nextPos.cursorPos >= size)
-        return Token(TokenType::EOT, peekedState.nextPos);
+        return Token(TokenType::EOT, peekedState.nextPos-1);
 
     skipWhiteSpace();
 
     if(matchWord("function"))
-        return Token(TokenType::FUNCTION, "function", peekedState.nextPos);
+        return Token(TokenType::FUNCTION, "function", peekedState.nextPos-1);
 
     char c;
     c = nextChar();
     if (!c)
-        return Token(TokenType::EOT, peekedState.nextPos);
+        return Token(TokenType::EOT, peekedState.nextPos-1);
 
     switch (c)
         {
         using enum TokenType;
-        case '\n': return Token(NEWLINE, c, peekedState.nextPos);
-        case '{': return Token(CURL_OPEN, c, peekedState.nextPos);
-        case '}': return Token(CURL_CLOSE, c, peekedState.nextPos);
-        case '(': return Token(PAR_OPEN, c, peekedState.nextPos);
-        case ')': return Token(PAR_CLOSE, c, peekedState.nextPos);
-        case '[': return Token(BRAC_OPEN, c, peekedState.nextPos);
-        case ']': return Token(BRAC_CLOSE, c, peekedState.nextPos);
-        case '^': return Token(POWER, c, peekedState.nextPos);
-        case '=': return Token(EQ, c, peekedState.nextPos);
-        case ',': return Token(COMMA, c, peekedState.nextPos);
-        case '|': return Token(PIPE, c, peekedState.nextPos);
-        case ';': return Token(SEMI_COLON, c, peekedState.nextPos);
+        case '\n': return Token(NEWLINE, c, peekedState.nextPos-1);
+        case '{': return Token(CURL_OPEN, c, peekedState.nextPos-1);
+        case '}': return Token(CURL_CLOSE, c, peekedState.nextPos-1);
+        case '(': return Token(PAR_OPEN, c, peekedState.nextPos-1);
+        case ')': return Token(PAR_CLOSE, c, peekedState.nextPos-1);
+        case '[': return Token(BRAC_OPEN, c, peekedState.nextPos-1);
+        case ']': return Token(BRAC_CLOSE, c, peekedState.nextPos-1);
+        case '^': return Token(POWER, c, peekedState.nextPos-1);
+        case '=': return Token(EQ, c, peekedState.nextPos-1);
+        case ',': return Token(COMMA, c, peekedState.nextPos-1);
+        case '|': return Token(PIPE, c, peekedState.nextPos-1);
+        case ';': return Token(SEMI_COLON, c, peekedState.nextPos-1);
         case '!': 
             {
             if (peekChar() == '/' && peekSecondChar() == '/')
@@ -89,53 +89,53 @@ Token Tokenizer::getNextToken()
                 nextChar(); //consume
                 nextChar(); //consume
                 auto comment = getToEOL();
-                return Token(ECHO_COMMENT_LINE, comment, peekedState.nextPos);
+                return Token(ECHO_COMMENT_LINE, comment, peekedState.nextPos-1);
                 }
             else if (match('/'))
-                return Token(ECHO_END, "!/", peekedState.nextPos.offset(-1));
+                return Token(ECHO_END, "!/", peekedState.nextPos-2);
             else if (match('!'))
-                return Token(ECHO_DOUBLE, "!", peekedState.nextPos.offset(-1));
-            return Token(ECHO, c, peekedState.nextPos);
+                return Token(ECHO_DOUBLE, "!", peekedState.nextPos-2);
+            return Token(ECHO, c, peekedState.nextPos-1);
             }
         case '.': 
             if (match('='))
-                return Token(EQ_UNIT, peekedState.nextPos.offset(-1));
+                return Token(EQ_UNIT, peekedState.nextPos-2);
             else
-                return Token(DOT, c, peekedState.nextPos);
+                return Token(DOT, c, peekedState.nextPos-1);
         case '+':
             if (match('='))
                 {
-                return Token(EQ_PLUS, peekedState.nextPos.offset(-1));
+                return Token(EQ_PLUS, peekedState.nextPos-2);
                 }
             else if (match('+'))
                 {
-                return Token(INC, peekedState.nextPos.offset(-1));
+                return Token(INC, peekedState.nextPos-2);
                 }
-            return Token(PLUS, c, peekedState.nextPos);
+            return Token(PLUS, c, peekedState.nextPos-1);
         case '-':
             if (match('='))
                 {
-                return Token(EQ_MIN, peekedState.nextPos.offset(-1));
+                return Token(EQ_MIN, peekedState.nextPos-2);
                 }
             else if (match('-'))
                 {
-                return Token(DEC, peekedState.nextPos.offset(-1));
+                return Token(DEC, peekedState.nextPos-2);
                 }
-            return Token(MIN, c, peekedState.nextPos);
+            return Token(MIN, c, peekedState.nextPos-1);
         case '*':
             if (match('='))
-                return Token(EQ_MULT, peekedState.nextPos.offset(-1));
-            return Token(MULT, c, peekedState.nextPos);
+                return Token(EQ_MULT, peekedState.nextPos-2);
+            return Token(MULT, c, peekedState.nextPos-1);
         case '#':
             if (match('/'))
                 {
-                return Token(MUTE_END, peekedState.nextPos.offset(-1));
+                return Token(MUTE_END, peekedState.nextPos-2);
                 }
             else if (matchWord("define"))
                 {
-                return Token(DEFINE, "#define", peekedState.nextPos);
+                return Token(DEFINE, "#define", peekedState.nextPos-1);
                 }
-            return Token(MUTE_LINE, c, peekedState.nextPos);
+            return Token(MUTE_LINE, c, peekedState.nextPos-1);
         case '/':
             {
             auto cc = peekChar();
@@ -143,12 +143,12 @@ Token Tokenizer::getNextToken()
                 {
                 case '=':
                     nextChar(); //consume
-                    return Token(EQ_DIV, peekedState.nextPos.offset(-1));
+                    return Token(EQ_DIV, peekedState.nextPos-2);
                 case '/':
                     {
                     nextChar(); //consume
                     auto comment = getToEOL();
-                    return Token(COMMENT_LINE, comment, peekedState.nextPos);
+                    return Token(COMMENT_LINE, comment, peekedState.nextPos-1);
                     }
                 case '*':
                     nextChar(); //consume
@@ -156,12 +156,12 @@ Token Tokenizer::getNextToken()
                     return getNextToken();
                 case '#':
                     nextChar(); //consume
-                    return Token(MUTE_START, peekedState.nextPos.offset(-1));
+                    return Token(MUTE_START, peekedState.nextPos-2);
                 case '!':
                     nextChar(); //consume
-                    return Token(ECHO_START, peekedState.nextPos.offset(-1));
+                    return Token(ECHO_START, peekedState.nextPos-2);
                 }
-            return Token(DIV, c, peekedState.nextPos);
+            return Token(DIV, c, peekedState.nextPos-1);
             }
         case '\'':
             {
@@ -179,7 +179,7 @@ Token Tokenizer::getNextToken()
                 return parseId(c);
                 }
             else
-                return Token(UNKNOWN, c, peekedState.nextPos);
+                return Token(UNKNOWN, c, peekedState.nextPos-1);
         }
     }
 
@@ -208,7 +208,7 @@ Token Tokenizer::parseId(char c)
             break;
             }
         }
-    return Token(TokenType::ID, word, wordPos);
+    return Token(TokenType::ID, word, wordPos-1);
     }
 
 Number Tokenizer::parseDecimal(char c)

@@ -6,11 +6,13 @@ SRC_DIR=src
 SRC_LIB_DIR=D:\Documents\Programming\WPFandXNA\MathParser\MathParserDll
 DESTDIR=www
 
-SRCS=$(wildcard $(SRC_DIR)/*.cpp)
-SRCS_LIB= $(wildcard $(SRC_LIB_DIR)/*.cpp)
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+SRCS_LIB = $(wildcard $(SRC_LIB_DIR)/*.cpp)
+SRCS_LIB := $(filter-out $(SRC_LIB_DIR)/pch.cpp, $(SRCS_LIB))
 
 DEPFLAGS=-MMD -MP
-CFLAGS=-I "$(SRC_LIB_DIR)" -D__WASM__ $(DEPFLAGS) -std=c++2b
+CFLAGS=-I "$(SRC_LIB_DIR)" -D__WASM__ -std=c++2b
+INCLUDE_PCH = $(CFLAGS) -Winvalid-pch -include-pch "D:\Documents\Programming\WPFandXNA\MathParser\MathParserDll\pch.hpp.pch"
 
 # local source compiled to build/
 OBS = $(notdir $(SRCS))
@@ -33,10 +35,10 @@ $(DESTDIR)/hullo.js: $(OBS) $(OBS_LIB)
 -include $(DEPS)
 
 $(BUILDDIR)/%.o : $(SRC_DIR)/%.cpp
-	$(CXX) -c $< -o $@ $(CFLAGS) 
+	$(CXX) -c $< -o $@ $(CFLAGS) $(DEPFLAGS) $(INCLUDE_PCH)
 
 $(BUILDDIR)/lib/%.o : $(SRC_LIB_DIR)/%.cpp
-	$(CXX) -c $< -o $@ $(CFLAGS)
+	$(CXX) -c $< -o $@ $(CFLAGS) $(DEPFLAGS) $(INCLUDE_PCH)
 
 .PHONY: clean
 
@@ -44,3 +46,8 @@ clean:
 	rmdir /s /q build
 	del /q "$(DESTDIR)\mathparser.wasm"
 	del /q "$(DESTDIR)\mathparser.wasm.js"
+
+.PHONY: pch
+
+pch:
+	$(CXX) -c $(SRC_LIB_DIR)\pch.hpp -o $(SRC_LIB_DIR)\pch.hpp.pch $(CFLAGS)

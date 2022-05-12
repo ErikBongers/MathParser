@@ -14,7 +14,7 @@ class BaseTokenizer
         size_t size = -1;
         struct State{
             Token token;
-            TokenPos nextPos = 0;
+            TokenPos nextPos;
             bool newLineStarted = true;
             void clear() { token = Token::Null(); }
             bool isNull() { return token.isNull(); }

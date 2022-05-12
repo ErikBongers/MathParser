@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "pch.hpp"
 #include "Resolver.h"
 #include "Function.h"
 #include "Number.h"
@@ -280,7 +280,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                     val = resolveDurationFragment(val, pfix.postfixId);
                     break;
                     }
-                //else fallthrough...
+                [[fallthrough]];
             default:
                 if(val.type == ValueType::NUMBER)
                     val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, unitDefs);

@@ -11,9 +11,6 @@
   > fix all the TODO's, because quick-and-dirty code.
 * optimize large programs
   > perhaps only one json stringstream? Via a Visitor?
-* emcc: use precompiled headers?
-  > https://clang.llvm.org/docs/PCHInternals.html
-  > https://gcc.gnu.org/onlinedocs/gcc/Precompiled-Headers.html
 * startup script
   > runs before every other run.
   > could contain functions and defs of vars,...

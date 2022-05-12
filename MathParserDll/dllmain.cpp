@@ -1,5 +1,5 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
-#include "pch.h"
+#include "pch.hpp"
 #ifndef __WASM__
 #include "framework.h"
 

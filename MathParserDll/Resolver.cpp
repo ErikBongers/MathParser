@@ -100,7 +100,7 @@ Value Resolver::resolveNode(const Node& node)
         case NodeType::STATEMENT: return resolveStatement((const Statement&)node);
         case NodeType::ASSIGNMENT: return resolveAssign((const AssignExpr&)node);
         case NodeType::LIST: return resolveList((const ListExpr&)node);
-        case NodeType::IDEXPR: return resolvePrim((const IdExpr&)node);
+        case NodeType::IDEXPR: return resolveIdExpr((const IdExpr&)node);
         case NodeType::POSTFIXEXPR: return resolvePostfix((const PostfixExpr&)node);
         case NodeType::CONSTEXPR: return resolveConst((const ConstExpr&)node);
         case NodeType::CALLEXPR: return resolveCall((const CallExpr&)node);
@@ -291,23 +291,18 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     return applyUnit(pfix, val);
     }
 
-Value Resolver::resolvePrim(const IdExpr& prim)
+Value Resolver::resolveIdExpr(const IdExpr& idExpr)
     {
     Value val;
-    if (prim.Id.type != TokenType::NULLPTR )
+    auto found = variables.find(idExpr.Id.stringValue);
+    if (found != variables.end())
         {
-        auto found = variables.find(prim.Id.stringValue);
-        if (found != variables.end())
-            {
-            val = getVar(prim.Id.stringValue);
-            }
-        else
-            return Value(Error(ErrorId::VAR_NOT_DEF, Range(prim.Id), prim.Id.stringValue.c_str()));
+        val = getVar(idExpr.Id.stringValue);
         }
     else
-        return Value(Error(ErrorId::UNKNOWN_EXPR, prim.range())); //TODO: this should never happen? -> allow only creation of prim with one of the above sub-types.
+        return Value(Error(ErrorId::VAR_NOT_DEF, Range(idExpr.Id), idExpr.Id.stringValue.c_str()));
 
-    return applyUnit(prim, val);
+    return applyUnit(idExpr, val);
     }
 
 Value& Resolver::applyUnit(const Node& node, Value& val)

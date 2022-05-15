@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>Test Sign in</title>
+</head>
+<body>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <h2 id="obey">Sign in, man!</h2>
+    <div id="g_id_onload"
+         data-client_id="595809100273-9vvaauhe57ovk2s67g6buuqptsiamfrg.apps.googleusercontent.com"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="onSignedIn"
+         data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="pill"
+         data-theme="outline"
+         data-text="signin_with"
+         data-size="medium"
+         data-logo_alignment="left">
+    </div>
+
+    <div>
+        <button id="btnUploadStartScript" onclick="uploadStartScript()">Upload start script</button>
+    </div>
+    <script>
+
+        let userSession = {};
+
+        function onSignedIn(googleUserToken) {
+            googleUserToken.test = "Test!";
+            fetch("https://europe-west1-ebo-tain.cloudfunctions.net/get-session", {
+                method: "POST",
+                mode: "cors",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(googleUserToken)
+            }).then(res => res.json())
+              .then (jsonUserSession => {
+                  console.log("Request complete! response:", jsonUserSession);
+                  document.getElementById("obey").innerHTML = jsonUserSession.name;
+                  userSession = jsonUserSession;
+            });
+        }
+
+
+        function uploadStartScript() {
+            fetch("https://europe-west1-ebo-tain.cloudfunctions.net/upload-start-script?sessionId=" + encodeURIComponent(userSession.sessionId), {
+                method: "POST",
+                mode: "cors",
+                headers: { 'Content-Type': 'plain/text' },
+                body: "start script met user id."
+            }).then(res => res.json())
+                .then(jsonResult=> {
+                    console.log("Upload complete! response:", jsonResult);
+                });
+        }
+
+    </script>
+</body>
+</html>

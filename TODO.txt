@@ -1,9 +1,16 @@
-﻿* Save to cloud (via functions?)
+﻿
+* replace strings with string_view, which are slices of existing strings.
+
+* Save to cloud (via functions?)
+  > cloud architecture: https://www.youtube.com/watch?v=JbEiek3MNWw
   > https://cloud.google.com/functions/docs/writing/http
   > depencencies for cloud functions in package.json : https://cloud.google.com/functions/docs/create-deploy-http-nodejs
   > Via Storage: use generateDownloadUrl
   > https://stackoverflow.com/questions/49201011/can-a-cloud-function-read-from-cloud-storage
   > functions to storage example in python: https://stackoverflow.com/questions/52249978/write-to-google-cloud-storage-from-cloud-function-python
+  > Authenticate Client (Bearer token) via javascript: https://cloud.google.com/endpoints/docs/frameworks/python/javascript-client
+  > Authenticate Storage via Function? : https://cloud.google.com/functions/docs/samples/functions-bearer-token
+  > Local development: https://cloud.google.com/functions/docs/local-development
 
 * Tests: include more complex tests with multi-line code, like function defs.
 * functions:

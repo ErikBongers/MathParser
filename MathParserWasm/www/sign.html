@@ -7,42 +7,38 @@
     <h2 id="obey">Sign in, man!</h2>
     <div id="g_id_onload"
          data-client_id="595809100273-9vvaauhe57ovk2s67g6buuqptsiamfrg.apps.googleusercontent.com"
-         data-context="signin"
-         data-ux_mode="popup"
+         data-context="use"
          data-callback="onSignedIn"
-         data-auto_prompt="false">
+         data-auto_select="true">
     </div>
-
-    <div class="g_id_signin"
-         data-type="standard"
-         data-shape="pill"
-         data-theme="outline"
-         data-text="signin_with"
-         data-size="medium"
-         data-logo_alignment="left">
-    </div>
-
     <div>
         <button id="btnUploadStartScript" onclick="uploadStartScript()">Upload start script</button>
         <button id="btnDownloadStartScript" onclick="downloadStartScript()">Download start script</button>
+        <button id="btnSetCookie" onclick="setTheCookie()">Set cookie</button>
+        <button id="btnSetCookie" onclick="getTheCookie()">Get cookie</button>
     </div>
     <script>
 
         let userSession = {};
 
         function onSignedIn(googleUserToken) {
-            googleUserToken.test = "Test!";
-            fetch("https://europe-west1-ebo-tain.cloudfunctions.net/get-session", {
+
+            userSession = JSON.parse(getCookie("mathparserSession"));
+            let params = "";
+            if (userSession.sessionId)
+                params = "?sessionId=" + encodeURIComponent(userSession.sessionId);
+            fetch("https://europe-west1-ebo-tain.cloudfunctions.net/get-session"+params, {
                 method: "POST",
                 mode: "cors",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(googleUserToken)
             }).then(res => res.json())
-              .then (jsonUserSession => {
-                  console.log("Request complete! response:", jsonUserSession);
-                  document.getElementById("obey").innerHTML = jsonUserSession.name;
-                  userSession = jsonUserSession;
-               });
+                .then(jsonUserSession => {
+                    console.log("Request complete! response:", jsonUserSession);
+                    document.getElementById("obey").innerHTML = jsonUserSession.name;
+                    userSession = jsonUserSession;
+                    setCookie("mathparserSession", JSON.stringify(userSession), 1);
+                });
         }
 
 
@@ -53,7 +49,7 @@
                 headers: { 'Content-Type': 'plain/text' },
                 body: "start script REST content."
             }).then(res => res.json())
-                .then(jsonResult=> {
+                .then(jsonResult => {
                     console.log("Upload complete! response:", jsonResult);
                 });
 
@@ -69,6 +65,37 @@
                 .then(content => {
                     console.log("download complete! response:", content);
                 });
+        }
+
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        function eraseCookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        function setTheCookie() {
+            setCookie("mathparserSession", "123456", 1);
+        }
+
+        function getTheCookie() {
+            console.log(JSON.parse(getCookie("mathparserSession")));
         }
     </script>
 </body>

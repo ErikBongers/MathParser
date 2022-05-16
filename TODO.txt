@@ -1,4 +1,5 @@
-﻿* session: keep after browser refresh.
+﻿* functions: use typescript?
+* session: keep after browser refresh.
   > except if expired!
 * expire session: check in upload-start-script if session is expired.
   > if not expired, rewrite session with new expiration time.

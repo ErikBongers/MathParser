@@ -17,9 +17,8 @@ async function verify(token) {
 }
 
 exports.getSession = async (req, res) => {
-    // Set CORS headers for preflight requests
-    // Allows GETs from any origin with the Content-Type header
-    // and caches preflight response for 3600s
+
+
 
     res.set('Access-Control-Allow-Origin', '*');
 
@@ -29,20 +28,30 @@ exports.getSession = async (req, res) => {
         res.set('Access-Control-Max-Age', '86400');
         res.status(204).send('');
     } else {
-        let session = await verify(req.body.credential);
-        session.sessionId = uuid.v1();
+        const storage = new Storage();
 
+        let session = null;
+        if (req.query.sessionId) {
+            //get the stored session.
+            session = await getSession(storage, req.query.sessionId);
+            if (session) {
+                //TODO: check expiration date
+            }
+        }
+
+        if (!session) {
+            session = await verify(req.body.credential);
+            session.sessionId = uuid.v1();
+        }
         let expirationTime = 2 * 60 * 60 * 1000;
 
         session.expirationDate = new Date();
         session.expirationDate.setTime(session.expirationDate.getTime() + expirationTime);
         //create session file.
-        const storage = new Storage();
         await storage
             .bucket("mathparser-session-data")
             .file(session.sessionId)
             .save(JSON.stringify(session));
-
 
         res.status(200).json(session);
     }
@@ -50,4 +59,23 @@ exports.getSession = async (req, res) => {
 
 };
 
+//await-able because returns a Promise
+function streamToString(stream) {
+    const chunks = [];
+    return new Promise((resolve, reject) => {
+        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+        stream.on('error', (err) => reject(err));
+        stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    })
+}
 
+async function getSession(storage, sessionId) {
+    let readStream = await storage
+        .bucket("mathparser-session-data")
+        .file(sessionId)
+        .createReadStream();
+
+    let strSession = await streamToString(readStream);
+
+    return JSON.parse(strSession);
+}

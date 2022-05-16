@@ -24,6 +24,7 @@
 
     <div>
         <button id="btnUploadStartScript" onclick="uploadStartScript()">Upload start script</button>
+        <button id="btnDownloadStartScript" onclick="downloadStartScript()">Download start script</button>
     </div>
     <script>
 
@@ -50,7 +51,7 @@
                 method: "POST",
                 mode: "cors",
                 headers: { 'Content-Type': 'plain/text' },
-                body: "start script met user id."
+                body: "start script REST content."
             }).then(res => res.json())
                 .then(jsonResult=> {
                     console.log("Upload complete! response:", jsonResult);
@@ -64,11 +65,11 @@
                 mode: "cors",
                 headers: { 'Content-Type': 'plain/text' }
                 //body: "start script met user id."
-            }).then(res => res.json())
-                .then(jsonResult => {
-                    console.log("Upload complete! response:", jsonResult);
+            }).then(res => res.text())
+                .then(content => {
+                    console.log("download complete! response:", content);
                 });
-
+        }
     </script>
 </body>
 </html>

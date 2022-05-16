@@ -62,7 +62,8 @@ void UnitDefs::init()
             { "hours", UnitDef("hours", 3600, UnitClass::DURATION)},
             { "days", UnitDef("days", 86400, UnitClass::DURATION)},
             { "months", UnitDef("months", 2629746, UnitClass::DURATION)},
-            { "years", UnitDef("years", 31556952, UnitClass::DURATION)}
+            { "years", UnitDef("years", 31556952, UnitClass::DURATION)},
+            { "ms", UnitDef("ms", 1/1000, UnitClass::DURATION)},
         };
 
 

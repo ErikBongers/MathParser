@@ -1,4 +1,9 @@
-﻿
+﻿* session: keep after browser refresh.
+  > except if expired!
+* expire session: check in upload-start-script if session is expired.
+  > if not expired, rewrite session with new expiration time.
+* graceful error if session is invalid (expired, not exists, ...)
+
 * replace strings with string_view, which are slices of existing strings.
 
 * Save to cloud (via functions?)
@@ -11,6 +16,9 @@
   > Authenticate Client (Bearer token) via javascript: https://cloud.google.com/endpoints/docs/frameworks/python/javascript-client
   > Authenticate Storage via Function? : https://cloud.google.com/functions/docs/samples/functions-bearer-token
   > Local development: https://cloud.google.com/functions/docs/local-development
+  > Using Firestore: https://www.youtube.com/watch?v=Z87OZtIYC_0&t=288s
+    > perhaps for session data?
+  > free hosting + domain: https://www.youtube.com/watch?v=cG9kv5-5bPI
 
 * Tests: include more complex tests with multi-line code, like function defs.
 * functions:

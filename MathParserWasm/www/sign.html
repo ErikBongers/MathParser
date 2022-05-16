@@ -41,12 +41,12 @@
                   console.log("Request complete! response:", jsonUserSession);
                   document.getElementById("obey").innerHTML = jsonUserSession.name;
                   userSession = jsonUserSession;
-            });
+               });
         }
 
 
         function uploadStartScript() {
-            fetch("https://europe-west1-ebo-tain.cloudfunctions.net/upload-start-script?sessionId=" + encodeURIComponent(userSession.sessionId), {
+            fetch("https://europe-west1-ebo-tain.cloudfunctions.net/start-script?sessionId=" + encodeURIComponent(userSession.sessionId), {
                 method: "POST",
                 mode: "cors",
                 headers: { 'Content-Type': 'plain/text' },
@@ -55,7 +55,19 @@
                 .then(jsonResult=> {
                     console.log("Upload complete! response:", jsonResult);
                 });
+
         }
+
+        function downloadStartScript() {
+            fetch("https://europe-west1-ebo-tain.cloudfunctions.net/start-script?sessionId=" + encodeURIComponent(userSession.sessionId), {
+                method: "GET",
+                mode: "cors",
+                headers: { 'Content-Type': 'plain/text' }
+                //body: "start script met user id."
+            }).then(res => res.json())
+                .then(jsonResult => {
+                    console.log("Upload complete! response:", jsonResult);
+                });
 
     </script>
 </body>

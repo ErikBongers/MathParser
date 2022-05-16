@@ -89,6 +89,17 @@ void Error::to_json(std::ostringstream& sstr) const
     sstr << ",\"isWarning\":" << (isWarning ? "true":"false");
     sstr << ",\"range\":";
     range.to_json(sstr);
+    sstr << ",\"stackTrace\":";
+    sstr << "[";
+    bool first = true;
+    for (auto& error : stackTrace)
+        {
+        if(!first)
+            sstr << ",";
+        error.to_json(sstr);
+        first = false;
+        }
+    sstr << "]";
     sstr << "}";
     }
 
@@ -104,6 +115,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::FUNC_NOT_DEF, {ErrorId::FUNC_NOT_DEF, "FUNC_NOT_DEF", "function {0} is not defined."}},
         {ErrorId::FUNC_ARG_MIS, {ErrorId::FUNC_ARG_MIS, "FUNC_ARG_MIS", "argument(s) for function {0} don't match."}},
         {ErrorId::FUNC_NO_OPEN_PAR, {ErrorId::FUNC_NO_OPEN_PAR, "FUNC_NO_OPEN_PAR", "Missing '(' for function {0}."}},
+        {ErrorId::FUNC_FAILED, {ErrorId::FUNC_FAILED, "FUNC_FAILED", "Error in function {0}."}},
         {ErrorId::W_DIV_IMPL_MULT, {ErrorId::W_DIV_IMPL_MULT, "W_DIV_IMPL_MULT", "Warning: ambiguous expression: division followed by implicit multiplication."}},
         {ErrorId::W_POW_IMPL_MULT, {ErrorId::W_POW_IMPL_MULT, "W_POW_IMPL_MULT", "Warning: ambiguous expression: exponential combined with implicit multiplication."}},
         {ErrorId::UNIT_NOT_DEF, {ErrorId::UNIT_NOT_DEF, "UNIT_NOT_DEF", "unit {0} is not defined."}},

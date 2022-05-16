@@ -10,6 +10,7 @@ enum class ErrorId
     FUNC_NOT_DEF,
     FUNC_ARG_MIS,
     FUNC_NO_OPEN_PAR,
+    FUNC_FAILED,
     W_DIV_IMPL_MULT,
     W_POW_IMPL_MULT,
     UNIT_NOT_DEF,
@@ -55,6 +56,7 @@ class Error
         ErrorId id = ErrorId::NONE;
         std::string errorMsg;
         Range range;
+        std::vector<Error> stackTrace;
 
         Error() {}
         Error(ErrorId id, const Range& range);

@@ -1,10 +1,25 @@
-﻿* functions: use typescript?
-* session: keep after browser refresh.
-  > except if expired!
-* expire session: check in upload-start-script if session is expired.
-  > if not expired, rewrite session with new expiration time.
-* graceful error if session is invalid (expired, not exists, ...)
+﻿* errors in functions?
+  > create  stacktrace.
+* test: add a global var to wasm
+  > first an int.
+  > then an object
+  > then a resolver!
+    > or at least, a number of start statements.
 
+* start script:
+  > limits of these start statements?
+    > what about line numbers?
+    > Statemtent should have a source index (byte)
+      0 = start script
+      1 = actual script.
+    > 
+* mathparser page
+  > show logged in user in upper right corner.
+  > load start script into localStorage (sessionStorage!)
+  > precompile startscript into resolver?
+    > means resolver has to be statefull.
+
+* functions: use typescript?
 * replace strings with string_view, which are slices of existing strings.
 
 * Save to cloud (via functions?)

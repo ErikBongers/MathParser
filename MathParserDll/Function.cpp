@@ -83,7 +83,13 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
         result = resolver.resolveStatement(*stmt);
         errors.insert(errors.end(), result.errors.begin(), result.errors.end());
         }
-    result.errors = std::move(errors);
+    if(!errors.empty())
+        {
+        auto error = Error(ErrorId::FUNC_FAILED, range, functionDef.id.stringValue);
+        error.stackTrace = std::move(errors);
+        result.errors.clear();
+        result.errors.push_back(error);
+        }
     return result;
     }
 

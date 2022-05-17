@@ -9,6 +9,7 @@
 #include "version.h"
 
 std::string version = "1.0." + std::to_string(VERSION_BUILD);
+std::string result = "";
 
 int C_DECL parse(const char* str)
     {
@@ -19,11 +20,11 @@ int C_DECL parse(const char* str)
     parser.parse();
     std::map<std::string, Value> nada;
     Resolver resolver(functionDefs, unitDefs, operatorDefs, nada);
-    resolver.resolve(parser.statements);
+    result = resolver.resolve(parser.statements);
     return getResultLen();
     }
 
-int C_DECL getResultLen() { return Resolver::getResultLen() + 1; }
+int C_DECL getResultLen() { return ((int)result.size()) + 1; }
 
 void trimStringAndCopy(std::string& str, char* buffer, int buflen)
     {
@@ -37,7 +38,6 @@ void trimStringAndCopy(std::string& str, char* buffer, int buflen)
 
 void C_DECL getResult(char* buffer, int buflen)
     {
-    auto result = Resolver::getResult();
     trimStringAndCopy(result, buffer, buflen);
     }
 

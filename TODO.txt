@@ -1,18 +1,24 @@
-﻿* Ranges: add source index.
-
-* test: add a global var to wasm
+﻿* test: add a global var to wasm
   > first an int.
+    > setInt(int theInt) -> sets global int.
+    > getInt()...
   > then an object
   > then a resolver!
     > or at least, a number of start statements.
 
+* Parser delete it's nodes!
+  > replace with smart pointers?
+  > create a NodesFactory per source file?
+  > or just keep the Parser of the startScript alive? Feels strange...
+
 * start script:
   > limits of these start statements?
-    > what about line numbers?
-    > Statemtent should have a source index (byte)
-      0 = start script
-      1 = actual script.
-    > 
+    > none: why bother having restrictions.
+    > start script does NOT generate output.
+      > also no echo?
+  > has sourceIndex = 0
+  > precompile into statements that can be passed to resolver (see globals)
+
 * mathparser page
   > show logged in user in upper right corner.
   > load start script into localStorage (sessionStorage!)

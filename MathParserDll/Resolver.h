@@ -8,7 +8,6 @@ class Resolver
     {
     private:
         FunctionDefs& functionDefs;
-        static std::string result;
         std::map<std::string, Value> variables;
 
         Value resolveNone(const NoneExpr& expr);
@@ -29,11 +28,9 @@ class Resolver
 
     public:
         Resolver(FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables);
-        void resolve(std::vector<Statement*>& statements);
+        std::string resolve(std::vector<Statement*>& statements);
         Value resolveStatement(const Statement& stmt);
         std::string formatError(const std::string errorMsg, ...);
-        static int getResultLen() { return (int)result.size(); }
-        static const std::string& getResult() { return result; }
         UnitDefs& unitDefs;
         OperatorDefs& operatorDefs;
         DateFormat dateFormat = DateFormat::UNDEFINED;

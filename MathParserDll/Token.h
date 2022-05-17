@@ -54,10 +54,11 @@ enum class TokenType
 class Token
     {
     public:
-        static Token Null() { return Token(TokenType::NULLPTR, {0, 0, 0}); }
+        static Token Null(char sourceIndex) { return Token(TokenType::NULLPTR, {0, 0, 0}, sourceIndex); }
         bool isNull() const { return type == TokenType::NULLPTR;}
         TokenType type;
         std::string stringValue;
+        char sourceIndex = -1;
 
         ValueType valueType = ValueType::NONE;
         Number numberValue = Number(0.0,0);
@@ -67,11 +68,11 @@ class Token
 
         TokenPos pos;
         bool isFirstOnLine = false;
-        Token() : Token(TokenType::NULLPTR, {0, 0, 0}) {}
-        Token(TokenType type, char c, TokenPos pos);
-        Token(TokenType type, Number n, TokenPos pos);
-        Token(TokenType type, std::string str, TokenPos pos);
-        Token(TokenType type, TokenPos pos);
+        Token() : Token(TokenType::NULLPTR, {0, 0, 0}, -1) {}
+        Token(TokenType type, char c, TokenPos pos, char sourceIndex);
+        Token(TokenType type, Number n, TokenPos pos, char sourceIndex);
+        Token(TokenType type, std::string str, TokenPos pos, char sourceIndex);
+        Token(TokenType type, TokenPos pos, char sourceIndex);
     };
 
 

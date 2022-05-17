@@ -1,5 +1,5 @@
-﻿* errors in functions?
-  > create  stacktrace.
+﻿* Ranges: add source index.
+
 * test: add a global var to wasm
   > first an int.
   > then an object

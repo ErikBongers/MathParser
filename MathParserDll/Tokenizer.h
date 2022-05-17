@@ -11,11 +11,12 @@
 class Tokenizer : public BaseTokenizer<Token>
     {
     public:
-        Tokenizer(const char* stream);
+        Tokenizer(const char* stream, char sourceIndex);
         Token peekSecond();
         Token next();
         void tokenizeComments(bool comments);
         void tokenizeNewlines(bool set);
+        char sourceIndex;
 
     private:
         bool peekComments = false;

@@ -129,5 +129,5 @@ Unit::Unit(const Token& idToken)
 
 Unit Unit::CLEAR() 
     { 
-    return Unit(Token::Null()); 
+    return Unit(Token::Null(-1)); 
     }

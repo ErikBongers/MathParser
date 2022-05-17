@@ -2,16 +2,16 @@
 #include "Parser.h"
 #include "Function.h"
 
-Parser::Parser(const char* stream, FunctionDefs& functionDefs)
-    : tok(stream), functionDefs(functionDefs) 
+Parser::Parser(const char* stream, char sourceIndex, FunctionDefs& functionDefs)
+    : tok(stream, sourceIndex), functionDefs(functionDefs) 
     {
     }
 # define M_PIl          3.141592653589793238462643383279502884L
 void Parser::parse()
     {
     ConstExpr* pConst = createConst(ValueType::NUMBER);
-    pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), {0, 0, 0});
-    ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}), pConst});
+    pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), {0, 0, 0}, tok.sourceIndex);
+    ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}, tok.sourceIndex), pConst});
     parseEchoLines();
     while (!peek(TokenType::EOT))
         {
@@ -298,7 +298,7 @@ Node* Parser::parseAssignExpr()
                 {
                 BinaryOpExpr* binOpExpr = createBinaryOp();
                 binOpExpr->n1 = idExpr;
-                binOpExpr->op = Token(oper, operToken.pos);
+                binOpExpr->op = Token(oper, operToken.pos, tok.sourceIndex);
                 binOpExpr->n2 = parseAddExpr();
                 assign->expr = binOpExpr;
                 }
@@ -316,7 +316,7 @@ Node* Parser::parseAssignExpr()
                     }
                 else
                     { //valid syntax: clear the unit, if any.
-                    pfix->postfixId = Token::Null();
+                    pfix->postfixId = Token::Null(tok.sourceIndex);
                     }
                 }
             return assign;
@@ -411,7 +411,7 @@ Node* Parser::parseImplicitMult()
         //don't consume the token yet...
         auto m = createBinaryOp();
         m->n1 = n1;
-        m->op = Token(TokenType::MULT, '*', tok.peek().pos);
+        m->op = Token(TokenType::MULT, '*', tok.peek().pos, tok.sourceIndex);
         m->n2 = parsePostFixExpr();
         m->implicitMult = true;
         n1 = m;
@@ -463,7 +463,7 @@ Node* Parser::parseOnePostFix(Node* node)
             }
         else
             { //a dot followed by nothing is valid syntax: clear the unit, if any.
-            postfixExpr->postfixId = Token::Null();
+            postfixExpr->postfixId = Token::Null(tok.sourceIndex);
             }
         }
     else if (t.type == TokenType::INC || t.type == TokenType::DEC)
@@ -478,7 +478,7 @@ Node* Parser::parseOnePostFix(Node* node)
         IdExpr* idExpr = (IdExpr*)node;
         CallExpr* callExpr = createCall();
         callExpr->arguments.push_back(node);
-        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), operToken.pos);
+        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), operToken.pos, tok.sourceIndex);
 
         AssignExpr* assignExpr = createAssign();
         assignExpr->Id = idExpr->Id;
@@ -561,7 +561,7 @@ Node* Parser::parseAbsOperator(const Token& currentToken)
     auto addExpr = parseAddExpr();
     CallExpr* callExpr = createCall();
     callExpr->arguments.push_back(addExpr);
-    callExpr->functionName = Token(TokenType::ID, "abs", currentToken.pos);
+    callExpr->functionName = Token(TokenType::ID, "abs", currentToken.pos, tok.sourceIndex);
     auto t = tok.peek();
     if (!match(TokenType::PIPE))
         {
@@ -642,7 +642,7 @@ Range ConstExpr::range() const
     TokenPos end = value.pos;
     end.cursorPos += (int)value.stringValue.size();
     end.linePos += (int)value.stringValue.size();
-    return Range(value.pos, end);
+    return Range(value.pos, end, this->value.sourceIndex);
     }
 
 Range IdExpr::range() const
@@ -650,7 +650,7 @@ Range IdExpr::range() const
     TokenPos end = Id.pos;
     end.cursorPos += (int)Id.stringValue.size();
     end.linePos += (int)Id.stringValue.size();
-    return Range(Id.pos, end);
+    return Range(Id.pos, end, Id.sourceIndex);
     }
 
 Range PostfixExpr::range() const
@@ -658,7 +658,7 @@ Range PostfixExpr::range() const
     TokenPos end = postfixId.pos;
     end.cursorPos += (int)postfixId.stringValue.size();
     end.linePos += (int)postfixId.stringValue.size();
-    Range r = Range(postfixId.pos, end);
+    Range r = Range(postfixId.pos, end, postfixId.sourceIndex);
     if(expr != nullptr)
         r += expr->range();
     return r;

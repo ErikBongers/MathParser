@@ -181,7 +181,7 @@ class Parser
         std::map<std::string, Variable> ids;
         std::vector<Statement*> statements;
 
-        Parser(const char* stream, FunctionDefs& functionDefs);
+        Parser(const char* stream, char sourceIndex, FunctionDefs& functionDefs);
         ~Parser() { for (auto node : nodes) delete node; }
         void parse();
     private:

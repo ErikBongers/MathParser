@@ -12,7 +12,7 @@
 class Value
     {
     public:
-        Token id = Token::Null(); //optional, in case of a variable.
+        Token id = Token::Null(-1); //optional, in case of a variable.
         ValueType type = ValueType::NONE;
         
     private:

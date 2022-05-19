@@ -1,5 +1,5 @@
 #pragma once
-#include "Unit.h"
+#include "Globals.h"
 #include "Error.h"
 #include "Tokenizer.h"
 #include <vector>
@@ -168,6 +168,7 @@ class Variable
         Node* addExpr = nullptr;
     };
 
+struct Globals;
 
 class Parser
     {
@@ -177,11 +178,11 @@ class Parser
         bool echoBlock = false;
         bool echoTrailingComment = false;
     public:
-        FunctionDefs& functionDefs;
+        Globals& globals;
         std::map<std::string, Variable> ids;
         std::vector<Statement*> statements;
 
-        Parser(const char* stream, char sourceIndex, FunctionDefs& functionDefs);
+        Parser(const char* stream, char sourceIndex, Globals& globals);
         ~Parser() { for (auto node : nodes) delete node; }
         void parse();
     private:

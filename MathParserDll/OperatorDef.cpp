@@ -35,12 +35,12 @@ Value OperatorDef::call(std::vector<Value>& args, const Range& range)
 
 void OperatorDefs::init()
     {
-    Add(new OpNumPlusNum(*this));
-    Add(new OpNumMinNum(*this));
-    Add(new OpNumMultNum(*this));
-    Add(new OpNumDivNum(*this));
-    Add(new OpNumPowNum(*this));
-    Add(new OpDateMinDate(*this));
+    Add(new OpNumPlusNum(globals));
+    Add(new OpNumMinNum(globals));
+    Add(new OpNumMultNum(globals));
+    Add(new OpNumDivNum(globals));
+    Add(new OpNumPowNum(globals));
+    Add(new OpDateMinDate(globals));
     }
 
 Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v, const Range& range)
@@ -81,12 +81,12 @@ Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v
 
 Value OpNumPlusNum::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(doTerm(defs.unitDefs, args[0].getNumber(), true, args[1].getNumber(), range)));
+    return Value(Number(doTerm(globals.unitDefs, args[0].getNumber(), true, args[1].getNumber(), range)));
     }
 
 Value OpNumMinNum::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(doTerm(defs.unitDefs, args[0].getNumber(), false, args[1].getNumber(), range)));
+    return Value(Number(doTerm(globals.unitDefs, args[0].getNumber(), false, args[1].getNumber(), range)));
     }
 
 Value OpNumMultNum::execute(std::vector<Value>& args, const Range& range)

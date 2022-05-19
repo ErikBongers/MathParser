@@ -1,8 +1,10 @@
 #include "pch.hpp"
 #include "Unit.h"
+#include "Globals.h"
 #include "Token.h"
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 
 std::ostream& operator<<(std::ostream& os, const Unit& u) 
     {
@@ -78,7 +80,7 @@ void UnitDefs::init()
 UnitDef& UnitDefs::get(const std::string& key)
     {
     if(exists(key))
-        return defs[key];
+        return defs[key.c_str()];
     else
         throw std::out_of_range ("blah");
     }
@@ -130,4 +132,24 @@ Unit::Unit(const Token& idToken)
 Unit Unit::CLEAR() 
     { 
     return Unit(Token::Null(-1)); 
+    }
+
+void UnitsView::addClass(UnitClass unitClass)
+    {
+    for (auto& unit : globals.unitDefs.defs)
+        {
+        if(unit.second.property == unitClass)
+            defs.emplace(unit.first, unit.second);
+        }
+    }
+
+void UnitsView::removeClass(UnitClass unitClass)
+    {
+    auto it = defs.begin();
+    while (it != defs.end()) {
+        if (it->second.property == unitClass)
+            it = defs.erase(it);
+        else
+            it++;
+        }
     }

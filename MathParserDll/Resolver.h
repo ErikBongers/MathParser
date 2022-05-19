@@ -2,12 +2,12 @@
 #include "Parser.h"
 #include "Value.h"
 #include "Unit.h"
-#include "OperatorDef.h"
+#include "Globals.h"
 
 class Resolver
     {
     private:
-        FunctionDefs& functionDefs;
+        Globals& globals;
         std::map<std::string, Value> variables;
 
         Value resolveNone(const NoneExpr& expr);
@@ -27,12 +27,10 @@ class Resolver
         Value resolveFunctionDef(const FunctionDefExpr& expr);
 
     public:
-        Resolver(FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables);
+        Resolver(Globals& globals, std::map<std::string, Value>& variables);
         std::string resolve(std::vector<Statement*>& statements);
         Value resolveStatement(const Statement& stmt);
         std::string formatError(const std::string errorMsg, ...);
-        UnitDefs& unitDefs;
-        OperatorDefs& operatorDefs;
         DateFormat dateFormat = DateFormat::UNDEFINED;
         Value& getVar(const std::string& id);
     };

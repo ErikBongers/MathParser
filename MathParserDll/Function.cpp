@@ -1,38 +1,38 @@
 #include "pch.hpp"
 #include "Function.h"
+#include "Globals.h"
 #include "Tokenizer.h"
-#include "Unit.h"
 #include "Resolver.h"
 #include <chrono>
 #include "Date.h"
 
 void FunctionDefs::init()
     {
-    Add(new Now(*this));
-    Add(new Int(*this));
-    Add(new Abs(*this));
-    Add(new Max(*this));
-    Add(new Min(*this));
-    Add(new Sin(*this));
-    Add(new Cos(*this));
-    Add(new Tan(*this));
-    Add(new ArcSin(*this));
-    Add(new ArcCos(*this));
-    Add(new ArcTan(*this));
-    Add(new ASin(*this));
-    Add(new ACos(*this));
-    Add(new ATan(*this));
-    Add(new Sqrt(*this));
-    Add(new Inc(*this));
-    Add(new Dec(*this));
-    Add(new Round(*this));
-    Add(new Floor(*this));
-    Add(new Ceil(*this));
-    Add(new Trunc(*this));
+    Add(new Now(globals));
+    Add(new Int(globals));
+    Add(new Abs(globals));
+    Add(new Max(globals));
+    Add(new Min(globals));
+    Add(new Sin(globals));
+    Add(new Cos(globals));
+    Add(new Tan(globals));
+    Add(new ArcSin(globals));
+    Add(new ArcCos(globals));
+    Add(new ArcTan(globals));
+    Add(new ASin(globals));
+    Add(new ACos(globals));
+    Add(new ATan(globals));
+    Add(new Sqrt(globals));
+    Add(new Inc(globals));
+    Add(new Dec(globals));
+    Add(new Round(globals));
+    Add(new Floor(globals));
+    Add(new Ceil(globals));
+    Add(new Trunc(globals));
     };
 
-FunctionDef::FunctionDef(FunctionDefs& functionDefs, const std::string& name, size_t minArgs, size_t maxArgs)
-    : name(name), minArgs(minArgs), maxArgs(maxArgs), functionDefs(functionDefs)
+FunctionDef::FunctionDef(Globals& globals, const std::string& name, size_t minArgs, size_t maxArgs)
+    : globals(globals), name(name), minArgs(minArgs), maxArgs(maxArgs)
     {}
 
 bool FunctionDef::isCorrectArgCount(size_t argCnt)
@@ -60,8 +60,8 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     return functions[name];
     }
 
-CustomFunction::CustomFunction(FunctionDefExpr& functionDef, FunctionDefs& functionDefs)
-    : functionDef(functionDef), FunctionDef(functionDefs, functionDef.id.stringValue, functionDef.params.size(), functionDef.params.size()) 
+CustomFunction::CustomFunction(FunctionDefExpr& functionDef, Globals& globals)
+    : functionDef(functionDef), FunctionDef(globals, functionDef.id.stringValue, functionDef.params.size(), functionDef.params.size()) 
     {}
 
 Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
@@ -75,7 +75,7 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
         paramVariables.emplace(functionDef.params[i].stringValue, args[i]);
         }
 
-    Resolver resolver(functionDefs, *unitDefs, *operatorDefs, paramVariables);
+    Resolver resolver(globals, paramVariables);
     resolver.dateFormat = dateFormat; //TODO: put defines in some resolver.State thing.
     std::vector<Error> errors;
     for(auto stmt : functionDef.statements)
@@ -111,7 +111,7 @@ Value Now::execute(std::vector<Value>& args, const Range& range)
     return now;
     }
 
-Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, const Range& range, bool max)
+Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, bool max)
     {
     bool diffUnits = false;
     double val0;
@@ -120,8 +120,8 @@ Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, const Range& 
     auto unit = args[0].getNumber().unit;
     for(int i = 1; i < args.size(); i++)
         {
-        val0 = ret.getNumber().toSI(functionDefs.unitDefs);
-        double val1 = args[i].getNumber().toSI(functionDefs.unitDefs);
+        val0 = ret.getNumber().toSI(globals.unitDefs);
+        double val1 = args[i].getNumber().toSI(globals.unitDefs);
         auto otherErrs = &ret.errors;
         if (max? (val0 > val1) : (val0 < val1))
             {
@@ -131,7 +131,7 @@ Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, const Range& 
             {
             ret = args[i];
             }
-        if(!functionDefs.unitDefs.isSameProperty(unit, args[i].getNumber().unit))
+        if(!globals.unitDefs.isSameProperty(unit, args[i].getNumber().unit))
            diffUnits = true;
         }
     std::vector<Error> errors;
@@ -147,12 +147,12 @@ Value minMax(FunctionDefs& functionDefs, std::vector<Value>& args, const Range& 
 
 Value Max::execute(std::vector<Value>& args, const Range& range)
     {
-    return minMax(functionDefs, args, range, true);
+    return minMax(globals, args, range, true);
     }
 
 Value Min::execute(std::vector<Value>& args, const Range& range)
     {
-    return minMax(functionDefs, args, range, false);
+    return minMax(globals, args, range, false);
     }
 
 Value Inc::execute(std::vector<Value>& args, const Range& range)
@@ -187,7 +187,7 @@ Value Sin::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = functionDefs.unitDefs.get("deg").toSI(arg);;
+        arg = globals.unitDefs.get("deg").toSI(arg);;
     return Value(Number(sin(arg), 0, range));
     }
 
@@ -195,7 +195,7 @@ Value Cos::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = functionDefs.unitDefs.get("deg").toSI(arg);
+        arg = globals.unitDefs.get("deg").toSI(arg);
     return Value(Number(cos(arg), 0, range));
     }
 
@@ -203,7 +203,7 @@ Value Tan::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = functionDefs.unitDefs.get("deg").toSI(arg);
+        arg = globals.unitDefs.get("deg").toSI(arg);
     return Value(Number(tan(arg), 0, range));
     }
 

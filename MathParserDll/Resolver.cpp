@@ -7,8 +7,8 @@
 #include "tools.h"
 #include <sstream>
 
-Resolver::Resolver(FunctionDefs& functionDefs, UnitDefs& unitDefs, OperatorDefs& operatorDefs, std::map<std::string, Value>& variables) 
-    : functionDefs(functionDefs), unitDefs(unitDefs), operatorDefs(operatorDefs)
+Resolver::Resolver(Globals& globals, std::map<std::string, Value>& variables) 
+    : globals(globals)
     {
     this->variables = variables;
     }
@@ -53,10 +53,10 @@ Value Resolver::resolveDefine(const Define& define)
         switch(hash(t.stringValue.c_str()))
             {
             case hash("date_units"):
-                this->unitDefs.addDateUnits(); 
+                globals.unitDefs.addDateUnits(); 
                 break;
             case hash("short_date_units"):
-                this->unitDefs.addShortDateUnits(); 
+                globals.unitDefs.addShortDateUnits(); 
                 break;
             case hash("ymd"):
                 dateFormat = DateFormat::YMD;
@@ -112,10 +112,7 @@ Value Resolver::resolveNode(const Node& node)
 
 Value Resolver::resolveFunctionDef(const FunctionDefExpr& expr)
     {
-    CustomFunction* f = dynamic_cast<CustomFunction*>(functionDefs.get(expr.id.stringValue));
-    //TODO: these should be dependencies.
-    f->operatorDefs = &operatorDefs;
-    f->unitDefs = &unitDefs;
+    CustomFunction* f = dynamic_cast<CustomFunction*>(globals.functionDefs.get(expr.id.stringValue));
     f->dateFormat = dateFormat;
     return Value(); //none
     }
@@ -148,7 +145,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
         case TokenType::POWER: opType = OperatorType::POW; break;
         default: break;
         }
-    OperatorDef* op = operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
+    OperatorDef* op = globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
         {
         result.errors.push_back(Error(ErrorId::NO_OP, Range(expr.op), expr.op.stringValue, to_string(a1.type), to_string(a2.type)));
@@ -161,7 +158,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
     if (expr.error.id != ErrorId::NONE)
         result.errors.push_back(expr.error);
     if(result.type ==ValueType::NUMBER && !expr.unit.isClear())
-        result.setNumber(result.getNumber().convertToUnit(expr.unit, unitDefs));
+        result.setNumber(result.getNumber().convertToUnit(expr.unit, globals.unitDefs));
     return result;
     }
 
@@ -183,11 +180,11 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
     auto result = resolveNode(*assign.expr);
     if (variables.count(assign.Id.stringValue) == 0)
         {
-        if (unitDefs.exists(assign.Id.stringValue))
+        if (globals.unitDefs.exists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, Range(assign.Id), assign.Id.stringValue));
             }
-        else if (functionDefs.exists(assign.Id.stringValue))
+        else if (globals.functionDefs.exists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, Range(assign.Id), assign.Id.stringValue));
             }
@@ -281,7 +278,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                 [[fallthrough]];
             default:
                 if(val.type == ValueType::NUMBER)
-                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, unitDefs);
+                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, globals.unitDefs);
                 else
                     ; //TODO: error: unknown postfix
                 break;
@@ -310,11 +307,11 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
         return val;
     if (!node.unit.isClear() && !val.getNumber().unit.isClear())
         {
-        val.getNumber ()= val.getNumber().convertToUnit(node.unit, unitDefs);
+        val.getNumber ()= val.getNumber().convertToUnit(node.unit, globals.unitDefs);
         }
     else if (!node.unit.isClear())
         {
-        if (unitDefs.exists(node.unit.id))
+        if (globals.unitDefs.exists(node.unit.id))
             val.getNumber().unit = node.unit;
         else
             val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.range, node.unit.id.c_str()));
@@ -324,7 +321,7 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
 
 Value Resolver::resolveCall(const CallExpr& callExpr)
     {
-    auto fd = functionDefs.get(callExpr.functionName.stringValue.c_str());
+    auto fd = globals.functionDefs.get(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
         return Value(Error(ErrorId::FUNC_NOT_DEF, Range(callExpr.functionName), callExpr.functionName.stringValue.c_str()));
     if (callExpr.error.id != ErrorId::NONE)
@@ -358,7 +355,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
             v.getNumber().unit = Unit();
         else
             {
-            if (unitDefs.exists(v.getNumber().unit.id) == false)
+            if (globals.unitDefs.exists(v.getNumber().unit.id) == false)
                 {
                 v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.range, v.getNumber().unit.id.c_str()));
                 }

@@ -4,7 +4,7 @@
 #include <cstring>
 #include "Tokenizer.h"
 #include "Resolver.h"
-#include "OperatorDef.h"
+#include "Globals.h"
 #include "api.h"
 #include "version.h"
 
@@ -13,13 +13,11 @@ std::string result = "";
 
 int C_DECL parse(const char* str)
     {
-    UnitDefs unitDefs;
-    FunctionDefs functionDefs(unitDefs);
-    OperatorDefs operatorDefs(unitDefs);
-    Parser parser(str, 1, functionDefs);
+    Globals globals;
+    Parser parser(str, 1, globals);
     parser.parse();
     std::map<std::string, Value> nada;
-    Resolver resolver(functionDefs, unitDefs, operatorDefs, nada);
+    Resolver resolver(globals, nada);
     result = resolver.resolve(parser.statements);
     return getResultLen();
     }

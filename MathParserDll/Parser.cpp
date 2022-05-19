@@ -1,9 +1,10 @@
 #include "pch.hpp"
 #include "Parser.h"
 #include "Function.h"
+#include "Globals.h"
 
-Parser::Parser(const char* stream, char sourceIndex, FunctionDefs& functionDefs)
-    : tok(stream, sourceIndex), functionDefs(functionDefs) 
+Parser::Parser(const char* stream, char sourceIndex, Globals& globals)
+    : tok(stream, sourceIndex), globals(globals) 
     {
     }
 # define M_PIl          3.141592653589793238462643383279502884L
@@ -155,9 +156,9 @@ Node* Parser::parseFunctionDef()
     funcDef->params = paramDefs;
     funcDef->statements = std::move(functionStmts);
 
-    auto fd = new CustomFunction(*funcDef, functionDefs);
+    auto fd = new CustomFunction(*funcDef, globals);
 
-    functionDefs.Add(fd);
+    globals.functionDefs.Add(fd);
     return funcDef;
     }
 
@@ -517,7 +518,7 @@ Node* Parser::parsePrimaryExpr()
             break;
         case TokenType::ID:
             tok.next();
-            if (functionDefs.exists(t.stringValue))
+            if (globals.functionDefs.exists(t.stringValue))
                 {
                 return parseCallExpr(t);
                 }

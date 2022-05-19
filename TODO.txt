@@ -1,11 +1,64 @@
-﻿* test: add a global var to wasm
-  > first an int.
-    > setInt(int theInt) -> sets global int.
-    > getInt()...
-  > then an object
-  > then a resolver!
-    > or at least, a number of start statements.
+﻿Scope
+---------
+Script scope.
+  - A script inherits full scope from the previous script (startScript)
+    > 'prevous' means, in preceding code.
+    > this allows for 'settings', like predefined vars (consts?), formats, functions.
+Function body scope.
+  - A function inherits all outside (and previous?) functions
+  - A function does not inherit any vars.
+  - A function does not inherit settings?
+    > this would avoid that a function fails if previous lines of code are changeed.
+  > Basically, a function is independent.
 
+* Create a Scope
+  - add globals and a UnitsView.
+  - add proxy functions to access the globals, views and scope-local objects.
+* Create a UnitsView
+  > filter-test in real-time or use a list/map?
+    > list/map is only 1 time a cost.
+* Exposure of global functions, units (and constants)
+  > Default is ALL exposed? 
+    > Functions: yes limit it with #undef TRIG
+    > Constants: no. Keep the short-named variables available by default!
+  > How to limit it?
+    : #undef TRIG
+  > group or label global stuff.
+    - Units: unitclass
+
+
+* Scope object
+  - a Scope has all the globals
+  - a Scope contains Views to the globals: not every global may be exposed, using #defines.
+* Lifecycle/ownership
+  - Functions, Operators, Units are global
+  - Nodes, FunctionDefs belong to a a script (a Parser? Only if a Parser belongs to one script and cannot be reused.)
+  - Variables (Values) are stack objects - no lifespan (in our control)
+* Context/scope
+  - Vars and FunctionDefs can be handed to a next script.
+    > how? by ref or by value? By ref, because there's no need to copy them.
+    > A function body does not inherit vars.
+* Create a ParserContext based on the Resolver state (partially shared with Parser)
+  > Use it in CustomFunctions and for "precompiling" startScript.
+  > Parser contains the nodes.
+  > StartScript, once precompiled  should be frozen.
+  > Scope and lifetime of objects on heap (new)
+    > Functions, Units, Operators are GLOBAL.
+    > A Context contains a subset of the above.
+    > Context also contains Nodes and CustomFunctions.
+  > Subsets are PRIVATE
+    > A function (or startscript) may have placed the c-constant into scope, but the caller of the function does NOT 'see' the constant.
+  > Functions inherit context
+    > A function always has a script it's contained in.
+    > Functions do NOT inherit vars, but DO inherit Consts! (or rather, subsets of consts)
+  > Who is owner of heap objects (new):
+    - Parser nodes
+    - Functions
+      - CustomFuncs 'borrow' nodes from Parser.
+      > CustomFuncs are owned by Parser.
+    - Operators: are global. Don't put them in a Context.
+      - They reference Units: also Global.
+      > Make a UnitsSubset
 * Parser delete it's nodes!
   > replace with smart pointers?
   > create a NodesFactory per source file?
@@ -25,8 +78,8 @@
   > precompile startscript into resolver?
     > means resolver has to be statefull.
 
-* functions: use typescript?
 * replace strings with string_view, which are slices of existing strings.
+  > first figure out life cycles.
 
 * Save to cloud (via functions?)
   > cloud architecture: https://www.youtube.com/watch?v=JbEiek3MNWw

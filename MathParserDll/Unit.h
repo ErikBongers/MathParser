@@ -32,7 +32,7 @@ class UnitDef
 
     public:
         std::string id;
-        UnitClass property = UnitClass::UNDEFINED;
+        UnitClass property = UnitClass::UNDEFINED; //TODO rename either class or variable!
 
         std::function<double(double)> toSI;
         std::function<double(double)> fromSI;
@@ -50,6 +50,8 @@ class UnitDef
             }
     };
 
+class UnitsView;
+    
 class UnitDefs
     {
     private:
@@ -63,5 +65,18 @@ class UnitDefs
         bool isSameProperty(const Unit& u1, const Unit& u2);
         void addDateUnits();
         void addShortDateUnits();
+        friend class UnitsView;
     };
 
+struct Globals;
+
+class UnitsView
+    {
+    private:
+        Globals& globals;
+        std::map<std::string, UnitDef&> defs;
+    public:
+        UnitsView(Globals& globals) : globals(globals) {}
+        void addClass(UnitClass unitClass);
+        void removeClass(UnitClass unitClass);
+    };

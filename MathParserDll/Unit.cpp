@@ -63,10 +63,21 @@ void UnitDefs::init()
             { "minutes", UnitDef("minutes", 60, UnitClass::DURATION)},
             { "hours", UnitDef("hours", 3600, UnitClass::DURATION)},
             { "days", UnitDef("days", 86400, UnitClass::DURATION)},
+            { "weeks", UnitDef("weeks", 60 * 60 * 24 * 7, UnitClass::DURATION)},
             { "months", UnitDef("months", 2629746, UnitClass::DURATION)},
             { "years", UnitDef("years", 31556952, UnitClass::DURATION)},
+            { "milliseconds", UnitDef("milliseconds", 1/1000, UnitClass::DURATION)},
+/* TODO
+            { "s", UnitDef("s", 1, UnitClass::DURATION)},
+            { "m", UnitDef("m", 60, UnitClass::DURATION)},
+            { "h", UnitDef("h", 3600, UnitClass::DURATION)},
+            { "d", UnitDef("d", 86400, UnitClass::DURATION)},
+            { "w", UnitDef("w", 60 * 60 * 24 * 7, UnitClass::DURATION)},
+            { "mon", UnitDef("mon", 2629746, UnitClass::DURATION)},
+            { "y", UnitDef("y", 31556952, UnitClass::DURATION)},
             { "ms", UnitDef("ms", 1/1000, UnitClass::DURATION)},
-        };
+*/
+            };
 
 
     for (auto& [id, def] : defs)
@@ -77,50 +88,21 @@ void UnitDefs::init()
     defs["F"].fromSI = [](double d) { return (d - 273.15) * 9 / 5 + 32; };
     }
 
-UnitDef& UnitDefs::get(const std::string& key)
+void UnitsView::addDateUnits()
     {
-    if(exists(key))
-        return defs[key.c_str()];
-    else
-        throw std::out_of_range ("blah");
+    //TODO: addDateUnits
     }
 
-void UnitDefs::set(UnitDef def)
+void UnitsView::addShortDateUnits()
     {
-    defs.emplace(def.id, def);
-    defs[def.id].setLambda();
+    //TODO: addDateUnits
     }
 
-bool UnitDefs::isSameProperty(const Unit& u1, const Unit& u2)
+UnitsView::UnitsView(Globals& globals) 
+    : globals(globals) 
     {
-    if(!exists(u1.id))
-        return false;
-    if(!exists(u2.id))
-        return false;
-
-    return get(u1.id).property == get(u2.id).property;
-    }
-
-void UnitDefs::addDateUnits()
-    {
-    set(UnitDef("seconds", 1, UnitClass::DURATION));
-    set(UnitDef("minutes", 60, UnitClass::DURATION));
-    set(UnitDef("hours", 60*60, UnitClass::DURATION));
-    set(UnitDef("days", 60*60*24, UnitClass::DURATION));
-    set(UnitDef("weeks", 60*60*24*7, UnitClass::DURATION));
-    set(UnitDef("months", 60*60*24*7*30, UnitClass::DURATION));
-    set(UnitDef("years", 60*60*24*7*30*12, UnitClass::DURATION));
-    }
-
-void UnitDefs::addShortDateUnits()
-    {
-    set(UnitDef("s", 1, UnitClass::DURATION));
-    set(UnitDef("min", 60, UnitClass::DURATION));
-    set(UnitDef("h", 60*60, UnitClass::DURATION));
-    set(UnitDef("d", 60*60*24, UnitClass::DURATION));
-    set(UnitDef("w", 60*60*24*7, UnitClass::DURATION));
-    set(UnitDef("mon", 60*60*24*7*30, UnitClass::DURATION));
-    set(UnitDef("y", 60*60*24*7*30*12, UnitClass::DURATION));
+    for(auto& unit : globals.unitDefs.defs)
+        defs.insert(unit.first);
     }
 
 Unit::Unit(const Token& idToken)
@@ -139,17 +121,36 @@ void UnitsView::addClass(UnitClass unitClass)
     for (auto& unit : globals.unitDefs.defs)
         {
         if(unit.second.property == unitClass)
-            defs.emplace(unit.first, unit.second);
+            defs.insert(unit.first);
         }
     }
 
 void UnitsView::removeClass(UnitClass unitClass)
     {
-    auto it = defs.begin();
-    while (it != defs.end()) {
+    auto it = globals.unitDefs.defs.begin();
+    while (it != globals.unitDefs.defs.end()) {
         if (it->second.property == unitClass)
-            it = defs.erase(it);
+            defs.erase(it->second.id);
         else
             it++;
         }
+    }
+
+UnitDef& UnitsView::get(const std::string& key)
+    {
+    if(exists(key))
+        return globals.unitDefs.defs[key];
+    else
+        throw std::out_of_range ("blah");
+    }
+
+
+bool UnitsView::isSameProperty(const Unit& u1, const Unit& u2)
+    {
+    if(!exists(u1.id))
+        return false;
+    if(!exists(u2.id))
+        return false;
+
+    return get(u1.id).property == get(u2.id).property;
     }

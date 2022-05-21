@@ -2,9 +2,11 @@
 #include "Parser.h"
 #include "Function.h"
 #include "Globals.h"
+#include "Variable.h"
+#include "Scope.h"
 
-Parser::Parser(const char* stream, char sourceIndex, Globals& globals)
-    : tok(stream, sourceIndex), globals(globals) 
+Parser::Parser(const char* stream, char sourceIndex, Scope* scope)
+    : tok(stream, sourceIndex), scope(scope) 
     {
     }
 # define M_PIl          3.141592653589793238462643383279502884L
@@ -12,7 +14,7 @@ void Parser::parse()
     {
     ConstExpr* pConst = createConst(ValueType::NUMBER);
     pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), {0, 0, 0}, tok.sourceIndex);
-    ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}, tok.sourceIndex), pConst});
+    scope->ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}, tok.sourceIndex), pConst});
     parseEchoLines();
     while (!peek(TokenType::EOT))
         {
@@ -141,13 +143,20 @@ Node* Parser::parseFunctionDef()
         return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "{"));
 
     std::vector<Statement*> functionStmts;
+    auto newScope = scope->copyForFunction();
+    auto oldScope = scope;
+
+    scope = newScope;
     while (!peek(TokenType::CURL_CLOSE) && !peek(TokenType::EOT))
         {
         auto stmt = parseStatement();
         if(stmt == nullptr)
             break;
         functionStmts.push_back(stmt);
+        while(peek(TokenType::COMMENT_LINE))
+            tok.next();
         }
+    scope = oldScope;
 
     if (!match(TokenType::CURL_CLOSE))
         return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "}"));
@@ -156,9 +165,8 @@ Node* Parser::parseFunctionDef()
     funcDef->params = paramDefs;
     funcDef->statements = std::move(functionStmts);
 
-    auto fd = new CustomFunction(*funcDef, globals);
 
-    globals.functionDefs.Add(fd);
+    scope->AddLocalFunction(*funcDef, newScope);
     return funcDef;
     }
 
@@ -221,7 +229,7 @@ Statement* Parser::parseExprStatement(Statement* stmt)
     auto t = tok.peek();
     if (t.type == TokenType::SEMI_COLON)
         {
-        tok.tokenizeComments(true);//from here on, include comments in the next peek! Must be set BEFORE next(), as next() will already peek.
+        tok.tokenizeComments(true);//TODO: this is probably no longer true: from here on, include comments in the next peek! Must be set BEFORE next(), as next() will already peek.
         tok.next(); //consume
         if(stmt->echo)
             {
@@ -272,7 +280,7 @@ Node* Parser::parseAssignExpr()
                 assign->expr = listExpr;
                 }
 
-            ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
+            scope->ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
             }
         else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
@@ -493,7 +501,7 @@ Node* Parser::parseUnitExpr()
     {
     Node* node = parsePrimaryExpr();
     auto t = tok.peek();
-    if (t.type == TokenType::ID && ids.count(t.stringValue) == 0)
+    if (t.type == TokenType::ID && scope->ids.count(t.stringValue) == 0)
         {
         tok.next();
         node->unit = t; //no known id: assuming a unit.
@@ -518,7 +526,7 @@ Node* Parser::parsePrimaryExpr()
             break;
         case TokenType::ID:
             tok.next();
-            if (globals.functionDefs.exists(t.stringValue))
+            if (scope->functionExists(t.stringValue))
                 {
                 return parseCallExpr(t);
                 }

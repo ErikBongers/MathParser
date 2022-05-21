@@ -24,9 +24,9 @@ struct Number
     Number operator*(const Number& n2) const;
     Number operator/(const Number& n2) const;
     Number convertToExponent(int e) const;
-    Number convertToUnit(const Unit& to, UnitDefs& unitDefs);
-    double toSI(UnitDefs& unitDefs) const;
-    double fromSI(UnitDefs& unitDefs) const;
+    Number convertToUnit(const Unit& to, UnitsView& units);
+    double toSI(UnitsView& units) const;
+    double fromSI(UnitsView& units) const;
     void to_json(std::ostringstream& sstr) const;
     };
 

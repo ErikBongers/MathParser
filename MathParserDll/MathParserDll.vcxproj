@@ -176,12 +176,14 @@
     <ClInclude Include="Function.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="json.h" />
+    <ClInclude Include="Nodes.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="OperatorDef.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="pch.hpp" />
     <ClInclude Include="Range.h" />
     <ClInclude Include="Resolver.h" />
+    <ClInclude Include="Scope.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="Tokenizer.h" />
     <ClInclude Include="TokenPos.h" />
@@ -190,6 +192,7 @@
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Value.h" />
     <ClInclude Include="ValueType.h" />
+    <ClInclude Include="Variable.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +215,7 @@
     </ClCompile>
     <ClCompile Include="Range.cpp" />
     <ClCompile Include="Resolver.cpp" />
+    <ClCompile Include="Scope.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="tools.cpp" />

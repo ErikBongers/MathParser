@@ -2,6 +2,6 @@
 #include "Globals.h"
 
 Globals::Globals()
-    : unitDefs(), functionDefs(*this), operatorDefs(*this)
+    : unitDefs(), functionDefs(*this), operatorDefs(*this), unitsView(*this)
     {
     }

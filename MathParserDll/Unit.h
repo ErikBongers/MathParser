@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include "Range.h"
+#include <set>
 
 class Token;
 class Unit
@@ -59,12 +60,7 @@ class UnitDefs
     public:
         UnitDefs() { init(); }
         void init();
-        UnitDef& get(const std::string& key);
         void set(UnitDef def);
-        bool exists(const std::string& key) { return defs.count(key) != 0; }
-        bool isSameProperty(const Unit& u1, const Unit& u2);
-        void addDateUnits();
-        void addShortDateUnits();
         friend class UnitsView;
     };
 
@@ -74,9 +70,16 @@ class UnitsView
     {
     private:
         Globals& globals;
-        std::map<std::string, UnitDef&> defs;
+        std::set<std::string> defs;
     public:
-        UnitsView(Globals& globals) : globals(globals) {}
+        UnitsView(const UnitsView&) = default;
+        UnitsView(Globals& globals);
         void addClass(UnitClass unitClass);
         void removeClass(UnitClass unitClass);
+        UnitDef& get(const std::string& key);
+        bool exists(const std::string& key) { return defs.count(key) != 0; }
+        bool isSameProperty(const Unit& u1, const Unit& u2);
+        void addDateUnits();
+        void addShortDateUnits();
+        void setDefs(const UnitsView& uv) { this->defs = uv.defs; }
     };

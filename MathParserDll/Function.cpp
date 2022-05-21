@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "Function.h"
+#include "Scope.h"
 #include "Globals.h"
 #include "Tokenizer.h"
 #include "Resolver.h"
@@ -53,16 +54,38 @@ bool FunctionDefs::exists(const std::string& functionName)
     return functions.count(functionName) != 0;
     }
 
+void FunctionDefs::Add(FunctionDef* f) { functions.emplace(f->name, f); }
+
 FunctionDef* FunctionDefs::get(const std::string& name)
     {
     if (functions.count(name) == 0)
         return nullptr;
-    return functions[name];
+    return functions.find(name)->second;
     }
 
-CustomFunction::CustomFunction(FunctionDefExpr& functionDef, Globals& globals)
-    : functionDef(functionDef), FunctionDef(globals, functionDef.id.stringValue, functionDef.params.size(), functionDef.params.size()) 
+//CustomFunction::CustomFunction(const CustomFunction& cf)
+//    :FunctionDef(cf.scope->globals, cf.functionDefExpr.id.stringValue, cf.functionDefExpr.params.size(), cf.functionDefExpr.params.size()), functionDefExpr(cf.functionDefExpr)
+//    {
+//    throw "This should not happen!";
+//    scope = cf.scope;
+//    }
+
+//CustomFunction::CustomFunction(CustomFunction&& cf)
+//    :FunctionDef(cf.scope->globals, cf.functionDefExpr.id.stringValue, cf.functionDefExpr->params.size(), cf.functionDefExpr->params.size()), functionDefExpr(cf.functionDefExpr)
+//    {
+//    scope = cf.scope;
+//    cf.scope = nullptr;
+//    }
+
+CustomFunction::CustomFunction(FunctionDefExpr& functionDefExpr, Scope* scope)
+    : FunctionDef(scope->globals, functionDefExpr.id.stringValue, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), scope(scope)
     {}
+
+CustomFunction::~CustomFunction() 
+    { 
+    if(scope != nullptr)
+        delete scope; 
+}
 
 Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     {
@@ -72,20 +95,19 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     //args.size and params.size should be equal.
     for (size_t i = 0; i < args.size(); i++)
         {
-        paramVariables.emplace(functionDef.params[i].stringValue, args[i]);
+        paramVariables.emplace(functionDefExpr.params[i].stringValue, args[i]);
         }
-
-    Resolver resolver(globals, paramVariables);
-    resolver.dateFormat = dateFormat; //TODO: put defines in some resolver.State thing.
+    scope->variables = paramVariables;
+    Resolver resolver(*scope);
     std::vector<Error> errors;
-    for(auto stmt : functionDef.statements)
+    for(auto stmt : functionDefExpr.statements)
         {
         result = resolver.resolveStatement(*stmt);
         errors.insert(errors.end(), result.errors.begin(), result.errors.end());
         }
     if(!errors.empty())
         {
-        auto error = Error(ErrorId::FUNC_FAILED, range, functionDef.id.stringValue);
+        auto error = Error(ErrorId::FUNC_FAILED, range, functionDefExpr.id.stringValue);
         error.stackTrace = std::move(errors);
         result.errors.clear();
         result.errors.push_back(error);
@@ -120,8 +142,8 @@ Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, boo
     auto unit = args[0].getNumber().unit;
     for(int i = 1; i < args.size(); i++)
         {
-        val0 = ret.getNumber().toSI(globals.unitDefs);
-        double val1 = args[i].getNumber().toSI(globals.unitDefs);
+        val0 = ret.getNumber().toSI(globals.unitsView);
+        double val1 = args[i].getNumber().toSI(globals.unitsView);
         auto otherErrs = &ret.errors;
         if (max? (val0 > val1) : (val0 < val1))
             {
@@ -131,7 +153,7 @@ Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, boo
             {
             ret = args[i];
             }
-        if(!globals.unitDefs.isSameProperty(unit, args[i].getNumber().unit))
+        if(!globals.unitsView.isSameProperty(unit, args[i].getNumber().unit))
            diffUnits = true;
         }
     std::vector<Error> errors;
@@ -187,7 +209,7 @@ Value Sin::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitDefs.get("deg").toSI(arg);;
+        arg = globals.unitsView.get("deg").toSI(arg);;
     return Value(Number(sin(arg), 0, range));
     }
 
@@ -195,7 +217,7 @@ Value Cos::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitDefs.get("deg").toSI(arg);
+        arg = globals.unitsView.get("deg").toSI(arg);
     return Value(Number(cos(arg), 0, range));
     }
 
@@ -203,7 +225,7 @@ Value Tan::execute(std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitDefs.get("deg").toSI(arg);
+        arg = globals.unitsView.get("deg").toSI(arg);
     return Value(Number(tan(arg), 0, range));
     }
 

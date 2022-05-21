@@ -7,6 +7,7 @@
 #include "Globals.h"
 #include "api.h"
 #include "version.h"
+#include "Scope.h"
 
 std::string version = "1.0." + std::to_string(VERSION_BUILD);
 std::string result = "";
@@ -14,10 +15,15 @@ std::string result = "";
 int C_DECL parse(const char* str)
     {
     Globals globals;
-    Parser parser(str, 1, globals);
+    Scope scope = Scope(globals);
+    auto PI = Value(Number(M_PI, 0, Range()));
+    PI.constant = true;
+    scope.variables.emplace("PI", PI);
+    scope.variables.emplace("pi", PI);
+    Parser parser(str, 1, &scope);
     parser.parse();
     std::map<std::string, Value> nada;
-    Resolver resolver(globals, nada);
+    Resolver resolver(scope);
     result = resolver.resolve(parser.statements);
     return getResultLen();
     }

@@ -76,7 +76,7 @@ Number Number::convertToExponent(int e) const
     return result;
     }
 
-Number Number::convertToUnit(const Unit& to, UnitDefs& unitDefs)
+Number Number::convertToUnit(const Unit& to, UnitsView& units)
     {
     Number num = *this;
     double fFrom = 1;
@@ -88,38 +88,38 @@ Number Number::convertToUnit(const Unit& to, UnitDefs& unitDefs)
         return num;
         }
     
-    if (unitDefs.exists(unit.id) == false)
+    if (units.exists(unit.id) == false)
         {
         return num; //invalid unit should already have been detected. Don't report the error again.
         }
-    if (unitDefs.exists(to.id) == false)
+    if (units.exists(to.id) == false)
         {
         num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.range, to.id.c_str()));
         return num;
         }
-    if (unitDefs.get(unit.id).property != unitDefs.get(to.id).property)
+    if (units.get(unit.id).property != units.get(to.id).property)
         {
         num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, to.range));
         return num;
         }
-    num = Number(unitDefs.get(this->unit.id).toSI(this->to_double()), 0); //from -> SI
-    num = Number(unitDefs.get(to.id).fromSI(num.to_double()), 0);  //SI -> to
+    num = Number(units.get(this->unit.id).toSI(this->to_double()), 0); //from -> SI
+    num = Number(units.get(to.id).fromSI(num.to_double()), 0);  //SI -> to
     num.unit = to;
     return num;
     }
 
-double Number::toSI(UnitDefs& unitDefs) const 
+double Number::toSI(UnitsView& units) const 
     { 
-    if(unitDefs.exists(unit.id))
-        return unitDefs.get(unit.id).toSI(to_double());
+    if(units.exists(unit.id))
+        return units.get(unit.id).toSI(to_double());
     else
         return to_double();
     }
 
-double Number::fromSI(UnitDefs& unitDefs) const 
+double Number::fromSI(UnitsView& units) const 
     { 
-    if(unitDefs.exists(unit.id))
-        return unitDefs.get(unit.id).fromSI(to_double()); 
+    if(units.exists(unit.id))
+        return units.get(unit.id).fromSI(to_double()); 
     else
         return to_double();
     }

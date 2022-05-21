@@ -1,0 +1,96 @@
+a= 12;
+b= 23;
+function hundred(a) 
+  { 
+  //sdfsdf 
+  a*100;
+  //sdf  
+  }
+hundred(13);
+function pluser(a, b, c)
+  {
+  function plus(a, b)
+    {
+    a+b;
+    }
+  res = plus(a,b)+c;
+  hundred(res);
+  }
+function plus(a, b)
+    {
+    a = 1000;
+    a-b;
+    }
+a;
+plus(a, b);
+a;
+//x=plus(3,14);
+yyy=pluser(3,4,5);
+a;
+#define dmy
+function ageThisYear(birth)
+  {
+  #define dmy
+  endOfYear=31,12,now().year;
+  endOfYear-birth;
+  }
+
+birthDate='09/05/2014';
+theAge=ageThisYear(birthDate);
+
+!//|-1;
+z=max(1,(2,3);
+!//ikke='30-07-1968'; 
+ikke.day;
+ikke.month;
+ikke.year=5;
+ikke;
+age=now()-ikke; !//age=54 years, -4 months, -2 days  
+!age.days;
+1months.days; 
+now().day;
+10km+5C;
+z=now();
+!birthday=1968, 7, 30;
+age=now(xxx)-birthdayx; 
+!//10km+5C;
+5C.km;
+a='12/apr/2022';
+duh=a-now();
+a=2;
+x=1; a x;
+123E0+234E0; 
+q=0b101;
+q.dec;
+q+=10;
+q.dec;
+b=1*q;
+F=123;
+30F;
+0C.F;
+r=3;
+r=4;
+r=5;
+!//sdfdsfxx
+a=1; !//test
+b=2; zzz;
+99aaa6xxx==zzxx
+sdfsdf88882 
+
+!//sdfsdf  
+
+c=3; !//x
+distance=10km + 1mi + 30m + 0.0000000001ly;
+distance=distance.mi;
+distance.km;
+distance;
+a++; 
+a--;
+min(20,10);
+max(30,20);
+x=PI+1;
+x=0-x;
+round(x);
+trunc(x);
+floor(x);
+ceil(x);

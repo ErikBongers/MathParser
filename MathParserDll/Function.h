@@ -5,9 +5,8 @@
 #include <string>
 #include <map>
 
-//class FunctionDefs;
 struct Globals;
-
+class Scope;
 class FunctionDef
     {
     public:
@@ -34,7 +33,7 @@ class FunctionDefs
         FunctionDefs(Globals& globals) : globals(globals) { init(); }
         void init();
         bool exists(const std::string& functionName);
-        void Add(FunctionDef* f) { functions.emplace(f->name, f); }
+        void Add(FunctionDef* f);
         FunctionDef* get(const std::string& name);
     };
 
@@ -44,12 +43,14 @@ class FunctionDefExpr;
 class CustomFunction: public FunctionDef
     {
     private:
-        FunctionDefExpr& functionDef;
+        FunctionDefExpr& functionDefExpr;
 
     public:
-        DateFormat dateFormat = DateFormat::UNDEFINED;
-
-        CustomFunction(FunctionDefExpr& functionDef, Globals& globals);
+        Scope* scope = nullptr;
+        //CustomFunction(const CustomFunction& cf);
+        //CustomFunction(CustomFunction&& cf);
+        CustomFunction(FunctionDefExpr& functionDefExpr, Scope* scope);
+        ~CustomFunction();
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 

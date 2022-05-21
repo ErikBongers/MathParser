@@ -137,7 +137,7 @@ namespace MathParserWPF
         //    });
         //    }
         
-        const string localStorageFileName = "localstorage.txt";
+        const string localStorageFileName = @"D:\Documents\Programming\WPFandXNA\MathParser\localstorage.txt";
         public MainWindow()
             {
             InitializeComponent();

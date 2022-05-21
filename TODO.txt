@@ -1,4 +1,15 @@
-﻿Scope
+﻿* parseFuncDef() removes COMMENT_LINEs, because parseExprStatement turns on tok.tokenizeComments()
+  > turning on tokenizeComments can probably be moved to main parseLoop because it re-peek()s after setting this flag.
+* Bug: if last statement of function is comment line -> no return value?
+* Rules on functions:
+  - Functions cannot be overriden?
+    > implement test in parser!
+* Delete scopes when they get out of...well, scope.
+  > add debug messages when creating and deleting the scope and name them (name of function).
+* scopes inherit localFunctions from parent and grandparents...
+  > copy?
+  > ref to parent?
+Scope
 ---------
 Script scope.
   - A script inherits full scope from the previous script (startScript)
@@ -10,7 +21,14 @@ Function body scope.
   - A function does not inherit settings?
     > this would avoid that a function fails if previous lines of code are changeed.
   > Basically, a function is independent.
-
+Scope and Parser
+  - In a function all vars, settings and function defs are local.
+  > Parser should create a new scope for a function def.
+  > This scope is attached to the function.
+Deleting a scope
+  > A scope is only deleted when a script is finished and the results returned.
+  > This means that all heap objects (nodes) should be owned by the scope.
+  > A parser will add new nodes to the scope.
 * Create a Scope
   - add globals and a UnitsView.
   - add proxy functions to access the globals, views and scope-local objects.
@@ -95,6 +113,7 @@ Function body scope.
     > perhaps for session data?
   > free hosting + domain: https://www.youtube.com/watch?v=cG9kv5-5bPI
 
+* short_date_units: implement.
 * Tests: include more complex tests with multi-line code, like function defs.
 * functions:
   > allow last ';' to be elimited.

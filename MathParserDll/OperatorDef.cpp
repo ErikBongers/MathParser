@@ -2,6 +2,7 @@
 #include "OperatorDef.h"
 #include "Value.h"
 #include "Resolver.h"
+#include "Globals.h"
 
 bool OperatorId::operator<(OperatorId const& id2) const
     {
@@ -43,24 +44,24 @@ void OperatorDefs::init()
     Add(new OpDateMinDate(globals));
     }
 
-Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v, const Range& range)
+Number doTerm(UnitsView& units, const Number& v1, bool adding, const Number& v, const Range& range)
     {
     Number result = v1;
     
     //if both values have units: convert them to SI before operation.
     if (!v1.unit.isClear() && !v.unit.isClear())
         {
-        if(unitDefs.exists(v1.unit.id) && unitDefs.exists(v.unit.id))
-            if (unitDefs.get(v1.unit.id).property != unitDefs.get(v.unit.id).property)
+        if(units.exists(v1.unit.id) && units.exists(v.unit.id))
+            if (units.get(v1.unit.id).property != units.get(v.unit.id).property)
                 {
                 result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, range));
                 return result;
                 }
-        double d1 = v1.toSI(unitDefs);
-        double d2 = v.toSI(unitDefs);
+        double d1 = v1.toSI(units);
+        double d2 = v.toSI(units);
         result = Number(adding ? (d1 + d2) : (d1 - d2), 0);
-        if(unitDefs.exists(v1.unit.id))
-            result = Number(unitDefs.get(v1.unit.id).fromSI(result.to_double()), v1.unit, v1.numFormat, range); //TODO: try to keep exponent.
+        if(units.exists(v1.unit.id))
+            result = Number(units.get(v1.unit.id).fromSI(result.to_double()), v1.unit, v1.numFormat, range); //TODO: try to keep exponent.
         }
     //if a unit is missing, just do operation.
     else 
@@ -81,12 +82,12 @@ Number doTerm(UnitDefs& unitDefs, const Number& v1, bool adding, const Number& v
 
 Value OpNumPlusNum::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(doTerm(globals.unitDefs, args[0].getNumber(), true, args[1].getNumber(), range)));
+    return Value(Number(doTerm(globals.unitsView, args[0].getNumber(), true, args[1].getNumber(), range)));
     }
 
 Value OpNumMinNum::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(doTerm(globals.unitDefs, args[0].getNumber(), false, args[1].getNumber(), range)));
+    return Value(Number(doTerm(globals.unitsView, args[0].getNumber(), false, args[1].getNumber(), range)));
     }
 
 Value OpNumMultNum::execute(std::vector<Value>& args, const Range& range)

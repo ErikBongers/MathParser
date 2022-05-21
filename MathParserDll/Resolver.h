@@ -2,13 +2,12 @@
 #include "Parser.h"
 #include "Value.h"
 #include "Unit.h"
-#include "Globals.h"
+#include "Scope.h"
 
 class Resolver
     {
     private:
-        Globals& globals;
-        std::map<std::string, Value> variables;
+        Scope& scope;
 
         Value resolveNone(const NoneExpr& expr);
         Value resolveDefine(const Define& define);
@@ -27,7 +26,7 @@ class Resolver
         Value resolveFunctionDef(const FunctionDefExpr& expr);
 
     public:
-        Resolver(Globals& globals, std::map<std::string, Value>& variables);
+        Resolver(Scope& scope);
         std::string resolve(std::vector<Statement*>& statements);
         Value resolveStatement(const Statement& stmt);
         std::string formatError(const std::string errorMsg, ...);

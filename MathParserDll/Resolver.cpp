@@ -6,19 +6,15 @@
 #include "trim.h"
 #include "tools.h"
 #include <sstream>
+#include "Globals.h"
 
-Resolver::Resolver(Globals& globals, std::map<std::string, Value>& variables) 
-    : globals(globals)
+Resolver::Resolver(Scope& scope) 
+    : scope(scope)
     {
-    this->variables = variables;
     }
 
 std::string Resolver::resolve(std::vector<Statement*>& statements)
     {
-    auto PI = Value(Number(M_PI, 0, Range()));
-    PI.constant = true;
-    variables.emplace("PI", PI);
-    variables.emplace("pi", PI);
     std::vector<std::string> jsonRes;
     std::ostringstream sstr;
     for (auto& stmt : statements)
@@ -53,10 +49,10 @@ Value Resolver::resolveDefine(const Define& define)
         switch(hash(t.stringValue.c_str()))
             {
             case hash("date_units"):
-                globals.unitDefs.addDateUnits(); 
+                scope.units.addDateUnits(); 
                 break;
             case hash("short_date_units"):
-                globals.unitDefs.addShortDateUnits(); 
+                scope.units.addShortDateUnits(); 
                 break;
             case hash("ymd"):
                 dateFormat = DateFormat::YMD;
@@ -112,8 +108,6 @@ Value Resolver::resolveNode(const Node& node)
 
 Value Resolver::resolveFunctionDef(const FunctionDefExpr& expr)
     {
-    CustomFunction* f = dynamic_cast<CustomFunction*>(globals.functionDefs.get(expr.id.stringValue));
-    f->dateFormat = dateFormat;
     return Value(); //none
     }
 
@@ -145,7 +139,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
         case TokenType::POWER: opType = OperatorType::POW; break;
         default: break;
         }
-    OperatorDef* op = globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
+    OperatorDef* op = scope.globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
         {
         result.errors.push_back(Error(ErrorId::NO_OP, Range(expr.op), expr.op.stringValue, to_string(a1.type), to_string(a2.type)));
@@ -158,7 +152,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
     if (expr.error.id != ErrorId::NONE)
         result.errors.push_back(expr.error);
     if(result.type ==ValueType::NUMBER && !expr.unit.isClear())
-        result.setNumber(result.getNumber().convertToUnit(expr.unit, globals.unitDefs));
+        result.setNumber(result.getNumber().convertToUnit(expr.unit, scope.units));
     return result;
     }
 
@@ -178,17 +172,17 @@ Value Resolver::resolveUnaryOp(const UnaryOpExpr& expr)
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.expr);
-    if (variables.count(assign.Id.stringValue) == 0)
+    if (scope.variables.count(assign.Id.stringValue) == 0)
         {
-        if (globals.unitDefs.exists(assign.Id.stringValue))
+        if (scope.units.exists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, Range(assign.Id), assign.Id.stringValue));
             }
-        else if (globals.functionDefs.exists(assign.Id.stringValue))
+        else if (scope.functionExists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, Range(assign.Id), assign.Id.stringValue));
             }
-        variables.emplace(assign.Id.stringValue, Value()); //create var, regardless of errors.
+        scope.variables.emplace(assign.Id.stringValue, Value()); //create var, regardless of errors.
         }
     auto& var = getVar(assign.Id.stringValue);
     if(var.constant)
@@ -278,7 +272,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                 [[fallthrough]];
             default:
                 if(val.type == ValueType::NUMBER)
-                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, globals.unitDefs);
+                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, scope.units);
                 else
                     ; //TODO: error: unknown postfix
                 break;
@@ -290,8 +284,8 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
 Value Resolver::resolveIdExpr(const IdExpr& idExpr)
     {
     Value val;
-    auto found = variables.find(idExpr.Id.stringValue);
-    if (found != variables.end())
+    auto found = scope.variables.find(idExpr.Id.stringValue);
+    if (found != scope.variables.end())
         {
         val = getVar(idExpr.Id.stringValue);
         }
@@ -307,11 +301,11 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
         return val;
     if (!node.unit.isClear() && !val.getNumber().unit.isClear())
         {
-        val.getNumber ()= val.getNumber().convertToUnit(node.unit, globals.unitDefs);
+        val.getNumber ()= val.getNumber().convertToUnit(node.unit, scope.units);
         }
     else if (!node.unit.isClear())
         {
-        if (globals.unitDefs.exists(node.unit.id))
+        if (scope.units.exists(node.unit.id))
             val.getNumber().unit = node.unit;
         else
             val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.range, node.unit.id.c_str()));
@@ -321,7 +315,7 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
 
 Value Resolver::resolveCall(const CallExpr& callExpr)
     {
-    auto fd = globals.functionDefs.get(callExpr.functionName.stringValue.c_str());
+    auto fd = scope.getFunction(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
         return Value(Error(ErrorId::FUNC_NOT_DEF, Range(callExpr.functionName), callExpr.functionName.stringValue.c_str()));
     if (callExpr.error.id != ErrorId::NONE)
@@ -355,7 +349,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
             v.getNumber().unit = Unit();
         else
             {
-            if (globals.unitDefs.exists(v.getNumber().unit.id) == false)
+            if (scope.units.exists(v.getNumber().unit.id) == false)
                 {
                 v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.range, v.getNumber().unit.id.c_str()));
                 }
@@ -424,5 +418,5 @@ std::string Resolver::formatError(const std::string errorMsg, ...)
 
 Value& Resolver::getVar(const std::string& id)
     {
-    return variables.find(id)->second;
+    return scope.variables.find(id)->second;
     }

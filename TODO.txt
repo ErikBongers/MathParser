@@ -1,6 +1,4 @@
-﻿* parseFuncDef() removes COMMENT_LINEs, because parseExprStatement turns on tok.tokenizeComments()
-  > turning on tokenizeComments can probably be moved to main parseLoop because it re-peek()s after setting this flag.
-* Delete scopes when they get out of...well, scope.
+﻿* Delete scopes when they get out of...well, scope.
   > add debug messages when creating and deleting the scope and name them (name of function).
 * scopes inherit localFunctions from parent and grandparents...
   > copy?
@@ -115,7 +113,6 @@ Deleting a scope
   > Wrap the decoration in a Range. RangeSet -> EditorView?
   > Or…create a parser for the output and hide the “special codes”?
 
-* short_date_units: implement.
 * Tests: include more complex tests with multi-line code, like function defs.
 * functions:
   > allow last ';' to be elimited.

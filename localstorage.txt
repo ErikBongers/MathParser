@@ -1,3 +1,12 @@
+//comment one
+a=12+3; //comment for a
+//comment two
+//comment three
+!b = 23+4;
+
+
+
+
 a= 12;
 b= 23;
 function hundred(a) 

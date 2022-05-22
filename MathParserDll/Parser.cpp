@@ -26,6 +26,7 @@ void Parser::parse()
 
 void Parser::parseEchosBetweenStatements(Statement* lastStmt)
     {
+    tok.tokenizeComments(true);
     if (peek(TokenType::ECHO_COMMENT_LINE)
         || (echoTrailingComment && peek(TokenType::COMMENT_LINE)))
         {
@@ -153,8 +154,6 @@ Node* Parser::parseFunctionDef()
         if(stmt == nullptr)
             break;
         functionStmts.push_back(stmt);
-        while(peek(TokenType::COMMENT_LINE))
-            tok.next();
         }
     scope = oldScope;
 
@@ -229,7 +228,6 @@ Statement* Parser::parseExprStatement(Statement* stmt)
     auto t = tok.peek();
     if (t.type == TokenType::SEMI_COLON)
         {
-        tok.tokenizeComments(true);//TODO: this is probably no longer true: from here on, include comments in the next peek! Must be set BEFORE next(), as next() will already peek.
         tok.next(); //consume
         if(stmt->echo)
             {

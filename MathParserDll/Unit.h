@@ -79,7 +79,8 @@ class UnitsView
         UnitDef& get(const std::string& key);
         bool exists(const std::string& key) { return defs.count(key) != 0; }
         bool isSameProperty(const Unit& u1, const Unit& u2);
-        void addDateUnits();
+        void addLongDateUnits();
         void addShortDateUnits();
+        void removeShortDateUnits();
         void setDefs(const UnitsView& uv) { this->defs = uv.defs; }
     };

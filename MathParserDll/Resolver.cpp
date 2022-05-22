@@ -49,7 +49,7 @@ Value Resolver::resolveDefine(const Define& define)
         switch(hash(t.stringValue.c_str()))
             {
             case hash("date_units"):
-                scope.units.addDateUnits(); 
+                scope.units.addLongDateUnits(); 
                 break;
             case hash("short_date_units"):
                 scope.units.addShortDateUnits(); 

@@ -25,7 +25,7 @@ class Scope
 
         Scope(Globals& globals);
         ~Scope();
-        Scope copyForScript();
+        Scope* copyForScript();
         Scope* copyForFunction();
         void AddLocalFunction(FunctionDefExpr& f, Scope* scope);
         bool functionExists(const std::string name);

@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
+#include <cassert>
 
 std::ostream& operator<<(std::ostream& os, const Unit& u) 
     {
@@ -67,16 +68,15 @@ void UnitDefs::init()
             { "months", UnitDef("months", 2629746, UnitClass::DURATION)},
             { "years", UnitDef("years", 31556952, UnitClass::DURATION)},
             { "milliseconds", UnitDef("milliseconds", 1/1000, UnitClass::DURATION)},
-/* TODO
+
             { "s", UnitDef("s", 1, UnitClass::DURATION)},
-            { "m", UnitDef("m", 60, UnitClass::DURATION)},
+            { "min", UnitDef("min", 60, UnitClass::DURATION)},
             { "h", UnitDef("h", 3600, UnitClass::DURATION)},
             { "d", UnitDef("d", 86400, UnitClass::DURATION)},
             { "w", UnitDef("w", 60 * 60 * 24 * 7, UnitClass::DURATION)},
             { "mon", UnitDef("mon", 2629746, UnitClass::DURATION)},
             { "y", UnitDef("y", 31556952, UnitClass::DURATION)},
             { "ms", UnitDef("ms", 1/1000, UnitClass::DURATION)},
-*/
             };
 
 
@@ -86,23 +86,46 @@ void UnitDefs::init()
     defs["C"].fromSI = [](double d) { return d - 273.15; };
     defs["F"].toSI = [](double d) { return (d - 32) * 5 / 9 + 273.15; };
     defs["F"].fromSI = [](double d) { return (d - 273.15) * 9 / 5 + 32; };
+#ifdef  _DEBUG
+    for (auto& def : defs)
+        {
+        assert(def.first == def.second.id);
+        }
+#endif //  DEBUG
+
     }
 
-void UnitsView::addDateUnits()
+const char* shortDateKeys[] = { "s", "min", "h", "d", "w", "mon", "y", "ms",  };
+
+void UnitsView::addLongDateUnits()
     {
     //TODO: addDateUnits
     }
 
 void UnitsView::addShortDateUnits()
     {
-    //TODO: addDateUnits
+    for(auto key: shortDateKeys)
+        defs.insert(key);
+    }
+
+void UnitsView::removeShortDateUnits()
+    {
+    for(auto key: shortDateKeys)
+        defs.erase(key);
     }
 
 UnitsView::UnitsView(Globals& globals) 
     : globals(globals) 
     {
-    for(auto& unit : globals.unitDefs.defs)
-        defs.insert(unit.first);
+    addClass(UnitClass::UNDEFINED); //needed to include the empty unit.
+    //TODO: make these based on settings.
+    addClass(UnitClass::ANGLE);
+    addClass(UnitClass::LENGTH);
+    addClass(UnitClass::TEMP);
+    addClass(UnitClass::VOLUME);
+    addClass(UnitClass::MASS_WEIGHT);
+    addClass(UnitClass::DURATION);
+    removeShortDateUnits();
     }
 
 Unit::Unit(const Token& idToken)

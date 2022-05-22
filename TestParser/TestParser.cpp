@@ -48,7 +48,7 @@ namespace TestParser
 
         TEST_METHOD(TestDefines)
             {
-            //TODO: assertResult("#define   date_units   short_date_units\n a=3s;", 3, "s");
+            assertResult("#define   date_units   short_date_units\n a=3s;", 3, "s");
             assertError("#define sdfsdf", "DEFINE_NOT_DEF");
             }
 

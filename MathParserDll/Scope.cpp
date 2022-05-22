@@ -16,10 +16,10 @@ Scope::~Scope()
         delete f.second;
     }
 
-Scope Scope::copyForScript()
+Scope* Scope::copyForScript()
     {
-    Scope newScope(globals);
-    newScope.parentScope = this;
+    auto newScope = new Scope(globals);
+    newScope->parentScope = this;
     return newScope; 
     }
 

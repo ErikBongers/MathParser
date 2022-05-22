@@ -12,7 +12,7 @@ Parser::Parser(const char* stream, char sourceIndex, Scope* scope)
 # define M_PIl          3.141592653589793238462643383279502884L
 void Parser::parse()
     {
-    ConstExpr* pConst = createConst(ValueType::NUMBER);
+    ConstExpr* pConst = nodeFactory.createConst(ValueType::NUMBER);
     pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), {0, 0, 0}, tok.sourceIndex);
     scope->ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}, tok.sourceIndex), pConst});
     parseEchoLines();
@@ -32,7 +32,7 @@ void Parser::parseEchosBetweenStatements(Statement* lastStmt)
         auto t = tok.next();
         if (t.isFirstOnLine)
             {
-            auto stmt = createStatement();
+            auto stmt = nodeFactory.createStatement();
             stmt->comment_line = t;
             statements.push_back(stmt);
             }
@@ -53,7 +53,7 @@ void Parser::parseEchoLines()
         auto t = tok.next();
         if(t.type == TokenType::ECHO_COMMENT_LINE)
             {
-            auto stmt = createStatement();
+            auto stmt = nodeFactory.createStatement();
             stmt->comment_line = t;
             statements.push_back(stmt);
             }
@@ -67,7 +67,7 @@ Define* Parser::parseDefine()
     if (t.type == TokenType::DEFINE || t.type == TokenType::UNDEF)
         {
         tok.next();
-        auto define = createDefine();
+        auto define = nodeFactory.createDefine();
         tok.tokenizeNewlines(true);
         while (!peek(TokenType::EOT))
             {
@@ -87,7 +87,7 @@ Define* Parser::parseDefine()
 
 Statement* Parser::parseStatement()
     {
-    Statement* stmt = createStatement();
+    Statement* stmt = nodeFactory.createStatement();
 
     stmt->node = parseDefine();
     if(stmt->node != nullptr)
@@ -119,11 +119,11 @@ Node* Parser::parseFunctionDef()
         return nullptr;
     
     if (!peek(TokenType::ID))
-        return createErrorExpr(Error(ErrorId::EXPECTED_ID, tok.peek()));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED_ID, tok.peek()));
     auto id = tok.next();
 
     if (!match(TokenType::PAR_OPEN))
-        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "("));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "("));
 
     std::vector<Token> paramDefs;
     while (tok.peek().type == TokenType::ID)
@@ -133,14 +133,14 @@ Node* Parser::parseFunctionDef()
             continue;
         if(peek(TokenType::PAR_CLOSE))
            break;
-        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ",' or ')"));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ",' or ')"));
         }
 
     if (!match(TokenType::PAR_CLOSE))
-        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ")"));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ")"));
 
     if (!match(TokenType::CURL_OPEN))
-        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "{"));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "{"));
 
     std::vector<Statement*> functionStmts;
     auto newScope = scope->copyForFunction();
@@ -159,8 +159,8 @@ Node* Parser::parseFunctionDef()
     scope = oldScope;
 
     if (!match(TokenType::CURL_CLOSE))
-        return createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "}"));
-    auto funcDef = createFunctionDef();
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "}"));
+    auto funcDef = nodeFactory.createFunctionDef();
     funcDef->id = id;
     funcDef->params = paramDefs;
     funcDef->statements = std::move(functionStmts);
@@ -186,7 +186,7 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
     if(peek(TokenType::ECHO_COMMENT_LINE))
         {
         auto t = tok.next(); //consume ECHO
-        stmt = createStatement();
+        stmt = nodeFactory.createStatement();
         stmt->comment_line = t;
         return stmt;
         }
@@ -265,7 +265,7 @@ Node* Parser::parseAssignExpr()
             {
             tok.next();//consume ID
             tok.next();//consume EQ
-            AssignExpr* assign = createAssign();
+            AssignExpr* assign = nodeFactory.createAssign();
             assign->Id = id;
             auto list = parseListExpr();
             if(list.size() == 1)
@@ -275,7 +275,7 @@ Node* Parser::parseAssignExpr()
                 if (list.size() == 0)
                     assign->error = Error(ErrorId::UNKNOWN_EXPR, Range(t));
 
-                auto listExpr = createList();
+                auto listExpr = nodeFactory.createList();
                 listExpr->list = list;
                 assign->expr = listExpr;
                 }
@@ -287,10 +287,10 @@ Node* Parser::parseAssignExpr()
             {
             tok.next(); //consume ID
             auto operToken = tok.next();//consume EQ
-            AssignExpr* assign = createAssign();
+            AssignExpr* assign = nodeFactory.createAssign();
             assign->Id = id;
             //prepare components to fabricate the new add or mult expression.
-            IdExpr* idExpr = createIdExpr();
+            IdExpr* idExpr = nodeFactory.createIdExpr();
             idExpr->Id = id;
             TokenType oper;
             switch (t.type)
@@ -305,7 +305,7 @@ Node* Parser::parseAssignExpr()
             //build expression
             if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV)
                 {
-                BinaryOpExpr* binOpExpr = createBinaryOp();
+                BinaryOpExpr* binOpExpr = nodeFactory.createBinaryOp();
                 binOpExpr->n1 = idExpr;
                 binOpExpr->op = Token(oper, operToken.pos, tok.sourceIndex);
                 binOpExpr->n2 = parseAddExpr();
@@ -313,7 +313,7 @@ Node* Parser::parseAssignExpr()
                 }
             else if (t.type == TokenType::EQ_UNIT)
                 {
-                PostfixExpr* pfix = createPostfix();
+                PostfixExpr* pfix = nodeFactory.createPostfix();
                 pfix->expr = idExpr;
                 assign->Id = id;
                 assign->expr = pfix;
@@ -348,7 +348,7 @@ Node* Parser::parseAddExpr()
     while (t.type == TokenType::PLUS || t.type == TokenType::MIN)
         {
         tok.next();
-        BinaryOpExpr* addExpr = createBinaryOp();
+        BinaryOpExpr* addExpr = nodeFactory.createBinaryOp();
         addExpr->n1 = node;
         addExpr->op = t;
         addExpr->n2 = parseMultExpr();
@@ -365,7 +365,7 @@ Node* Parser::parseMultExpr()
     while (t.type == TokenType::MULT || t.type == TokenType::DIV)
         {
         tok.next();
-        BinaryOpExpr* multExpr = createBinaryOp();
+        BinaryOpExpr* multExpr = nodeFactory.createBinaryOp();
         multExpr->n1 = node;
         multExpr->op = t;
         multExpr->n2 = parsePowerExpr();
@@ -394,7 +394,7 @@ Node* Parser::parsePowerExpr()
     while (t.type == TokenType::POWER)
         {
         tok.next();
-        BinaryOpExpr* powerExpr = createBinaryOp();
+        BinaryOpExpr* powerExpr = nodeFactory.createBinaryOp();
         powerExpr->n1 = node;
         powerExpr->op = t;
         powerExpr->n2 = parsePowerExpr(); //right associative!
@@ -418,7 +418,7 @@ Node* Parser::parseImplicitMult()
            || t.type == TokenType::PAR_OPEN)
         {
         //don't consume the token yet...
-        auto m = createBinaryOp();
+        auto m = nodeFactory.createBinaryOp();
         m->n1 = n1;
         m->op = Token(TokenType::MULT, '*', tok.peek().pos, tok.sourceIndex);
         m->n2 = parsePostFixExpr();
@@ -435,7 +435,7 @@ Node* Parser::parseUnaryExpr()
     if (t.type == TokenType::MIN)
         {
         tok.next();
-        auto node = createUnaryOp();
+        auto node = nodeFactory.createUnaryOp();
         node->op = t;
         node->n = parsePostFixExpr();
         return node;
@@ -462,7 +462,7 @@ Node* Parser::parseOnePostFix(Node* node)
         {
         tok.next();
         t = tok.peek();
-        auto postfixExpr = createPostfix();
+        auto postfixExpr = nodeFactory.createPostfix();
         postfixExpr->expr = node;
         node = postfixExpr;
         if (t.type == TokenType::ID)
@@ -485,11 +485,11 @@ Node* Parser::parseOnePostFix(Node* node)
             }
 
         IdExpr* idExpr = (IdExpr*)node;
-        CallExpr* callExpr = createCall();
+        CallExpr* callExpr = nodeFactory.createCall();
         callExpr->arguments.push_back(node);
         callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), operToken.pos, tok.sourceIndex);
 
-        AssignExpr* assignExpr = createAssign();
+        AssignExpr* assignExpr = nodeFactory.createAssign();
         assignExpr->Id = idExpr->Id;
         assignExpr->expr = callExpr;
         node = assignExpr;
@@ -532,7 +532,7 @@ Node* Parser::parsePrimaryExpr()
                 }
             else
                 {
-                IdExpr* idExpr = createIdExpr();
+                IdExpr* idExpr = nodeFactory.createIdExpr();
                 idExpr->Id = t;
                 return idExpr;
                 }
@@ -553,14 +553,14 @@ Node* Parser::parsePrimaryExpr()
         case TokenType::QUOTED_STR:
             {
             tok.next();
-            auto constExpr = createConst(ValueType::TIMEPOINT);
+            auto constExpr = nodeFactory.createConst(ValueType::TIMEPOINT);
             constExpr->value = t;
             return constExpr;
             }
         default: 
             break;
         }
-    auto none = createNoneExpr();
+    auto none = nodeFactory.createNoneExpr();
     none->token = t;
     return none;
     }
@@ -568,7 +568,7 @@ Node* Parser::parsePrimaryExpr()
 Node* Parser::parseAbsOperator(const Token& currentToken)
     {
     auto addExpr = parseAddExpr();
-    CallExpr* callExpr = createCall();
+    CallExpr* callExpr = nodeFactory.createCall();
     callExpr->arguments.push_back(addExpr);
     callExpr->functionName = Token(TokenType::ID, "abs", currentToken.pos, tok.sourceIndex);
     auto t = tok.peek();
@@ -582,7 +582,7 @@ Node* Parser::parseAbsOperator(const Token& currentToken)
 
 ConstExpr* Parser::parseNumber(Token currentToken, bool negative)
     {
-    auto constExpr = createConst(ValueType::NUMBER);
+    auto constExpr = nodeFactory.createConst(ValueType::NUMBER);
     currentToken.numberValue.significand = (negative ? -1 : 1) * currentToken.numberValue.significand;
     constExpr->value = currentToken;
     return constExpr;
@@ -590,7 +590,7 @@ ConstExpr* Parser::parseNumber(Token currentToken, bool negative)
 
 CallExpr* Parser::parseCallExpr(Token functionName)
     {
-    CallExpr* callExpr = createCall();
+    CallExpr* callExpr = nodeFactory.createCall();
     callExpr->functionName = functionName;
     auto t = tok.peek();
     if (t.type != TokenType::PAR_OPEN)
@@ -623,28 +623,6 @@ std::vector<Node*> Parser::parseListExpr()
         }
     return list;
     }
-
-
-NoneExpr* Parser::createErrorExpr(Error error)
-    { 
-    NoneExpr* p = new NoneExpr(); 
-    nodes.push_back(p); 
-    p->error = error;
-    return p; 
-    }
-
-FunctionDefExpr* Parser::createFunctionDef() { FunctionDefExpr* p = new FunctionDefExpr(); nodes.push_back(p); return p; }
-NoneExpr* Parser::createNoneExpr() { NoneExpr* p = new NoneExpr(); nodes.push_back(p); return p; }
-ConstExpr* Parser::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
-BinaryOpExpr* Parser::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
-UnaryOpExpr* Parser::createUnaryOp() { UnaryOpExpr* p = new UnaryOpExpr; nodes.push_back(p); return p; }
-IdExpr* Parser::createIdExpr() { IdExpr* p = new IdExpr; nodes.push_back(p); return p; }
-PostfixExpr* Parser::createPostfix() { PostfixExpr* p = new PostfixExpr; nodes.push_back(p); return p; }
-AssignExpr* Parser::createAssign() { AssignExpr* p = new AssignExpr; nodes.push_back(p); return p; }
-ListExpr* Parser::createList() { ListExpr* p = new ListExpr; nodes.push_back(p); return p; }
-Define* Parser::createDefine() { Define* p = new Define; nodes.push_back(p); return p; }
-Statement* Parser::createStatement() { Statement* p = new Statement; nodes.push_back(p); return p; }
-CallExpr* Parser::createCall() { CallExpr* p = new CallExpr; nodes.push_back(p); return p; }
 
 Range ConstExpr::range() const
     {

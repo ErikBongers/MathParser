@@ -176,6 +176,7 @@
     <ClInclude Include="Function.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="json.h" />
+    <ClInclude Include="NodeFactory.h" />
     <ClInclude Include="Nodes.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="OperatorDef.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="json.cpp" />
+    <ClCompile Include="NodeFactory.cpp" />
     <ClCompile Include="Number.cpp" />
     <ClCompile Include="OperatorDef.cpp" />
     <ClCompile Include="Parser.cpp" />

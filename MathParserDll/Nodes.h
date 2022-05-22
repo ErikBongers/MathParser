@@ -7,7 +7,7 @@
 #include "Range.h"
 
 enum class NodeType {FUNCTIONDEF, CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE};
-class Parser;
+class NodeFactory;
 
 class Node
     {
@@ -22,7 +22,7 @@ class Node
         virtual ~Node() {}
     private:
         Node() : type(NodeType::CONSTEXPR) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class NoneExpr : public Node
@@ -32,7 +32,7 @@ class NoneExpr : public Node
         Range range() const { return Range(token); }
     private:
         NoneExpr() : Node(NodeType::NONE) {};
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class ConstExpr : public Node
@@ -43,7 +43,7 @@ class ConstExpr : public Node
         Range range() const;
     private:
         ConstExpr(ValueType type) : Node(NodeType::CONSTEXPR), type(type) {};
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class IdExpr : public Node
@@ -53,7 +53,7 @@ class IdExpr : public Node
         Range range() const;
     private:
         IdExpr() : Node(NodeType::IDEXPR) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class PostfixExpr : public Node
@@ -64,7 +64,7 @@ class PostfixExpr : public Node
         Range range() const;
     private:
         PostfixExpr() : Node(NodeType::POSTFIXEXPR) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 
@@ -76,7 +76,7 @@ class CallExpr : public Node
         Range range() const;
     private:
         CallExpr() : Node(NodeType::CALLEXPR) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class BinaryOpExpr : public Node
@@ -89,7 +89,7 @@ class BinaryOpExpr : public Node
         Range range() const;
     private:
         BinaryOpExpr() : Node(NodeType::BINARYOPEXPR) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class UnaryOpExpr : public Node
@@ -100,7 +100,7 @@ class UnaryOpExpr : public Node
         Range range() const;
     private:
         UnaryOpExpr() : Node(NodeType::UNARYOPEXPR) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class AssignExpr : public Node
@@ -111,7 +111,7 @@ class AssignExpr : public Node
         Range range() const;
     private:
         AssignExpr() : Node(NodeType::ASSIGNMENT) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class ListExpr : public Node
@@ -121,7 +121,7 @@ class ListExpr : public Node
         Range range() const;
     private:
         ListExpr() : Node(NodeType::LIST) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class Define : public Node
@@ -131,7 +131,7 @@ class Define : public Node
         Range range() const;
     private:
         Define() : Node(NodeType::DEFINE) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class Statement : public Node
@@ -145,14 +145,14 @@ class Statement : public Node
         Range range() const;
     private:
         Statement() : Node(NodeType::STATEMENT) {}
-        friend class Parser;
+        friend class NodeFactory;
     };
 
 class FunctionDefExpr : public Node
     {
     private:
         FunctionDefExpr() : Node(NodeType::FUNCTIONDEF) {}
-        friend class Parser;
+        friend class NodeFactory;
     public:
         Token id;
         std::vector<Token> params;

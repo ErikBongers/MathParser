@@ -1,21 +1,20 @@
 #pragma once
-#include "Nodes.h"
+#include "NodeFactory.h"
 
 class Parser
     {
     private:
         Tokenizer tok;
+        NodeFactory nodeFactory;
         bool muteBlock = false;
         bool echoBlock = false;
         bool echoTrailingComment = false;
-        std::vector<Node*> nodes;
         unsigned int statementStartPos = 0;
     public:
         Scope* scope;
         std::vector<Statement*> statements;
 
         Parser(const char* stream, char sourceIndex, Scope* scope);
-        ~Parser() { for (auto node : nodes) delete node; }
         void parse();
     private:
         Statement* parseStatement();
@@ -36,20 +35,6 @@ class Parser
         ConstExpr* parseNumber(Token currentToken, bool negative);
         CallExpr* parseCallExpr(Token functionName);
         std::vector<Node*> parseListExpr();
-
-        FunctionDefExpr* createFunctionDef();
-        NoneExpr* createErrorExpr(Error error);
-        NoneExpr* createNoneExpr();
-        ConstExpr* createConst(ValueType type);
-        BinaryOpExpr* createBinaryOp();
-        UnaryOpExpr* createUnaryOp();
-        IdExpr* createIdExpr();
-        PostfixExpr* createPostfix();
-        AssignExpr* createAssign();
-        ListExpr* createList();
-        Define* createDefine();
-        CallExpr* createCall();
-        Statement* createStatement();
 
         Node* parseAbsOperator(const Token& currentToken);
         void parseEchosBetweenStatements(Statement* lastStmt);

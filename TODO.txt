@@ -1,9 +1,5 @@
 ﻿* parseFuncDef() removes COMMENT_LINEs, because parseExprStatement turns on tok.tokenizeComments()
   > turning on tokenizeComments can probably be moved to main parseLoop because it re-peek()s after setting this flag.
-* Bug: if last statement of function is comment line -> no return value?
-* Rules on functions:
-  - Functions cannot be overriden?
-    > implement test in parser!
 * Delete scopes when they get out of...well, scope.
   > add debug messages when creating and deleting the scope and name them (name of function).
 * scopes inherit localFunctions from parent and grandparents...
@@ -112,6 +108,12 @@ Deleting a scope
   > Using Firestore: https://www.youtube.com/watch?v=Z87OZtIYC_0&t=288s
     > perhaps for session data?
   > free hosting + domain: https://www.youtube.com/watch?v=cG9kv5-5bPI
+
+
+* Syntax highlighting is done with Mark Decorations
+  > CodeMirror 6: Decorations or HighlightingStyle?
+  > Wrap the decoration in a Range. RangeSet -> EditorView?
+  > Or…create a parser for the output and hide the “special codes”?
 
 * short_date_units: implement.
 * Tests: include more complex tests with multi-line code, like function defs.

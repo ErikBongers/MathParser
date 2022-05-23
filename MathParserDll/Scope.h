@@ -32,5 +32,6 @@ class Scope
         FunctionDef* getFunction(const std::string& name);
     private:
         CustomFunction* getLocalFunction(const std::string& name);
-        Scope(const Scope& scope) = default;
+        Scope(const Scope& scope) = delete;
+        Scope& operator=(const Scope& scope) = delete;
     };

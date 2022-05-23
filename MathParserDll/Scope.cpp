@@ -16,16 +16,16 @@ Scope::~Scope()
         delete f.second;
     }
 
-Scope* Scope::copyForScript()
+std::unique_ptr<Scope> Scope::copyForScript()
     {
-    auto newScope = new Scope(globals);
+    auto newScope = std::make_unique<Scope>(globals);
     newScope->parentScope = this;
     return newScope; 
     }
 
-Scope* Scope::copyForFunction()
+std::unique_ptr<Scope> Scope::copyForFunction()
     {
-    auto newScope = new Scope(globals);
+    auto newScope = std::make_unique<Scope>(globals);
     newScope->parentScope = this;
     newScope->units.setDefs(units);
     //settings;
@@ -64,8 +64,8 @@ FunctionDef* Scope::getFunction(const std::string& name)
     return globals.functionDefs.get(name);
     }
 
-void Scope::AddLocalFunction(FunctionDefExpr& f, Scope* scope) 
+void Scope::AddLocalFunction(FunctionDefExpr& f, std::unique_ptr<Scope>&& scope) 
     { 
-    localFunctions.emplace(f.id.stringValue, new CustomFunction(f, scope));
+    localFunctions.emplace(f.id.stringValue, new CustomFunction(f, std::move(scope)));
     }
 

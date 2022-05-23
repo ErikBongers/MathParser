@@ -5,10 +5,12 @@
 #include "Unit.h"
 #include "Function.h"
 #include "Variable.h"
+#include <memory>
 
 struct Globals;
 class FunctionDefExpr;
-
+class CustomFunction;
+class FunctionDef;
 class Scope
     {
     public:
@@ -25,9 +27,9 @@ class Scope
 
         Scope(Globals& globals);
         ~Scope();
-        Scope* copyForScript();
-        Scope* copyForFunction();
-        void AddLocalFunction(FunctionDefExpr& f, Scope* scope);
+        std::unique_ptr<Scope> copyForScript();
+        std::unique_ptr<Scope> copyForFunction();
+        void AddLocalFunction(FunctionDefExpr& f, std::unique_ptr<Scope>&& scope);
         bool functionExists(const std::string name);
         FunctionDef* getFunction(const std::string& name);
     private:

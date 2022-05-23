@@ -63,33 +63,15 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     return functions.find(name)->second;
     }
 
-//CustomFunction::CustomFunction(const CustomFunction& cf)
-//    :FunctionDef(cf.scope->globals, cf.functionDefExpr.id.stringValue, cf.functionDefExpr.params.size(), cf.functionDefExpr.params.size()), functionDefExpr(cf.functionDefExpr)
-//    {
-//    throw "This should not happen!";
-//    scope = cf.scope;
-//    }
+CustomFunction::CustomFunction(FunctionDefExpr& functionDefExpr, std::unique_ptr<Scope>&& scope)
+    : FunctionDef(scope->globals, functionDefExpr.id.stringValue, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), codeBlock(std::move(scope))
+    {
+    codeBlock.statements = std::move(functionDefExpr.statements);
+    }
 
-//CustomFunction::CustomFunction(CustomFunction&& cf)
-//    :FunctionDef(cf.scope->globals, cf.functionDefExpr.id.stringValue, cf.functionDefExpr->params.size(), cf.functionDefExpr->params.size()), functionDefExpr(cf.functionDefExpr)
-//    {
-//    scope = cf.scope;
-//    cf.scope = nullptr;
-//    }
-
-CustomFunction::CustomFunction(FunctionDefExpr& functionDefExpr, Scope* scope)
-    : FunctionDef(scope->globals, functionDefExpr.id.stringValue, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), scope(scope)
-    {}
-
-CustomFunction::~CustomFunction() 
-    { 
-    if(scope != nullptr)
-        delete scope; 
-}
 
 Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     {
-    Value result;
     std::map<std::string, Value> paramVariables;
 
     //args.size and params.size should be equal.
@@ -97,22 +79,9 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
         {
         paramVariables.emplace(functionDefExpr.params[i].stringValue, args[i]);
         }
-    scope->variables = paramVariables;
-    Resolver resolver(*scope);
-    std::vector<Error> errors;
-    for(auto stmt : functionDefExpr.statements)
-        {
-        result = resolver.resolveStatement(*stmt);
-        errors.insert(errors.end(), result.errors.begin(), result.errors.end());
-        }
-    if(!errors.empty())
-        {
-        auto error = Error(ErrorId::FUNC_FAILED, range, functionDefExpr.id.stringValue);
-        error.stackTrace = std::move(errors);
-        result.errors.clear();
-        result.errors.push_back(error);
-        }
-    return result;
+    codeBlock.scope->variables = paramVariables;
+    Resolver resolver(codeBlock);
+    return resolver.resolveBlock(range,functionDefExpr.id.stringValue);
     }
 
 namespace c = std::chrono;

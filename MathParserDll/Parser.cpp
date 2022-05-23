@@ -5,8 +5,8 @@
 #include "Variable.h"
 #include "Scope.h"
 
-Parser::Parser(const char* stream, char sourceIndex, Scope* scope)
-    : tok(stream, sourceIndex), scope(scope) 
+Parser::Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& scope)
+    : tok(stream, sourceIndex), codeBlock(std::move(scope))
     {
     }
 # define M_PIl          3.141592653589793238462643383279502884L
@@ -14,12 +14,12 @@ void Parser::parse()
     {
     ConstExpr* pConst = nodeFactory.createConst(ValueType::NUMBER);
     pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), {0, 0, 0}, tok.sourceIndex);
-    scope->ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}, tok.sourceIndex), pConst});
+    codeBlock.scope->ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}, tok.sourceIndex), pConst});
     parseEchoLines();
     while (!peek(TokenType::EOT))
         {
         auto stmt = parseStatement();
-        statements.push_back(stmt);
+        codeBlock.statements.push_back(stmt);
         parseEchosBetweenStatements(stmt);
         }
     }
@@ -35,7 +35,7 @@ void Parser::parseEchosBetweenStatements(Statement* lastStmt)
             {
             auto stmt = nodeFactory.createStatement();
             stmt->comment_line = t;
-            statements.push_back(stmt);
+            codeBlock.statements.push_back(stmt);
             }
         else
             {
@@ -56,7 +56,7 @@ void Parser::parseEchoLines()
             {
             auto stmt = nodeFactory.createStatement();
             stmt->comment_line = t;
-            statements.push_back(stmt);
+            codeBlock.statements.push_back(stmt);
             }
         }
     tok.tokenizeComments(false);
@@ -144,10 +144,9 @@ Node* Parser::parseFunctionDef()
         return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "{"));
 
     std::vector<Statement*> functionStmts;
-    auto newScope = scope->copyForFunction();
-    auto oldScope = scope;
+    auto newScope = codeBlock.scope->copyForFunction();
 
-    scope = newScope;
+    std::swap(newScope, codeBlock.scope);
     while (!peek(TokenType::CURL_CLOSE) && !peek(TokenType::EOT))
         {
         auto stmt = parseStatement();
@@ -155,7 +154,7 @@ Node* Parser::parseFunctionDef()
             break;
         functionStmts.push_back(stmt);
         }
-    scope = oldScope;
+    std::swap(codeBlock.scope, newScope);
 
     if (!match(TokenType::CURL_CLOSE))
         return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "}"));
@@ -165,7 +164,7 @@ Node* Parser::parseFunctionDef()
     funcDef->statements = std::move(functionStmts);
 
 
-    scope->AddLocalFunction(*funcDef, newScope);
+    codeBlock.scope->AddLocalFunction(*funcDef, std::move(newScope));
     return funcDef;
     }
 
@@ -278,7 +277,7 @@ Node* Parser::parseAssignExpr()
                 assign->expr = listExpr;
                 }
 
-            scope->ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
+            codeBlock.scope->ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
             }
         else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
@@ -499,7 +498,7 @@ Node* Parser::parseUnitExpr()
     {
     Node* node = parsePrimaryExpr();
     auto t = tok.peek();
-    if (t.type == TokenType::ID && scope->ids.count(t.stringValue) == 0)
+    if (t.type == TokenType::ID && codeBlock.scope->ids.count(t.stringValue) == 0)
         {
         tok.next();
         node->unit = t; //no known id: assuming a unit.
@@ -524,7 +523,7 @@ Node* Parser::parsePrimaryExpr()
             break;
         case TokenType::ID:
             tok.next();
-            if (scope->functionExists(t.stringValue))
+            if (codeBlock.scope->functionExists(t.stringValue))
                 {
                 return parseCallExpr(t);
                 }

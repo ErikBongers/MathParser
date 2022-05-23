@@ -2,13 +2,12 @@
 #include "Parser.h"
 #include "Value.h"
 #include "Unit.h"
-#include "Scope.h"
+#include "CodeBlock.h"
 
 class Resolver
     {
     private:
-        Scope& scope;
-
+        CodeBlock& codeBlock;
         Value resolveNone(const NoneExpr& expr);
         Value resolveDefine(const Define& define);
         Value resolveNode(const Node& node);
@@ -26,8 +25,9 @@ class Resolver
         Value resolveFunctionDef(const FunctionDefExpr& expr);
 
     public:
-        Resolver(Scope& scope);
-        std::string resolve(std::vector<Statement*>& statements);
+        Resolver(CodeBlock& codeBlock);
+        std::string resolve();
+        Value resolveBlock(const Range& range, const std::string& functionName);
         Value resolveStatement(const Statement& stmt);
         std::string formatError(const std::string errorMsg, ...);
         DateFormat dateFormat = DateFormat::UNDEFINED;

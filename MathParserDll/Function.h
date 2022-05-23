@@ -4,9 +4,11 @@
 #include "Unit.h"
 #include <string>
 #include <map>
+#include <memory>
+#include "CodeBlock.h"
+#include "Scope.h"
 
 struct Globals;
-class Scope;
 class FunctionDef
     {
     public:
@@ -46,11 +48,10 @@ class CustomFunction: public FunctionDef
         FunctionDefExpr& functionDefExpr;
 
     public:
-        Scope* scope = nullptr;
+        CodeBlock codeBlock;
         //CustomFunction(const CustomFunction& cf);
         //CustomFunction(CustomFunction&& cf);
-        CustomFunction(FunctionDefExpr& functionDefExpr, Scope* scope);
-        ~CustomFunction();
+        CustomFunction(FunctionDefExpr& functionDefExpr, std::unique_ptr<Scope>&& scope);
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 

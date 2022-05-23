@@ -3,7 +3,6 @@
 #include "json.h"
 #include <sstream>
 #include <bitset>
-#include "Resolver.h"
 
 Value::Value(Number n)
     : type(ValueType::NUMBER)

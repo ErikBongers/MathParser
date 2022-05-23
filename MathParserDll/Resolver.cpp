@@ -7,17 +7,19 @@
 #include "tools.h"
 #include <sstream>
 #include "Globals.h"
+#include "Scope.h"
+#include "NodeFactory.h"
 
-Resolver::Resolver(Scope& scope) 
-    : scope(scope)
+Resolver::Resolver(CodeBlock& codeBlock) 
+    : codeBlock(codeBlock)
     {
     }
 
-std::string Resolver::resolve(std::vector<Statement*>& statements)
+std::string Resolver::resolve()
     {
     std::vector<std::string> jsonRes;
     std::ostringstream sstr;
-    for (auto& stmt : statements)
+    for (auto& stmt : codeBlock.statements)
         {
         auto result = resolveStatement(*stmt);
         if (stmt->node != nullptr)
@@ -41,6 +43,26 @@ std::string Resolver::resolve(std::vector<Statement*>& statements)
     return result;
     }
 
+Value Resolver::resolveBlock(const Range& range, const std::string& functionName)
+    {
+    Value result;
+    std::vector<Error> errors;
+    for(auto stmt : codeBlock.statements)
+        {
+        result = resolveStatement(*stmt);
+        errors.insert(errors.end(), result.errors.begin(), result.errors.end());
+        }
+    if(!errors.empty())
+        {
+        auto error = Error(ErrorId::FUNC_FAILED, range, functionName);
+        error.stackTrace = std::move(errors);
+        result.errors.clear();
+        result.errors.push_back(error);
+        }
+    return result;
+    }
+
+
 Value Resolver::resolveDefine(const Define& define)
     {
     Value result;
@@ -49,10 +71,10 @@ Value Resolver::resolveDefine(const Define& define)
         switch(hash(t.stringValue.c_str()))
             {
             case hash("date_units"):
-                scope.units.addLongDateUnits(); 
+                codeBlock.scope->units.addLongDateUnits(); 
                 break;
             case hash("short_date_units"):
-                scope.units.addShortDateUnits(); 
+                codeBlock.scope->units.addShortDateUnits(); 
                 break;
             case hash("ymd"):
                 dateFormat = DateFormat::YMD;
@@ -139,7 +161,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
         case TokenType::POWER: opType = OperatorType::POW; break;
         default: break;
         }
-    OperatorDef* op = scope.globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
+    OperatorDef* op = codeBlock.scope->globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
         {
         result.errors.push_back(Error(ErrorId::NO_OP, Range(expr.op), expr.op.stringValue, to_string(a1.type), to_string(a2.type)));
@@ -152,7 +174,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
     if (expr.error.id != ErrorId::NONE)
         result.errors.push_back(expr.error);
     if(result.type ==ValueType::NUMBER && !expr.unit.isClear())
-        result.setNumber(result.getNumber().convertToUnit(expr.unit, scope.units));
+        result.setNumber(result.getNumber().convertToUnit(expr.unit, codeBlock.scope->units));
     return result;
     }
 
@@ -172,17 +194,17 @@ Value Resolver::resolveUnaryOp(const UnaryOpExpr& expr)
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.expr);
-    if (scope.variables.count(assign.Id.stringValue) == 0)
+    if (codeBlock.scope->variables.count(assign.Id.stringValue) == 0)
         {
-        if (scope.units.exists(assign.Id.stringValue))
+        if (codeBlock.scope->units.exists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_UNIT, Range(assign.Id), assign.Id.stringValue));
             }
-        else if (scope.functionExists(assign.Id.stringValue))
+        else if (codeBlock.scope->functionExists(assign.Id.stringValue))
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, Range(assign.Id), assign.Id.stringValue));
             }
-        scope.variables.emplace(assign.Id.stringValue, Value()); //create var, regardless of errors.
+        codeBlock.scope->variables.emplace(assign.Id.stringValue, Value()); //create var, regardless of errors.
         }
     auto& var = getVar(assign.Id.stringValue);
     if(var.constant)
@@ -272,7 +294,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                 [[fallthrough]];
             default:
                 if(val.type == ValueType::NUMBER)
-                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, scope.units);
+                    val.getNumber() = val.getNumber().convertToUnit(pfix.postfixId, codeBlock.scope->units);
                 else
                     ; //TODO: error: unknown postfix
                 break;
@@ -284,8 +306,8 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
 Value Resolver::resolveIdExpr(const IdExpr& idExpr)
     {
     Value val;
-    auto found = scope.variables.find(idExpr.Id.stringValue);
-    if (found != scope.variables.end())
+    auto found = codeBlock.scope->variables.find(idExpr.Id.stringValue);
+    if (found != codeBlock.scope->variables.end())
         {
         val = getVar(idExpr.Id.stringValue);
         }
@@ -301,11 +323,11 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
         return val;
     if (!node.unit.isClear() && !val.getNumber().unit.isClear())
         {
-        val.getNumber ()= val.getNumber().convertToUnit(node.unit, scope.units);
+        val.getNumber ()= val.getNumber().convertToUnit(node.unit, codeBlock.scope->units);
         }
     else if (!node.unit.isClear())
         {
-        if (scope.units.exists(node.unit.id))
+        if (codeBlock.scope->units.exists(node.unit.id))
             val.getNumber().unit = node.unit;
         else
             val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.range, node.unit.id.c_str()));
@@ -315,7 +337,7 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
 
 Value Resolver::resolveCall(const CallExpr& callExpr)
     {
-    auto fd = scope.getFunction(callExpr.functionName.stringValue.c_str());
+    auto fd = codeBlock.scope->getFunction(callExpr.functionName.stringValue.c_str());
     if (fd == nullptr)
         return Value(Error(ErrorId::FUNC_NOT_DEF, Range(callExpr.functionName), callExpr.functionName.stringValue.c_str()));
     if (callExpr.error.id != ErrorId::NONE)
@@ -349,7 +371,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
             v.getNumber().unit = Unit();
         else
             {
-            if (scope.units.exists(v.getNumber().unit.id) == false)
+            if (codeBlock.scope->units.exists(v.getNumber().unit.id) == false)
                 {
                 v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.range, v.getNumber().unit.id.c_str()));
                 }
@@ -418,5 +440,5 @@ std::string Resolver::formatError(const std::string errorMsg, ...)
 
 Value& Resolver::getVar(const std::string& id)
     {
-    return scope.variables.find(id)->second;
+    return codeBlock.scope->variables.find(id)->second;
     }

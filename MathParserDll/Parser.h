@@ -1,5 +1,7 @@
 #pragma once
 #include "NodeFactory.h"
+#include <memory>
+#include "CodeBlock.h"
 
 class Parser
     {
@@ -11,10 +13,8 @@ class Parser
         bool echoTrailingComment = false;
         unsigned int statementStartPos = 0;
     public:
-        Scope* scope;
-        std::vector<Statement*> statements;
-
-        Parser(const char* stream, char sourceIndex, Scope* scope);
+        CodeBlock codeBlock;
+        Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& scope);
         void parse();
     private:
         Statement* parseStatement();

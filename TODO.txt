@@ -1,7 +1,4 @@
-﻿* FunctionDefExpr.statements is moved to CustomFunction.codeBlock.statements.
-  > can this move be avoided?
-
-Scope
+﻿Scope
 ---------
 * Exposure of global functions, units (and constants)
   > Default is ALL exposed? 

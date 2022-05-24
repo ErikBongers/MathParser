@@ -63,10 +63,9 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     return functions.find(name)->second;
     }
 
-CustomFunction::CustomFunction(FunctionDefExpr& functionDefExpr, std::unique_ptr<Scope>&& scope)
-    : FunctionDef(scope->globals, functionDefExpr.id.stringValue, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), codeBlock(std::move(scope))
+CustomFunction::CustomFunction(FunctionDefExpr& functionDefExpr, CodeBlock&& codeBlock)
+    : FunctionDef(codeBlock.scope->globals, functionDefExpr.id.stringValue, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), codeBlock(std::move(codeBlock))
     {
-    codeBlock.statements = std::move(functionDefExpr.statements);
     }
 
 

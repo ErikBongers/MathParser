@@ -51,7 +51,7 @@ class CustomFunction: public FunctionDef
         CodeBlock codeBlock;
         //CustomFunction(const CustomFunction& cf);
         //CustomFunction(CustomFunction&& cf);
-        CustomFunction(FunctionDefExpr& functionDefExpr, std::unique_ptr<Scope>&& scope);
+        CustomFunction(FunctionDefExpr& functionDefExpr, CodeBlock&& codeBlock);
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 

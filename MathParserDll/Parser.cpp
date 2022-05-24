@@ -161,10 +161,11 @@ Node* Parser::parseFunctionDef()
     auto funcDef = nodeFactory.createFunctionDef();
     funcDef->id = id;
     funcDef->params = paramDefs;
-    funcDef->statements = std::move(functionStmts);
+    funcDef->r = id;
+    for(auto& stmt : functionStmts)
+        funcDef->r += stmt->range();
 
-
-    codeBlock.scope->AddLocalFunction(*funcDef, std::move(newScope));
+    codeBlock.scope->AddLocalFunction(*funcDef, CodeBlock(std::move(newScope), std::move(functionStmts)));
     return funcDef;
     }
 
@@ -705,8 +706,5 @@ Range Statement::range() const
 
 Range FunctionDefExpr::range() const
     {
-    Range r = id;
-    if(!statements.empty())
-        r += statements.back()->range();
     return r;
     }

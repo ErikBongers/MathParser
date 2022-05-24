@@ -64,8 +64,8 @@ FunctionDef* Scope::getFunction(const std::string& name)
     return globals.functionDefs.get(name);
     }
 
-void Scope::AddLocalFunction(FunctionDefExpr& f, std::unique_ptr<Scope>&& scope) 
+void Scope::AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock) 
     { 
-    localFunctions.emplace(f.id.stringValue, new CustomFunction(f, std::move(scope)));
+    localFunctions.emplace(f.id.stringValue, new CustomFunction(f, std::move(codeBlock)));
     }
 

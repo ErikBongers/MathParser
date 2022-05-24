@@ -153,8 +153,8 @@ class FunctionDefExpr : public Node
         FunctionDefExpr() : Node(NodeType::FUNCTIONDEF) {}
         friend class NodeFactory;
     public:
+        Range r;
         Token id;
         std::vector<Token> params;
-        std::vector<Statement*> statements;
         Range range() const;
     };

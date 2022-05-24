@@ -11,6 +11,7 @@ struct Globals;
 class FunctionDefExpr;
 class CustomFunction;
 class FunctionDef;
+struct CodeBlock;
 class Scope
     {
     public:
@@ -29,7 +30,7 @@ class Scope
         ~Scope();
         std::unique_ptr<Scope> copyForScript();
         std::unique_ptr<Scope> copyForFunction();
-        void AddLocalFunction(FunctionDefExpr& f, std::unique_ptr<Scope>&& scope);
+        void AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock);
         bool functionExists(const std::string name);
         FunctionDef* getFunction(const std::string& name);
     private:

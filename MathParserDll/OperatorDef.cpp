@@ -3,6 +3,7 @@
 #include "Value.h"
 #include "Resolver.h"
 #include "Globals.h"
+#include "Scope.h"
 
 bool OperatorId::operator<(OperatorId const& id2) const
     {

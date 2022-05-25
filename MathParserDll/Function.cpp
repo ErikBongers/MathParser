@@ -4,8 +4,8 @@
 #include "Globals.h"
 #include "Tokenizer.h"
 #include "Resolver.h"
-#include <chrono>
 #include "Date.h"
+#include "GlobalFunctions.h"
 
 void FunctionDefs::init()
     {
@@ -83,180 +83,35 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     return resolver.resolveBlock(range,functionDefExpr.id.stringValue);
     }
 
-namespace c = std::chrono;
-using time_point = c::system_clock::time_point;
-using year_month_day = c::year_month_day;
-using namespace std::chrono_literals;
+const char* trigFuncKeys[] = { "sin", "cos", "tan", "asin", "acos", "atan", "arcsin", "arccos", "arctan"};
 
-Value Now::execute(std::vector<Value>& args, const Range& range)
+;void FunctionsView::addTrigFunctions()
     {
-    Value now;
-    time_point tpNow = c::system_clock::now();
-    year_month_day ymd{ c::floor<std::chrono::days>(tpNow) };
-    Date date;
-    date.day = static_cast<unsigned>(ymd.day());
-    date.month = (Month)static_cast<unsigned>(ymd.month());
-    date.year =  static_cast<int>(ymd.year());
-    now.setDate(date);
-    return now;
+    for(auto key: trigFuncKeys)
+        defs.insert(key);
     }
 
-Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, bool max)
+void FunctionsView::removeTrigFunctions()
     {
-    bool diffUnits = false;
-    double val0;
+    for(auto key: trigFuncKeys)
+        defs.erase(key);
+    }
 
-    Value ret = args[0];
-    auto unit = args[0].getNumber().unit;
-    for(int i = 1; i < args.size(); i++)
+FunctionsView::FunctionsView(Globals& globals) 
+    : globals(globals) 
+    {
+    for (auto& func : globals.functionDefs.functions)
         {
-        val0 = ret.getNumber().toSI(globals.unitsView);
-        double val1 = args[i].getNumber().toSI(globals.unitsView);
-        auto otherErrs = &ret.errors;
-        if (max? (val0 > val1) : (val0 < val1))
-            {
-            //ret keeps it's value.
-            }
-        else
-            {
-            ret = args[i];
-            }
-        if(!globals.unitsView.isSameProperty(unit, args[i].getNumber().unit))
-           diffUnits = true;
+        defs.insert(func.first);
         }
-    std::vector<Error> errors;
-    for(auto& arg : args)
-        {
-        errors.insert(errors.begin(), arg.errors.begin(), arg.errors.end());
-        }
-    if(diffUnits)
-        errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, range));
-    ret.errors = errors;
-    return ret;
     }
 
-Value Max::execute(std::vector<Value>& args, const Range& range)
+FunctionDef* FunctionsView::get(const std::string& key)
     {
-    return minMax(globals, args, range, true);
+    if(exists(key))
+        return globals.functionDefs.functions[key];
+    else
+        throw std::out_of_range ("blah");
     }
-
-Value Min::execute(std::vector<Value>& args, const Range& range)
-    {
-    return minMax(globals, args, range, false);
-    }
-
-Value Inc::execute(std::vector<Value>& args, const Range& range)
-    {
-    Value arg = args[0];
-    arg.getNumber()++;
-    return arg;
-    }
-
-Value Dec::execute(std::vector<Value>& args, const Range& range)
-    {
-    Value arg = args[0];
-    arg.getNumber()--;
-    return arg;
-    }
-
-Value Int::execute(std::vector<Value>& args, const Range& range)
-    {
-    Value arg = args[0];
-    arg.getNumber ()= {trunc(arg.getNumber().to_double()), 0};
-    return arg;
-    }
-
-Value Abs::execute(std::vector<Value>& args, const Range& range)
-    {
-    Value arg = args[0];
-    arg.getNumber ()= {abs(arg.getNumber().to_double()), 0};
-    return arg;
-    }
-
-Value Sin::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitsView.get("deg").toSI(arg);;
-    return Value(Number(sin(arg), 0, range));
-    }
-
-Value Cos::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitsView.get("deg").toSI(arg);
-    return Value(Number(cos(arg), 0, range));
-    }
-
-Value Tan::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitsView.get("deg").toSI(arg);
-    return Value(Number(tan(arg), 0, range));
-    }
-
-Value ArcSin::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    return Value(Number(asin(arg), 0, range));
-    }
-
-Value ArcCos::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    return Value(Number(acos(arg), 0, range));
-    }
-
-Value ATan::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    return Value(Number(atan(arg), 0, range));
-    }
-
-Value ASin::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    return Value(Number(asin(arg), 0, range));
-    }
-
-Value ACos::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    return Value(Number(acos(arg), 0, range));
-    }
-
-Value ArcTan::execute(std::vector<Value>& args, const Range& range)
-    {
-    double arg = args[0].getNumber().to_double();
-    return Value(Number(atan(arg), 0, range));
-    }
-
-Value Sqrt::execute(std::vector<Value>& args, const Range& range)
-    {
-    return Value(Number(sqrt(args[0].getNumber().to_double()), 0, range));
-    }
-
-Value Round::execute(std::vector<Value>& args, const Range& range)
-    {
-    return Value(Number(round(args[0].getNumber().to_double()), 0, range));
-    }
-
-Value Floor::execute(std::vector<Value>& args, const Range& range)
-    {
-    return Value(Number(floor(args[0].getNumber().to_double()), 0, range));
-    }
-
-Value Ceil::execute(std::vector<Value>& args, const Range& range)
-    {
-    return Value(Number(ceil(args[0].getNumber().to_double()), 0, range));
-    }
-
-Value Trunc::execute(std::vector<Value>& args, const Range& range)
-    {
-    return Value(Number(trunc(args[0].getNumber().to_double()), 0, range));
-    }
-
 
 

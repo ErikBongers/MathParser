@@ -6,7 +6,7 @@
 #include "Parser.h"
 
 Scope::Scope(Globals& globals) 
-    : globals(globals), units(globals)
+    : globals(globals), units(globals), functions(globals)
     {
     }
 
@@ -42,7 +42,7 @@ bool Scope::functionExists(const std::string name)
     else if(parentScope != nullptr && parentScope->functionExists(name))
         return true;
     else 
-        return globals.functionDefs.exists(name);
+        return functions.exists(name);
     }
 
 CustomFunction* Scope::getLocalFunction(const std::string& name)
@@ -61,7 +61,7 @@ FunctionDef* Scope::getFunction(const std::string& name)
         fd = parentScope->getFunction(name);
     if(fd != nullptr)
         return fd;
-    return globals.functionDefs.get(name);
+    return functions.get(name);
     }
 
 void Scope::AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock) 

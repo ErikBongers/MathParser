@@ -1,4 +1,8 @@
-﻿Scope
+﻿* FunctionDef uses Globals: replace with Scope?
+* FunctionsView: use FunctionType to #def #undef groups of global functions.
+* Unit tests: really need to add functions and #def and #undef
+
+Scope
 ---------
 * Exposure of global functions, units (and constants)
   > Default is ALL exposed? 

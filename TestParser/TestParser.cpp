@@ -4,6 +4,7 @@
 #include "../MathParserDll/Date.h"
 #include "../MathParserDll/Parser.h"
 #include "../MathParserDll/Function.h"
+#include "../MathParserDll/Scope.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace nlohmann;

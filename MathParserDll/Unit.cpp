@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "Unit.h"
 #include "Globals.h"
+#include "Scope.h"
 #include "Token.h"
 #include <stdexcept>
 #include <iostream>

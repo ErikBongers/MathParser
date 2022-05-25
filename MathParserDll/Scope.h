@@ -3,14 +3,11 @@
 #include "Value.h"
 #include "Date.h"
 #include "Unit.h"
-#include "Function.h"
 #include "Variable.h"
 #include <memory>
+#include "Function.h"
 
 struct Globals;
-class FunctionDefExpr;
-class CustomFunction;
-class FunctionDef;
 struct CodeBlock;
 class Scope
     {
@@ -19,6 +16,7 @@ class Scope
         Scope* parentScope = nullptr;
         //views (inherited)
         UnitsView units;
+        FunctionsView functions;
         //settings
         DateFormat dateFormat = DateFormat::UNDEFINED;
         //locals

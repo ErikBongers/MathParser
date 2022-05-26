@@ -70,14 +70,26 @@ Hot.=C; //Does the same as the above line.
 * Mass (weight): `kg, g, mg, t, lb (lbs), oz, N` (note that for convenience no distinction is made between weight and mass)
 * Volume: `L, ml, gal, pt`
 
-### Functions
+### Built in functions
 * Trigonometry: `sin, cos, tan, asin, acos, atan`
 * Other: `max(val1, val2,...), min(val1,val2,...), round, floor, ceil, trunc, abs`
 * `|x|` is the same as `abs(x)`
 * Dates: `now()`
 * [TODO]: round() and abs() in combination with units.
 
-
+### Define functions
+Statements can be grouped in functions as well.
+```
+x = 100;
+function hundred(a)
+  {
+  cent = x;//error: variables from outside the function are not visible within the function body (scope).
+  cent = 100; //ok
+  a*cent; //the last statement calculates the return value of the function.
+  }
+ cent++;//error: cent was a local variable of hundred(). It's out of scope here.
+ x=hundred(1+2); // = 300
+```
 ### Constants
 Currently only PI. (also in lower case)
 
@@ -86,7 +98,7 @@ Currently only PI. (also in lower case)
 Math Parser follows to some extend the chrono library concepts.
 * A **date** is a point in time. It has no length or duration. It has the members: day, month, year.
 * A **duration** is a length of time. You can add and multiply them. It has the members: days, months, years. Note the plural form.
-#### Calculations [TODO]
+#### Calculations
 ```
 date - date ==> duration
 date + duration ==> date

@@ -83,17 +83,30 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     return resolver.resolveBlock(range,functionDefExpr.id.stringValue);
     }
 
-const char* trigFuncKeys[] = { "sin", "cos", "tan", "asin", "acos", "atan", "arcsin", "arccos", "arctan"};
+std::vector<std::string> FunctionKeys::trig = { "sin", "cos", "tan", "asin", "acos", "atan", "arcsin", "arccos", "arctan"};
+std::vector<std::string> FunctionKeys::arithm = { "round", "trunc", "floor", "ceil", "abs", "max", "min"};
+std::vector<std::string> FunctionKeys::date = { "now"};
 
-;void FunctionsView::addTrigFunctions()
+const std::vector<std::string>& FunctionsView::getFuncKeyList(FunctionType type)
     {
-    for(auto key: trigFuncKeys)
+    switch (type)
+        {
+        using enum FunctionType;
+        case TRIG: return functionKeys.trig;
+        case ARITHM: return functionKeys.arithm;
+        case DATE: return functionKeys.all;
+        case ALL: return functionKeys.all;
+        }
+    }
+;void FunctionsView::addFunctions(FunctionType type)
+    {
+    for(auto key: getFuncKeyList(type))
         defs.insert(key);
     }
 
-void FunctionsView::removeTrigFunctions()
+void FunctionsView::removeFunctions(FunctionType type)
     {
-    for(auto key: trigFuncKeys)
+    for(auto key: getFuncKeyList(type))
         defs.erase(key);
     }
 
@@ -114,4 +127,11 @@ FunctionDef* FunctionsView::get(const std::string& key)
         return nullptr;
     }
 
+FunctionKeys FunctionsView::functionKeys;
 
+FunctionKeys::FunctionKeys()
+    {
+    all.insert(all.end(), trig.begin(), trig.end());
+    all.insert(all.end(), arithm.begin(), arithm.end());
+    all.insert(all.end(), date.begin(), date.end());
+    }

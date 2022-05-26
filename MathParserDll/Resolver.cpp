@@ -62,6 +62,17 @@ Value Resolver::resolveBlock(const Range& range, const std::string& functionName
     return result;
     }
 
+ FunctionType toFunctionType(uint32_t funcHash)
+    {
+    switch(funcHash)
+        {
+        using enum FunctionType;
+        case hash("trig"): return TRIG;
+        case hash("arithm"): return ARITHM;
+        case hash("date"): return DATE;
+        case hash("all"): return ALL;
+        }
+    }
 
 Value Resolver::resolveDefine(const Define& define)
     {
@@ -86,10 +97,13 @@ Value Resolver::resolveDefine(const Define& define)
                 dateFormat = DateFormat::MDY;
                 break;
             case hash("trig"):
+            case hash("arithm"):
+            case hash("date"):
+            case hash("all"):
                 if(define.undef)
-                    codeBlock.scope->functions.removeTrigFunctions();
+                    codeBlock.scope->functions.removeFunctions(toFunctionType(hash(t.stringValue.c_str())));
                 else
-                    codeBlock.scope->functions.addTrigFunctions();
+                    codeBlock.scope->functions.addFunctions(toFunctionType(hash(t.stringValue.c_str())));
                 break;
             default:
                 result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), t.stringValue));

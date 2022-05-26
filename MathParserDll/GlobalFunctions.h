@@ -1,9 +1,6 @@
 #pragma once
 #include "Function.h"
 
-enum class FunctionType { DATE, TRIG, ALL };
-
-
 class Now: public FunctionDef
     {
     public:

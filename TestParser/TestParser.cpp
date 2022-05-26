@@ -102,12 +102,35 @@ hundred(a);
             assertResult("#define   date_units   short_date_units\n a=3s;", 3, "s");
             assertError("#define sdfsdf", "DEFINE_NOT_DEF");
             assertError("#undef trig\n sin(30deg)", "FUNC_NOT_DEF");
+            assertError("#undef all\n sin(30deg)", "FUNC_NOT_DEF");
+            assertError("#undef all\n max(30, 40)", "FUNC_NOT_DEF");
+            assertError("#undef all\n now()", "FUNC_NOT_DEF");
             assertResult(R"CODE(
 #undef trig
 #define trig
 sin(30deg);
                         )CODE"
-                        , 0.5);
+                         , 0.5);
+            assertResult(R"CODE(
+#undef arithm
+#define arithm
+max(30, 20);
+                        )CODE"
+                         , 30);
+            assertResult(R"CODE(
+#undef all
+#define all
+sin(30deg);
+                        )CODE"
+                         , 0.5);
+            assertResult(R"CODE(
+#undef date
+#define date
+d=now() - now();
+d.years + d.months + d.days;
+
+                        )CODE"
+                         , 0);
             }
 
         TEST_METHOD(TestPrecedence)

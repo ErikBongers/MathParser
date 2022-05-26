@@ -135,6 +135,10 @@ Token Tokenizer::getNextToken()
                 {
                 return Token(DEFINE, "#define", peekedState.nextPos-1, sourceIndex);
                 }
+            else if (matchWord("undef"))
+                {
+                return Token(UNDEF, "#undef", peekedState.nextPos-1, sourceIndex);
+                }
             return Token(MUTE_LINE, c, peekedState.nextPos-1, sourceIndex);
         case '/':
             {

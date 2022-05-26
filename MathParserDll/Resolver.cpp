@@ -85,6 +85,12 @@ Value Resolver::resolveDefine(const Define& define)
             case hash("mdy"):
                 dateFormat = DateFormat::MDY;
                 break;
+            case hash("trig"):
+                if(define.undef)
+                    codeBlock.scope->functions.removeTrigFunctions();
+                else
+                    codeBlock.scope->functions.addTrigFunctions();
+                break;
             default:
                 result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), t.stringValue));
             }

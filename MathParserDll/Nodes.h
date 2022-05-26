@@ -128,6 +128,7 @@ class Define : public Node
     public:
         std::vector<Token> defs;
         Range range() const;
+        bool undef = false;
     private:
         Define() : Node(NodeType::DEFINE) {}
         friend class NodeFactory;

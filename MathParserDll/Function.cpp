@@ -111,7 +111,7 @@ FunctionDef* FunctionsView::get(const std::string& key)
     if(exists(key))
         return globals.functionDefs.functions[key];
     else
-        throw std::out_of_range ("blah");
+        return nullptr;
     }
 
 

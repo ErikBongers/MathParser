@@ -37,7 +37,7 @@ function ageThisYear(birth)
 
 birthDate='09/05/2014';
 theAge=ageThisYear(birthDate);
-
+theAge.to_days;
 !//|-1;
 z=max(1,(2,3);
 !//ikke='30-07-1968'; 

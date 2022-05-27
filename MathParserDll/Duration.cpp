@@ -29,3 +29,11 @@ void Duration::normalize()
     months = (months+12)%12;
     years +=(long)years_in_months;
     }
+
+double Duration::to_days() const
+    {
+    double ytod = years == EmptyYears ? 0 : years * 365.2425;
+    double mtod = months == EmptyMonths ? 0 : months * 365.2425 / 12;
+    double dtod = days == EmptyDays ? 0 : days;
+    return ytod + mtod + dtod;
+    }

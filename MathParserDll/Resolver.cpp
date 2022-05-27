@@ -303,6 +303,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
             case hash("year"):
                 val = resolveDateFragment(val, pfix.postfixId);
                 break;
+            case hash("to_days"):
             case hash("days"):
             case hash("months"):
             case hash("years"):
@@ -436,6 +437,8 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
     const auto dur = val.getDuration();
     switch (hash(fragmentId.stringValue.c_str()))
         {
+        case hash("to_days"):
+            newValue = Value(Number(dur.to_days(), 0)); break;//TODO: set unit to "days" ? But what if days has been #undef-ed?
         case hash("days"):
             newValue = Value(Number(dur.days, 0)); break;
         case hash("months"):

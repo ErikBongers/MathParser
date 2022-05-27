@@ -1,4 +1,6 @@
-﻿* Test date calculations:
+﻿* highlight errors IN functions.
+
+* Test date calculations:
 date + duration ==> date
 duration * x ==> duration // or any other arithmetic
 

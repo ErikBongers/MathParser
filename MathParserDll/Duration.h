@@ -13,5 +13,6 @@ class Duration
 
         void to_json(std::ostringstream& sstr) const;
         void normalize();
+        double to_days() const;
     };
 

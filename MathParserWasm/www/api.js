@@ -17,6 +17,14 @@ Module.onRuntimeInitialized = async _ => {
       return hint;
 	};
 
+	Module.addErrorsToLint = function (errors) {
+		for (e of errors) {
+			Module.errorsForLint.push(Module.convertErrorToCodeMirror(e, cm.editor.state.doc));
+			if (e.stackTrace)
+				Module.addErrorsToLint(e.stackTrace);
+		}
+	};
+
 	Module.resultToString = function (line) {
 		if (line.onlyComment == true) {
 			return "//" + line.comment;
@@ -25,10 +33,11 @@ Module.onRuntimeInitialized = async _ => {
 		if (line.comment != "")
 			strComment = " //" + line.comment;
 		let strNL = "";
+		Module.addErrorsToLint(line.errors);
+		//just for top level errors in the output window:
 		let strErrors = "";
 		for (e of line.errors) {
 			strErrors += "  " + e.message;
-			Module.parserErrors.push(Module.convertErrorToCodeMirror(e, cm.editor.state.doc));
 		}
 		let strText = "";
 		if (line.text != "")
@@ -56,7 +65,7 @@ Module.onRuntimeInitialized = async _ => {
 	};
 
 	Module.parseAfterChange = function(){
-		Module.parserErrors = [];
+		Module.errorsForLint = [];
 		localStorage.savedCode = cm.editor.state.doc.toString();
 		var result = Module.api.parseMath(cm.editor.state.doc.toString());
 		Module.log(result);
@@ -73,7 +82,7 @@ Module.onRuntimeInitialized = async _ => {
 
 	cm.setLintSource((view) => {
 		Module.parseAfterChange();
-		return Module.parserErrors;
+		return Module.errorsForLint;
 	});
 	if(localStorage.savedCode) {
 		let transaction = cm.editor.state.update({changes: {from: 0, to: cm.editor.state.doc.length, insert: localStorage.savedCode}});

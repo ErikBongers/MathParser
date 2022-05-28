@@ -1,8 +1,8 @@
-﻿* highlight errors IN functions.
-
-* Test date calculations:
-date + duration ==> date
-duration * x ==> duration // or any other arithmetic
+﻿* Test date calculations:
+  > how to create a duration?
+  * calculations:
+    date + duration ==> date
+    duration * x ==> duration // or any other arithmetic
 
 * FunctionDef uses Globals: replace with Scope?
 
@@ -70,26 +70,11 @@ Scope
 * Move project from WPF folder to C++ folder.
 * var.fragment=x; --> gives error: unexpected ';'. Should be "can't assign to..."
 
-* Ambiguous:
-  : DURATION.days -> fragment?
-  : DURATION.days -> conversion?
-  > do conversion another way?
-    > DURATION -> NUMBER = seconds
-    > How? Syntax?
-      : to_days(DURATION)
-      : DURATION->days
-      : DURATION.as_days <<< my preferred solution. Just use fragments. No new notation. only as_days and as_seconds. Other resolutions can be derived via units.
-      : (days)DURATION
-      : Duration.s ? But duration will have a DURATION.seconds fragment...difference between .seconds and .s is confusing - too subtle.
-
 * date fragment as hls should give error
     : today.year = 2022; //error!
 * Date parsing;
   - return warnings if assumptions (ymd?) are being made.
-* Duration calculations work!
-  - separate fields for all fragments
-  - parser (already in progress)
-  - operators for what...works
+
 * myDate + 1y
   > y unit
 * test chrono with both MSVC and EMCC
@@ -282,3 +267,8 @@ En ook klassieke “Save as” en “Open” en “New”, …
   > download and upload: yes.
     > requires active webserver.
 
+
+Vectors
+----------
+* ||x|| is the normalized vector.
+  > If x = (x1, x2, x3) then ||x|| = (x1^2 + x2^2 + x3^2)^(1/2)

@@ -241,61 +241,66 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     {
     bool hasDuration = false;
     bool hasOther = false;
+    std::vector<Number> numberList;
     for (auto& val : listExpr.list)
         {
-        if(!codeBlock.scope->units.exists(val->unit.id))
-            return Error(ErrorId::UNIT_NOT_DEF, val->range(), val->unit.id);
-        hasDuration |= codeBlock.scope->units.isUnit(val->unit.id, UnitClass::DURATION);
-        hasOther |= !codeBlock.scope->units.isUnit(val->unit.id, UnitClass::DURATION);
+        auto value = resolveNode(*val);
+        if(value.type != ValueType::NUMBER) 
+            return Error(ErrorId::EXPECTED, val->range(), "a numeric expression.");
+        numberList.push_back(value.getNumber());
+        }
+    for (auto& number : numberList)
+        {
+        if(!codeBlock.scope->units.exists(number.unit.id))
+            return Error(ErrorId::UNIT_NOT_DEF, number.range, number.unit.id);
+        hasDuration |= codeBlock.scope->units.isUnit(number.unit.id, UnitClass::DURATION);
+        hasOther |= !codeBlock.scope->units.isUnit(number.unit.id, UnitClass::DURATION);
         }
     if(hasOther && hasDuration)
         return Error(ErrorId::INV_LIST, listExpr.range());
     if(hasDuration)
-        return resolveDurationList(listExpr);
+        return resolveDurationList(numberList);
     else
-        return resolveDateList(listExpr);
+        return resolveDateList(numberList);
     }
 
-Value Resolver::resolveDurationList(const ListExpr& listExpr)
+Value Resolver::resolveDurationList(const std::vector<Number>& numberList)
     {
     bool hasDays = false;
     bool hasMonths = false;
     bool hasYears = false;
     Duration duration;
-    for (auto& val : listExpr.list)
+    for (auto& number : numberList)
         {
-        auto value = resolveNode(*val);
-        if(value.type != ValueType::NUMBER) 
-            return Error(ErrorId::INV_DATE_VALUE, val->range(), "TODO", "TODO"); //TODO: make proper error message.
-        if (value.getNumber().unit.id == "days")
+        if (number.unit.id == "days")
             {
             if(hasDays)
-                return Error(ErrorId::INV_LIST, val->range()); //TODO: improve error message to: unit days used more than once.
+                return Error(ErrorId::INV_LIST, number.range); //TODO: improve error message to: unit days used more than once.
             hasDays = true;
-            duration.days = (long)value.getNumber().to_double();
+            duration.days = (long)number.to_double();
             }
-        if (value.getNumber().unit.id == "months")
+        if (number.unit.id == "months")
             {
             if(hasMonths)
-                return Error(ErrorId::INV_LIST, val->range()); //TODO: improve error message to: unit days used more than once.
+                return Error(ErrorId::INV_LIST, number.range); //TODO: improve error message to: unit days used more than once.
             hasMonths = true;
-            duration.months = (long)value.getNumber().to_double();
+            duration.months = (long)number.to_double();
             }
-        if (value.getNumber().unit.id == "years")
+        if (number.unit.id == "years")
             {
             if(hasYears)
-                return Error(ErrorId::INV_LIST, val->range()); //TODO: improve error message to: unit days used more than once.
+                return Error(ErrorId::INV_LIST, number.range); //TODO: improve error message to: unit days used more than once.
             hasYears = true;
-            duration.days = (long)value.getNumber().to_double();
+            duration.days = (long)number.to_double();
             }
         }
     return duration;
     }
 
-Value Resolver::resolveDateList(const ListExpr& listExpr)
+Value Resolver::resolveDateList(const std::vector<Number>& numberList)
     {
     //just a minimal implementation for now...
-    if(listExpr.list.size() != 3)
+    if(numberList.size() != 3)
         return Value();
     int iDay = 0, iMonth = 0, iYear = 0;
 
@@ -310,29 +315,23 @@ Value Resolver::resolveDateList(const ListExpr& listExpr)
         case UNDEFINED: //fall through
             iYear = 0; iMonth = 1; iDay = 2; break;
         }
-    auto day = resolveNode(*listExpr.list[iDay]);
-    auto month = resolveNode(*listExpr.list[iMonth]);
-    auto year = resolveNode(*listExpr.list[iYear]);
+    auto day = numberList[iDay];
+    auto month = numberList[iMonth];
+    auto year = numberList[iYear];
     Date date;
-    if(day.type != ValueType::NUMBER) 
-        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iDay]->range(), "?", "day"));
-    if(month.type != ValueType::NUMBER) 
-        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iMonth]->range(), "?", "month"));
-    if(year.type != ValueType::NUMBER) 
-        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iYear]->range(), "?", "year"));
 
-    if(day.getNumber().to_double() < 1 || day.getNumber().to_double() > 31)// don't check date.day as it might have been truncated!
-        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iDay]->range(), std::to_string(day.getNumber().to_double()), "day"));
-    if(month.getNumber().to_double() < 1 || month.getNumber().to_double() > 12)
-        return Value(Error(ErrorId::INV_DATE_VALUE, listExpr.list[iMonth]->range(), std::to_string(month.getNumber().to_double()), "month"));
+    if(day.to_double() < 1 || day.to_double() > 31)// don't check date.day as it might have been truncated!
+        return Value(Error(ErrorId::INV_DATE_VALUE, numberList[iDay].range, std::to_string(day.to_double()), "day"));
+    if(month.to_double() < 1 || month.to_double() > 12)
+        return Value(Error(ErrorId::INV_DATE_VALUE, numberList[iMonth].range, std::to_string(month.to_double()), "month"));
 
-    date.day = (char)day.getNumber().to_double();
-    date.month = (Month)month.getNumber().to_double();
-    date.year = (long)year.getNumber().to_double();
+    date.day = (char)day.to_double();
+    date.month = (Month)month.to_double();
+    date.year = (long)year.to_double();
 
-    date.errors.insert(date.errors.end(), day.getNumber().errors.begin(), day.getNumber().errors.end());
-    date.errors.insert(date.errors.end(), month.getNumber().errors.begin(), month.getNumber().errors.end());
-    date.errors.insert(date.errors.end(), year.getNumber().errors.begin(), year.getNumber().errors.end());
+    date.errors.insert(date.errors.end(), day.errors.begin(), day.errors.end());
+    date.errors.insert(date.errors.end(), month.errors.begin(), month.errors.end());
+    date.errors.insert(date.errors.end(), year.errors.begin(), year.errors.end());
     return Value(date);
     }
 

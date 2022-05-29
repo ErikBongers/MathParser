@@ -13,7 +13,10 @@ namespace TestParser
     TEST_CLASS(TestParser)
     {
     public:
-        
+        TEST_METHOD(TestConstants)
+            {
+            assertResult("trunc(PI);", 3);
+            }
         TEST_METHOD(TestFunctions)
             {
             //basic function call

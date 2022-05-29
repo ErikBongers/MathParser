@@ -6,7 +6,7 @@
 #include "Parser.h"
 
 Scope::Scope(Globals& globals) 
-    : globals(globals), units(globals), functions(globals)
+    : globals(globals), units(globals), functions(globals), constants(globals)
     {
     }
 
@@ -64,8 +64,49 @@ FunctionDef* Scope::getFunction(const std::string& name)
     return functions.get(name);
     }
 
+Value& Scope::getVariable(const std::string& id)
+    {
+    if(variables.count(id) != 0)
+        return variables.find(id)->second;
+    else 
+        return constants.get(id);
+    }
+
+bool Scope::varExists(const std::string& id)
+    {
+    if(variables.count(id) != 0)
+        return true;
+    else
+        return constants.exists(id);
+    }
+
+bool Scope::varDefExists(const std::string& id)
+    {
+    if(varDefs.count(id) != 0)
+        return true;
+    else
+        return constants.exists(id);
+    }
+
+void Scope::setVariables(const std::map<std::string, Value>& variables)
+    {
+    this->variables = variables;
+    }
+
 void Scope::AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock) 
     { 
     localFunctions.emplace(f.id.stringValue, new CustomFunction(f, std::move(codeBlock)));
     }
 
+ConstantsView::ConstantsView(Globals& globals)
+    : globals(globals)
+    {
+    constants.insert("PI");
+    }
+
+Value& ConstantsView::get(const std::string& id)
+    {
+    if(exists(id))
+        return globals.constants[id];
+    throw "blak";
+    }

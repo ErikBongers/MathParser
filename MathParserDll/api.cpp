@@ -16,10 +16,6 @@ int C_DECL parse(const char* str)
     {
     Globals globals;
     auto scope = std::make_unique<Scope>(globals);
-    auto PI = Value(Number(M_PI, 0, Range()));
-    PI.constant = true;
-    scope->variables.emplace("PI", PI);
-    scope->variables.emplace("pi", PI);
     Parser parser(str, 1, std::move(scope));
     parser.parse();
     std::map<std::string, Value> nada;

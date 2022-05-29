@@ -9,12 +9,8 @@ Parser::Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& sc
     : tok(stream, sourceIndex), codeBlock(std::move(scope))
     {
     }
-# define M_PIl          3.141592653589793238462643383279502884L
 void Parser::parse()
     {
-    ConstExpr* pConst = nodeFactory.createConst(ValueType::NUMBER);
-    pConst->value = Token(TokenType::NUMBER, Number(M_PIl, 0), {0, 0, 0}, tok.sourceIndex);
-    codeBlock.scope->ids.emplace("pi", Variable{ Token(TokenType::ID, "pi", {0, 0, 0}, tok.sourceIndex), pConst});
     parseEchoLines();
     while (!peek(TokenType::EOT))
         {
@@ -279,7 +275,7 @@ Node* Parser::parseAssignExpr()
                 assign->expr = listExpr;
                 }
 
-            codeBlock.scope->ids.emplace(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
+            codeBlock.scope->emplaceVarDef(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
             }
         else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
@@ -500,7 +496,7 @@ Node* Parser::parseUnitExpr()
     {
     Node* node = parsePrimaryExpr();
     auto t = tok.peek();
-    if (t.type == TokenType::ID && codeBlock.scope->ids.count(t.stringValue) == 0)
+    if (t.type == TokenType::ID && !codeBlock.scope->varDefExists(t.stringValue))
         {
         tok.next();
         node->unit = t; //no known id: assuming a unit.

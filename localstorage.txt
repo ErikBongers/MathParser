@@ -1,4 +1,6 @@
 a= 12;
+a+=1;
+a--;
 b= 23;
 function hundred(a) 
   { 

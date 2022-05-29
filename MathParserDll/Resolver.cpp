@@ -214,7 +214,7 @@ Value Resolver::resolveUnaryOp(const UnaryOpExpr& expr)
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.expr);
-    if (codeBlock.scope->variables.count(assign.Id.stringValue) == 0)
+    if (!codeBlock.scope->varExists(assign.Id.stringValue))
         {
         if (codeBlock.scope->units.exists(assign.Id.stringValue))
             {
@@ -224,7 +224,7 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
             {
             result.errors.push_back(Error(ErrorId::W_VAR_IS_FUNCTION, Range(assign.Id), assign.Id.stringValue));
             }
-        codeBlock.scope->variables.emplace(assign.Id.stringValue, Value()); //create var, regardless of errors.
+        codeBlock.scope->emplaceVariable(assign.Id.stringValue, Value()); //create var, regardless of errors.
         }
     auto& var = getVar(assign.Id.stringValue);
     if(var.constant)
@@ -327,8 +327,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
 Value Resolver::resolveIdExpr(const IdExpr& idExpr)
     {
     Value val;
-    auto found = codeBlock.scope->variables.find(idExpr.Id.stringValue);
-    if (found != codeBlock.scope->variables.end())
+    if (codeBlock.scope->varExists(idExpr.Id.stringValue))
         {
         val = getVar(idExpr.Id.stringValue);
         }
@@ -463,5 +462,5 @@ std::string Resolver::formatError(const std::string errorMsg, ...)
 
 Value& Resolver::getVar(const std::string& id)
     {
-    return codeBlock.scope->variables.find(id)->second;
+    return codeBlock.scope->getVariable(id);
     }

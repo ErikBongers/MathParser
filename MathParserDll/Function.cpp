@@ -78,7 +78,7 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
         {
         paramVariables.emplace(functionDefExpr.params[i].stringValue, args[i]);
         }
-    codeBlock.scope->variables = paramVariables;
+    codeBlock.scope->setVariables(paramVariables);
     Resolver resolver(codeBlock);
     return resolver.resolveBlock(range,functionDefExpr.id.stringValue);
     }

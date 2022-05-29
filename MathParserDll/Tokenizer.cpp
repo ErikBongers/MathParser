@@ -351,12 +351,14 @@ double Tokenizer::parseHex()
 Token Tokenizer::parseNumber(char c)
     {
     auto curPos = peekedState.nextPos;
-    if(peekChar() == 'b' || peekChar() == 'B')
-        return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), curPos, sourceIndex);
-    else if(peekChar() == 'x' || peekChar() == 'X')
-        return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), curPos, sourceIndex);
-    else
-        return Token(TokenType::NUMBER, parseDecimal(c), curPos, sourceIndex);
+    if(c == '0')
+        {
+        if(peekChar() == 'b' || peekChar() == 'B')
+            return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), curPos, sourceIndex);
+        else if(peekChar() == 'x' || peekChar() == 'X')
+            return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), curPos, sourceIndex);
+        }
+    return Token(TokenType::NUMBER, parseDecimal(c), curPos, sourceIndex);
     }
 
 void Tokenizer::skipToEndOfComment()

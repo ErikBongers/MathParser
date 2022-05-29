@@ -1,3 +1,4 @@
+duur=12days, 2months;
 a= 12;
 a+=1;
 a--;

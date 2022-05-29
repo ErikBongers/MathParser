@@ -239,6 +239,61 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
 
 Value Resolver::resolveList(const ListExpr& listExpr)
     {
+    bool hasDuration = false;
+    bool hasOther = false;
+    for (auto& val : listExpr.list)
+        {
+        if(!codeBlock.scope->units.exists(val->unit.id))
+            return Error(ErrorId::UNIT_NOT_DEF, val->range(), val->unit.id);
+        hasDuration |= codeBlock.scope->units.isUnit(val->unit.id, UnitClass::DURATION);
+        hasOther |= !codeBlock.scope->units.isUnit(val->unit.id, UnitClass::DURATION);
+        }
+    if(hasOther && hasDuration)
+        return Error(ErrorId::INV_LIST, listExpr.range());
+    if(hasDuration)
+        return resolveDurationList(listExpr);
+    else
+        return resolveDateList(listExpr);
+    }
+
+Value Resolver::resolveDurationList(const ListExpr& listExpr)
+    {
+    bool hasDays = false;
+    bool hasMonths = false;
+    bool hasYears = false;
+    Duration duration;
+    for (auto& val : listExpr.list)
+        {
+        auto value = resolveNode(*val);
+        if(value.type != ValueType::NUMBER) 
+            return Error(ErrorId::INV_DATE_VALUE, val->range(), "TODO", "TODO"); //TODO: make proper error message.
+        if (value.getNumber().unit.id == "days")
+            {
+            if(hasDays)
+                return Error(ErrorId::INV_LIST, val->range()); //TODO: improve error message to: unit days used more than once.
+            hasDays = true;
+            duration.days = (long)value.getNumber().to_double();
+            }
+        if (value.getNumber().unit.id == "months")
+            {
+            if(hasMonths)
+                return Error(ErrorId::INV_LIST, val->range()); //TODO: improve error message to: unit days used more than once.
+            hasMonths = true;
+            duration.months = (long)value.getNumber().to_double();
+            }
+        if (value.getNumber().unit.id == "years")
+            {
+            if(hasYears)
+                return Error(ErrorId::INV_LIST, val->range()); //TODO: improve error message to: unit days used more than once.
+            hasYears = true;
+            duration.days = (long)value.getNumber().to_double();
+            }
+        }
+    return duration;
+    }
+
+Value Resolver::resolveDateList(const ListExpr& listExpr)
+    {
     //just a minimal implementation for now...
     if(listExpr.list.size() != 3)
         return Value();

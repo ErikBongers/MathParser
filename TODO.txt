@@ -1,5 +1,13 @@
-﻿* Test date calculations:
+﻿* lists: allow them in parens
+  : x = (val1, val2, val3);
+  not just
+  : x = val1, val2, val3;
+  > allow lists to be assigned to variables?
+    > if not, the above is technically more difficult
+      > redude and remove the parens!
+* Test date calculations:
   > how to create a duration?
+    > list with units, no order needed, but each unit distinct!
   * calculations:
     date + duration ==> date
     duration * x ==> duration // or any other arithmetic

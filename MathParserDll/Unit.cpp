@@ -178,3 +178,11 @@ bool UnitsView::isSameProperty(const Unit& u1, const Unit& u2)
 
     return get(u1.id).property == get(u2.id).property;
     }
+
+
+bool UnitsView::isUnit(const std::string& id, UnitClass property)
+    {
+    if(exists(id))
+        return globals.unitDefs.defs[id].property == property;
+    return false;
+    }

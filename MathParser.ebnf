@@ -31,12 +31,9 @@ exprStatement = addExpr |
 assignment = id '=' listExpr |
             id ('+=' | '-=' | '*=' | '/=') addExpr 
 
-addExpr = multExpr |  
-          addExpr ("+" | "-") multExpr 
+addExpr = multExpr [ ("+" | "-") multExpr ]
 
-multExpr = powerExpr |
-           multExpr ("*" | "/") powerExpr |
-           impliedMultExpr
+multExpr = powerExpr [ ("*" | "/") powerExpr ]
 
 powerExpr = impliedMultExpr |
             powerExpr "^" impliedMultExpr
@@ -61,7 +58,7 @@ unitExpr = primaryExpr [unit]
 
 primaryExpr = const | 
               id | 
-              "(", addExpr, ")" |
+              "(", listExpr, ")" |
               callExpr |
               absExpr
 

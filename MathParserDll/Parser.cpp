@@ -262,16 +262,7 @@ Node* Parser::parseAssignExpr()
             tok.next();//consume EQ
             AssignExpr* assign = nodeFactory.createAssign();
             assign->Id = id;
-            auto listExpr = parseListExpr();
-            if(listExpr->list.size() == 1)
-                assign->expr = listExpr->list[0];
-            else
-                {
-                if (listExpr->list.size() == 0)
-                    assign->error = Error(ErrorId::UNKNOWN_EXPR, Range(t));
-
-                assign->expr = listExpr;
-                }
+            assign->expr = reduceList(parseListExpr());
 
             codeBlock.scope->emplaceVarDef(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
             return assign;
@@ -402,6 +393,13 @@ Node* Parser::parsePowerExpr()
     return node;
     }
 
+Node* Parser::reduceList(ListExpr* listExpr)
+    {
+    if(listExpr->list.size() == 1)
+        return listExpr->list[0];
+    return listExpr;
+    }
+
 Node* Parser::parseImplicitMult()
     {
     Node* n1 = parseUnaryExpr();
@@ -414,7 +412,12 @@ Node* Parser::parseImplicitMult()
         auto m = nodeFactory.createBinaryOp();
         m->n1 = n1;
         m->op = Token(TokenType::MULT, '*', tok.peek().pos, tok.sourceIndex);
-        m->n2 = parsePostFixExpr();
+        if(t.type == TokenType::PAR_OPEN)
+            {
+            m->n2 = reduceList(parseListExpr());
+            }
+        else
+            m->n2 = parsePostFixExpr();
         m->implicitMult = true;
         n1 = m;
         t = tok.peek();
@@ -533,7 +536,7 @@ Node* Parser::parsePrimaryExpr()
         case TokenType::PAR_OPEN:
             {
             tok.next();
-            auto addExpr = parseAddExpr();
+            auto addExpr = reduceList(parseListExpr());
             if (!match(TokenType::PAR_CLOSE))
                 {
                 if(addExpr->error.id == ErrorId::NONE)
@@ -605,6 +608,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
 
 ListExpr* Parser::parseListExpr()
     {
+    Range range = tok.getCurrentToken();
     std::vector<Node*> list;
     while (true)
         {
@@ -618,6 +622,10 @@ ListExpr* Parser::parseListExpr()
         }
     auto listExpr = nodeFactory.createList();
     listExpr->list = std::move(list);
+    if (listExpr->list.size() == 0)
+        {
+        listExpr->error = Error(ErrorId::UNKNOWN_EXPR, range);
+        }
     return listExpr;
     }
 

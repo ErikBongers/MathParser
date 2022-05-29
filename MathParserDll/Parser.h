@@ -35,6 +35,7 @@ class Parser
         ConstExpr* parseNumber(Token currentToken, bool negative);
         CallExpr* parseCallExpr(Token functionName);
         ListExpr* parseListExpr();
+        Node* reduceList(ListExpr* listExpr);
 
         Node* parseAbsOperator(const Token& currentToken);
         void parseEchosBetweenStatements(Statement* lastStmt);

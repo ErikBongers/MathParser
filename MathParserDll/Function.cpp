@@ -96,6 +96,7 @@ const std::vector<std::string>& FunctionsView::getFuncKeyList(FunctionType type)
         case ARITHM: return functionKeys.arithm;
         case DATE: return functionKeys.all;
         case ALL: return functionKeys.all;
+        default: return  functionKeys.all; //should not happen.
         }
     }
 ;void FunctionsView::addFunctions(FunctionType type)

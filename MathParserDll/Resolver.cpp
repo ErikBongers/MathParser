@@ -71,6 +71,7 @@ Value Resolver::resolveBlock(const Range& range, const std::string& functionName
         case hash("arithm"): return ARITHM;
         case hash("date"): return DATE;
         case hash("all"): return ALL;
+        default: throw "blah";
         }
     }
 
@@ -252,7 +253,7 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     for (auto& number : numberList)
         {
         if(!codeBlock.scope->units.exists(number.unit.id))
-            return Error(ErrorId::UNIT_NOT_DEF, number.range, number.unit.id);
+            return Error(ErrorId::UNIT_NOT_DEF, number.unit.range, number.unit.id);
         hasDuration |= codeBlock.scope->units.isUnit(number.unit.id, UnitClass::DURATION);
         hasOther |= !codeBlock.scope->units.isUnit(number.unit.id, UnitClass::DURATION);
         }
@@ -418,11 +419,11 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
         return Value(callExpr.error);
 
     // check function arguments:
-    if (!fd->isCorrectArgCount(callExpr.arguments.size()))
+    if (!fd->isCorrectArgCount(callExpr.arguments->list.size()))
         return Value(Error(ErrorId::FUNC_ARG_MIS, Range(callExpr.functionName), callExpr.functionName.stringValue.c_str()));
     std::vector<Error> errors;
     std::vector<Value> args;
-    for (auto arg : callExpr.arguments)
+    for (auto arg : callExpr.arguments->list)
         {
         auto argVal = resolveNode(*arg);
         errors.insert(errors.begin(), argVal.errors.begin(), argVal.errors.end());

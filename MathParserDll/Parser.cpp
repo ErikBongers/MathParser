@@ -262,16 +262,14 @@ Node* Parser::parseAssignExpr()
             tok.next();//consume EQ
             AssignExpr* assign = nodeFactory.createAssign();
             assign->Id = id;
-            auto list = parseListExpr();
-            if(list.size() == 1)
-                assign->expr = list[0];
+            auto listExpr = parseListExpr();
+            if(listExpr->list.size() == 1)
+                assign->expr = listExpr->list[0];
             else
                 {
-                if (list.size() == 0)
+                if (listExpr->list.size() == 0)
                     assign->error = Error(ErrorId::UNKNOWN_EXPR, Range(t));
 
-                auto listExpr = nodeFactory.createList();
-                listExpr->list = list;
                 assign->expr = listExpr;
                 }
 
@@ -481,7 +479,8 @@ Node* Parser::parseOnePostFix(Node* node)
 
         IdExpr* idExpr = (IdExpr*)node;
         CallExpr* callExpr = nodeFactory.createCall();
-        callExpr->arguments.push_back(node);
+        callExpr->arguments = nodeFactory.createList();
+        callExpr->arguments->list.push_back(node);
         callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), operToken.pos, tok.sourceIndex);
 
         AssignExpr* assignExpr = nodeFactory.createAssign();
@@ -564,7 +563,8 @@ Node* Parser::parseAbsOperator(const Token& currentToken)
     {
     auto addExpr = parseAddExpr();
     CallExpr* callExpr = nodeFactory.createCall();
-    callExpr->arguments.push_back(addExpr);
+    callExpr->arguments = nodeFactory.createList();
+    callExpr->arguments->list.push_back(addExpr);
     callExpr->functionName = Token(TokenType::ID, "abs", currentToken.pos, tok.sourceIndex);
     auto t = tok.peek();
     if (!match(TokenType::PIPE))
@@ -603,7 +603,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
     return callExpr;
     }
 
-std::vector<Node*> Parser::parseListExpr()
+ListExpr* Parser::parseListExpr()
     {
     std::vector<Node*> list;
     while (true)
@@ -616,7 +616,9 @@ std::vector<Node*> Parser::parseListExpr()
             break;
         tok.next();
         }
-    return list;
+    auto listExpr = nodeFactory.createList();
+    listExpr->list = std::move(list);
+    return listExpr;
     }
 
 Range ConstExpr::range() const
@@ -649,8 +651,8 @@ Range PostfixExpr::range() const
 Range CallExpr::range() const
     {
     Range r = Range(functionName);
-    if(!arguments.empty())
-        r += arguments.back()->range();
+    if(!arguments->list.empty())
+        r += arguments->list.back()->range();
     return r;
     }
 

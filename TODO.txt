@@ -1,4 +1,8 @@
-﻿* lists: allow them in parens
+﻿* parseListExpr: return a ListExpr object instead of a vector.
+  > this allows for what's needed below:
+  > and also for 
+  : duration = (date-list) - (date-list);
+* lists: allow them in parens
   : x = (val1, val2, val3);
   not just
   : x = val1, val2, val3;

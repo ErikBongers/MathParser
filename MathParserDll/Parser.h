@@ -34,7 +34,7 @@ class Parser
         Node* parsePrimaryExpr();
         ConstExpr* parseNumber(Token currentToken, bool negative);
         CallExpr* parseCallExpr(Token functionName);
-        std::vector<Node*> parseListExpr();
+        ListExpr* parseListExpr();
 
         Node* parseAbsOperator(const Token& currentToken);
         void parseEchosBetweenStatements(Statement* lastStmt);

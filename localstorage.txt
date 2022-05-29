@@ -1,9 +1,10 @@
+3abc;
 dag=3days;
 maanden = 1months;
 totdays=dag+maanden;
 duur=dag, maanden;
 
-duur=12days, 2months;
+duur=12das, 2months;
 a= 12;
 a+=1;
 a--;

@@ -66,12 +66,21 @@ class PostfixExpr : public Node
         friend class NodeFactory;
     };
 
+class ListExpr : public Node
+    {
+    public: 
+        std::vector<Node*> list;
+        Range range() const;
+    private:
+        ListExpr() : Node(NodeType::LIST) {}
+        friend class NodeFactory;
+    };
 
 class CallExpr : public Node
     {
     public:
         Token functionName;
-        std::vector<Node*> arguments;
+        ListExpr* arguments;
         Range range() const;
     private:
         CallExpr() : Node(NodeType::CALLEXPR) {}
@@ -110,16 +119,6 @@ class AssignExpr : public Node
         Range range() const;
     private:
         AssignExpr() : Node(NodeType::ASSIGNMENT) {}
-        friend class NodeFactory;
-    };
-
-class ListExpr : public Node
-    {
-    public: 
-        std::vector<Node*> list;
-        Range range() const;
-    private:
-        ListExpr() : Node(NodeType::LIST) {}
         friend class NodeFactory;
     };
 

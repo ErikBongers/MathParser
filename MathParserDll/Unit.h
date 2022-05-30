@@ -24,7 +24,7 @@ class Unit
         bool isClear() const { return id.empty(); }
     };
 
-enum class UnitClass { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DURATION, VOLUME, UNDEFINED};
+enum class UnitProperty { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DURATION, VOLUME, UNDEFINED};
 
 class UnitDef
     {
@@ -33,14 +33,14 @@ class UnitDef
 
     public:
         std::string id;
-        UnitClass property = UnitClass::UNDEFINED; //TODO rename either class or variable!
+        UnitProperty property = UnitProperty::UNDEFINED;
 
         std::function<double(double)> toSI;
         std::function<double(double)> fromSI;
         UnitDef()
-            :UnitDef("", 1, UnitClass::UNDEFINED)
+            :UnitDef("", 1, UnitProperty::UNDEFINED)
             {}
-        UnitDef(std::string id, double toSiFactor, UnitClass unitClass) 
+        UnitDef(std::string id, double toSiFactor, UnitProperty unitClass) 
             :id(id), _toSI(toSiFactor), property(unitClass)
             {}
         void setLambda() 
@@ -74,12 +74,12 @@ class UnitsView
     public:
         UnitsView(const UnitsView&) = default;
         UnitsView(Globals& globals);
-        void addClass(UnitClass unitClass);
-        void removeClass(UnitClass unitClass);
+        void addClass(UnitProperty unitClass);
+        void removeClass(UnitProperty unitClass);
         UnitDef& get(const std::string& key);
         bool exists(const std::string& key) { return defs.count(key) != 0; }
         bool isSameProperty(const Unit& u1, const Unit& u2);
-        bool isUnit(const std::string& id, UnitClass property);
+        bool isUnit(const std::string& id, UnitProperty property);
         void addLongDateUnits();
         void addShortDateUnits();
         void removeShortDateUnits();

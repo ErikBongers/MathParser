@@ -254,8 +254,8 @@ Value Resolver::resolveList(const ListExpr& listExpr)
         {
         if(!codeBlock.scope->units.exists(number.unit.id))
             return Error(ErrorId::UNIT_NOT_DEF, number.unit.range, number.unit.id);
-        hasDuration |= codeBlock.scope->units.isUnit(number.unit.id, UnitClass::DURATION);
-        hasOther |= !codeBlock.scope->units.isUnit(number.unit.id, UnitClass::DURATION);
+        hasDuration |= codeBlock.scope->units.isUnit(number.unit.id, UnitProperty::DURATION);
+        hasOther |= !codeBlock.scope->units.isUnit(number.unit.id, UnitProperty::DURATION);
         }
     if(hasOther && hasDuration)
         return Error(ErrorId::INV_LIST, listExpr.range());

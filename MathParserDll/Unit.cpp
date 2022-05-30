@@ -25,59 +25,59 @@ void UnitDefs::init()
     {
     defs = 
         {
-            {"", UnitDef("", 1, UnitClass::UNDEFINED)}, //dummy unit for convenience.
+            {"", UnitDef("", 1, UnitProperty::UNDEFINED)}, //dummy unit for convenience.
 
-            {"rad", UnitDef("rad", 1, UnitClass::ANGLE)},
-            {"deg", UnitDef("deg", M_PIl / 180.0L, UnitClass::ANGLE)},
+            {"rad", UnitDef("rad", 1, UnitProperty::ANGLE)},
+            {"deg", UnitDef("deg", M_PIl / 180.0L, UnitProperty::ANGLE)},
 
-            {"m", UnitDef("m", 1, UnitClass::LENGTH)},
-            { "cm", UnitDef("cm", 0.01, UnitClass::LENGTH)},
-            { "km", UnitDef("km", 1000, UnitClass::LENGTH)},
-            { "mm", UnitDef("mm", 0.001, UnitClass::LENGTH)},
-            { "in", UnitDef("in", 0.0254, UnitClass::LENGTH)},
-            { "ft", UnitDef("ft", 0.3048, UnitClass::LENGTH)},
-            { "thou", UnitDef("thou", 0.0254 / 1000, UnitClass::LENGTH)},
-            { "yd", UnitDef("yd", 0.9144, UnitClass::LENGTH)},
-            { "mi", UnitDef("mi", 1609.344, UnitClass::LENGTH)},
-            { "micron", UnitDef("micron", 0.000001, UnitClass::LENGTH)},
-            { "um", UnitDef("um", 0.000001, UnitClass::LENGTH)},
-            { "ly", UnitDef("ly", 9460730472580800, UnitClass::LENGTH)},
+            {"m", UnitDef("m", 1, UnitProperty::LENGTH)},
+            { "cm", UnitDef("cm", 0.01, UnitProperty::LENGTH)},
+            { "km", UnitDef("km", 1000, UnitProperty::LENGTH)},
+            { "mm", UnitDef("mm", 0.001, UnitProperty::LENGTH)},
+            { "in", UnitDef("in", 0.0254, UnitProperty::LENGTH)},
+            { "ft", UnitDef("ft", 0.3048, UnitProperty::LENGTH)},
+            { "thou", UnitDef("thou", 0.0254 / 1000, UnitProperty::LENGTH)},
+            { "yd", UnitDef("yd", 0.9144, UnitProperty::LENGTH)},
+            { "mi", UnitDef("mi", 1609.344, UnitProperty::LENGTH)},
+            { "micron", UnitDef("micron", 0.000001, UnitProperty::LENGTH)},
+            { "um", UnitDef("um", 0.000001, UnitProperty::LENGTH)},
+            { "ly", UnitDef("ly", 9460730472580800, UnitProperty::LENGTH)},
 
-            { "C", UnitDef("C", 0.000001, UnitClass::TEMP)},
-            { "K", UnitDef("K", 1, UnitClass::TEMP)},
-            { "F", UnitDef("F", 0.000001, UnitClass::TEMP)},
+            { "C", UnitDef("C", 0.000001, UnitProperty::TEMP)},
+            { "K", UnitDef("K", 1, UnitProperty::TEMP)},
+            { "F", UnitDef("F", 0.000001, UnitProperty::TEMP)},
 
-            { "L", UnitDef("L", 1, UnitClass::VOLUME)},
-            { "ml", UnitDef("ml", 0.001, UnitClass::VOLUME)},
-            { "gal", UnitDef("gal", 3.785411784, UnitClass::VOLUME)},
-            { "pt", UnitDef("pt", 0.473176473, UnitClass::VOLUME)},
+            { "L", UnitDef("L", 1, UnitProperty::VOLUME)},
+            { "ml", UnitDef("ml", 0.001, UnitProperty::VOLUME)},
+            { "gal", UnitDef("gal", 3.785411784, UnitProperty::VOLUME)},
+            { "pt", UnitDef("pt", 0.473176473, UnitProperty::VOLUME)},
 
-            { "kg", UnitDef("kg", 1, UnitClass::MASS_WEIGHT)},
-            { "N", UnitDef("N", 1/9.80665, UnitClass::MASS_WEIGHT)}, //WEIGHT on earth, not mass!
-            { "g", UnitDef("g", 0.001, UnitClass::MASS_WEIGHT)},
-            { "mg", UnitDef("mg", 0.000001, UnitClass::MASS_WEIGHT)},
-            { "t", UnitDef("t", 1000, UnitClass::MASS_WEIGHT)},
-            { "lb", UnitDef("lb", 0.45359, UnitClass::MASS_WEIGHT)},
-            { "lbs", UnitDef("lbs", 0.45359, UnitClass::MASS_WEIGHT)},
-            { "oz", UnitDef("oz", 1/ 35.2739619496, UnitClass::MASS_WEIGHT)},
+            { "kg", UnitDef("kg", 1, UnitProperty::MASS_WEIGHT)},
+            { "N", UnitDef("N", 1/9.80665, UnitProperty::MASS_WEIGHT)}, //WEIGHT on earth, not mass!
+            { "g", UnitDef("g", 0.001, UnitProperty::MASS_WEIGHT)},
+            { "mg", UnitDef("mg", 0.000001, UnitProperty::MASS_WEIGHT)},
+            { "t", UnitDef("t", 1000, UnitProperty::MASS_WEIGHT)},
+            { "lb", UnitDef("lb", 0.45359, UnitProperty::MASS_WEIGHT)},
+            { "lbs", UnitDef("lbs", 0.45359, UnitProperty::MASS_WEIGHT)},
+            { "oz", UnitDef("oz", 1/ 35.2739619496, UnitProperty::MASS_WEIGHT)},
 
-            { "seconds", UnitDef("seconds", 1, UnitClass::DURATION)},
-            { "minutes", UnitDef("minutes", 60, UnitClass::DURATION)},
-            { "hours", UnitDef("hours", 3600, UnitClass::DURATION)},
-            { "days", UnitDef("days", 86400, UnitClass::DURATION)},
-            { "weeks", UnitDef("weeks", 60 * 60 * 24 * 7, UnitClass::DURATION)},
-            { "months", UnitDef("months", 2629746, UnitClass::DURATION)},
-            { "years", UnitDef("years", 31556952, UnitClass::DURATION)},
-            { "milliseconds", UnitDef("milliseconds", 1/1000, UnitClass::DURATION)},
+            { "seconds", UnitDef("seconds", 1, UnitProperty::DURATION)},
+            { "minutes", UnitDef("minutes", 60, UnitProperty::DURATION)},
+            { "hours", UnitDef("hours", 3600, UnitProperty::DURATION)},
+            { "days", UnitDef("days", 86400, UnitProperty::DURATION)},
+            { "weeks", UnitDef("weeks", 60 * 60 * 24 * 7, UnitProperty::DURATION)},
+            { "months", UnitDef("months", 2629746, UnitProperty::DURATION)},
+            { "years", UnitDef("years", 31556952, UnitProperty::DURATION)},
+            { "milliseconds", UnitDef("milliseconds", 1/1000, UnitProperty::DURATION)},
 
-            { "s", UnitDef("s", 1, UnitClass::DURATION)},
-            { "min", UnitDef("min", 60, UnitClass::DURATION)},
-            { "h", UnitDef("h", 3600, UnitClass::DURATION)},
-            { "d", UnitDef("d", 86400, UnitClass::DURATION)},
-            { "w", UnitDef("w", 60 * 60 * 24 * 7, UnitClass::DURATION)},
-            { "mon", UnitDef("mon", 2629746, UnitClass::DURATION)},
-            { "y", UnitDef("y", 31556952, UnitClass::DURATION)},
-            { "ms", UnitDef("ms", 1/1000, UnitClass::DURATION)},
+            { "s", UnitDef("s", 1, UnitProperty::DURATION)},
+            { "min", UnitDef("min", 60, UnitProperty::DURATION)},
+            { "h", UnitDef("h", 3600, UnitProperty::DURATION)},
+            { "d", UnitDef("d", 86400, UnitProperty::DURATION)},
+            { "w", UnitDef("w", 60 * 60 * 24 * 7, UnitProperty::DURATION)},
+            { "mon", UnitDef("mon", 2629746, UnitProperty::DURATION)},
+            { "y", UnitDef("y", 31556952, UnitProperty::DURATION)},
+            { "ms", UnitDef("ms", 1/1000, UnitProperty::DURATION)},
             };
 
 
@@ -118,14 +118,14 @@ void UnitsView::removeShortDateUnits()
 UnitsView::UnitsView(Globals& globals) 
     : globals(globals) 
     {
-    addClass(UnitClass::UNDEFINED); //needed to include the empty unit.
+    addClass(UnitProperty::UNDEFINED); //needed to include the empty unit.
     //TODO: make these based on settings.
-    addClass(UnitClass::ANGLE);
-    addClass(UnitClass::LENGTH);
-    addClass(UnitClass::TEMP);
-    addClass(UnitClass::VOLUME);
-    addClass(UnitClass::MASS_WEIGHT);
-    addClass(UnitClass::DURATION);
+    addClass(UnitProperty::ANGLE);
+    addClass(UnitProperty::LENGTH);
+    addClass(UnitProperty::TEMP);
+    addClass(UnitProperty::VOLUME);
+    addClass(UnitProperty::MASS_WEIGHT);
+    addClass(UnitProperty::DURATION);
     removeShortDateUnits();
     }
 
@@ -140,7 +140,7 @@ Unit Unit::CLEAR()
     return Unit(Token::Null(-1)); 
     }
 
-void UnitsView::addClass(UnitClass unitClass)
+void UnitsView::addClass(UnitProperty unitClass)
     {
     for (auto& unit : globals.unitDefs.defs)
         {
@@ -149,7 +149,7 @@ void UnitsView::addClass(UnitClass unitClass)
         }
     }
 
-void UnitsView::removeClass(UnitClass unitClass)
+void UnitsView::removeClass(UnitProperty unitClass)
     {
     auto it = globals.unitDefs.defs.begin();
     while (it != globals.unitDefs.defs.end()) {
@@ -180,7 +180,7 @@ bool UnitsView::isSameProperty(const Unit& u1, const Unit& u2)
     }
 
 
-bool UnitsView::isUnit(const std::string& id, UnitClass property)
+bool UnitsView::isUnit(const std::string& id, UnitProperty property)
     {
     if(exists(id))
         return globals.unitDefs.defs[id].property == property;

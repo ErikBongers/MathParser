@@ -58,11 +58,11 @@ Number doTerm(UnitsView& units, const Number& v1, bool adding, const Number& v, 
                 result.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, range));
                 return result;
                 }
-        double d1 = v1.toSI(units);
-        double d2 = v.toSI(units);
-        result = Number(adding ? (d1 + d2) : (d1 - d2), 0);
+        Number d1 = v1.toSI(units);
+        Number d2 = v.toSI(units);
+        result = adding ? (d1 + d2) : (d1 - d2);
         if(units.exists(v1.unit.id))
-            result = Number(units.get(v1.unit.id).fromSI(result.to_double()), v1.unit, v1.numFormat, range); //TODO: try to keep exponent.
+            result = Number(units.get(v1.unit.id).fromSI(result.significand), result.exponent, v1.unit, v1.numFormat, range);
         }
     //if a unit is missing, just do operation.
     else 

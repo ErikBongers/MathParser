@@ -76,6 +76,16 @@ Number Number::convertToExponent(int e) const
     return result;
     }
 
+bool Number::operator>(const Number& n2) const
+    {
+    return to_double() > n2.to_double();
+    }
+
+bool Number::operator<(const Number& n2) const
+    {
+    return to_double() < n2.to_double();
+    }
+
 Number Number::convertToUnit(const Unit& to, UnitsView& units)
     {
     Number num = *this;
@@ -105,23 +115,27 @@ Number Number::convertToUnit(const Unit& to, UnitsView& units)
     num = Number(units.get(this->unit.id).toSI(this->to_double()), 0); //from -> SI
     num = Number(units.get(to.id).fromSI(num.to_double()), 0);  //SI -> to
     num.unit = to;
-    return num;
+    return num.convertToExponent(exponent);
     }
 
-double Number::toSI(UnitsView& units) const 
-    { 
+Number Number::toSI(UnitsView& units) const 
+    {
+    Number num = *this;
     if(units.exists(unit.id))
-        return units.get(unit.id).toSI(to_double());
-    else
-        return to_double();
+        {
+        num.significand =  units.get(unit.id).toSI(to_double());
+        num.exponent = 0;
+        num.unit = Unit::CLEAR();//TODO: rename to NONE or EMPTY or NULL
+        }
+    return num.convertToExponent(exponent);
     }
 
-double Number::fromSI(UnitsView& units) const 
+Number Number::fromSI(UnitsView& units) const 
     { 
+    Number num = *this;
     if(units.exists(unit.id))
-        return units.get(unit.id).fromSI(to_double()); 
-    else
-        return to_double();
+        num.significand =  units.get(unit.id).fromSI(to_double()); 
+    return num.convertToExponent(exponent);
     }
 
 std::string formatDouble(double d)

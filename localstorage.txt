@@ -1,3 +1,6 @@
+1E2mm.cm;
+1E3m + 1km;
+a=12E34;
 3abc;
 dag=3days;
 maanden = 11months;

@@ -25,14 +25,14 @@ Value Now::execute(std::vector<Value>& args, const Range& range)
 Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, bool max)
     {
     bool diffUnits = false;
-    double val0;
+    Number val0;
 
     Value ret = args[0];
     auto unit = args[0].getNumber().unit;
     for(int i = 1; i < args.size(); i++)
         {
         val0 = ret.getNumber().toSI(globals.unitsView);
-        double val1 = args[i].getNumber().toSI(globals.unitsView);
+        Number val1 = args[i].getNumber().toSI(globals.unitsView);
         auto otherErrs = &ret.errors;
         if (max? (val0 > val1) : (val0 < val1))
             {

@@ -16,6 +16,7 @@ struct Number
     Number(double d, int e, NumFormat numFormat = NumFormat::DEC) : significand(d), exponent(e), numFormat(numFormat) {}
     Number(double d, int e, const Range& range) : significand(d), exponent(e), range(range) {}
     Number(double d, const Unit& unit, NumFormat numFormat, const Range& range) : significand(d), unit(unit), numFormat(numFormat), range(range) {}
+    Number(double d, int e, const Unit& unit, NumFormat numFormat, const Range& range) : significand(d), exponent(e), unit(unit), numFormat(numFormat), range(range) {}
     Number& operator++(int);
     Number& operator--(int);
     double to_double() const;
@@ -23,10 +24,12 @@ struct Number
     Number operator-(const Number& n2) const;
     Number operator*(const Number& n2) const;
     Number operator/(const Number& n2) const;
+    bool operator>(const Number& n2) const;
+    bool operator<(const Number& n2) const;
     Number convertToExponent(int e) const;
     Number convertToUnit(const Unit& to, UnitsView& units);
-    double toSI(UnitsView& units) const;
-    double fromSI(UnitsView& units) const;
+    Number toSI(UnitsView& units) const;
+    Number fromSI(UnitsView& units) const;
     void to_json(std::ostringstream& sstr) const;
     };
 

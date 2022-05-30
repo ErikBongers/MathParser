@@ -196,6 +196,9 @@ d.years + d.months + d.days;
             assertExponent("123E10 * 2E10", 246, 20);
             assertExponent("246E10 / 2E10", 123, 0);
             assertExponent("1E-2", 1, -2);
+            //combined with units:
+            assertExponent("1E2mm.cm", 0.1, 2, "cm");
+            assertExponent("1E3m + 1km", 2, 3, "m");
             }
 
         TEST_METHOD(TestNameConflicts)
@@ -264,9 +267,9 @@ d.years + d.months + d.days;
             double value;
             };
 
-        void assertExponent(const char* stmt, double expectedNumber, int expectedExponent)
+        void assertExponent(const char* stmt, double expectedNumber, int expectedExponent, const std::string expectedUnit = "")
             {
-            assertResult(stmt, expectedNumber, "", "", "DEC", expectedExponent);
+            assertResult(stmt, expectedNumber, expectedUnit, "", "DEC", expectedExponent);
             }
 
         void assertOutput(const char* stmt, double expectedResult, const std::string text, const std::string comment)

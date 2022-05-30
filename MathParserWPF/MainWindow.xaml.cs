@@ -89,7 +89,15 @@ namespace MathParserWPF
                             if (result.number.format == "BIN" || result.number.format == "HEX")
                                 resultVal = result.number.formatted;
                             else
-                                resultVal = number.ToString("0.#######");
+                                {
+                                if (result.number.exponent != 0)
+                                    {
+                                    double.TryParse(result.number.significand, out number);
+                                    resultVal = number.ToString("0.#######") + "E" + result.number.exponent;
+                                    }
+                                else
+                                    resultVal = number.ToString("0.#######");
+                                }
                             }
                         else
                             resultVal = result.number.value;

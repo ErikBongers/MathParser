@@ -12,7 +12,6 @@ Date DateParser::parse(const std::string& str, const Range& range)
     _stream = str;
     this->range = range;
     Date date;
-    //TODO: check if a preference has been set for day first or month first...
     int pos = 0;
     int start = 0;
     while (pos < _stream.length())

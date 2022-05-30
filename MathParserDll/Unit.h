@@ -83,5 +83,6 @@ class UnitsView
         void addLongDateUnits();
         void addShortDateUnits();
         void removeShortDateUnits();
+        void removeLongDateUnits();
         void setDefs(const UnitsView& uv) { this->defs = uv.defs; }
     };

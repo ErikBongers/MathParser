@@ -95,12 +95,13 @@ void UnitDefs::init()
 #endif //  DEBUG
 
     }
-
+const char* longDateKeys[] = { "seconds", "minutes", "hours", "days", "weeks", "months", "years", "milliseconds", };
 const char* shortDateKeys[] = { "s", "min", "h", "d", "w", "mon", "y", "ms",  };
 
 void UnitsView::addLongDateUnits()
     {
-    //TODO: addDateUnits
+    for(auto key: longDateKeys)
+        defs.insert(key);
     }
 
 void UnitsView::addShortDateUnits()
@@ -115,11 +116,16 @@ void UnitsView::removeShortDateUnits()
         defs.erase(key);
     }
 
+void UnitsView::removeLongDateUnits()
+    {
+    for(auto key: longDateKeys)
+        defs.erase(key);
+    }
+
 UnitsView::UnitsView(Globals& globals) 
     : globals(globals) 
     {
     addClass(UnitProperty::UNDEFINED); //needed to include the empty unit.
-    //TODO: make these based on settings.
     addClass(UnitProperty::ANGLE);
     addClass(UnitProperty::LENGTH);
     addClass(UnitProperty::TEMP);

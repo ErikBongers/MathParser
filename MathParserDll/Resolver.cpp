@@ -258,7 +258,7 @@ Value Resolver::resolveList(const ListExpr& listExpr)
         hasOther |= !codeBlock.scope->units.isUnit(number.unit.id, UnitProperty::DURATION);
         }
     if(hasOther && hasDuration)
-        return Error(ErrorId::INV_LIST, listExpr.range());
+        return Error(ErrorId::INV_LIST, listExpr.range(), "Units do not match.");
     if(hasDuration)
         return resolveDurationList(numberList);
     else
@@ -276,21 +276,21 @@ Value Resolver::resolveDurationList(const std::vector<Number>& numberList)
         if (number.unit.id == "days")
             {
             if(hasDays)
-                return Error(ErrorId::INV_LIST, number.range); //TODO: improve error message to: unit days used more than once.
+                return Error(ErrorId::INV_LIST, number.range, "Unit 'days' used more than once.");
             hasDays = true;
             duration.days = (long)number.to_double();
             }
         if (number.unit.id == "months")
             {
             if(hasMonths)
-                return Error(ErrorId::INV_LIST, number.range); //TODO: improve error message to: unit days used more than once.
+                return Error(ErrorId::INV_LIST, number.range, "Unit 'months' used more than once.");
             hasMonths = true;
             duration.months = (long)number.to_double();
             }
         if (number.unit.id == "years")
             {
             if(hasYears)
-                return Error(ErrorId::INV_LIST, number.range); //TODO: improve error message to: unit days used more than once.
+                return Error(ErrorId::INV_LIST, number.range, "Unit 'years' used more than once.");
             hasYears = true;
             duration.days = (long)number.to_double();
             }

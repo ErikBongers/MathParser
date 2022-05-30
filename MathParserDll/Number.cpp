@@ -125,7 +125,7 @@ Number Number::toSI(UnitsView& units) const
         {
         num.significand =  units.get(unit.id).toSI(to_double());
         num.exponent = 0;
-        num.unit = Unit::CLEAR();//TODO: rename to NONE or EMPTY or NULL
+        num.unit = Unit::NONE();
         }
     return num.convertToExponent(exponent);
     }

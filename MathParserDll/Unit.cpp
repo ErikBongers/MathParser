@@ -141,7 +141,7 @@ Unit::Unit(const Token& idToken)
     this->range = idToken;
     }
 
-Unit Unit::CLEAR() 
+Unit Unit::NONE() 
     { 
     return Unit(Token::Null(-1)); 
     }

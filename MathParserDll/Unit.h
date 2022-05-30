@@ -20,7 +20,7 @@ class Unit
         Unit() {}
         const char* to_string() const;
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
-        static Unit CLEAR();
+        static Unit NONE();
         bool isClear() const { return id.empty(); }
     };
 

@@ -343,7 +343,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
         return Value(pfix.error);
     auto val = resolveNode(*pfix.expr);
     if(pfix.postfixId.isNull() && val.type == ValueType::NUMBER)
-        val.getNumber().unit = Unit::CLEAR();
+        val.getNumber().unit = Unit::NONE();
     else 
         switch(hash(pfix.postfixId.stringValue.c_str()))
             {

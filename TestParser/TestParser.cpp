@@ -67,6 +67,22 @@ hundred(a);
                         , 300);
 
             }
+
+        TEST_METHOD(TestDurations)
+            {
+            assertDuration("duur=2 days, 3 months", 2, 3);
+            assertDate(R"CODE(
+date='Jan 12, 2022'; 
+duur=2 days, 3 months;
+date+duur;
+                    )CODE", 14, 4, 2022);
+        assertDate(R"CODE(
+date='Jan 12, 2022'; 
+duur=360 days, 0 months; //calculated year of 30*12 days
+date+duur;
+                    )CODE", 12, 1, 2023);
+        }
+
         TEST_METHOD(TestDates)
             {
             testDateString("11/11/11", 11, 11, 11);
@@ -322,11 +338,36 @@ d.years + d.months + d.days;
             std::string strDay = date["day"]; int d = std::stoi(strDay);
             std::string strMonth = date["month"]; int m = std::stoi(strMonth);
             std::string strYear = date["year"]; long y = std::stol(strYear);
-            Assert::AreEqual(d, day);
-            Assert::AreEqual(m, month);
-            Assert::AreEqual(y, year);
+            Assert::AreEqual(day, d);
+            Assert::AreEqual(month, m);
+            Assert::AreEqual(year, y);
             }
-            
+
+        void assertDuration(const char* stmt, int days = 0, int months = 0, long years = 0, const std::string errorId = "")
+            {
+            std::string msg;
+
+            auto result = parseSingleResult(stmt);
+            logJson(result);
+            assertErrors(result, stmt, errorId);
+            json date = result["duration"];
+            int d = 0;
+            int m = 0;
+            long y = 0;
+            std::string strDays = date["days"]; 
+            if(strDays != "NaN")
+             d = std::stoi(strDays);
+            std::string strMonths = date["months"];
+            if(strMonths != "NaN")
+                m = std::stoi(strMonths);
+            std::string strYears = date["years"]; 
+            if(strYears != "NaN")
+                y = std::stol(strYears);
+            Assert::AreEqual(d, days);
+            Assert::AreEqual(m, months);
+            Assert::AreEqual(y, years);
+            }
+
         json assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
             {
             std::string msg;

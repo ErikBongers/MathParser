@@ -449,3 +449,24 @@ Duration Date::operator-(const Date& d2)
     dd.days = this->day - d2.day;
     return dd;
     }
+
+Date Date::operator+(const Duration& dur)
+    {
+    Date d = *this;
+    Duration duur = dur;
+    duur.normalize(); //get rid of the NaN values.
+    long days = d.day + duur.days;
+    long months_in_days = (long)std::floor(days/30.0);
+    days = (days+30)%30;
+
+    long months= (long)d.month + duur.months + months_in_days;
+    long years_in_months = (long)std::floor(months/12.0);
+    months = (months+12)%12;
+
+    long years = (long)d.year + duur.years + years_in_months;
+    
+    d.day = days;
+    d.month = (Month)months;
+    d.year = years;
+    return d;
+    }

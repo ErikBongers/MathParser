@@ -43,6 +43,7 @@ void OperatorDefs::init()
     Add(new OpNumDivNum(globals));
     Add(new OpNumPowNum(globals));
     Add(new OpDateMinDate(globals));
+    Add(new OpDatePlusDur(globals));
     }
 
 Number doTerm(UnitsView& units, const Number& v1, bool adding, const Number& v, const Range& range)
@@ -132,5 +133,13 @@ Value OpDateMinDate::execute(std::vector<Value>& args, const Range& range)
     Date d2 = args[1].getDate();
     auto dd = d1 - d2;
     dd.normalize();
+    return dd;
+    }
+
+Value OpDatePlusDur::execute(std::vector<Value>& args, const Range& range)
+    {
+    Date date = args[0].getDate();
+    Duration dur = args[1].getDuration();
+    auto dd = date + dur;
     return dd;
     }

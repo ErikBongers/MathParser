@@ -22,6 +22,12 @@ void Duration::to_json(std::ostringstream& sstr) const
 
 void Duration::normalize()
     {
+    if(days == Duration::EmptyDays)
+        days = 0;
+    if(months == Duration::EmptyMonths)
+        months = 0;
+    if(years == Duration::EmptyYears)
+        years = 0;
     double months_in_days = std::floor(days/30.0);
     days = (days+30)%30;
     months+=(long)months_in_days;

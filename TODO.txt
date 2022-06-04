@@ -1,9 +1,8 @@
 ﻿* Test date calculations:
-  > how to create a duration?
-    > list with units, no order needed, but each unit distinct!
   * calculations:
-    date + duration ==> date
-    duration * x ==> duration // or any other arithmetic
+    - date calculations with overflow use a year of 360 days. Try to use a year of 364.nnn average.
+    - date + number.unit ==> date
+    - duration * x ==> duration // or any other arithmetic
 
 * FunctionDef uses Globals: replace with Scope?
 

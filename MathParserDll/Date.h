@@ -19,6 +19,7 @@ class Date
         void to_json(std::ostringstream& sstr) const;
         std::vector<Error> errors;
         Duration operator-(const Date& d2);
+        Date operator+(const Duration& dur);
     };
 
 class DateParser

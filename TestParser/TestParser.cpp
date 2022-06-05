@@ -71,6 +71,8 @@ hundred(a);
         TEST_METHOD(TestDurations)
             {
             assertDuration("duur=2 days, 3 months", 2, 3);
+            assertDate("'01 jan 2022'+2days", 3, 1, 2022);
+            assertError("'01 jan 2022'+2", "DUR_INV_FRAG");
             assertDate(R"CODE(
 date='Jan 12, 2022'; 
 duur=2 days, 3 months;

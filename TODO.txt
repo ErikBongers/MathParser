@@ -1,4 +1,10 @@
-﻿* Test date calculations:
+﻿* www: undo buffer of editor not enough.
+  > after F5, the editor forgets the previous states.
+
+* www: exception when range is not set
+  >  catch the exception and log the full Error or Result.
+
+* Test date calculations:
   * calculations:
     - date calculations with overflow use a year of 360 days. Try to use a year of 364.nnn average.
     - date + number.unit ==> date

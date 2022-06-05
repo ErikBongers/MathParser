@@ -41,6 +41,7 @@ Date DateParser::parse(const std::string& str, const Range& range)
             break;
             }
         }
+    date.range = range;
     return date;
     }
 
@@ -453,6 +454,12 @@ Duration Date::operator-(const Date& d2)
 Date Date::operator+(const Duration& dur)
     {
     Date d = *this;
+    if(!dur.error.isNone())
+        {
+        d.errors.push_back(dur.error);
+        return d;
+        }
+
     Duration duur = dur;
     duur.normalize(); //get rid of the NaN values.
     long days = d.day + duur.days;
@@ -465,8 +472,13 @@ Date Date::operator+(const Duration& dur)
 
     long years = (long)d.year + duur.years + years_in_months;
     
-    d.day = days;
+    d.day = (char)days;
     d.month = (Month)months;
     d.year = years;
     return d;
+    }
+
+Date Date::operator+(const Number& num)
+    {
+    return operator+(Duration(num, range));
     }

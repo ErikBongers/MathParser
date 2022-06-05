@@ -71,7 +71,8 @@ class Error
         Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2);
         Error(ErrorId id, const Range& range, const std::string& arg1, const std::string& arg2, const std::string& arg3);
         void to_json(std::ostringstream& sstr) const;
-        bool isWarning();
+        bool isWarning() const;
+        bool isNone() const { return id == ErrorId::NONE; }
     };
 
 bool hasRealErrors(std::vector<Error>& errors);

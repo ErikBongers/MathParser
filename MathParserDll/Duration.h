@@ -1,5 +1,7 @@
 #pragma once
+#include "Error.h"
 
+struct Number;
 class Duration
     {
     public:
@@ -11,8 +13,12 @@ class Duration
         long months = EmptyMonths;
         long days = EmptyDays;
 
+        Error error;
+
         void to_json(std::ostringstream& sstr) const;
         void normalize();
         double to_days() const;
+        Duration(const Number& num, const Range& range);
+        Duration() = default;
     };
 

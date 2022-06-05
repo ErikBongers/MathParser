@@ -103,7 +103,7 @@ void Error::to_json(std::ostringstream& sstr) const
     sstr << "}";
     }
 
-bool Error::isWarning()
+bool Error::isWarning() const
     {
     return ErrorDefs::get(id).name[0] == 'W';
     }

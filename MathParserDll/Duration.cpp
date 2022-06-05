@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "Duration.h"
+#include "Number.h"
 #include <sstream>
 #include <iomanip>
 #include "tools.h"
@@ -42,4 +43,22 @@ double Duration::to_days() const
     double mtod = months == EmptyMonths ? 0 : months * 365.2425 / 12;
     double dtod = days == EmptyDays ? 0 : days;
     return ytod + mtod + dtod;
+    }
+
+Duration::Duration(const Number& num, const Range& range)
+    {
+    if (num.unit.id == "days")
+        {
+        this->days = (long)num.to_double();
+        }
+    else if (num.unit.id == "months")
+        {
+        this->months = (long)num.to_double();
+        }
+    else if (num.unit.id == "years")
+        {
+        this->years = (long)num.to_double();
+        }
+    else
+        error = Error(ErrorId::DUR_INV_FRAG, range, num.unit.id); //TODO: unit id can be empty.
     }

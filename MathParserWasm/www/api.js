@@ -5,16 +5,23 @@ Module.onRuntimeInitialized = async _ => {
     };
 
 	window.document.title = "Math Parser " + Module.api.getMathVersion();
-	Module.convertErrorToCodeMirror = function(e, doc){
-		let start = doc.line(e.range.startLine + 1).from + e.range.startPos;
-		let end = doc.line(e.range.endLine + 1).from + e.range.endPos;
-		var hint = {
-            message: e.message,
-            severity: "error", //"warning"
-            from: start,
-            to: end
-          };
-      return hint;
+
+	Module.convertErrorToCodeMirror = function (e, doc) {
+		try {
+			let start = doc.line(e.range.startLine + 1).from + e.range.startPos;
+			let end = doc.line(e.range.endLine + 1).from + e.range.endPos;
+			var hint = {
+				message: e.message,
+				severity: "error", //"warning"
+				from: start,
+				to: end
+			};
+			return hint;
+		}
+		catch (err) {
+			console.log(e);
+			throw err;
+		}
 	};
 
 	Module.addErrorsToLint = function (errors) {
@@ -105,10 +112,12 @@ Module.onRuntimeInitialized = async _ => {
                     }
                 };
             })();
-    Module.log = function(text) {
+
+	Module.log = function (text) {
     	console.log(text);
     	};
-    Module.formatFloatString = function(floatString, exponent)
+
+	Module.formatFloatString = function (floatString, exponent)
     	{
 		var sFixed = parseFloat(floatString).toFixed(5);
 		if(sFixed.search(".") == -1)

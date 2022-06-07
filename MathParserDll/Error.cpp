@@ -117,6 +117,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::FUNC_NOT_DEF, {ErrorId::FUNC_NOT_DEF, "FUNC_NOT_DEF", "function {0} is not defined."}},
         {ErrorId::UNIT_NOT_DEF, {ErrorId::UNIT_NOT_DEF, "UNIT_NOT_DEF", "unit {0} is not defined."}},
         {ErrorId::DEFINE_NOT_DEF, {ErrorId::DEFINE_NOT_DEF, "DEFINE_NOT_DEF", "#define: option '{0}' not recognized."}},
+        {ErrorId::UNDEF_NOT_OK, {ErrorId::UNDEF_NOT_OK, "UNDEF_NOT_OK", "#undef: option '{0}' not recognized."}},
 
         {ErrorId::FUNC_ARG_MIS, {ErrorId::FUNC_ARG_MIS, "FUNC_ARG_MIS", "argument(s) for function {0} don't match."}},
         {ErrorId::FUNC_NO_OPEN_PAR, {ErrorId::FUNC_NO_OPEN_PAR, "FUNC_NO_OPEN_PAR", "Missing '(' for function {0}."}},

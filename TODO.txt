@@ -1,8 +1,16 @@
 ﻿* www: undo buffer of editor not enough.
   > after F5, the editor forgets the previous states.
-
-* www: exception when range is not set
-  >  catch the exception and log the full Error or Result.
+<script>
+function closeIt()
+{
+  return "Any string value here forces a dialog box to \n" + 
+         "appear before closing the window.";
+}
+window.onbeforeunload = closeIt;
+</script>
+  > keep 10 backups;
+    - backup1..10
+    - pointer to lastBackup = 3;
 
 * Test date calculations:
   * calculations:
@@ -14,15 +22,6 @@
 
 Scope
 ---------
-* Exposure of global functions, units (and constants)
-  > Default is ALL exposed? 
-    > Functions: yes limit it with #undef TRIG
-    > Constants: no. Keep the short-named variables available by default!
-  > How to limit it?
-    : #undef TRIG
-  > group or label global stuff.
-    - Units: unitclass
-
 * start script:
   > limits of these start statements?
     > none: why bother having restrictions.

@@ -78,37 +78,61 @@ Value Resolver::resolveBlock(const Range& range, const std::string& functionName
 Value Resolver::resolveDefine(const Define& define)
     {
     Value result;
-    for(auto& t: define.defs) 
+    if(!define.undef)
         {
-        switch(hash(t.stringValue.c_str()))
+        for(auto& t: define.defs) 
             {
-            case hash("date_units"):
-                codeBlock.scope->units.addLongDateUnits(); 
-                break;
-            case hash("short_date_units"):
-                codeBlock.scope->units.addShortDateUnits(); 
-                break;
-            case hash("ymd"):
-                dateFormat = DateFormat::YMD;
-                break;
-            case hash("dmy"):
-                dateFormat = DateFormat::DMY;
-                break;
-            case hash("mdy"):
-                dateFormat = DateFormat::MDY;
-                break;
-            case hash("trig"):
-            case hash("arithm"):
-            case hash("date"):
-            case hash("all"):
-                if(define.undef)
-                    codeBlock.scope->functions.removeFunctions(toFunctionType(hash(t.stringValue.c_str())));
-                else
+            switch(hash(t.stringValue.c_str()))
+                {
+                case hash("date_units"):
+                    codeBlock.scope->units.addLongDateUnits(); 
+                    break;
+                case hash("short_date_units"):
+                    codeBlock.scope->units.addShortDateUnits(); 
+                    break;
+                case hash("ymd"):
+                    dateFormat = DateFormat::YMD;
+                    break;
+                case hash("dmy"):
+                    dateFormat = DateFormat::DMY;
+                    break;
+                case hash("mdy"):
+                    dateFormat = DateFormat::MDY;
+                    break;
+                case hash("trig"):
+                case hash("arithm"):
+                case hash("date"):
+                case hash("all"):
                     codeBlock.scope->functions.addFunctions(toFunctionType(hash(t.stringValue.c_str())));
-                break;
-            default:
-                result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), t.stringValue));
+                    break;
+                default:
+                    result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), t.stringValue));
+                }
             }
+        }
+    else //undef
+        {
+        for(auto& t: define.defs) 
+            {
+            switch(hash(t.stringValue.c_str()))
+                {
+                case hash("date_units"):
+                    codeBlock.scope->units.removeLongDateUnits(); 
+                    break;
+                case hash("short_date_units"):
+                    codeBlock.scope->units.removeShortDateUnits(); 
+                    break;
+                case hash("trig"):
+                case hash("arithm"):
+                case hash("date"):
+                case hash("all"):
+                    codeBlock.scope->functions.removeFunctions(toFunctionType(hash(t.stringValue.c_str())));
+                    break;
+                default:
+                    result.errors.push_back(Error(ErrorId::UNDEF_NOT_OK, define.range(), t.stringValue));
+                }
+            }
+
         }
     return result;
     }

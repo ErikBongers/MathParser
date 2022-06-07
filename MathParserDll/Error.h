@@ -12,6 +12,7 @@ enum class ErrorId
     FUNC_NOT_DEF,
     UNIT_NOT_DEF,
     DEFINE_NOT_DEF,
+    UNDEF_NOT_OK,
 
     FUNC_ARG_MIS,
     FUNC_NO_OPEN_PAR,

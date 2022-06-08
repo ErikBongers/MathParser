@@ -71,6 +71,7 @@ hundred(a);
         TEST_METHOD(TestDurations)
             {
             assertDuration("duur=2 days, 3 months", 2, 3);
+            assertDuration("'Jan 12, 2022'-'Jan 11, 2022';", 1);
             assertDate("'01 jan 2022'+2days", 3, 1, 2022);
             assertError("'01 jan 2022'+2", "DUR_INV_FRAG");
             assertDate(R"CODE(
@@ -113,9 +114,8 @@ date+duur;
             assertDate("d = 2022,12,13", 13, 12, 2022);
             assertDate("#define dmy\n d = 13, 12, 2022", 13, 12, 2022);
             assertDate("#define mdy\n d = 12, 13, 2022", 13, 12, 2022);
-            assertDate("d = 2022,12,13", 13, 12, 2022);
             assertError("d = 13, 12, 2022", "INV_DATE_VALUE");
-            
+
             }
 
         TEST_METHOD(TestDefines)

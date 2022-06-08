@@ -496,11 +496,11 @@ Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)
     switch (hash(fragmentId.stringValue.c_str()))
         {
         case hash("day"):
-            newValue = Value(Number(date.day, 0)); break;
+            newValue = Value(Number(date.day, 0, fragmentId)); break;
         case hash("month"):
-            newValue = Value(Number((double)date.month, 0)); break;
+            newValue = Value(Number((double)date.month, 0, fragmentId)); break;
         case hash("year"):
-            newValue = Value(Number(date.year, 0)); break;
+            newValue = Value(Number(date.year, 0, fragmentId)); break;
         default:
             return Value(Error(ErrorId::DATE_INV_FRAG, fragmentId, fragmentId.stringValue));
         }
@@ -516,13 +516,13 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
     switch (hash(fragmentId.stringValue.c_str()))
         {
         case hash("to_days"):
-            newValue = Value(Number(dur.to_days(), 0)); break;//TODO: set unit to "days" ? But what if days has been #undef-ed?
+            newValue = Value(Number(dur.to_days(), 0, fragmentId)); break;//TODO: set unit to "days" ? But what if days has been #undef-ed?
         case hash("days"):
-            newValue = Value(Number(dur.days, 0)); break;
+            newValue = Value(Number(dur.days, 0, fragmentId)); break;
         case hash("months"):
-            newValue = Value(Number((double)dur.months, 0)); break;
+            newValue = Value(Number((double)dur.months, 0, fragmentId)); break;
         case hash("years"):
-            newValue = Value(Number(dur.years, 0)); break;
+            newValue = Value(Number(dur.years, 0, fragmentId)); break;
         default:
             return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId, fragmentId.stringValue));
         }

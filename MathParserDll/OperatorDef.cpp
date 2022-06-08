@@ -121,7 +121,7 @@ Value OpNumPowNum::execute(std::vector<Value>& args, const Range& range)
     {
     Value result = args[0];
     result.constant = false;
-    result.setNumber(Number(std::pow(args[0].getNumber().to_double(), args[1].getNumber().to_double()), 0));
+    result.setNumber(Number(std::pow(args[0].getNumber().to_double(), args[1].getNumber().to_double()), 0, result.getNumber().range));
     if (!args[0].getNumber().unit.isClear())
         result.getNumber().unit = args[1].getNumber().unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());

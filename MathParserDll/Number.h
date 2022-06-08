@@ -13,8 +13,7 @@ struct Number
     std::vector<Error> errors;
     Range range;
     Number() {}
-    Number(double d, int e, NumFormat numFormat = NumFormat::DEC) : significand(d), exponent(e), numFormat(numFormat) {}
-    Number(double d, int e, const Range& range) : significand(d), exponent(e), range(range) {}
+    Number(double d, int e, const Range& range, NumFormat numFormat = NumFormat::DEC) : significand(d), exponent(e), range(range), numFormat(numFormat) {}
     Number(double d, const Unit& unit, NumFormat numFormat, const Range& range) : significand(d), unit(unit), numFormat(numFormat), range(range) {}
     Number(double d, int e, const Unit& unit, NumFormat numFormat, const Range& range) : significand(d), exponent(e), unit(unit), numFormat(numFormat), range(range) {}
     Number& operator++(int);

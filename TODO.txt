@@ -17,6 +17,7 @@ window.onbeforeunload = closeIt;
     - date calculations with overflow use a year of 360 days. Try to use a year of 364.nnn average.
     - date + number.unit ==> date
     - duration * x ==> duration // or any other arithmetic
+      > No operator '+' defined for DURATION and NUMBER.
 
 * FunctionDef uses Globals: replace with Scope?
 
@@ -30,6 +31,8 @@ Scope
   > has sourceIndex = 0
   > precompile into statements that can be passed to resolver (see globals)
 
+WWW
+---
 * mathparser page
   > show logged in user in upper right corner.
   > load start script into localStorage (sessionStorage!)

@@ -16,6 +16,6 @@ Token::Token(TokenType type, std::string str, TokenPos pos, char sourceIndex)
     {}
 
 Token::Token(TokenType type, TokenPos pos, char sourceIndex)
-    : Token(type, Number(0.0, 0), pos, sourceIndex)
+    : Token(type, Number(0.0, 0, Range()), pos, sourceIndex)
     {}
 

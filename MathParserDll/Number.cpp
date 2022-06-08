@@ -48,14 +48,14 @@ Number Number::operator-(const Number& number2) const
 
 Number Number::operator*(const Number& n2) const
     {
-    Number n = Number(significand*n2.significand, exponent+n2.exponent);
+    Number n = Number(significand*n2.significand, exponent+n2.exponent, n2.range);
     n.unit = this->unit;
     return n;
     }
 
 Number Number::operator/(const Number& n2) const
     {
-    Number n = Number(significand/n2.significand, exponent-n2.exponent);
+    Number n = Number(significand/n2.significand, exponent-n2.exponent, n2.range);
     n.unit = this->unit;
     return n;
     }
@@ -112,8 +112,8 @@ Number Number::convertToUnit(const Unit& to, UnitsView& units)
         num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, to.range));
         return num;
         }
-    num = Number(units.get(this->unit.id).toSI(this->to_double()), 0); //from -> SI
-    num = Number(units.get(to.id).fromSI(num.to_double()), 0);  //SI -> to
+    num = Number(units.get(this->unit.id).toSI(this->to_double()), 0, range); //from -> SI
+    num = Number(units.get(to.id).fromSI(num.to_double()), 0, range);  //SI -> to
     num.unit = to;
     return num.convertToExponent(exponent);
     }

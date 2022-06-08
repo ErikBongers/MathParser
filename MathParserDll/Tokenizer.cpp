@@ -217,6 +217,7 @@ Token Tokenizer::parseId(char c)
 
 Number Tokenizer::parseDecimal(char c)
     {
+    TokenPos startPos = peekedState.nextPos-1;
     //we already have the first digit
     double d = 0;
     int e = 0;
@@ -267,7 +268,7 @@ Number Tokenizer::parseDecimal(char c)
         nextChar();//consume 'E'
         e = parseInteger();
         }
-    return Number(d, e);
+    return Number(d, e, Range(startPos, peekedState.nextPos, sourceIndex));
     }
 
 int Tokenizer::parseInteger()
@@ -354,9 +355,15 @@ Token Tokenizer::parseNumber(char c)
     if(c == '0')
         {
         if(peekChar() == 'b' || peekChar() == 'B')
-            return Token(TokenType::NUMBER, Number(parseBinary(), 0, NumFormat::BIN), curPos, sourceIndex);
+            {
+            auto binary = parseBinary();
+            return Token(TokenType::NUMBER, Number(binary, 0, Range(curPos, peekedState.nextPos-1, sourceIndex), NumFormat::BIN), curPos, sourceIndex);
+            }
         else if(peekChar() == 'x' || peekChar() == 'X')
-            return Token(TokenType::NUMBER, Number(parseHex(), 0, NumFormat::HEX), curPos, sourceIndex);
+            {
+            auto hex = parseHex();
+            return Token(TokenType::NUMBER, Number(hex, 0, Range(curPos, peekedState.nextPos-1, sourceIndex), NumFormat::HEX), curPos, sourceIndex);
+            }
         }
     return Token(TokenType::NUMBER, parseDecimal(c), curPos, sourceIndex);
     }

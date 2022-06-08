@@ -61,7 +61,7 @@ class Token
         char sourceIndex = -1;
 
         ValueType valueType = ValueType::NONE;
-        Number numberValue = Number(0.0,0);
+        Number numberValue = Number(0.0,0, Range());
         //Timepoint
         //Duration
         //Calendar

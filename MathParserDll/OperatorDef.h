@@ -3,6 +3,8 @@
 #include "Value.h"
 
 enum class OperatorType : char { NONE = '_', PLUS = '+', MIN = '-', MULT = '*', DIV = '/', POW = '^' };
+typedef Value (*Operator)(Globals& globals, std::vector<Value>& args, const Range& range);
+
 class OperatorId
     {
     public:
@@ -18,92 +20,19 @@ class OperatorId
             {}
     };
 
-struct Globals;
 class OperatorDefs;
-class OperatorDef
-    {
-    public:
-        Globals& globals;
-        OperatorId id;
-        OperatorDef(Globals& globals, OperatorId id) : globals(globals), id(id) {}
-        Value call(std::vector<Value>& args, const Range& range);
-
-    private:
-        virtual Value execute(std::vector<Value>& args, const Range& range) = 0;
-    };
 
 struct Globals;
 class Resolver;
 class OperatorDefs
     {
+    private:
+        std::map<OperatorId, Operator> operators;
     public:
         OperatorDefs(Globals& globals) : globals(globals) { init(); }
         void init();
-        std::map<OperatorId, OperatorDef*> operators;
-        void Add(OperatorDef* op) { operators.emplace(op->id, op); }
-        OperatorDef* get(const OperatorId& id) { return operators[id]; }
+        void Add(OperatorId id, Operator op) { operators.emplace(id, op); }
+        Operator get(const OperatorId& id) { return operators[id]; }
         Globals& globals;
     };
 
-class OpNumPlusNum : public OperatorDef
-    {
-    public:
-        OpNumPlusNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::NUMBER, OperatorType::PLUS, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpNumMinNum : public OperatorDef
-    {
-    public:
-        OpNumMinNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::NUMBER, OperatorType::MIN, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpNumMultNum : public OperatorDef
-    {
-    public:
-        OpNumMultNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::NUMBER, OperatorType::MULT, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpNumDivNum : public OperatorDef
-    {
-    public:
-        OpNumDivNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::NUMBER, OperatorType::DIV, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpNumPowNum : public OperatorDef
-    {
-    public:
-        OpNumPowNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::NUMBER, OperatorType::POW, ValueType::NUMBER, ValueType::NUMBER)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpDateMinDate : public OperatorDef
-    {
-    public:
-        OpDateMinDate(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::TIMEPOINT, OperatorType::MIN, ValueType::TIMEPOINT, ValueType::DURATION)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpDatePlusDur: public OperatorDef
-    {
-    public:
-        OpDatePlusDur(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::TIMEPOINT, OperatorType::PLUS, ValueType::DURATION, ValueType::TIMEPOINT)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpDatePlusNum: public OperatorDef
-    {
-    public:
-        OpDatePlusNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::TIMEPOINT, OperatorType::PLUS, ValueType::NUMBER, ValueType::TIMEPOINT)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
-class OpDurPlusNum: public OperatorDef
-    {
-    public:
-        OpDurPlusNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::DURATION, OperatorType::PLUS, ValueType::NUMBER, ValueType::DURATION)) {}
-        virtual Value execute(std::vector<Value>& args, const Range& range) override;
-    };

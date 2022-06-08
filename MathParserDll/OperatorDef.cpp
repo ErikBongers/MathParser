@@ -27,27 +27,6 @@ std::string OperatorId::to_string()
     return std::string("op ") + (char)type1 + (char)op + (char)type2;
     }
 
-Value OperatorDef::call(std::vector<Value>& args, const Range& range)
-    { 
-    //TODO: check args
-
-    return execute(args, range); 
-    }
-
-
-void OperatorDefs::init()
-    {
-    Add(new OpNumPlusNum(globals));
-    Add(new OpNumMinNum(globals));
-    Add(new OpNumMultNum(globals));
-    Add(new OpNumDivNum(globals));
-    Add(new OpNumPowNum(globals));
-    Add(new OpDateMinDate(globals));
-    Add(new OpDatePlusDur(globals));
-    Add(new OpDatePlusNum(globals));
-    Add(new OpDurPlusNum(globals));
-    }
-
 Number doTerm(UnitsView& units, const Number& v1, bool adding, const Number& v, const Range& range)
     {
     Number result = v1;
@@ -84,17 +63,17 @@ Number doTerm(UnitsView& units, const Number& v1, bool adding, const Number& v, 
     return result;
     }
 
-Value OpNumPlusNum::execute(std::vector<Value>& args, const Range& range)
+Value OpNumPlusNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     return Value(Number(doTerm(globals.unitsView, args[0].getNumber(), true, args[1].getNumber(), range)));
     }
 
-Value OpNumMinNum::execute(std::vector<Value>& args, const Range& range)
+Value OpNumMinNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     return Value(Number(doTerm(globals.unitsView, args[0].getNumber(), false, args[1].getNumber(), range)));
     }
 
-Value OpNumMultNum::execute(std::vector<Value>& args, const Range& range)
+Value OpNumMultNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Value result = args[0];
     result.constant = false;
@@ -106,7 +85,7 @@ Value OpNumMultNum::execute(std::vector<Value>& args, const Range& range)
     return result;
     }
 
-Value OpNumDivNum::execute(std::vector<Value>& args, const Range& range)
+Value OpNumDivNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Value result = args[0];
     result.constant = false;
@@ -118,7 +97,7 @@ Value OpNumDivNum::execute(std::vector<Value>& args, const Range& range)
     return result;
     }
 
-Value OpNumPowNum::execute(std::vector<Value>& args, const Range& range)
+Value OpNumPowNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Value result = args[0];
     result.constant = false;
@@ -129,7 +108,7 @@ Value OpNumPowNum::execute(std::vector<Value>& args, const Range& range)
     return result;
     }
 
-Value OpDateMinDate::execute(std::vector<Value>& args, const Range& range)
+Value OpDateMinDate(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Date d1 = args[0].getDate();
     Date d2 = args[1].getDate();
@@ -138,7 +117,7 @@ Value OpDateMinDate::execute(std::vector<Value>& args, const Range& range)
     return dd;
     }
 
-Value OpDatePlusDur::execute(std::vector<Value>& args, const Range& range)
+Value OpDatePlusDur(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Date date = args[0].getDate();
     Duration dur = args[1].getDuration();
@@ -146,7 +125,7 @@ Value OpDatePlusDur::execute(std::vector<Value>& args, const Range& range)
     return dd;
     }
 
-Value OpDatePlusNum::execute(std::vector<Value>& args, const Range& range)
+Value OpDatePlusNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Date date = args[0].getDate();
     Number num = args[1].getNumber();
@@ -154,10 +133,38 @@ Value OpDatePlusNum::execute(std::vector<Value>& args, const Range& range)
     return dd;
     }
 
-Value OpDurPlusNum::execute(std::vector<Value>& args, const Range& range)
+Value OpDurPlusNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Duration dur = args[0].getDuration();
     Number num = args[1].getNumber();
     auto dd = dur + num;
     return dd;
     }
+
+void OperatorDefs::init()
+    {
+    Add(OperatorId(ValueType::NUMBER, OperatorType::PLUS, ValueType::NUMBER, ValueType::NUMBER), OpNumPlusNum);
+    Add(OperatorId(ValueType::NUMBER, OperatorType::MIN, ValueType::NUMBER, ValueType::NUMBER), OpNumMinNum);
+    Add(OperatorId(ValueType::NUMBER, OperatorType::MULT, ValueType::NUMBER, ValueType::NUMBER), OpNumMultNum);
+    Add(OperatorId(ValueType::NUMBER, OperatorType::DIV, ValueType::NUMBER, ValueType::NUMBER), OpNumDivNum);
+    Add(OperatorId(ValueType::NUMBER, OperatorType::POW, ValueType::NUMBER, ValueType::NUMBER), OpNumPowNum);
+    Add(OperatorId(ValueType::TIMEPOINT, OperatorType::MIN, ValueType::TIMEPOINT, ValueType::DURATION), OpDateMinDate);
+    Add(OperatorId(ValueType::TIMEPOINT, OperatorType::PLUS, ValueType::DURATION, ValueType::TIMEPOINT), OpDatePlusDur);
+    Add(OperatorId(ValueType::TIMEPOINT, OperatorType::PLUS, ValueType::NUMBER, ValueType::TIMEPOINT), OpDatePlusNum);
+    Add(OperatorId(ValueType::DURATION, OperatorType::PLUS, ValueType::NUMBER, ValueType::DURATION), OpDurPlusNum);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

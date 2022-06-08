@@ -206,7 +206,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
         case TokenType::POWER: opType = OperatorType::POW; break;
         default: break;
         }
-    OperatorDef* op = codeBlock.scope->globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
+    Operator op = codeBlock.scope->globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
         {
         result.errors.push_back(Error(ErrorId::NO_OP, Range(expr.op), expr.op.stringValue, to_string(a1.type), to_string(a2.type)));
@@ -215,7 +215,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
     std::vector<Value> args;
     args.push_back(a1);
     args.push_back(a2);
-    result = op->call(args, expr.op);
+    result = op(codeBlock.scope->globals, args, expr.op);
     if (expr.error.id != ErrorId::NONE)
         result.errors.push_back(expr.error);
     if(result.type ==ValueType::NUMBER && !expr.unit.isClear())

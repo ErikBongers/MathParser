@@ -40,7 +40,12 @@ Module.onRuntimeInitialized = async _ => {
 		if (line.comment != "")
 			strComment = " //" + line.comment;
 		let strNL = "";
-		Module.addErrorsToLint(line.errors);
+		try {
+			Module.addErrorsToLint(line.errors);
+		}
+		catch (err) {
+			console.log(line);
+        }
 		//just for top level errors in the output window:
 		let strErrors = "";
 		for (e of line.errors) {

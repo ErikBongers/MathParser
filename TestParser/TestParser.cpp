@@ -84,7 +84,8 @@ date='Jan 12, 2022';
 duur=360 days, 0 months; //calculated year of 30*12 days
 date+duur;
                     )CODE", 12, 1, 2023);
-        }
+            assertDuration("duur=2 days, 3 months; duur + 2 days", 4, 3);
+            }
 
         TEST_METHOD(TestDates)
             {

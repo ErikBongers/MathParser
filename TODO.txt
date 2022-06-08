@@ -15,9 +15,7 @@ window.onbeforeunload = closeIt;
 * Test date calculations:
   * calculations:
     - date calculations with overflow use a year of 360 days. Try to use a year of 364.nnn average.
-    - date + number.unit ==> date
     - duration * x ==> duration // or any other arithmetic
-      > No operator '+' defined for DURATION and NUMBER.
 
 * FunctionDef uses Globals: replace with Scope?
 

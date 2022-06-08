@@ -100,3 +100,10 @@ class OpDatePlusNum: public OperatorDef
         OpDatePlusNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::TIMEPOINT, OperatorType::PLUS, ValueType::NUMBER, ValueType::TIMEPOINT)) {}
         virtual Value execute(std::vector<Value>& args, const Range& range) override;
     };
+
+class OpDurPlusNum: public OperatorDef
+    {
+    public:
+        OpDurPlusNum(Globals& globals) : OperatorDef(globals, OperatorId(ValueType::DURATION, OperatorType::PLUS, ValueType::NUMBER, ValueType::DURATION)) {}
+        virtual Value execute(std::vector<Value>& args, const Range& range) override;
+    };

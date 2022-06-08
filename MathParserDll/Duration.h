@@ -14,11 +14,13 @@ class Duration
         long days = EmptyDays;
 
         Error error;
+        Range range;
 
         void to_json(std::ostringstream& sstr) const;
         void normalize();
         double to_days() const;
         Duration(const Number& num, const Range& range);
         Duration() = default;
+        Duration operator+ (const Number& num) const;
     };
 

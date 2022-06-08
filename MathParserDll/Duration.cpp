@@ -46,6 +46,7 @@ double Duration::to_days() const
     }
 
 Duration::Duration(const Number& num, const Range& range)
+    : range(range)
     {
     if (num.unit.id == "days")
         {
@@ -61,4 +62,24 @@ Duration::Duration(const Number& num, const Range& range)
         }
     else
         error = Error(ErrorId::DUR_INV_FRAG, range, num.unit.id); //TODO: unit id can be empty.
+    }
+
+Duration Duration::operator+(const Number& num) const
+    {
+    Duration dur = *this;
+    if (num.unit.id == "days")
+        {
+        dur.days += (long)num.to_double();
+        }
+    else if (num.unit.id == "months")
+        {
+        dur.months += (long)num.to_double();
+        }
+    else if (num.unit.id == "years")
+        {
+        dur.years += (long)num.to_double();
+        }
+    else
+        dur.error = Error(ErrorId::DUR_INV_FRAG, range, num.unit.id); //TODO: unit id can be empty.
+    return dur;
     }

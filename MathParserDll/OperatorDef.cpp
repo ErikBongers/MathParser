@@ -97,6 +97,29 @@ Value OpNumDivNum(Globals& globals, std::vector<Value>& args, const Range& range
     return result;
     }
 
+Value OpNumRemNum(Globals& globals, std::vector<Value>& args, const Range& range)
+    {
+    Value result = args[0];
+    result.constant = false;
+    result.setNumber(result.getNumber() % args[1].getNumber());
+    if (args[0].getNumber().unit.isClear())
+        result.getNumber().unit = args[1].getNumber().unit;
+    result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
+    return result;
+    }
+
+Value OpNumModNum(Globals& globals, std::vector<Value>& args, const Range& range)
+    {
+    Value result = args[0];
+    result.constant = false;
+    result.setNumber(result.getNumber().modulo(args[1].getNumber()));
+    if (args[0].getNumber().unit.isClear())
+        result.getNumber().unit = args[1].getNumber().unit;
+    result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
+    return result;
+    }
+
+
 Value OpNumPowNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Value result = args[0];
@@ -133,6 +156,14 @@ Value OpDatePlusNum(Globals& globals, std::vector<Value>& args, const Range& ran
     return dd;
     }
 
+Value OpDateMinNum(Globals& globals, std::vector<Value>& args, const Range& range)
+    {
+    Date date = args[0].getDate();
+    Number num = args[1].getNumber();
+    auto dd = date - num;
+    return dd;
+    }
+
 Value OpDurPlusNum(Globals& globals, std::vector<Value>& args, const Range& range)
     {
     Duration dur = args[0].getDuration();
@@ -141,17 +172,30 @@ Value OpDurPlusNum(Globals& globals, std::vector<Value>& args, const Range& rang
     return dd;
     }
 
+Value OpDurMinNum(Globals& globals, std::vector<Value>& args, const Range& range)
+    {
+    Duration dur = args[0].getDuration();
+    Number num = args[1].getNumber();
+    auto dd = dur - num;
+    return dd;
+    }
+
+
+
 void OperatorDefs::init()
     {
     Add(OperatorId(ValueType::NUMBER, OperatorType::PLUS, ValueType::NUMBER, ValueType::NUMBER), OpNumPlusNum);
     Add(OperatorId(ValueType::NUMBER, OperatorType::MIN, ValueType::NUMBER, ValueType::NUMBER), OpNumMinNum);
     Add(OperatorId(ValueType::NUMBER, OperatorType::MULT, ValueType::NUMBER, ValueType::NUMBER), OpNumMultNum);
     Add(OperatorId(ValueType::NUMBER, OperatorType::DIV, ValueType::NUMBER, ValueType::NUMBER), OpNumDivNum);
+    Add(OperatorId(ValueType::NUMBER, OperatorType::REMAIN, ValueType::NUMBER, ValueType::NUMBER), OpNumRemNum);
+    Add(OperatorId(ValueType::NUMBER, OperatorType::MODULO, ValueType::NUMBER, ValueType::NUMBER), OpNumModNum);
     Add(OperatorId(ValueType::NUMBER, OperatorType::POW, ValueType::NUMBER, ValueType::NUMBER), OpNumPowNum);
     Add(OperatorId(ValueType::TIMEPOINT, OperatorType::MIN, ValueType::TIMEPOINT, ValueType::DURATION), OpDateMinDate);
     Add(OperatorId(ValueType::TIMEPOINT, OperatorType::PLUS, ValueType::DURATION, ValueType::TIMEPOINT), OpDatePlusDur);
     Add(OperatorId(ValueType::TIMEPOINT, OperatorType::PLUS, ValueType::NUMBER, ValueType::TIMEPOINT), OpDatePlusNum);
     Add(OperatorId(ValueType::DURATION, OperatorType::PLUS, ValueType::NUMBER, ValueType::DURATION), OpDurPlusNum);
+    Add(OperatorId(ValueType::DURATION, OperatorType::MIN, ValueType::NUMBER, ValueType::DURATION), OpDurMinNum);
     }
 
 

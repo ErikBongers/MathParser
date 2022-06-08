@@ -33,7 +33,7 @@ assignment = id '=' listExpr |
 
 addExpr = multExpr [ ("+" | "-") multExpr ]
 
-multExpr = powerExpr [ ("*" | "/") powerExpr ]
+multExpr = powerExpr [ ("*" | "/" | "%" | "%%") powerExpr ]
 
 powerExpr = impliedMultExpr |
             powerExpr "^" impliedMultExpr

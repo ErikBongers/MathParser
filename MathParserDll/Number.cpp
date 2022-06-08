@@ -3,6 +3,7 @@
 #include <sstream>
 #include <bitset>
 #include <iomanip>
+#include <cmath>
 
 Number& Number::operator++(int)
     {
@@ -56,6 +57,21 @@ Number Number::operator*(const Number& n2) const
 Number Number::operator/(const Number& n2) const
     {
     Number n = Number(significand/n2.significand, exponent-n2.exponent, n2.range);
+    n.unit = this->unit;
+    return n;
+    }
+
+Number Number::operator%(const Number& n2) const
+    {
+    Number n = Number(std::remainder(to_double(), n2.to_double()), 0, n2.range);
+    n.unit = this->unit;
+    return n;
+    }
+
+Number Number::modulo(const Number& n2) const
+    {
+    //modulo is not defined in C++
+    Number n = Number(to_double() - n2.to_double()*floor(to_double()/n2.to_double()), 0, n2.range);
     n.unit = this->unit;
     return n;
     }

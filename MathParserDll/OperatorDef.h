@@ -2,7 +2,7 @@
 #include "ValueType.h"
 #include "Value.h"
 
-enum class OperatorType : char { NONE = '_', PLUS = '+', MIN = '-', MULT = '*', DIV = '/', POW = '^' };
+enum class OperatorType : char { NONE = '_', PLUS = '+', MIN = '-', MULT = '*', DIV = '/', POW = '^', REMAIN = '%', MODULO = 'M' };
 typedef Value (*Operator)(Globals& globals, std::vector<Value>& args, const Range& range);
 
 class OperatorId

@@ -346,7 +346,7 @@ Node* Parser::parseMultExpr()
     {
     Node* node = parsePowerExpr();
     auto t = tok.peek();
-    while (t.type == TokenType::MULT || t.type == TokenType::DIV)
+    while (t.type == TokenType::MULT || t.type == TokenType::DIV || t.type == TokenType::PERCENT || t.type == TokenType::MODULO)
         {
         tok.next();
         BinaryOpExpr* multExpr = nodeFactory.createBinaryOp();

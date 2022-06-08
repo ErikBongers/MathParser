@@ -23,6 +23,8 @@ struct Number
     Number operator-(const Number& n2) const;
     Number operator*(const Number& n2) const;
     Number operator/(const Number& n2) const;
+    Number operator%(const Number& n2) const;
+    Number modulo(const Number& n2) const;
     bool operator>(const Number& n2) const;
     bool operator<(const Number& n2) const;
     Number convertToExponent(int e) const;

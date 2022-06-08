@@ -82,6 +82,10 @@ Token Tokenizer::getNextToken()
         case ',': return Token(COMMA, c, peekedState.nextPos-1, sourceIndex);
         case '|': return Token(PIPE, c, peekedState.nextPos-1, sourceIndex);
         case ';': return Token(SEMI_COLON, c, peekedState.nextPos-1, sourceIndex);
+        case '%': 
+            if(match('%'))
+                return Token(MODULO, "%%", peekedState.nextPos - 2, sourceIndex);
+            return Token(PERCENT, c, peekedState.nextPos-1, sourceIndex);
         case '!': 
             {
             if (peekChar() == '/' && peekSecondChar() == '/')

@@ -42,6 +42,8 @@ enum class TokenType
     QUOTED_STR,
     NEWLINE,
     FUNCTION,
+    PERCENT,
+    MODULO,
 
     DEFINE,
     UNDEF,

@@ -204,6 +204,8 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
         case TokenType::MULT: opType = OperatorType::MULT; break;
         case TokenType::DIV: opType = OperatorType::DIV; break;
         case TokenType::POWER: opType = OperatorType::POW; break;
+        case TokenType::PERCENT: opType = OperatorType::REMAIN; break;
+        case TokenType::MODULO: opType = OperatorType::MODULO; break;
         default: break;
         }
     Operator op = codeBlock.scope->globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));

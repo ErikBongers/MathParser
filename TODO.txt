@@ -1,4 +1,12 @@
-﻿* www: undo buffer of editor not enough.
+﻿* Date: operator + and - : make generic
+  > Adding a duration may contain negative values in the duration!
+  > Fix this for the +operator
+  > the -operator is just the +operator with all duration values made negative.
+  > Durations allow calculations and max(), floor(),…
+    > Floor is template: floor<Sec>(duration);
+
+
+* www: undo buffer of editor not enough.
   > after F5, the editor forgets the previous states.
 <script>
 function closeIt()
@@ -64,8 +72,6 @@ WWW
 * functions:
   > allow last ';' to be elimited.
   > fix all the TODO's, because quick-and-dirty code.
-* optimize large programs
-  > perhaps only one json stringstream? Via a Visitor?
 * startup script
   > runs before every other run.
   > could contain functions and defs of vars,...
@@ -80,11 +86,6 @@ WWW
     : today.year = 2022; //error!
 * Date parsing;
   - return warnings if assumptions (ymd?) are being made.
-
-* myDate + 1y
-  > y unit
-* test chrono with both MSVC and EMCC
-  > not everything is implemented.
 
 * npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
@@ -143,95 +144,11 @@ Nice to have
           : februari 28.last  --> postfix notation? Feels like a subfield...
           : 2022:february:last(28) -> this could be both input syntax as output syntax, with or without the (28), which could be ignored when added to the input.
           
-  > Date notation
-    > if dd or mon are <= 12 -> error ambiguous.
-    > always allow yyyy mm dd
-    > #define date_format MDY | DMY  (YMD is always allowed)
-    > date seperators: '/' '-' ' ' ','
-    > month can be written in number, abbrev and full.
-
-  > Value is currently only numeric.
-    > Dates and numbers can not be calculated with directly: now() + 5 ? Five what? days? hours?
-    > Analize a complexer expression with date stuff. See how it unravels and how to resolve it.
-      : elon_time = now() + ((timepoint - timepoint).hours * big_integer)
-      > timepoint = timepoint + [ (timepoint - timepoint = duration).hours = duration_in_unit_hours * number ]
-      > basic expressions:
-        - assign timepoint
-        - timepoint operator- timepoint ==> duration // note that only the minus operator makes sense. See chrono for all operators.
-        - duration operator* int
-
-
-
-    > since dates are so different from numeric values, they require seperate classes, with their own resolvers and operators.
-      > timepoint : UTC ( or system?) date.
-      > duration : contains a numeric value and a 
-      > calendar : a timepoint in it's individual components
-        > Do we really need Timepoint? All dates can be represented in Calendar, no?
-    > Value must have a type field: number, timepoint, duration, calendar,...
-    > How to avoid a code mess in Resolver?
-      > A resolver per type?
-      > Or Keep a general resolver, and create a Calculator per type?
-      > An expression can contain sub parts for other value types.
-        > elon_time = (timepoint - timepoint).hours * big_integer.
-    > any value can suddenly be turned into a date fragment:
-      (a*5+2)hours;
-    > so, fragments are ordinary Values with a unit.
-    > how about dates?
-    > You can't add dates:
-      yesterday + today = nonsense;
-    > but dates can still be used in expressions:
-      lastMonday = today-3days; --> <date> = <date> op <value>
-  > only once units and conversions/fragments are implemented.
-  > x = '12/12/2022 23:45:11'; --> allow all parsable dates, unless ambiguous.
   > time-span: date - date -> timespan
-  > now() function
-  > fragments:
-    > x = now().year
-    > .year, .month,... 
-      > are all integers, as decimals are confusing? 
-      > warning when stripping a decimal part? Suggesting conversion to a lower type?
-      > complex calculation:
-        > (1hour/2)*4 = 2hours !! thus, no warning needed!
-        > only warn about rounding at the end result
-          > when assinging to  var
-          > when converting to other unit.
   > half a minute?
     > 1min.sec/2 => 30sec 
     > imin/2 => omin !!!
-  > data types:
-    > see chrono lib
-    - timepoint (don't use 'date' as this will be a unit for timepoint truncated to only the date part)
-      > representation? readable date with or without time?
-      > depends on unit:
-        - date: only date
-        - dt (or datetime?): plus time
-        - time: 
-          > does this make sense?
-          > a time is perhaps only a duration?
-          > when a 
-    - duration:
-      > units
-        > singular and plural can be used - same meaning.
-        - day, month, year, hour, minute, second
-        - short version: dd, mon (mm = millimeter), yy, hh, min, ss
-        Timepoints
-Time_point<utc_clock> now = …;
-Now():
-Std:chrono::steady_clock::now() -> time_point<steady_clock>
-Std:chrono::utc_clock::now() -> time_point<utc_clock>
 
-Duration
-Duration = now() - then();
-Durations allow calculations and max(), floor(),…
-Floor is template: floor<Sec>(duration);
-
-See duration doc for conversions with or without precision loss, float or int.
-Duration_cast<hours> from_duration to_duration: so, duration are of a type? Probably not. Cast is needed for durations of INT type. The cast defines the resolution, I guess.
-Duration without cast: duration<double, millis>
-So, I guess for a duration<int, sec> a duration_cast<sec> is needed?
-
-  > units (fragments):
-    >
   > conversions:
     - UTC
     - GPS
@@ -251,7 +168,6 @@ So, I guess for a duration<int, sec> a duration_cast<sec> is needed?
     70;
     D=_;//D = 70
 
-* custom functions
 * resolve equations
 * Variable ranges and wildcards
     Sum(a..z) : // sum all vars a to z
@@ -262,10 +178,6 @@ So, I guess for a duration<int, sec> a duration_cast<sec> is needed?
 
 * simplify
 * Latex visualisation
-
-Voor eigen gebruik: online storage?
-Of via localStorage: “Save as, in local browser”.
-En ook klassieke “Save as” en “Open” en “New”, …
 
 * drag en drop file on textarea?
 * Save and open? 
@@ -278,3 +190,8 @@ Vectors
 ----------
 * ||x|| is the normalized vector.
   > If x = (x1, x2, x3) then ||x|| = (x1^2 + x2^2 + x3^2)^(1/2)
+
+
+Extra operators
+---------------
+https://www.statmethods.net/management/operators.html

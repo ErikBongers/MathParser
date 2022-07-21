@@ -66,6 +66,7 @@ Define* Parser::parseDefine()
         tok.next();
         auto define = nodeFactory.createDefine();
         define->undef = (t.type == TokenType::UNDEF);
+        define->def_undef = t;
         tok.tokenizeNewlines(true);
         while (!peek(TokenType::EOT))
             {
@@ -699,7 +700,12 @@ Range ListExpr::range() const
 
 Range Define::range() const
     {
-    Range r = defs.front();
+    Range r = def_undef;
+    
+    if(defs.size() == 0)
+        return r;
+
+    r += defs.front();
     r += defs.back();
     return r;
     }

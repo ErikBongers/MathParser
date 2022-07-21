@@ -1,3 +1,5 @@
+#define electric;
+a=3A.mA;
 ddd = 12, 13, 2022; 
 1E2mm.cm;
 1E3m + 1km;

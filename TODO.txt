@@ -1,9 +1,7 @@
-﻿* allow numbers starting with a DOT.
-* Implement electrical units.
-  > Unit for Ohm? Use R.
-  > Also not the R prefix below:
-* Implement electronic components notation
+﻿* Implement electronic components notation
   > R103 = 10000 Ohm;
+* Implement combined units for V, A, R.
+  > V * A = Watt !!!
 * Date: operator + and - : make generic
   > Adding a duration may contain negative values in the duration!
   > Fix this for the +operator

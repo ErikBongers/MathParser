@@ -78,7 +78,18 @@ void UnitDefs::init()
             { "mon", UnitDef("mon", 2629746, UnitProperty::DURATION)},
             { "y", UnitDef("y", 31556952, UnitProperty::DURATION)},
             { "ms", UnitDef("ms", 1/1000, UnitProperty::DURATION)},
-            };
+
+            { "A", UnitDef("A", 1, UnitProperty::CURRENT)},
+            { "mA", UnitDef("mA", 0.001, UnitProperty::CURRENT)},
+
+            { "R", UnitDef("R", 1, UnitProperty::RESISTANCE)},
+            { "mR", UnitDef("mR", 0.001, UnitProperty::RESISTANCE)},
+            { "kR", UnitDef("kR", 1000, UnitProperty::RESISTANCE)},
+            { "MR", UnitDef("MR", 1000000, UnitProperty::RESISTANCE)},
+
+            { "V", UnitDef("V", 1, UnitProperty::VOLTAGE)},
+            { "mV", UnitDef("mV", 0.001, UnitProperty::VOLTAGE)},
+        };
 
 
     for (auto& [id, def] : defs)
@@ -98,6 +109,9 @@ void UnitDefs::init()
 const char* longDateKeys[] = { "seconds", "minutes", "hours", "days", "weeks", "months", "years", "milliseconds", };
 const char* shortDateKeys[] = { "s", "min", "h", "d", "w", "mon", "y", "ms",  };
 
+const char* electric[] = { "A", "mA", "R", "mR", "kR", "MR", "V", "mV"};
+
+//TODO: make these generic
 void UnitsView::addLongDateUnits()
     {
     for(auto key: longDateKeys)
@@ -119,6 +133,18 @@ void UnitsView::removeShortDateUnits()
 void UnitsView::removeLongDateUnits()
     {
     for(auto key: longDateKeys)
+        defs.erase(key);
+    }
+
+void UnitsView::addElectic()
+    {
+    for(auto key: electric)
+        defs.insert(key);
+    }
+
+void UnitsView::removeElectric()
+    {
+    for(auto key: electric)
         defs.erase(key);
     }
 

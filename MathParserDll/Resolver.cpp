@@ -105,6 +105,9 @@ Value Resolver::resolveDefine(const Define& define)
                 case hash("all"):
                     codeBlock.scope->functions.addFunctions(toFunctionType(hash(t.stringValue.c_str())));
                     break;
+                case hash("electric"):
+                    codeBlock.scope->units.addElectic();
+                    break;
                 default:
                     result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, define.range(), t.stringValue));
                 }
@@ -127,6 +130,9 @@ Value Resolver::resolveDefine(const Define& define)
                 case hash("date"):
                 case hash("all"):
                     codeBlock.scope->functions.removeFunctions(toFunctionType(hash(t.stringValue.c_str())));
+                    break;
+                case hash("electric"):
+                    codeBlock.scope->units.removeElectric();
                     break;
                 default:
                     result.errors.push_back(Error(ErrorId::UNDEF_NOT_OK, define.range(), t.stringValue));

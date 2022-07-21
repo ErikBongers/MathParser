@@ -24,7 +24,7 @@ class Unit
         bool isClear() const { return id.empty(); }
     };
 
-enum class UnitProperty { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DURATION, VOLUME, UNDEFINED};
+enum class UnitProperty { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DURATION, VOLUME, CURRENT, VOLTAGE, RESISTANCE, UNDEFINED};
 
 class UnitDef
     {
@@ -84,5 +84,7 @@ class UnitsView
         void addShortDateUnits();
         void removeShortDateUnits();
         void removeLongDateUnits();
+        void addElectic();
+        void removeElectric();
         void setDefs(const UnitsView& uv) { this->defs = uv.defs; }
     };

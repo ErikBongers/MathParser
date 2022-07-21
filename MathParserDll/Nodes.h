@@ -125,6 +125,7 @@ class AssignExpr : public Node
 class Define : public Node
     {
     public:
+        Token def_undef; //needed for range
         std::vector<Token> defs;
         Range range() const;
         bool undef = false;

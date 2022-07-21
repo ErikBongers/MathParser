@@ -478,7 +478,19 @@ Date Date::operator+(const Duration& dur)
     return d;
     }
 
+Date Date::operator-(const Duration& dur)
+    {
+    Date d = *this;
+    //TODO: just call operator+ with a negative duration.
+    return d;
+    }
+
 Date Date::operator+(const Number& num)
     {
     return operator+(Duration(num, range));
+    }
+
+Date Date::operator-(const Number& num)
+    {
+    return operator-(Duration(num, range));
     }

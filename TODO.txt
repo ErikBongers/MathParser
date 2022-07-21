@@ -1,4 +1,10 @@
-﻿* Date: operator + and - : make generic
+﻿* allow numbers starting with a DOT.
+* Implement electrical units.
+  > Unit for Ohm? Use R.
+  > Also not the R prefix below:
+* Implement electronic components notation
+  > R103 = 10000 Ohm;
+* Date: operator + and - : make generic
   > Adding a duration may contain negative values in the duration!
   > Fix this for the +operator
   > the -operator is just the +operator with all duration values made negative.
@@ -27,8 +33,6 @@ window.onbeforeunload = closeIt;
 
 * FunctionDef uses Globals: replace with Scope?
 
-Scope
----------
 * start script:
   > limits of these start statements?
     > none: why bother having restrictions.
@@ -105,6 +109,9 @@ GUI
     * Output to left of input
       > #txtOutput .CodeMirror {  text-align: right!important;  }
       > option to 'mirror' the lines or to collapse (remove) empty output lines
+      > what if output is more lines than input? 
+        > Shift input?
+        > Collapse output?
 
 3. Command line.  --> desktop + mobile.
    > like mathlab.

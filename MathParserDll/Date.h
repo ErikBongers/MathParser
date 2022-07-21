@@ -23,7 +23,9 @@ class Date
         std::vector<Error> errors;
         Duration operator-(const Date& d2);
         Date operator+(const Duration& dur);
+        Date operator-(const Duration& dur);
         Date operator+(const Number& num);
+        Date operator-(const Number& num);
     };
 
 class DateParser

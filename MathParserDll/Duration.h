@@ -22,5 +22,6 @@ class Duration
         Duration(const Number& num, const Range& range);
         Duration() = default;
         Duration operator+ (const Number& num) const;
+        Duration operator- (const Number& num) const;
     };
 

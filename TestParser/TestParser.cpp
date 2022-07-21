@@ -199,6 +199,7 @@ d.years + d.months + d.days;
 
         TEST_METHOD(TestNumberFormats)
             {
+            assertResult(".123", 0.123);
             assertResult("123_456", 123456);
             assertResult("-123_456", -123456);
             assertResult("0b111_1011", 123, "", "", "BIN");

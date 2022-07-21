@@ -104,6 +104,10 @@ Token Tokenizer::getNextToken()
         case '.': 
             if (match('='))
                 return Token(EQ_UNIT, peekedState.nextPos-2, sourceIndex);
+            if (peekChar() >= '0' && peekChar() <= '9')
+                {
+                return parseNumber('.');
+                }
             else
                 return Token(DOT, c, peekedState.nextPos-1, sourceIndex);
         case '+':

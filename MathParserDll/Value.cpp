@@ -38,6 +38,12 @@ Value::Value(Duration duration)
     data = duration;
     }
 
+Value::Value(List list)
+    : type(ValueType::LIST)
+    {
+    data = list;
+    }
+
 void Value::to_json(std::ostringstream& sstr) const
     {
     sstr << "{";

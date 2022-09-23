@@ -147,3 +147,17 @@ class Trunc: public FunctionDef
         Trunc(Globals& globals) : FunctionDef(globals, "trunc", 1, 1) {}
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
+
+class Factors: public FunctionDef
+    {
+    public:
+        Factors(Globals& globals) : FunctionDef(globals, "factors", 1, 1) {}
+        Value execute(std::vector<Value>& args, const Range& range) override;
+    };
+
+class DateFunc: public FunctionDef
+    {
+    public:
+        DateFunc(Globals& globals) : FunctionDef(globals, "date", 1, 3) {}
+        Value execute(std::vector<Value>& args, const Range& range) override;
+    };

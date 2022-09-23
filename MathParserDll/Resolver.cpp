@@ -294,7 +294,7 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     if(hasDuration)
         return resolveDurationList(numberList);
     else
-        return resolveDateList(numberList);
+        return List(numberList);
     }
 
 Value Resolver::resolveDurationList(const std::vector<Number>& numberList)
@@ -328,44 +328,6 @@ Value Resolver::resolveDurationList(const std::vector<Number>& numberList)
             }
         }
     return duration;
-    }
-
-Value Resolver::resolveDateList(const std::vector<Number>& numberList)
-    {
-    //just a minimal implementation for now...
-    if(numberList.size() != 3)
-        return Value();
-    int iDay = 0, iMonth = 0, iYear = 0;
-
-    switch (dateFormat)
-        {
-        using enum DateFormat;
-        case DMY:
-            iDay = 0; iMonth = 1; iYear = 2; break;
-        case MDY:
-            iMonth = 0; iDay = 1; iYear = 2; break;
-        case YMD:
-        case UNDEFINED: //fall through
-            iYear = 0; iMonth = 1; iDay = 2; break;
-        }
-    auto day = numberList[iDay];
-    auto month = numberList[iMonth];
-    auto year = numberList[iYear];
-    Date date;
-
-    if(day.to_double() < 1 || day.to_double() > 31)// don't check date.day as it might have been truncated!
-        return Value(Error(ErrorId::INV_DATE_VALUE, numberList[iDay].range, std::to_string(day.to_double()), "day"));
-    if(month.to_double() < 1 || month.to_double() > 12)
-        return Value(Error(ErrorId::INV_DATE_VALUE, numberList[iMonth].range, std::to_string(month.to_double()), "month"));
-
-    date.day = (char)day.to_double();
-    date.month = (Month)month.to_double();
-    date.year = (long)year.to_double();
-
-    date.errors.insert(date.errors.end(), day.errors.begin(), day.errors.end());
-    date.errors.insert(date.errors.end(), month.errors.begin(), month.errors.end());
-    date.errors.insert(date.errors.end(), year.errors.begin(), year.errors.end());
-    return Value(date);
     }
 
 //wrapper to parse postfixExpressions

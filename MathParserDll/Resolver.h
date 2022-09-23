@@ -15,7 +15,6 @@ class Resolver
         Value resolveUnaryOp(const UnaryOpExpr& expr);
         Value resolveAssign(const AssignExpr& assignExpr);
         Value resolveList(const ListExpr& listExpr);
-        Value resolveDateList(const std::vector<Number>& numberList);
         Value resolveDurationList(const std::vector<Number>& numberList);
         Value resolveIdExpr(const IdExpr& idExpr);
         Value& applyUnit(const Node& node, Value& val);

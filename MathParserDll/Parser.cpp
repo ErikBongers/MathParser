@@ -660,7 +660,7 @@ Range PostfixExpr::range() const
 Range CallExpr::range() const
     {
     Range r = Range(functionName);
-    if(!arguments->list.empty())
+    if(arguments != nullptr && !arguments->list.empty())
         r += arguments->list.back()->range();
     return r;
     }

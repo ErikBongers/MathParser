@@ -30,6 +30,7 @@ void FunctionDefs::init()
     Add(new Floor(globals));
     Add(new Ceil(globals));
     Add(new Trunc(globals));
+    Add(new DateFunc(globals));
     };
 
 FunctionDef::FunctionDef(Globals& globals, const std::string& name, size_t minArgs, size_t maxArgs)
@@ -85,7 +86,7 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
 
 std::vector<std::string> FunctionKeys::trig = { "sin", "cos", "tan", "asin", "acos", "atan", "arcsin", "arccos", "arctan"};
 std::vector<std::string> FunctionKeys::arithm = { "round", "trunc", "floor", "ceil", "abs", "max", "min"};
-std::vector<std::string> FunctionKeys::date = { "now"};
+std::vector<std::string> FunctionKeys::date = { "now", "date"};
 
 const std::vector<std::string>& FunctionsView::getFuncKeyList(FunctionType type)
     {

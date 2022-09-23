@@ -12,6 +12,7 @@ SRCS_LIB := $(filter-out $(SRC_LIB_DIR)/pch.cpp, $(SRCS_LIB))
 
 DEPFLAGS=-MMD -MP
 CFLAGS=-I "$(SRC_LIB_DIR)" -D__WASM__ -std=c++2b
+DEBUG_FLAGS = -g -fdebug-compilation-dir='..'
 INCLUDE_PCH = $(CFLAGS) -Winvalid-pch -include-pch "D:\Documents\Programming\WPFandXNA\MathParser\MathParserDll\pch.hpp.pch"
 
 # local source compiled to build/
@@ -29,7 +30,7 @@ $(info $(shell mkdir $(BUILDDIR)\lib 2> nul))
 
 $(DESTDIR)/hullo.js: $(OBS) $(OBS_LIB)
 	del /q "$(DESTDIR)\mathparser.wasm.js"
-	$(CXX) -o $(DESTDIR)/mathparser.js $(OBS) $(OBS_LIB) -O0 -s WASM=1 -s NO_EXIT_RUNTIME=1  -s "EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']" -s LLD_REPORT_UNDEFINED
+	$(CXX) -o $(DESTDIR)/mathparser.js $(OBS) $(OBS_LIB) -O0 -s WASM=1 -s NO_EXIT_RUNTIME=1  -s "EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap']" -s LLD_REPORT_UNDEFINED  $(DEBUG_FLAGS)
 	rename "$(DESTDIR)\mathparser.js" mathparser.wasm.js
 
 -include $(DEPS)
@@ -38,7 +39,7 @@ $(BUILDDIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) -c $< -o $@ $(CFLAGS) $(DEPFLAGS) $(INCLUDE_PCH)
 
 $(BUILDDIR)/lib/%.o : $(SRC_LIB_DIR)/%.cpp
-	$(CXX) -c $< -o $@ $(CFLAGS) $(DEPFLAGS) $(INCLUDE_PCH)
+	$(CXX) -c $< -o $@ $(CFLAGS) $(DEPFLAGS) $(INCLUDE_PCH) $(DEBUG_FLAGS)
 
 .PHONY: clean
 

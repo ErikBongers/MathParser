@@ -13,7 +13,7 @@ Error::Error(ErrorId id, const Range& range, const std::string& arg1)
     {
     this->id = id;
 #ifdef _MSC_VER
-    std::string buffer = std::format(ErrorDefs::get(id).message, arg1.c_str());
+    std::string buffer = std::vformat(ErrorDefs::get(id).message, std::make_format_args(arg1.c_str()));
 #else
     std::string buffer = ErrorDefs::get(id).message;
     size_t start_pos = buffer.find("{0}");
@@ -29,7 +29,7 @@ Error::Error(ErrorId id, const Range& range, const std::string& arg1, const std:
     {
     this->id = id;
 #ifdef _MSC_VER
-    std::string buffer = std::format(ErrorDefs::get(id).message, arg1.c_str(), arg2.c_str());
+    std::string buffer = std::vformat(ErrorDefs::get(id).message, std::make_format_args(arg1.c_str(), arg2.c_str()));
 #else
     std::string buffer = ErrorDefs::get(id).message;
     size_t start_pos = buffer.find("{0}");
@@ -51,7 +51,7 @@ Error::Error(ErrorId id, const Range& range, const std::string& arg1, const std:
     {
     this->id = id;
 #ifdef _MSC_VER
-    std::string buffer = std::format(ErrorDefs::get(id).message, arg1.c_str(), arg2.c_str(), arg3.c_str());
+    std::string buffer = std::vformat(ErrorDefs::get(id).message, std::make_format_args(arg1.c_str(), arg2.c_str(), arg3.c_str()));
 #else
     std::string buffer = ErrorDefs::get(id).message;
     size_t start_pos = buffer.find("{0}");

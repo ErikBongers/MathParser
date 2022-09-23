@@ -80,7 +80,7 @@ class CallExpr : public Node
     {
     public:
         Token functionName;
-        ListExpr* arguments;
+        ListExpr* arguments = nullptr;
         Range range() const;
     private:
         CallExpr() : Node(NodeType::CALLEXPR) {}

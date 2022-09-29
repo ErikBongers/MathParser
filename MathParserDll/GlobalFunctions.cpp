@@ -182,15 +182,17 @@ Value Trunc::execute(std::vector<Value>& args, const Range& range)
 Value Factors::execute(std::vector<Value>& args, const Range& range)
     {
 
-    long long number = (long long) args[0].getNumber().to_double();
-    for(int i = 2; i < number; i++)
+    long long number = (long long) args[0].getNumber().to_double()/2;
+    std::vector<Number> numberList;
+    for(int i = 2; i <= number; i++)
         {
         if(number%i == 0)
             {
+            numberList.push_back(Number(i, 0, range));
             }
         }
 
-    return Value(Number(trunc(args[0].getNumber().to_double()), 0, range));
+    return Value(numberList);
     }
 
 Value DateFunc::execute(std::vector<Value>& args, const Range& range)

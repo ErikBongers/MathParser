@@ -30,6 +30,7 @@ void FunctionDefs::init()
     Add(new Floor(globals));
     Add(new Ceil(globals));
     Add(new Trunc(globals));
+    Add(new Factors(globals));
     Add(new DateFunc(globals));
     };
 

@@ -1,4 +1,5 @@
-﻿* make date() more robust. quick-and-dirty currently.
+﻿* min(), max(): expand/explode max(list) into max(1,2,3)
+* make date() more robust. quick-and-dirty currently.
   > test types of arguments.
     > also units
   > return proper error messages.
@@ -11,11 +12,6 @@
   > else: assume date and try to parse it.
   > but what if we just want numbers?
     > even if the values accidently are date values,
-* implement factors(), which returns alle the divisors (factors) of an integer.
-  >should return a list, that allows to get to max or min.
-  > create a function that the biggest or smallest match between 2 lists.
-    > no, create a function common() that reduces 2 lists to the common elements.
-    > THEN you can apply min() or max() to find the biggest or smalles common denominator/factor.
 * Implement electronic components notation
   > R103 = 10000 Ohm;
 * Implement combined units for V, A, R.

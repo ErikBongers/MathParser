@@ -32,6 +32,26 @@ Module.onRuntimeInitialized = async _ => {
 		}
 	};
 
+	Module.formatNumber = function (numb) {
+		let strFormatted = "";
+		if (numb.format == "DEC")
+			strFormatted = Module.formatFloatString(numb.significand, numb.exponent);
+		else
+			strFormatted = numb.formatted;
+		strFormatted += numb.unit;
+		return strFormatted;
+	};
+
+	Module.formatList = function (values) {
+		let strFormatted = "";
+		let strComma = "";
+		values.forEach(value => {
+			strFormatted += strComma + Module.formatNumber(value);
+			strComma = ", ";
+		});
+		return strFormatted;
+	};
+
 	Module.resultToString = function (line) {
 		if (line.onlyComment == true) {
 			return "//" + line.comment;
@@ -57,17 +77,16 @@ Module.onRuntimeInitialized = async _ => {
 		let strLine = "";
 		let strFormatted = "";
 		if (line.type == "NUMBER") {
-			if (line.number.format == "DEC")
-				strFormatted = Module.formatFloatString(line.number.significand, line.number.exponent);
-			else
-				strFormatted = line.number.formatted;
-			strFormatted += line.number.unit;
+			strFormatted = Module.formatNumber(line.number);
 		}
 		else if (line.type == "TIMEPOINT")
 			strFormatted = line.date.formatted;
 		else if (line.type == "DURATION") {
 			strFormatted = line.duration.years + " years, " + line.duration.months + " months, " + line.duration.days + " days";
-        }
+		}
+		else if (line.type == "LIST") {
+			strFormatted = Module.formatList(line.values);
+		}
 
 		if (line.mute == false || line.errors.length > 0)
 			strLine += (line.id === "_" ? "" : line.id + "=") + strFormatted;

@@ -70,6 +70,11 @@ void Value::to_json(std::ostringstream& sstr) const
         sstr << ",\"duration\":";
         std::get<Duration>(data).to_json(sstr);
         }
+    else if (type == ValueType::LIST)
+        {
+        sstr << ",\"values\":";
+        std::get<List>(data).to_json(sstr);
+        }
 
     sstr << ",\"errors\":[";
     std::string comma = "";

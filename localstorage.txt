@@ -1,3 +1,4 @@
+lst=factors(52);
 test='31/03/2015';
 list = 2015, 1, 13;
 aDate= date(list);

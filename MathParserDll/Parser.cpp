@@ -543,6 +543,11 @@ Node* Parser::parsePrimaryExpr()
                 if(addExpr->error.id == ErrorId::NONE)
                     addExpr->error = Error(ErrorId::EXPECTED, addExpr->range(), ")");
                 }
+            if (addExpr->is(NodeType::BINARYOPEXPR))
+                {
+                auto binOp = (BinaryOpExpr*)addExpr;
+                binOp->implicitMult = false;//parenthesis mean this flag is no longer applicable.
+                }
             return addExpr;
             }
         case TokenType::PIPE:

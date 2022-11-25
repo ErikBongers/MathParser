@@ -41,6 +41,10 @@ Date DateParser::parse(const std::string& str, const Range& range)
             break;
             }
         }
+    if (!date.isValid())
+        {
+        parseForFormat(date); //TODO: might be doing this twice...
+        }
     date.range = range;
     return date;
     }
@@ -493,4 +497,9 @@ Date Date::operator+(const Number& num)
 Date Date::operator-(const Number& num)
     {
     return operator-(Duration(num, range));
+    }
+
+bool Date::isValid()
+    {
+    return year != EmptyYear; //a very basic check...
     }

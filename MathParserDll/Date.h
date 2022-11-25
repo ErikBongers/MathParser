@@ -26,6 +26,8 @@ class Date
         Date operator-(const Duration& dur);
         Date operator+(const Number& num);
         Date operator-(const Number& num);
+        bool isValid();
+
     };
 
 class DateParser

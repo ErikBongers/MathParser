@@ -46,7 +46,8 @@ struct ErrorDef
     ErrorId id = ErrorId::NONE;
     const char* name = nullptr;
     const char* message = nullptr;
-    bool isWarning() { return name[0] == 'W'; }
+    bool isWarning() { return type() == 'W'; }
+    char type() const { return name[0]; }
     };
 
 class ErrorDefs

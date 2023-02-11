@@ -1,6 +1,6 @@
-﻿* bug:  #define dmy
-        dat='1/2/3'; -> bug
-
+﻿* add error_type to errors. 
+  > replace isWarning with Type.
+  > Display warnings in a different color.
 * min(), max(): expand/explode max(list) into max(1,2,3)
 * make date() more robust. quick-and-dirty currently.
   > test types of arguments.

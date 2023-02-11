@@ -85,8 +85,7 @@ void Error::to_json(std::ostringstream& sstr) const
     sstr << "{";
     auto& ed = ErrorDefs::get(id);
     sstr << "\"id\":\"" << ed.name << "\",\"message\":\"" + escape_json(errorMsg) + "\"";
-    isWarning = ed.name[0] == 'W';
-    sstr << ",\"isWarning\":" << (isWarning ? "true":"false");
+    sstr << ",\"type\":\"" << ed.type() << "\"";
     sstr << ",\"range\":";
     range.to_json(sstr);
     sstr << ",\"stackTrace\":";

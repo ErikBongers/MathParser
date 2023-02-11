@@ -16,6 +16,8 @@ Module.onRuntimeInitialized = async _ => {
 				from: start,
 				to: end
 			};
+			if (e.type == "W")
+				hint.severity = "warning";
 			return hint;
 		}
 		catch (err) {

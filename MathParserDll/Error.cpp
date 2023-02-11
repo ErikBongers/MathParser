@@ -81,7 +81,6 @@ Error::Error(ErrorId id, const Range& range)
 
 void Error::to_json(std::ostringstream& sstr) const
     {
-    bool isWarning = false;
     sstr << "{";
     auto& ed = ErrorDefs::get(id);
     sstr << "\"id\":\"" << ed.name << "\",\"message\":\"" + escape_json(errorMsg) + "\"";
@@ -104,7 +103,7 @@ void Error::to_json(std::ostringstream& sstr) const
 
 bool Error::isWarning() const
     {
-    return ErrorDefs::get(id).name[0] == 'W';
+    return ErrorDefs::get(id).type() == 'W';
     }
 
 std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =

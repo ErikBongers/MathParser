@@ -111,6 +111,10 @@ Number Number::convertToUnit(const Unit& to, UnitsView& units)
     if (unit.isClear())
         {
         num.unit = to;
+        if (units.exists(num.unit.id) == false)
+            {
+            num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, num.unit.range, num.unit.id.c_str()));
+            }
         return num;
         }
     

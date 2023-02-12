@@ -3,10 +3,6 @@
 
 * Examine the Scope object. This should contain the full environment (and parser?) for every scope level. Should Parser and Interpreter be stateless? Probably yes.
 
-* BUG
-    x=(3*2)zzzzsdfsdf; //should give error!!
-    x=(3^2)zzzzsdfsdf; // should give error!!
-
 * Date deduction doesn’t work anymore:
     #define ymd
     age= ageThisYear('1/03/2015'); -> no error! (or warning?)

@@ -128,6 +128,8 @@ Value OpNumPowNum(Globals& globals, std::vector<Value>& args, const Range& range
     if (!args[0].getNumber().unit.isClear())
         result.getNumber().unit = args[1].getNumber().unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
+    if (!args[1].getNumber().unit.isClear())
+        result.errors.push_back(Error(ErrorId::EXP_HAS_UNIT, args[1].getNumber().range, args[1].getNumber().unit.to_string()));
     return result;
     }
 

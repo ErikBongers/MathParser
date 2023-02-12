@@ -19,6 +19,7 @@ enum class ErrorId
     FUNC_FAILED,
     UNIT_PROP_DIFF,
     CONST_REDEF,
+    EXP_HAS_UNIT,
 
     DATE_FRAG_NO_DATE,
     DATE_FRAG_NO_DURATION,

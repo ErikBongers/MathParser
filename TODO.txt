@@ -1,6 +1,16 @@
-﻿* add error_type to errors. 
-  > replace isWarning with Type.
-  > Display warnings in a different color.
+﻿* How to specify the last day of the monht?
+  > lastDay=now().year, 12, last;
+
+* Examine the Scope object. This should contain the full environment (and parser?) for every scope level. Should Parser and Interpreter be stateless? Probably yes.
+
+* BUG
+    x=(3*2)zzzzsdfsdf; //should give error!!
+    x=(3^2)zzzzsdfsdf; // should give error!!
+
+* Date deduction doesn’t work anymore:
+    #define ymd
+    age= ageThisYear('1/03/2015'); -> no error! (or warning?)
+
 * min(), max(): expand/explode max(list) into max(1,2,3)
 * make date() more robust. quick-and-dirty currently.
   > test types of arguments.

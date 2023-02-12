@@ -1,3 +1,4 @@
+x=3^(2zzzzsdfsdf); // should give error!!/*
 #define dmy
 dat='1/2/3'; / bug
 

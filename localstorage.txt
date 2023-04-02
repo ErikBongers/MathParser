@@ -1,3 +1,4 @@
+factors(3175); 
 x=(3*2)zzzzsdfsdf; //should give error!!
 /*
 #define dmy

@@ -182,9 +182,10 @@ Value Trunc::execute(std::vector<Value>& args, const Range& range)
 Value Factors::execute(std::vector<Value>& args, const Range& range)
     {
 
-    long long number = (long long) args[0].getNumber().to_double()/2;
+    long long number = (long long) args[0].getNumber().to_double();
+    long long half = number/2;
     std::vector<Number> numberList;
-    for(int i = 2; i <= number; i++)
+    for(int i = 2; i <= half; i++)
         {
         if(number%i == 0)
             {

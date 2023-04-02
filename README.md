@@ -25,6 +25,8 @@ a=3^2; //exponent operator
 a=|-3|; //absolute value operator
 a++; //increment operator: same as a=a+1 or a+=1;
 a--; //decrement operator.
+a%3; //remainder operator: -15%12 = -3;
+a%%3; //modulus operator: -15%%12 = 9; //very usefull for dates and hours: starting from midnight, -14 hours = 9:00 , not -3:00 !
 ```
 ### Output control
 ```
@@ -75,7 +77,7 @@ Hot.=C; //Does the same as the above line.
 * Other: `max(val1, val2,...), min(val1,val2,...), round, floor, ceil, trunc, abs, factors`
 * `|x|` is the same as `abs(x)`
 * Dates: `now(), date(year, month, day)`
-* [TODO]: round() and abs() in combination with units.
+* [TODO]: abs() in combination with units.
 
 ### Define functions
 Statements can be grouped in functions as well.

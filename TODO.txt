@@ -1,4 +1,6 @@
-﻿* BUG: factors (3175) -> WRONG !!!
+﻿* round(),...should keep unit;
+: buh=1.01in;
+  buhMetricRounded=trunc(buh.mm); --> should be 25mm
 
 * add an ECHO statement (or function?).
   > It's not part of a calculation, so it's a statement.

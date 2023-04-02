@@ -109,6 +109,21 @@ button {
 
 
 /* layout grid*/
+.header
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+/*flex-wrap: wrap;*/
+}
+.header .title
+{
+}
+.header .help
+{
+align-self: flex-end;
+text-align: right;
+}
 .layout-grid
 {
 	display: grid;

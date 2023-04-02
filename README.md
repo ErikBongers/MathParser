@@ -72,9 +72,9 @@ Hot.=C; //Does the same as the above line.
 
 ### Built in functions
 * Trigonometry: `sin, cos, tan, asin, acos, atan`
-* Other: `max(val1, val2,...), min(val1,val2,...), round, floor, ceil, trunc, abs`
+* Other: `max(val1, val2,...), min(val1,val2,...), round, floor, ceil, trunc, abs, factors`
 * `|x|` is the same as `abs(x)`
-* Dates: `now()`
+* Dates: `now(), date(year, month, day)`
 * [TODO]: round() and abs() in combination with units.
 
 ### Define functions
@@ -85,13 +85,14 @@ function hundred(a)
   {
   cent = x;//error: variables from outside the function are not visible within the function body (scope).
   cent = 100; //ok
-  a*cent; //the last statement calculates the return value of the function.
+  a*cent; //the last statement defines the return value of the function.
   }
  cent++;//error: cent was a local variable of hundred(). It's out of scope here.
  x=hundred(1+2); // = 300
 ```
 ### Constants
 Currently only PI. (also in lower case)
+[TODO]: G, C, e...
 
 ### Dates
 #### Concepts

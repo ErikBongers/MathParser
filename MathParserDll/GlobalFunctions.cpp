@@ -26,13 +26,23 @@ Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, boo
     {
     bool diffUnits = false;
     Number val0;
+    std::vector<Value> explodedList;
+    std::vector<Value>* argsPtr = &args;
 
-    Value ret = args[0];
-    auto unit = args[0].getNumber().unit;
-    for(int i = 1; i < args.size(); i++)
+    if (args[0].type == ValueType::LIST)
+        {
+        //explode args[0]
+        for (auto &arg : args[0].getList().numberList)
+            explodedList.push_back(arg);
+        argsPtr = &explodedList;
+        }
+    auto& argList = *argsPtr;
+    Value ret = argList[0];
+    auto unit = argList[0].getNumber().unit;
+    for(int i = 1; i < argList.size(); i++)
         {
         val0 = ret.getNumber().toSI(globals.unitsView);
-        Number val1 = args[i].getNumber().toSI(globals.unitsView);
+        Number val1 = argList[i].getNumber().toSI(globals.unitsView);
         auto otherErrs = &ret.errors;
         if (max? (val0 > val1) : (val0 < val1))
             {
@@ -40,13 +50,13 @@ Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, boo
             }
         else
             {
-            ret = args[i];
+            ret = argList[i];
             }
-        if(!globals.unitsView.isSameProperty(unit, args[i].getNumber().unit))
+        if(!globals.unitsView.isSameProperty(unit, argList[i].getNumber().unit))
             diffUnits = true;
         }
     std::vector<Error> errors;
-    for(auto& arg : args)
+    for(auto& arg : argList)
         {
         errors.insert(errors.begin(), arg.errors.begin(), arg.errors.end());
         }

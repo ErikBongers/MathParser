@@ -32,14 +32,14 @@ class Abs : public FunctionDef
 class Max : public FunctionDef
     {
     public:
-        Max(Globals& globals) : FunctionDef(globals, "max", 2, 99) {}
+        Max(Globals& globals) : FunctionDef(globals, "max", 1, 99) {}
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
 class Min : public FunctionDef
     {
     public:
-        Min(Globals& globals) : FunctionDef(globals, "min", 2, 99) {}
+        Min(Globals& globals) : FunctionDef(globals, "min", 1, 99) {}
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 

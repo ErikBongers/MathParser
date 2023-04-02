@@ -21,7 +21,6 @@
     #define ymd
     age= ageThisYear('1/03/2015'); -> no error! (or warning?)
 
-* min(), max(): expand/explode max(list) into max(1,2,3)
 * make date() more robust. quick-and-dirty currently.
   > test types of arguments.
     > also units

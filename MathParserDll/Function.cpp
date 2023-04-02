@@ -10,7 +10,6 @@
 void FunctionDefs::init()
     {
     Add(new Now(globals));
-    Add(new Int(globals));
     Add(new Abs(globals));
     Add(new Max(globals));
     Add(new Min(globals));

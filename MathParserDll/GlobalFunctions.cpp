@@ -80,12 +80,6 @@ Value Dec::execute(std::vector<Value>& args, const Range& range)
     return arg;
     }
 
-Value Int::execute(std::vector<Value>& args, const Range& range)
-    {
-    Value arg = args[0];
-    arg.getNumber ()= {trunc(arg.getNumber().to_double()), 0, range};
-    return arg;
-    }
 
 Value Abs::execute(std::vector<Value>& args, const Range& range)
     {

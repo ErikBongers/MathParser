@@ -22,13 +22,6 @@ class Dec : public FunctionDef
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
-class Int : public FunctionDef
-    {
-    public:
-        Int(Globals& globals) : FunctionDef(globals, "_ int", 1, 1) {}
-        Value execute(std::vector<Value>& args, const Range& range) override;
-    };
-
 class Abs : public FunctionDef
     {
     public:

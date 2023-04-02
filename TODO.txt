@@ -1,6 +1,5 @@
-﻿* round(),...should keep unit;
-: buh=1.01in;
-  buhMetricRounded=trunc(buh.mm); --> should be 25mm
+﻿* use MOD operator for hours and date calculations = less checking to do than with REM!
+  > Duration::normalize()
 
 * add an ECHO statement (or function?).
   > It's not part of a calculation, so it's a statement.

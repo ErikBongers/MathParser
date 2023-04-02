@@ -161,22 +161,22 @@ Value Sqrt::execute(std::vector<Value>& args, const Range& range)
 
 Value Round::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(round(args[0].getNumber().to_double()), 0, range));
+    return Value(Number(round(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
 Value Floor::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(floor(args[0].getNumber().to_double()), 0, range));
+    return Value(Number(floor(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
 Value Ceil::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(ceil(args[0].getNumber().to_double()), 0, range));
+    return Value(Number(ceil(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
 Value Trunc::execute(std::vector<Value>& args, const Range& range)
     {
-    return Value(Number(trunc(args[0].getNumber().to_double()), 0, range));
+    return Value(Number(trunc(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
 Value Factors::execute(std::vector<Value>& args, const Range& range)

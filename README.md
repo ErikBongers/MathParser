@@ -13,6 +13,7 @@ I think it may feel more familiar to programmers than those other tools.
 a=3+4; //this is a typical statement.
 b=2a+3; //implicit multiplication is allowed: same as (2*a)+3;
 a+=2; b=a*10; //a statement always ends with a semi-colon, not a new line, so these are two statements.
+randomNumbers = 1, 234, 567; // a list of numbers (array)
 ```
 ### Numeric notation
 ```

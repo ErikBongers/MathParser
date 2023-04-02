@@ -3,7 +3,7 @@
 ## Introduction
 Mathparser is a mathematical expression language based on C-style syntax.
 It was created out of a desire for a simple mathematical script language outside of spreadsheets, online c-compilers, mathlab and other math tools.
-I think it may feel more familiar to programmers that those other tools.
+I think it may feel more familiar to programmers than those other tools.
 
 ## Language reference
 
@@ -13,9 +13,12 @@ I think it may feel more familiar to programmers that those other tools.
 a=3+4; //this is a typical statement.
 b=2a+3; //implicit multiplication is allowed: same as (2*a)+3;
 a+=2; b=a*10; //a statement always ends with a semi-colon, not a new line, so these are two statements.
+```
+### Numeric notation
+```
 0xFF; //hexadecimal notation for decimal 255
 0b101; //binary notation for decimal 5
-123e4; //scientific notation
+123e4; //scientific notation for decimal 1230000
 ```
 ### Operators
 In addition to the usual `+ - * /` operators, there are:

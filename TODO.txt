@@ -2,10 +2,15 @@
   > Duration::normalize()
 
 * add an ECHO statement (or function?).
+  > perhaps use the !-notation?
   > It's not part of a calculation, so it's a statement.
   > allow formatting or value embedding?
   > no use of quotes needed?
   > newline, how?
+  : ! this line contains a {number}
+  : ! the previous line is $ and the result is _
+  : ! line 3 contains this statement: #3 and it's value is #3_
+  : ! line 3 contains this statement: #3 and it's value is #3_
 
 * How to specify the last day of the monht?
   > lastDay=now().year, 12, last;

@@ -61,6 +61,11 @@ const basicSetup = [
   ])
 ];
 
+const fontTheme = EditorView.theme({
+    "&": {
+        fontFamily: "monospace"
+    }
+});
 
 export let editor = new EditorView({
   state: EditorState.create({
@@ -72,7 +77,8 @@ export let editor = new EditorView({
       autocompletion(),
       mathparser(),   
       linter( mathparserLint(), {delay: 200}),
-      lintGutter()
+      lintGutter(),
+      fontTheme
     ]
   }),
   parent: document.getElementById("txtInput")

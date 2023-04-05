@@ -36,11 +36,11 @@ Module.onRuntimeInitialized = async _ => {
 
 	Module.formatNumber = function (numb) {
 		let strFormatted = "";
-		if (numb.format == "DEC")
-			strFormatted = Module.formatFloatString(numb.significand, numb.exponent);
+		if (numb.fmt == "DEC")
+			strFormatted = Module.formatFloatString(numb.sig, numb.exp);
 		else
-			strFormatted = numb.formatted;
-		strFormatted += numb.unit;
+			strFormatted = numb.fmtd;
+		strFormatted += numb.u;
 		return strFormatted;
 	};
 

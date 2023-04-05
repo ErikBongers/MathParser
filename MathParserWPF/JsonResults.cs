@@ -27,12 +27,12 @@ public class Error
 
 public class Number
     {
-    public string value { get; set; }
-    public string significand { get; set; }
-    public double exponent { get; set; }
-    public string format { get; set; }
-    public string formatted { get; set; }
-    public string unit { get; set; }
+    public string val { get; set; }
+    public string sig { get; set; }
+    public double exp { get; set; }
+    public string fmt { get; set; }
+    public string fmtd { get; set; }
+    public string u { get; set; }
     }
 
 public class Date

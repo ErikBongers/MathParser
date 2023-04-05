@@ -83,25 +83,25 @@ namespace MathParserWPF
                     if (result.type == "NUMBER")
                         {
                         double number;
-                        bool isNum = double.TryParse(result.number.value, out number);
+                        bool isNum = double.TryParse(result.number.val, out number);
                         if (isNum)
                             {
-                            if (result.number.format == "BIN" || result.number.format == "HEX")
-                                resultVal = result.number.formatted;
+                            if (result.number.fmt == "BIN" || result.number.fmt == "HEX")
+                                resultVal = result.number.fmtd;
                             else
                                 {
-                                if (result.number.exponent != 0)
+                                if (result.number.exp != 0)
                                     {
-                                    double.TryParse(result.number.significand, out number);
-                                    resultVal = number.ToString("0.#######") + "E" + result.number.exponent;
+                                    double.TryParse(result.number.sig, out number);
+                                    resultVal = number.ToString("0.#######") + "E" + result.number.exp;
                                     }
                                 else
                                     resultVal = number.ToString("0.#######");
                                 }
                             }
                         else
-                            resultVal = result.number.value;
-                        resultVal += result.number.unit;
+                            resultVal = result.number.val;
+                        resultVal += result.number.u;
                         }
                     else if(result.type == "TIMEPOINT")
                         {

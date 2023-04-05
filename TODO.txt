@@ -3,9 +3,6 @@
 
 * DateFunc::execute: use explodeArgs()
 
-* lists: sort?
-  > sort() and reverse()
-
 * lists in functions: always explode lists BEFOPRE passing them to functions?
 
 * add an ECHO statement (or function?).
@@ -21,6 +18,7 @@
 
 * How to specify the last day of the monht?
   > lastDay=now().year, 12, last;
+  > make 'last' a keyword? Only when #define(-d)?
 
 * Examine the Scope object. This should contain the full environment (and parser?) for every scope level. Should Parser and Interpreter be stateless? Probably yes.
 

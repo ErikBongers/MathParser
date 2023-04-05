@@ -185,21 +185,21 @@ void Number::to_json(std::ostringstream& sstr) const
 
     std::ostringstream numval;
     numval << formatDouble(to_double());
-    sstr << "\"value\":\"" << numval.str() << "\"";
+    sstr << "\"val\":\"" << numval.str() << "\"";
 
     numval = std::ostringstream();
     numval << formatDouble(significand);
-    sstr << ",\"significand\":\"" << numval.str() << "\"";
-    sstr << ",\"exponent\":" << exponent;
+    sstr << ",\"sig\":\"" << numval.str() << "\"";
+    sstr << ",\"exp\":" << exponent;
 
-    sstr << ",\"unit\":\"" << unit << "\"";
+    sstr << ",\"u\":\"" << unit << "\"";
 
     std::string format = "DEC";
     if(numFormat == NumFormat::BIN)
         format = "BIN";
     else if(numFormat == NumFormat::HEX)
         format = "HEX";
-    sstr << ",\"format\":\"" << format << "\"";
+    sstr << ",\"fmt\":\"" << format << "\"";
 
     std::string formatted;
     if (numFormat == NumFormat::BIN)
@@ -215,7 +215,7 @@ void Number::to_json(std::ostringstream& sstr) const
         formatted = "0x"+oss.str();
         }
 
-    sstr << ",\"formatted\":\""
+    sstr << ",\"fmtd\":\""
         << formatted
         << "\"";
 

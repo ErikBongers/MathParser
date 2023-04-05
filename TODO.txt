@@ -1,7 +1,12 @@
 ﻿* use MOD operator for hours and date calculations = less checking to do than with REM!
   > Duration::normalize()
 
+* DateFunc::execute: use explodeArgs()
+
 * lists: sort?
+  > sort() and reverse()
+
+* lists in functions: always explode lists BEFOPRE passing them to functions?
 
 * add an ECHO statement (or function?).
   > perhaps use the !-notation?

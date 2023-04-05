@@ -15,6 +15,8 @@ b=2a+3; //implicit multiplication is allowed: same as (2*a)+3;
 a+=2; b=a*10; //a statement always ends with a semi-colon, not a new line, so these are two statements.
 randomNumbers = 1, 234, 567; // a list of numbers (array)
 ```
+Values can either be numbers or lists of numbers.
+
 ### Numeric notation
 ```
 0xFF; //hexadecimal notation for decimal 255
@@ -78,9 +80,11 @@ Hot.=C; //Does the same as the above line.
 
 ### Built in functions
 * Trigonometry: `sin, cos, tan, asin, acos, atan`
-* Other: `max(val1, val2,...), min(val1,val2,...), round, floor, ceil, trunc, abs, factors`
+* Other: `round, floor, ceil, trunc, abs, factors`
+* ```max(randomNumbers); // lists (arrays) can also be used as arguments```
 * `|x|` is the same as `abs(x)`
 * Dates: `now(), date(year, month, day)`
+* Lists: `sort(), reverse(), max(), min()`
 * [TODO]: abs() in combination with units.
 
 ### Define functions

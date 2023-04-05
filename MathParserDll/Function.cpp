@@ -31,6 +31,8 @@ void FunctionDefs::init()
     Add(new Trunc(globals));
     Add(new Factors(globals));
     Add(new DateFunc(globals));
+    Add(new Sort(globals));
+    Add(new Reverse(globals));
     };
 
 FunctionDef::FunctionDef(Globals& globals, const std::string& name, size_t minArgs, size_t maxArgs)

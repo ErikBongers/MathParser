@@ -22,21 +22,26 @@ Value Now::execute(std::vector<Value>& args, const Range& range)
     return now;
     }
 
-Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, bool max)
+std::vector<Value>* explodeArgs(std::vector<Value>& args, std::vector<Value>& emptyExplodedList)
     {
-    bool diffUnits = false;
-    Number val0;
-    std::vector<Value> explodedList;
     std::vector<Value>* argsPtr = &args;
 
     if (args[0].type == ValueType::LIST)
         {
         //explode args[0]
         for (auto &arg : args[0].getList().numberList)
-            explodedList.push_back(arg);
-        argsPtr = &explodedList;
+            emptyExplodedList.push_back(arg);
+        argsPtr = &emptyExplodedList;
         }
-    auto& argList = *argsPtr;
+    return argsPtr;
+    }
+
+Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, bool max)
+    {
+    bool diffUnits = false;
+    Number val0;
+    std::vector<Value> explodedList;
+    auto& argList = *explodeArgs(args, explodedList);
     Value ret = argList[0];
     auto unit = argList[0].getNumber().unit;
     for(int i = 1; i < argList.size(); i++)
@@ -262,3 +267,37 @@ Value DateFunc::execute(std::vector<Value>& args, const Range& range)
     return Value(date);
 
     }
+
+bool compareNumber(Number n1, Number n2)
+    {
+    return (n1.to_double() < n2.to_double());
+    }
+
+Value Sort::execute(std::vector<Value>& args, const Range& range)
+    {
+    std::vector<Value> explodedList;
+    auto& argList = *explodeArgs(args, explodedList);
+    std::vector<Number> sortedList;
+    for (auto &val : argList)
+        {
+        if(val.isNumber())
+            sortedList.push_back(val.getNumber());
+        }
+    sort(sortedList.begin(), sortedList.end(), compareNumber);
+    return Value(sortedList);
+    }
+
+Value Reverse::execute(std::vector<Value>& args, const Range& range)
+    {
+    std::vector<Value> explodedList;
+    auto& argList = *explodeArgs(args, explodedList);
+    std::vector<Number> reverseList;
+    for (auto &val : argList)
+        {
+        if(val.isNumber())
+            reverseList.push_back(val.getNumber());
+        }
+    reverse(reverseList.begin(), reverseList.end());
+    return Value(reverseList);
+    }
+

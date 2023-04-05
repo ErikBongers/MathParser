@@ -154,3 +154,18 @@ class DateFunc: public FunctionDef
         DateFunc(Globals& globals) : FunctionDef(globals, "date", 1, 3) {}
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
+
+class Sort: public FunctionDef
+    {
+    public:
+        Sort(Globals& globals) : FunctionDef(globals, "sort", 1, 99) {}
+        Value execute(std::vector<Value>& args, const Range& range) override;
+    };
+
+class Reverse: public FunctionDef
+    {
+    public:
+        Reverse(Globals& globals) : FunctionDef(globals, "reverse", 1, 99) {}
+        Value execute(std::vector<Value>& args, const Range& range) override;
+    };
+

@@ -1,4 +1,10 @@
-﻿* use MOD operator for hours and date calculations = less checking to do than with REM!
+﻿* api.js: Module.print obsolete?
+
+* Use json value.line to build a result view with proper line skipping.
+  > Assume all lines in order?
+  > What about functions?
+
+* use MOD operator for hours and date calculations = less checking to do than with REM!
   > Duration::normalize()
 
 * DateFunc::execute: use explodeArgs()

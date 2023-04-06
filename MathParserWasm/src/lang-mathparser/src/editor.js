@@ -91,3 +91,9 @@ export let cmOutput = new EditorView({
   parent: document.getElementById("txtOutput")
 })
 
+export let cmResult = new EditorView({
+    state: EditorState.create({
+        extensions: [basicSetup, mathparser()]
+    }),
+    parent: document.getElementById("txtResult")
+})

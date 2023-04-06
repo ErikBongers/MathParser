@@ -54,7 +54,23 @@ Module.onRuntimeInitialized = async _ => {
 		return strFormatted;
 	};
 
-	Module.resultToString = function (line) {
+	Module.formatResult = function (line) {
+		let strFormatted = "";
+		if (line.type == "NUMBER") {
+			strFormatted = Module.formatNumber(line.number);
+		}
+		else if (line.type == "TIMEPOINT")
+			strFormatted = line.date.formatted;
+		else if (line.type == "DURATION") {
+			strFormatted = line.duration.years + " years, " + line.duration.months + " months, " + line.duration.days + " days";
+		}
+		else if (line.type == "LIST") {
+			strFormatted = Module.formatList(line.values);
+		}
+		return strFormatted;
+	};
+
+	Module.lineToString = function (line) {
 		if (line.onlyComment == true) {
 			return "//" + line.comment;
 		}
@@ -77,23 +93,25 @@ Module.onRuntimeInitialized = async _ => {
 		if (line.text != "")
 			strText = " " + line.text;
 		let strLine = "";
-		let strFormatted = "";
-		if (line.type == "NUMBER") {
-			strFormatted = Module.formatNumber(line.number);
-		}
-		else if (line.type == "TIMEPOINT")
-			strFormatted = line.date.formatted;
-		else if (line.type == "DURATION") {
-			strFormatted = line.duration.years + " years, " + line.duration.months + " months, " + line.duration.days + " days";
-		}
-		else if (line.type == "LIST") {
-			strFormatted = Module.formatList(line.values);
-		}
+		let strFormatted = Module.formatResult(line);
 
 		if (line.mute == false || line.errors.length > 0)
 			strLine += (line.id === "_" ? "" : line.id + "=") + strFormatted;
 		strLine += strText + (strErrors === "" ? "" : "  <<<" + strErrors);
 		strLine += strComment;
+		return strLine;
+	};
+
+	Module.ResultToString = function (line) {
+		if (line.onlyComment == true) {
+			return line.comment;
+		}
+		let strComment = "";
+		if (line.comment != "")
+			strComment = line.comment + " ";
+		let strLine = "";
+		strLine += strComment;
+		strLine += (line.id === "_" ? "" : line.id + "=") + Module.formatResult(line);
 		return strLine;
 	};
 
@@ -104,13 +122,26 @@ Module.onRuntimeInitialized = async _ => {
 		Module.log(result);
 		result = JSON.parse(result);
 		var strOutput = "";
-		for(line of result.result) {
-			let strLine = Module.resultToString(line);
+		var strResult = "";
+		for (line of result.result) {
+			let strLine = Module.lineToString(line);
 			if (strLine.length > 0)
 				strOutput += strLine + "\n";
 		}
-		let transaction = cm.cmOutput.state.update({changes: {from: 0, to: cm.cmOutput.state.doc.length, insert: strOutput}});
+		let lineCnt = 0;
+		for (line of result.result) {
+			//goto the next line in output
+			while (lineCnt < line.line) {
+				strResult += "\n";
+				lineCnt++;
+			}
+			let strValue = Module.ResultToString(line);
+			strResult += strValue;
+		}
+		let transaction = cm.cmOutput.state.update({ changes: { from: 0, to: cm.cmOutput.state.doc.length, insert: strOutput } });
 		cm.cmOutput.update([transaction]);
+		transaction = cm.cmResult.state.update({ changes: { from: 0, to: cm.cmResult.state.doc.length, insert: strResult } });
+		cm.cmResult.update([transaction]);
 	};
 
 	cm.setLintSource((view) => {
@@ -124,18 +155,24 @@ Module.onRuntimeInitialized = async _ => {
 
 	Module.print = (function() 
             {
-            var txtOutput = document.getElementById('txtOutput');
-            if (txtOutput) txtOutput.value = '';
+			var txtOutput = document.getElementById('txtOutput');
+			if (txtOutput) txtOutput.value = '';
+			var txtResult = document.getElementById('txtResult');
+			if (txtResult) txtResult.value = '';
             
             return function(text) 
                 {
                 if (arguments.length > 1) 
                     text = Array.prototype.slice.call(arguments).join(' ');
-                if (txtOutput) 
-                    {
+                if (txtOutput) {
                     txtOutput.value += text + "\n";
                     txtOutput.scrollTop = txtOutput.scrollHeight; // focus on bottom
-                    }
+				}
+				txtResult.value = "sdfsdfsdf";
+				if (txtResult) {
+					txtResult.value += text + "\n";
+					txtResult.scrollTop = txtResult.scrollHeight; // focus on bottom
+				}
                 };
             })();
 

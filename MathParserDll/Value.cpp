@@ -47,10 +47,11 @@ Value::Value(List list)
 void Value::to_json(std::ostringstream& sstr) const
     {
     sstr << "{";
+    sstr << "\"line\":" << this->stmtRange.start.line << "";
     if (id.type != TokenType::NULLPTR)
-        sstr << "\"id\":\"" << id.stringValue << "\"";
+        sstr << ",\"id\":\"" << id.stringValue << "\"";
     else
-        sstr << "\"id\":\"_\"";
+        sstr << ",\"id\":\"_\"";
     sstr << ",\"type\":\"" << to_string(type) << "\"";
     const std::vector<Error>* pErrors = nullptr;
     if(type == ValueType::NUMBER)

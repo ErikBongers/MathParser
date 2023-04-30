@@ -227,29 +227,19 @@ Value DateFunc::execute(std::vector<Value>& args, const Range& range)
     Number month;
     Number year;
     Range rDay;
-    //date(list) or date(a,b,c)?
-    if (args[0].type == ValueType::LIST)
-        {
-        auto numberList = args[0].getList();
-        //just a minimal implementation for now...
-        if(numberList.numberList.size() != 3)
-            return Value();
-        day = numberList.numberList[iDay];
-        month = numberList.numberList[iMonth];
-        year = numberList.numberList[iYear];
-        }
-    else
-        {
-        auto numberList = args;
-        //just a minimal implementation for now...
-        if(numberList.size() != 3)
-            return Value();
-        if(!numberList[0].isNumber()) //TODO: also test the other values.
-            return Value(Error(ErrorId::INV_DATE_VALUE, day.range)); //TODO: proper error message and args.
-        day = numberList[iDay].getNumber();
-        month = numberList[iMonth].getNumber();
-        year = numberList[iYear].getNumber();
-        }
+    
+    std::vector<Value> explodedList;
+    auto& argList = *explodeArgs(args, explodedList);
+
+    //just a minimal implementation for now...
+    if(argList.size() != 3)
+        return Value();
+    if(!argList[0].isNumber()) //TODO: also test the other values.
+        return Value(Error(ErrorId::INV_DATE_VALUE, day.range)); //TODO: proper error message and args.
+    day = argList[iDay].getNumber();
+    month = argList[iMonth].getNumber();
+    year = argList[iYear].getNumber();
+
     Date date;
 
     if(day.to_double() < 1 || day.to_double() > 31)// don't check date.day as it might have been truncated!

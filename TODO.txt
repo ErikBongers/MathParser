@@ -1,4 +1,21 @@
-﻿* www: make errors clickable.
+﻿* variable = unit
+    m=p/PI;
+    3m; //TODO: should give warning: ambiguous: m is both a variable and a unit.
+    > UNDEF a single unit to get rid of the warning.
+* Add factoral operator
+  x = 9!;
+  > Tokenizer:
+    !// : echo comment token
+    !/ : echo to end
+    > how to distinguish from factoral followed by division?
+      5!/3
+    > Replace echo to end with !///
+
+* www: https://www.youtube.com/watch?v=veEqYQlfNx8
+  height: 100vh; // have BOTH lines, in this order, for browser support!
+  height: 100svh; //vh=view height, dvh=dynamic, s=smallest as in, without the urlbar. (also lvh=largest, like vh)
+  height=x%; based on parent, so not possible at heighest level.
+* www: make errors clickable.
 
 * api.js: Module.print obsolete?
 

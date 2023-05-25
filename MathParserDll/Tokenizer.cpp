@@ -92,14 +92,20 @@ Token Tokenizer::getNextToken()
                 {
                 nextChar(); //consume
                 nextChar(); //consume
-                auto comment = getToEOL();
-                return Token(ECHO_COMMENT_LINE, comment, peekedState.nextPos-1, sourceIndex);
+                if (peekChar() == '/')
+                    {
+                    nextChar(); //consume
+                    return Token(ECHO_START, "!///", peekedState.nextPos-4, sourceIndex);
+                    }
+                else
+                    {
+                    auto comment = getToEOL();
+                    return Token(ECHO_COMMENT_LINE, comment, peekedState.nextPos-2, sourceIndex);
+                    }
                 }
-            else if (match('/'))
-                return Token(ECHO_END, "!/", peekedState.nextPos-2, sourceIndex);
             else if (match('!'))
                 return Token(ECHO_DOUBLE, "!", peekedState.nextPos-2, sourceIndex);
-            return Token(ECHO, c, peekedState.nextPos-1, sourceIndex);
+            return Token(EXCLAM, c, peekedState.nextPos-1, sourceIndex);
             }
         case '.': 
             if (match('='))
@@ -159,6 +165,12 @@ Token Tokenizer::getNextToken()
                 case '/':
                     {
                     nextChar(); //consume
+                    if (peekChar() == '/' && peekSecondChar() == '!')
+                        {
+                        nextChar();
+                        nextChar();
+                        return Token(ECHO_END, "///!", peekedState.nextPos-4, sourceIndex);
+                        }
                     auto comment = getToEOL();
                     return Token(COMMENT_LINE, comment, peekedState.nextPos-1, sourceIndex);
                     }

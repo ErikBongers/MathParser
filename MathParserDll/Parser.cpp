@@ -169,7 +169,7 @@ Node* Parser::parseFunctionDef()
 
 Statement* Parser::parseStatementHeader(Statement* stmt)
     {
-    if(match(TokenType::ECHO))
+    if(match(TokenType::EXCLAM))
         {
         stmt->echo = true;
         return parseStatementHeader(stmt);

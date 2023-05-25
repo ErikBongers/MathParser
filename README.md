@@ -43,9 +43,12 @@ a=2*7; //will output only the variable and it's result: a=14
 ##### Echo
 An exclamation mark `!` is used to echo the full expression to the output.
 ```
-!b=60/3; //Will echo the code together with the result: b=20 b=60/3
+!b=60/3; //Will echo the code together with the result, but not the comment --> b=20 b=60/3
 !//this comment line will appear on the output
 !q=100/10; !//some comment  --> output: q=10 q=100/10 //some comment
+!!q=100/10; //some comment  --> echo the full line (same effect as the line above)
+!/// --> echo all the input for all the lines until...
+///!  --> end of echo
 ```
 ##### Mute
 A hashtag `#` is used to mute the result.

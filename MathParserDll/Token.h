@@ -30,7 +30,7 @@ enum class TokenType
     COMMA,
     DOT, //except for the decimal dot.
     PIPE,
-    ECHO,
+    EXCLAM,
     ECHO_COMMENT_LINE,
     COMMENT_LINE,
     ECHO_START,

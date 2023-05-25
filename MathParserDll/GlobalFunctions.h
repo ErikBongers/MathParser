@@ -169,3 +169,10 @@ class Reverse: public FunctionDef
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
 
+class Factorial: public FunctionDef
+    {
+    public:
+        Factorial(Globals& globals) : FunctionDef(globals, "factorial", 1, 1) {}
+        Value execute(std::vector<Value>& args, const Range& range) override;
+    };
+

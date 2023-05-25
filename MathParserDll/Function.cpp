@@ -33,6 +33,7 @@ void FunctionDefs::init()
     Add(new DateFunc(globals));
     Add(new Sort(globals));
     Add(new Reverse(globals));
+    Add(new Factorial(globals));
     };
 
 FunctionDef::FunctionDef(Globals& globals, const std::string& name, size_t minArgs, size_t maxArgs)

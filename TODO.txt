@@ -1,15 +1,11 @@
-﻿* variable = unit
+﻿* BUG: 
+   !; --> crash!
+   > store program text AFTER a succesful parse!
+* expanded functionNames like ++ --> "_inc" or ! --> "factorial" will likely not have the correct range as it's based on the length of the functionName.
+* variable = unit
     m=p/PI;
     3m; //TODO: should give warning: ambiguous: m is both a variable and a unit.
     > UNDEF a single unit to get rid of the warning.
-* Add factoral operator
-  x = 9!;
-  > Tokenizer:
-    !// : echo comment token
-    !/ : echo to end
-    > how to distinguish from factoral followed by division?
-      5!/3
-    > Replace echo to end with !///
 
 * www: https://www.youtube.com/watch?v=veEqYQlfNx8
   height: 100vh; // have BOTH lines, in this order, for browser support!

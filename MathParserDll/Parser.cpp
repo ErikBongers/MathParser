@@ -444,7 +444,7 @@ Node* Parser::parsePostFixExpr()
     {
     Node* node = parseUnitExpr();
     auto t = tok.peek();
-    while (t.type == TokenType::DOT || t.type == TokenType::INC || t.type == TokenType::DEC)
+    while (t.type == TokenType::DOT || t.type == TokenType::INC || t.type == TokenType::DEC || t.type == TokenType::EXCLAM)
         {
         node = parseOnePostFix(node);
         t = tok.peek();
@@ -491,6 +491,15 @@ Node* Parser::parseOnePostFix(Node* node)
         assignExpr->Id = idExpr->Id;
         assignExpr->expr = callExpr;
         node = assignExpr;
+        }
+    else if (t.type == TokenType::EXCLAM)
+        {
+        auto operToken = tok.next();
+        auto callExpr = nodeFactory.createCall();
+        callExpr->functionName = Token(TokenType::ID, "factorial", operToken.pos, tok.sourceIndex);
+        callExpr->arguments = nodeFactory.createList();
+        callExpr->arguments->list.push_back(node);
+        return callExpr;
         }
     return node;
     }

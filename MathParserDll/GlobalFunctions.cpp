@@ -291,3 +291,16 @@ Value Reverse::execute(std::vector<Value>& args, const Range& range)
     return Value(reverseList);
     }
 
+Value Factorial::execute(std::vector<Value>& args, const Range& range)
+    {
+    auto size = args[0].getNumber().to_double();
+    double val = 1;
+    //TODO: check if size is int, positive and not larger than....10?
+    for (int i = 1; i <= size; i++)
+        {
+        val *= i;
+        }
+
+    return Value(Number(val, 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
+    }
+

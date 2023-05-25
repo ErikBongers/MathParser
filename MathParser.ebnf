@@ -52,6 +52,7 @@ postFixExpr = unitExpr |
             postFixExpr '.'             // clear unit
             postFixExpr '.'  id  |
             postFixExpr '.' ("day" | "year" | "month")
+            postFixExpr '!'
             primaryExpr ("++" | "--")
             
 unitExpr = primaryExpr [unit]

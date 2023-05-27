@@ -1,9 +1,24 @@
-﻿* Tokenizer -> Filter -> Parser
+﻿* Refactor tokenizer to bluntly get the next token.
+ > Wrap it in a extra tokenizer that stores the peek() and resets the peek if a param of the Wrapper changes.
+ > this means that the blunt tokenizer has no settings. Would this work?
+ > start by moving all changes to tok-settings like tokenizeComments() together to see if they can be extracted.
+
+* Tokenizer -> Filter -> Parser
 > A filter for comments
 > A filter for meta (output control: echo and mute)
   - meta is only allowed in between statements.
   - since output will get variable or even expression embedding "the sum is {{ 1 + 2 }}.", there should be a dedicated output filter.
   - but...since meta is only allowed between statements, the filter should be statement-aware.
+
+
+* output bug:
+  !//10km+5C
+  (5C.)km;
+  > these statements are output on the same line, so their range (pos) is wrong.
+
+* output bug:
+    a=2;
+    x=1; a x; --> outputs x=12 !!!!
 
 * Why is Tokenizer so complex? What am I trying to hide from the parser?\
 

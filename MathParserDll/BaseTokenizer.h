@@ -25,7 +25,7 @@ class BaseTokenizer
         unsigned int getLine() { return peekedState.nextPos.line;}
         unsigned int getLinePos() { return peekedState.nextPos.linePos-1;}
     public:
-        unsigned int getPos() { return peekedState.nextPos.cursorPos;}
+        unsigned int getPos() { return currentState.nextPos.cursorPos;}
         const Token& getCurrentToken() const { return currentState.token; }
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
         BaseTokenizer(const char* stream) 

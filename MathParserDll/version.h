@@ -1,3 +1,3 @@
 #pragma once
 
-const long VERSION_BUILD = 1030;
+const long VERSION_BUILD = 1034;

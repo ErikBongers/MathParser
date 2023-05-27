@@ -41,18 +41,20 @@ void Tokenizer::tokenizeNewlines(bool set)
 
 void Tokenizer::getNextState()
     {
-    peekedState.token = getNextToken();
+    peekedState.token = peekNextToken();
     if(peekComments == false)
         { 
         //skip comments
         while(peekedState.token.type == TokenType::ECHO_COMMENT_LINE || peekedState.token.type == TokenType::COMMENT_LINE)
-            peekedState.token = getNextToken();
+            {
+            peekedState.token = peekNextToken();
+            }
         }
     peekedState.token.isFirstOnLine = peekedState.newLineStarted;
     peekedState.newLineStarted = false;
     }
 
-Token Tokenizer::getNextToken()
+Token Tokenizer::peekNextToken()
     {
     if (peekedState.nextPos.cursorPos >= size)
         return Token(TokenType::EOT, peekedState.nextPos-1, sourceIndex);
@@ -177,7 +179,7 @@ Token Tokenizer::getNextToken()
                 case '*':
                     nextChar(); //consume
                     skipToEndOfComment();
-                    return getNextToken();
+                    return peekNextToken();
                 case '#':
                     nextChar(); //consume
                     return Token(MUTE_START, peekedState.nextPos-2, sourceIndex);

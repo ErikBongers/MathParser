@@ -1,4 +1,13 @@
-﻿* BUG: 
+﻿* Tokenizer -> Filter -> Parser
+> A filter for comments
+> A filter for meta (output control: echo and mute)
+  - meta is only allowed in between statements.
+  - since output will get variable or even expression embedding "the sum is {{ 1 + 2 }}.", there should be a dedicated output filter.
+  - but...since meta is only allowed between statements, the filter should be statement-aware.
+
+* Why is Tokenizer so complex? What am I trying to hide from the parser?\
+
+* BUG: 
    !; --> crash!
    > store program text AFTER a succesful parse!
 * expanded functionNames like ++ --> "_inc" or ! --> "factorial" will likely not have the correct range as it's based on the length of the functionName.

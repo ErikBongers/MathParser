@@ -32,7 +32,7 @@ class Tokenizer : public BaseTokenizer<Token>
         Token parseNumber(char c);
 
         void skipToEndOfComment();
-        Token getNextToken();
+        Token peekNextToken();
         bool matchWord(const std::string& str);
     };
 

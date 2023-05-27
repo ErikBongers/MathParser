@@ -33,6 +33,7 @@ a++; //increment operator: same as a=a+1 or a+=1;
 a--; //decrement operator.
 a%3; //remainder operator: -15%12 = -3;
 a%%3; //modulus operator: -15%%12 = 9; //very usefull for dates and hours: starting from midnight, -14 hours = 9:00 , not -3:00 !
+3!; //factorials.
 ```
 ### Output control
 ```

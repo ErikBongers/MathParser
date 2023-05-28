@@ -158,29 +158,6 @@ Module.onRuntimeInitialized = async _ => {
 		cm.editor.update([transaction]);
 		}
 
-	Module.print = (function() 
-            {
-			var txtOutput = document.getElementById('txtOutput');
-			if (txtOutput) txtOutput.value = '';
-			var txtResult = document.getElementById('txtResult');
-			if (txtResult) txtResult.value = '';
-            
-            return function(text) 
-                {
-                if (arguments.length > 1) 
-                    text = Array.prototype.slice.call(arguments).join(' ');
-                if (txtOutput) {
-                    txtOutput.value += text + "\n";
-                    txtOutput.scrollTop = txtOutput.scrollHeight; // focus on bottom
-				}
-				txtResult.value = "sdfsdfsdf";
-				if (txtResult) {
-					txtResult.value += text + "\n";
-					txtResult.scrollTop = txtResult.scrollHeight; // focus on bottom
-				}
-                };
-            })();
-
 	Module.log = function (text) {
     	console.log(text);
     	};

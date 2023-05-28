@@ -1,4 +1,8 @@
-﻿* sourceIndex is part of Pos and Range.
+﻿* replace strings with string_view, which are slices of existing strings.
+  > worth it? How may string copies are made?
+  > Use Range?
+
+* sourceIndex is part of Pos and Range.
 
 * expanded functionNames like ++ --> "_inc" or ! --> "factorial" will likely not have the correct range as it's based on the length of the functionName.
 * variable = unit
@@ -11,8 +15,6 @@
   height: 100svh; //vh=view height, dvh=dynamic, s=smallest as in, without the urlbar. (also lvh=largest, like vh)
   height=x%; based on parent, so not possible at heighest level.
 * www: make errors clickable.
-
-* api.js: Module.print obsolete?
 
 * use MOD operator for hours and date calculations = less checking to do than with REM!
   > Duration::normalize()
@@ -116,9 +118,6 @@ WWW
   > load start script into localStorage (sessionStorage!)
   > precompile startscript into resolver?
     > means resolver has to be statefull.
-
-* replace strings with string_view, which are slices of existing strings.
-  > first figure out life cycles.
 
 * Save to cloud (via functions?)
   > cloud architecture: https://www.youtube.com/watch?v=JbEiek3MNWw

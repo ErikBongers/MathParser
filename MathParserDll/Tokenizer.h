@@ -12,15 +12,14 @@ class Tokenizer : public BaseTokenizer<Token>
     {
     public:
         Tokenizer(const char* stream, char sourceIndex);
-        Token peekSecond();
         Token next();
         void tokenizeComments(bool comments);
         void tokenizeNewlines(bool set);
         char sourceIndex;
+        void setState(const State& newState);
 
     private:
         bool peekComments = false;
-        void getNextState();
         bool peekWord(std::string str);
         Token parseId(char c);
 
@@ -32,7 +31,7 @@ class Tokenizer : public BaseTokenizer<Token>
         Token parseNumber(char c);
 
         void skipToEndOfComment();
-        Token peekNextToken();
+        Token nextUnfiltered();
         bool matchWord(const std::string& str);
     };
 

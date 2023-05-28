@@ -5,8 +5,10 @@ class PeekingTokenizer
     {
     private:
         Tokenizer tok;
+        BaseTokenizer<Token>::State currentState;
+
     public:
-        PeekingTokenizer(const char* stream, char sourceIndex) : tok(stream, sourceIndex){}
+        PeekingTokenizer(const char* stream, char sourceIndex);
         Token next();
         Token peek();
         Token peekSecond();

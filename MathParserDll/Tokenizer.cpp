@@ -5,89 +5,73 @@
 Tokenizer::Tokenizer(const char* stream, char sourceIndex) 
     : BaseTokenizer(stream), sourceIndex(sourceIndex)
     { 
-    getNextState();
     }
 
-Token Tokenizer::peekSecond() 
+void Tokenizer::setState(const State& newState)
     {
-    State tmpState = peekedState;
-    getNextState();
-    auto t = peekedState.token;
-    peekedState = tmpState;
-    return t;
-    }
-
-Token Tokenizer::next()
-    {
-    currentState = peekedState;
-    Token t = currentState.token;
-    getNextState();
-    return t;
+    this->state = newState;
     }
 
 void Tokenizer::tokenizeComments(bool comments) 
     { 
     peekComments = comments;
-    peekedState = currentState; //rollback last peek, and peek again.
-    getNextState();
     }
 
 void Tokenizer::tokenizeNewlines(bool set) 
     { 
     newlineIsToken = set;
-    peekedState = currentState; //rollback last peek, and peek again.
-    getNextState();
     }
 
-void Tokenizer::getNextState()
+Token Tokenizer::next()
     {
-    peekedState.token = peekNextToken();
+    state.token = nextUnfiltered();
     if(peekComments == false)
         { 
         //skip comments
-        while(peekedState.token.type == TokenType::ECHO_COMMENT_LINE || peekedState.token.type == TokenType::COMMENT_LINE)
+        while(state.token.type == TokenType::ECHO_COMMENT_LINE || state.token.type == TokenType::COMMENT_LINE)
             {
-            peekedState.token = peekNextToken();
+            state.token = nextUnfiltered();
             }
         }
-    peekedState.token.isFirstOnLine = peekedState.newLineStarted;
-    peekedState.newLineStarted = false;
+    state.token.isFirstOnLine = state.newLineStarted;
+    state.newLineStarted = false;
+    return state.token;
     }
 
-Token Tokenizer::peekNextToken()
+Token Tokenizer::nextUnfiltered()
     {
-    if (peekedState.nextPos.cursorPos >= size)
-        return Token(TokenType::EOT, peekedState.nextPos-1, sourceIndex);
+    if (state.nextPos.cursorPos >= size)
+        return Token(TokenType::EOT, state.nextPos-1, sourceIndex);
 
     skipWhiteSpace();
 
     if(matchWord("function"))
-        return Token(TokenType::FUNCTION, "function", peekedState.nextPos-1, sourceIndex);
+        return Token(TokenType::FUNCTION, "function", state.nextPos-1, sourceIndex);
 
     char c;
     c = nextChar();
     if (!c)
-        return Token(TokenType::EOT, peekedState.nextPos-1, sourceIndex);
+        return Token(TokenType::EOT, state.nextPos-1, sourceIndex);
 
     switch (c)
         {
         using enum TokenType;
-        case '\n': return Token(NEWLINE, c, peekedState.nextPos-1, sourceIndex);
-        case '{': return Token(CURL_OPEN, c, peekedState.nextPos-1, sourceIndex);
-        case '}': return Token(CURL_CLOSE, c, peekedState.nextPos-1, sourceIndex);
-        case '(': return Token(PAR_OPEN, c, peekedState.nextPos-1, sourceIndex);
-        case ')': return Token(PAR_CLOSE, c, peekedState.nextPos-1, sourceIndex);
-        case '[': return Token(BRAC_OPEN, c, peekedState.nextPos-1, sourceIndex);
-        case ']': return Token(BRAC_CLOSE, c, peekedState.nextPos-1, sourceIndex);
-        case '^': return Token(POWER, c, peekedState.nextPos-1, sourceIndex);
-        case '=': return Token(EQ, c, peekedState.nextPos-1, sourceIndex);
-        case ',': return Token(COMMA, c, peekedState.nextPos-1, sourceIndex);
-        case '|': return Token(PIPE, c, peekedState.nextPos-1, sourceIndex);
-        case ';': return Token(SEMI_COLON, c, peekedState.nextPos-1, sourceIndex);
+        case '\n': return Token(NEWLINE, c, state.nextPos-1, sourceIndex);
+        case '{': return Token(CURL_OPEN, c, state.nextPos-1, sourceIndex);
+        case '}': return Token(CURL_CLOSE, c, state.nextPos-1, sourceIndex);
+        case '(': return Token(PAR_OPEN, c, state.nextPos-1, sourceIndex);
+        case ')': return Token(PAR_CLOSE, c, state.nextPos-1, sourceIndex);
+        case '[': return Token(BRAC_OPEN, c, state.nextPos-1, sourceIndex);
+        case ']': return Token(BRAC_CLOSE, c, state.nextPos-1, sourceIndex);
+        case '^': return Token(POWER, c, state.nextPos-1, sourceIndex);
+        case '=': return Token(EQ, c, state.nextPos-1, sourceIndex);
+        case ',': return Token(COMMA, c, state.nextPos-1, sourceIndex);
+        case '|': return Token(PIPE, c, state.nextPos-1, sourceIndex);
+        case ';': return Token(SEMI_COLON, c, state.nextPos-1, sourceIndex);
         case '%': 
             if(match('%'))
-                return Token(MODULO, "%%", peekedState.nextPos - 2, sourceIndex);
-            return Token(PERCENT, c, peekedState.nextPos-1, sourceIndex);
+                return Token(MODULO, "%%", state.nextPos - 2, sourceIndex);
+            return Token(PERCENT, c, state.nextPos-1, sourceIndex);
         case '!': 
             {
             if (peekChar() == '/' && peekSecondChar() == '/')
@@ -97,65 +81,65 @@ Token Tokenizer::peekNextToken()
                 if (peekChar() == '/')
                     {
                     nextChar(); //consume
-                    return Token(ECHO_START, "!///", peekedState.nextPos-4, sourceIndex);
+                    return Token(ECHO_START, "!///", state.nextPos-4, sourceIndex);
                     }
                 else
                     {
                     auto comment = getToEOL();
-                    return Token(ECHO_COMMENT_LINE, comment, peekedState.nextPos-2, sourceIndex);
+                    return Token(ECHO_COMMENT_LINE, comment, state.nextPos-2, sourceIndex);
                     }
                 }
             else if (match('!'))
-                return Token(ECHO_DOUBLE, "!", peekedState.nextPos-2, sourceIndex);
-            return Token(EXCLAM, c, peekedState.nextPos-1, sourceIndex);
+                return Token(ECHO_DOUBLE, "!", state.nextPos-2, sourceIndex);
+            return Token(EXCLAM, c, state.nextPos-1, sourceIndex);
             }
         case '.': 
             if (match('='))
-                return Token(EQ_UNIT, peekedState.nextPos-2, sourceIndex);
+                return Token(EQ_UNIT, state.nextPos-2, sourceIndex);
             if (peekChar() >= '0' && peekChar() <= '9')
                 {
                 return parseNumber('.');
                 }
             else
-                return Token(DOT, c, peekedState.nextPos-1, sourceIndex);
+                return Token(DOT, c, state.nextPos-1, sourceIndex);
         case '+':
             if (match('='))
                 {
-                return Token(EQ_PLUS, peekedState.nextPos-2, sourceIndex);
+                return Token(EQ_PLUS, state.nextPos-2, sourceIndex);
                 }
             else if (match('+'))
                 {
-                return Token(INC, peekedState.nextPos-2, sourceIndex);
+                return Token(INC, state.nextPos-2, sourceIndex);
                 }
-            return Token(PLUS, c, peekedState.nextPos-1, sourceIndex);
+            return Token(PLUS, c, state.nextPos-1, sourceIndex);
         case '-':
             if (match('='))
                 {
-                return Token(EQ_MIN, peekedState.nextPos-2, sourceIndex);
+                return Token(EQ_MIN, state.nextPos-2, sourceIndex);
                 }
             else if (match('-'))
                 {
-                return Token(DEC, peekedState.nextPos-2, sourceIndex);
+                return Token(DEC, state.nextPos-2, sourceIndex);
                 }
-            return Token(MIN, c, peekedState.nextPos-1, sourceIndex);
+            return Token(MIN, c, state.nextPos-1, sourceIndex);
         case '*':
             if (match('='))
-                return Token(EQ_MULT, peekedState.nextPos-2, sourceIndex);
-            return Token(MULT, c, peekedState.nextPos-1, sourceIndex);
+                return Token(EQ_MULT, state.nextPos-2, sourceIndex);
+            return Token(MULT, c, state.nextPos-1, sourceIndex);
         case '#':
             if (match('/'))
                 {
-                return Token(MUTE_END, peekedState.nextPos-2, sourceIndex);
+                return Token(MUTE_END, state.nextPos-2, sourceIndex);
                 }
             else if (matchWord("define"))
                 {
-                return Token(DEFINE, "#define", peekedState.nextPos-1, sourceIndex);
+                return Token(DEFINE, "#define", state.nextPos-1, sourceIndex);
                 }
             else if (matchWord("undef"))
                 {
-                return Token(UNDEF, "#undef", peekedState.nextPos-1, sourceIndex);
+                return Token(UNDEF, "#undef", state.nextPos-1, sourceIndex);
                 }
-            return Token(MUTE_LINE, c, peekedState.nextPos-1, sourceIndex);
+            return Token(MUTE_LINE, c, state.nextPos-1, sourceIndex);
         case '/':
             {
             auto cc = peekChar();
@@ -163,7 +147,7 @@ Token Tokenizer::peekNextToken()
                 {
                 case '=':
                     nextChar(); //consume
-                    return Token(EQ_DIV, peekedState.nextPos-2, sourceIndex);
+                    return Token(EQ_DIV, state.nextPos-2, sourceIndex);
                 case '/':
                     {
                     nextChar(); //consume
@@ -171,29 +155,29 @@ Token Tokenizer::peekNextToken()
                         {
                         nextChar();
                         nextChar();
-                        return Token(ECHO_END, "///!", peekedState.nextPos-4, sourceIndex);
+                        return Token(ECHO_END, "///!", state.nextPos-4, sourceIndex);
                         }
                     auto comment = getToEOL();
-                    return Token(COMMENT_LINE, comment, peekedState.nextPos-1, sourceIndex);
+                    return Token(COMMENT_LINE, comment, state.nextPos-1, sourceIndex);
                     }
                 case '*':
                     nextChar(); //consume
                     skipToEndOfComment();
-                    return peekNextToken();
+                    return nextUnfiltered();
                 case '#':
                     nextChar(); //consume
-                    return Token(MUTE_START, peekedState.nextPos-2, sourceIndex);
+                    return Token(MUTE_START, state.nextPos-2, sourceIndex);
                 case '!':
                     nextChar(); //consume
-                    return Token(ECHO_START, peekedState.nextPos-2, sourceIndex);
+                    return Token(ECHO_START, state.nextPos-2, sourceIndex);
                 }
-            return Token(DIV, c, peekedState.nextPos-1, sourceIndex);
+            return Token(DIV, c, state.nextPos-1, sourceIndex);
             }
         case '\'':
             {
-            auto start= peekedState.nextPos;
+            auto start= state.nextPos;
             skipToWithinLine('\'');
-            return Token(QUOTED_STR, getText(start.cursorPos, std::max(start.cursorPos, peekedState.nextPos.cursorPos-1)), start, sourceIndex);
+            return Token(QUOTED_STR, getText(start.cursorPos, std::max(start.cursorPos, state.nextPos.cursorPos-1)), start, sourceIndex);
             }
         default:
             if ((c >= '0' && c <= '9') || c == '.')
@@ -205,7 +189,7 @@ Token Tokenizer::peekNextToken()
                 return parseId(c);
                 }
             else
-                return Token(UNKNOWN, c, peekedState.nextPos-1, sourceIndex);
+                return Token(UNKNOWN, c, state.nextPos-1, sourceIndex);
         }
     }
 
@@ -219,7 +203,7 @@ constexpr bool isIdChar(char c)
 Token Tokenizer::parseId(char c)
     {
     std::string word = "";
-    auto wordPos = peekedState.nextPos;
+    auto wordPos = state.nextPos;
     word += c;
 
     while ((c = peekChar()))
@@ -239,7 +223,7 @@ Token Tokenizer::parseId(char c)
 
 Number Tokenizer::parseDecimal(char c)
     {
-    TokenPos startPos = peekedState.nextPos-1;
+    TokenPos startPos = state.nextPos-1;
     //we already have the first digit
     double d = 0;
     int e = 0;
@@ -290,7 +274,7 @@ Number Tokenizer::parseDecimal(char c)
         nextChar();//consume 'E'
         e = parseInteger();
         }
-    return Number(d, e, Range(startPos, peekedState.nextPos, sourceIndex));
+    return Number(d, e, Range(startPos, state.nextPos, sourceIndex));
     }
 
 int Tokenizer::parseInteger()
@@ -373,18 +357,18 @@ double Tokenizer::parseHex()
 
 Token Tokenizer::parseNumber(char c)
     {
-    auto curPos = peekedState.nextPos;
+    auto curPos = state.nextPos;
     if(c == '0')
         {
         if(peekChar() == 'b' || peekChar() == 'B')
             {
             auto binary = parseBinary();
-            return Token(TokenType::NUMBER, Number(binary, 0, Range(curPos, peekedState.nextPos-1, sourceIndex), NumFormat::BIN), curPos, sourceIndex);
+            return Token(TokenType::NUMBER, Number(binary, 0, Range(curPos, state.nextPos-1, sourceIndex), NumFormat::BIN), curPos, sourceIndex);
             }
         else if(peekChar() == 'x' || peekChar() == 'X')
             {
             auto hex = parseHex();
-            return Token(TokenType::NUMBER, Number(hex, 0, Range(curPos, peekedState.nextPos-1, sourceIndex), NumFormat::HEX), curPos, sourceIndex);
+            return Token(TokenType::NUMBER, Number(hex, 0, Range(curPos, state.nextPos-1, sourceIndex), NumFormat::HEX), curPos, sourceIndex);
             }
         }
     return Token(TokenType::NUMBER, parseDecimal(c), curPos, sourceIndex);
@@ -410,16 +394,17 @@ void Tokenizer::skipToEndOfComment()
         }
     }
 
+
 bool Tokenizer::peekWord(std::string str)
     {
-    if(peekedState.nextPos.cursorPos + str.size() >= size)
+    if(state.nextPos.cursorPos + str.size() >= size)
         return false;
-    if(str.compare(0, str.size(), _stream, peekedState.nextPos.cursorPos, str.size()) != 0)
+    if(str.compare(0, str.size(), _stream, state.nextPos.cursorPos, str.size()) != 0)
         return false;
-    if(peekedState.nextPos.cursorPos + str.size() == size)
+    if(state.nextPos.cursorPos + str.size() == size)
         return true;//EOF, so ID-string matches.
     //looking for WORD, so next char should not be an ID char
-    return !isIdChar(_stream[peekedState.nextPos.cursorPos+str.size()]);
+    return !isIdChar(_stream[state.nextPos.cursorPos+str.size()]);
     }
 
 bool Tokenizer::matchWord(const std::string& str)

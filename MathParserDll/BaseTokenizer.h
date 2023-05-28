@@ -9,9 +9,7 @@ Token is a class that must implement following functions:
 template <class Token>
 class BaseTokenizer
     {
-    protected:
-        const char* _stream;
-        size_t size = -1;
+    public:
         struct State{
             Token token;
             TokenPos nextPos;
@@ -19,12 +17,16 @@ class BaseTokenizer
             void clear() { token = Token::Null(); }
             bool isNull() { return token.isNull(); }
             };
-        State peekedState;
-        State currentState;
+
+    protected:
+        const char* _stream;
+        size_t size = -1;
+        State state;
         bool newlineIsToken = false;
     public:
-        unsigned int getPos() const { return currentState.nextPos.cursorPos;}
-        const Token& getCurrentToken() const { return currentState.token; }
+        const State& getState() const {return state; }
+        unsigned int getPos() const { return state.nextPos.cursorPos;}
+        const Token& getCurrentToken() const { return state.token; }
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
         BaseTokenizer(const char* stream) 
             : _stream(stream) 
@@ -39,7 +41,7 @@ class BaseTokenizer
                 {
                 if(c == '\n')
                     {
-                    peekedState.newLineStarted = true;
+                    state.newLineStarted = true;
                     if(newlineIsToken)
                         break;
                     }
@@ -62,31 +64,31 @@ class BaseTokenizer
 
         char peekChar()
             {
-            if(peekedState.nextPos.cursorPos >= size)
+            if(state.nextPos.cursorPos >= size)
                 return 0; //EOF
-            return _stream[peekedState.nextPos.cursorPos];
+            return _stream[state.nextPos.cursorPos];
             }
 
         char peekSecondChar()
             {
-            if((peekedState.nextPos.cursorPos+1) >= size)
+            if((state.nextPos.cursorPos+1) >= size)
                 return 0; //EOF
-            return _stream[peekedState.nextPos.cursorPos+1];
+            return _stream[state.nextPos.cursorPos+1];
             }
 
         char nextChar()
             {
-            if(peekedState.nextPos.cursorPos >= size)
+            if(state.nextPos.cursorPos >= size)
                 return 0; //EOF
-            if(_stream[peekedState.nextPos.cursorPos] == '\n')
+            if(_stream[state.nextPos.cursorPos] == '\n')
                 {
-                peekedState.nextPos.line++;
-                peekedState.nextPos.linePos = 0;
-                peekedState.newLineStarted = true;
+                state.nextPos.line++;
+                state.nextPos.linePos = 0;
+                state.newLineStarted = true;
                 }
             else
-                peekedState.nextPos.linePos++;
-            return _stream[peekedState.nextPos.cursorPos++];
+                state.nextPos.linePos++;
+            return _stream[state.nextPos.cursorPos++];
             }
 
         bool match(char c)
@@ -101,7 +103,7 @@ class BaseTokenizer
 
         Token peek()
             {
-            return peekedState.token;
+            return state.token;
             }
 
         void skipToEOL()

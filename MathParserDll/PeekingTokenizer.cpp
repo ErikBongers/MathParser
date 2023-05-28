@@ -53,12 +53,6 @@ const Token& PeekingTokenizer::getCurrentToken() const
     return tok.getCurrentToken();
     }
 
-void PeekingTokenizer::skipWhiteSpace()
-    {
-    //TODO: skip from the CURRENT position of the PEEKED position?
-    tok.skipWhiteSpace();
-    }
-
 unsigned int PeekingTokenizer::getPos() const
     {
     return currentState.nextPos.cursorPos;

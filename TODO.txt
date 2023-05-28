@@ -1,7 +1,5 @@
 ﻿* sourceIndex is part of Pos and Range.
 
-* Why is Tokenizer so complex? What am I trying to hide from the parser?\
-
 * expanded functionNames like ++ --> "_inc" or ! --> "factorial" will likely not have the correct range as it's based on the length of the functionName.
 * variable = unit
     m=p/PI;

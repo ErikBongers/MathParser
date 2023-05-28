@@ -213,7 +213,6 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         this->echoBlock = false;
         return parseStatementHeader(stmt);
         }
-    tok.skipWhiteSpace();
     statementStartPos = tok.getPos();
     return parseExprStatement(stmt);
     }

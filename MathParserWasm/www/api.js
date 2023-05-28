@@ -129,14 +129,19 @@ Module.onRuntimeInitialized = async _ => {
 				strOutput += strLine + "\n";
 		}
 		let lineCnt = 0;
+		let lineAlreadyFilled = false;
 		for (line of result.result) {
 			//goto the next line in output
 			while (lineCnt < line.line) {
 				strResult += "\n";
 				lineCnt++;
+				lineAlreadyFilled = false;
 			}
 			let strValue = Module.ResultToString(line);
+			if (lineAlreadyFilled)
+				strResult += " | ";
 			strResult += strValue;
+			lineAlreadyFilled = true;
 		}
 		let transaction = cm.cmOutput.state.update({ changes: { from: 0, to: cm.cmOutput.state.doc.length, insert: strOutput } });
 		cm.cmOutput.update([transaction]);

@@ -470,7 +470,7 @@ Node* Parser::parseOnePostFix(Node* node)
             }
         else
             { //a dot followed by nothing is valid syntax: clear the unit, if any.
-            postfixExpr->postfixId = Token::Null(tok.getSourceIndex());
+            postfixExpr->postfixId = Token(TokenType::NULLPTR, t.pos, tok.getSourceIndex());
             }
         }
     else if (t.type == TokenType::INC || t.type == TokenType::DEC)

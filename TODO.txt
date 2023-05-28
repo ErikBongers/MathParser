@@ -1,20 +1,7 @@
 ﻿* sourceIndex is part of Pos and Range.
 
-
-* output bug:
-  !//10km+5C
-  (5C.)km;
-  > these statements are output on the same line, so their range (pos) is wrong.
-
-* output bug:
-    a=2;
-    x=1; a x; --> outputs x=12 !!!!
-
 * Why is Tokenizer so complex? What am I trying to hide from the parser?\
 
-* BUG: 
-   !; --> crash!
-   > store program text AFTER a succesful parse!
 * expanded functionNames like ++ --> "_inc" or ! --> "factorial" will likely not have the correct range as it's based on the length of the functionName.
 * variable = unit
     m=p/PI;

@@ -11,26 +11,16 @@ var Calc = {
         },
     addButtons: function()
         {
-            Calc.addButton("7", "light");
-            Calc.addButton("8", "light");
-            Calc.addButton("9", "light");
-            Calc.addButton("/", "medium");
-            Calc.addButton("(", "medium");
-            Calc.addButton("4", "light");
-            Calc.addButton("5", "light");
-            Calc.addButton("6", "light");
-            Calc.addButton("*", "medium");
-            Calc.addButton(")", "medium");
-            Calc.addButton("1", "light");
-            Calc.addButton("2", "light");
-            Calc.addButton("3", "light");
-            Calc.addButton("-", "medium");
-            Calc.addButton(";", "medium");
-            Calc.addButton(".", "medium");
-            Calc.addButton("0", "light");
-            Calc.addButton("=", "medium");
             Calc.addButton("+", "medium");
+            Calc.addButton("-", "medium");
+            Calc.addButton("*", "medium");
+            Calc.addButton("/", "medium");
             Calc.addButton("^", "medium");
+            Calc.addButton("(", "medium");
+            Calc.addButton(")", "medium");
+            Calc.addButton(".", "medium");
+            Calc.addButton("=", "medium");
+            Calc.addButton(";", "medium");
         },
     typeIt: function(event){
         let theText = event.srcElement.innerHTML;

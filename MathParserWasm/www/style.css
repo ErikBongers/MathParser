@@ -196,8 +196,7 @@ text-align: right;
 #calculator {
     display: grid;
     grid-gap: 5px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-	height: 10vh;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 	margin:10px;
 	}
 
@@ -207,6 +206,7 @@ text-align: right;
 	border-radius: 1.5vw;
 	align-items: center;
 	font-family: 'JetBrains Mono', monospace;
+	height: 2.5em;
 	}
 
 #calculator .grid-item.light
@@ -222,12 +222,12 @@ text-align: right;
 	.layout-grid {
 		height: 80vh;
 		grid-template-columns: 1fr;
+		grid-template-rows: 1fr min-content 1fr 0fr;
 	}
 	.hide-on-phone {
 	  display: none;
 	}
 	#calculator {
-		height: 28vh;
 		margin-top: 0px;
 	}
 	#input, #txtOutput{
@@ -235,6 +235,7 @@ text-align: right;
 	}
 	#result{
 		visibility: collapse;
+		grid-row: 4;
 	}
 	#input {
 		grid-column: 1;
@@ -243,7 +244,7 @@ text-align: right;
 	
 	#output {
 		grid-column: 1;
-		grid-row: 2;
+		grid-row: 3;
 	}
 	
 	#txtOutput {
@@ -252,7 +253,7 @@ text-align: right;
 	
 	#calculator {
 		grid-column: 1;
-		grid-row: 3;
+		grid-row: 2;
 	}
 }
   

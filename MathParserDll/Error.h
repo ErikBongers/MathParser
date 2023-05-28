@@ -29,6 +29,7 @@ enum class ErrorId
     VAR_EXPECTED,
     EXPECTED,
     EXPECTED_ID,
+    EXPECTED_NUMERIC_VALUE,
 
     INV_DATE_STR,
     INV_DATE_VALUE,

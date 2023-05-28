@@ -136,6 +136,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::VAR_EXPECTED, {ErrorId::VAR_EXPECTED, "VAR_EXPECTED", "The increment (++) or decrement (--) operator can only be used on a variable."}},
         {ErrorId::EXPECTED, {ErrorId::EXPECTED, "EXPECTED", "Expected '{0}'."}},
         {ErrorId::EXPECTED_ID, {ErrorId::EXPECTED_ID, "EXPECTED_ID", "Expected identifier."}},
+        {ErrorId::EXPECTED_NUMERIC_VALUE, {ErrorId::EXPECTED_NUMERIC_VALUE, "EXPECTED_NUMERIC_VALUE", "Expected numeric value."}},
 
         {ErrorId::DATE_INV_FRAG, {ErrorId::DATE_INV_FRAG, "DATE_INV_FRAG", "Invalid fragment '{0}' for date."}},
         {ErrorId::DUR_INV_FRAG, {ErrorId::DUR_INV_FRAG, "DUR_INV_FRAG", "Invalid fragment '{0}' for duration."}},

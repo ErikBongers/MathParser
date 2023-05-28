@@ -293,6 +293,9 @@ Value Reverse::execute(std::vector<Value>& args, const Range& range)
 
 Value Factorial::execute(std::vector<Value>& args, const Range& range)
     {
+    if(!args[0].isNumber())
+        return Value(Error(ErrorId::EXPECTED_NUMERIC_VALUE, range));
+
     auto size = args[0].getNumber().to_double();
     double val = 1;
     //TODO: check if size is int, positive and not larger than....10?

@@ -112,11 +112,7 @@ date+duur;
             assertDate("#define ymd; '2022 2 1'", 1, 2, 2022); //#define ends with either a NL or a ;
 
             // date via lists:
-            assertDate("d = 2022,12,13", 13, 12, 2022);
-            assertDate("#define dmy\n d = 13, 12, 2022", 13, 12, 2022);
-            assertDate("#define mdy\n d = 12, 13, 2022", 13, 12, 2022);
-            assertError("d = 13, 12, 2022", "INV_DATE_VALUE");
-
+            assertDate("d = date(2022, 12, 13)", 13, 12, 2022);
             }
 
         TEST_METHOD(TestDefines)
@@ -346,6 +342,12 @@ a;
             auto result = parseSingleResult(stmt);
             logJson(result);
             assertErrors(result, stmt, errorId);
+            if(result["type"] != "TIMEPOINT")
+                {
+                std::string strType = result["type"];
+                msg = std::format("Expected TIMEPOINT, found {0}", strType);
+                Assert::Fail(toWstring(msg).c_str());
+                }
             json date = result["date"];
             std::string strDay = date["day"]; int d = std::stoi(strDay);
             std::string strMonth = date["month"]; int m = std::stoi(strMonth);

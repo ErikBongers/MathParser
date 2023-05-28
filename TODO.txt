@@ -1,7 +1,18 @@
-﻿* Refactor tokenizer to bluntly get the next token.
- > Wrap it in a extra tokenizer that stores the peek() and resets the peek if a param of the Wrapper changes.
- > this means that the blunt tokenizer has no settings. Would this work?
- > start by moving all changes to tok-settings like tokenizeComments() together to see if they can be extracted.
+﻿* sourceIndex is part of Pos and Range.
+
+* Refactor Tokenizer to bluntly get the next token.
+ > Wrap it in PeekedTokenizer that re-peeks() if a setting of the Tokenizer changes.
+ - BaseTokenizer.skipWhiteSpace() uses newlineIsToken flag
+ - Tokenizer.getNextState() uses peekComments flag.
+ > If Tokenizer would ALWAYS return NL and COMMENT as a token, a filter could ignore them.
+ > OR: Tokenizer has a state that can always be reset to something and go from there.
+   - Tokenizer can NOT peek. It can only compute the next token. Current state of Tokenizer stores the token that has been read, so before the NextPos!
+   - A wrapper saves the state(tok.pos + Token)
+ > What a token is, is defined within Tokenizer:
+   - A comment
+   - A newlin
+   - ...
+   - when this state changes, the Wrapper may have to reset the Tokenizer pos.
 
 * Tokenizer -> Filter -> Parser
 > A filter for comments

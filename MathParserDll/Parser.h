@@ -2,11 +2,12 @@
 #include "NodeFactory.h"
 #include <memory>
 #include "CodeBlock.h"
+#include "PeekingTokenizer.h"
 
 class Parser
     {
     private:
-        Tokenizer tok;
+        PeekingTokenizer tok;
         NodeFactory nodeFactory;
         bool muteBlock = false;
         bool echoBlock = false;

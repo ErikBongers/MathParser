@@ -1,9 +1,10 @@
 #pragma once
 #include "Error.h"
-#include "Tokenizer.h"
 #include <vector>
 #include "ValueType.h"
 #include "Range.h"
+#include "Unit.h"
+#include "Token.h"
 
 enum class NodeType {FUNCTIONDEF, CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE};
 class NodeFactory;

@@ -101,7 +101,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(ProjectDir)..\MathParserDll\x64\Debug;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>pch.obj;GlobalFunctions.obj;NodeFactory.obj;Scope.obj;OperatorDef.obj;Resolver.obj;Token.obj;Range.obj;Duration.obj;Date.obj;Value.obj;ValueType.obj;Number.obj;json.obj;Error.obj;Parser.obj;Function.obj;Unit.obj;Tokenizer.obj;List.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>pch.obj;GlobalFunctions.obj;NodeFactory.obj;Scope.obj;OperatorDef.obj;Resolver.obj;Token.obj;Range.obj;Duration.obj;Date.obj;Value.obj;ValueType.obj;Number.obj;json.obj;Error.obj;Parser.obj;Function.obj;Unit.obj;Tokenizer.obj;List.obj;PeekingTokenizer.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

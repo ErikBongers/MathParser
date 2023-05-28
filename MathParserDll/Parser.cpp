@@ -9,6 +9,7 @@ Parser::Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& sc
     : tok(stream, sourceIndex), codeBlock(std::move(scope))
     {
     }
+
 void Parser::parse()
     {
     parseEchoLines();
@@ -292,7 +293,7 @@ Node* Parser::parseAssignExpr()
                 {
                 BinaryOpExpr* binOpExpr = nodeFactory.createBinaryOp();
                 binOpExpr->n1 = idExpr;
-                binOpExpr->op = Token(oper, operToken.pos, tok.sourceIndex);
+                binOpExpr->op = Token(oper, operToken.pos, tok.getSourceIndex());
                 binOpExpr->n2 = parseAddExpr();
                 assign->expr = binOpExpr;
                 }
@@ -310,7 +311,7 @@ Node* Parser::parseAssignExpr()
                     }
                 else
                     { //valid syntax: clear the unit, if any.
-                    pfix->postfixId = Token::Null(tok.sourceIndex);
+                    pfix->postfixId = Token::Null(tok.getSourceIndex());
                     }
                 }
             return assign;
@@ -412,7 +413,7 @@ Node* Parser::parseImplicitMult()
         //don't consume the token yet...
         auto m = nodeFactory.createBinaryOp();
         m->n1 = n1;
-        m->op = Token(TokenType::MULT, '*', tok.peek().pos, tok.sourceIndex);
+        m->op = Token(TokenType::MULT, '*', tok.peek().pos, tok.getSourceIndex());
         if(t.type == TokenType::PAR_OPEN)
             {
             m->n2 = reduceList(parseListExpr());
@@ -469,7 +470,7 @@ Node* Parser::parseOnePostFix(Node* node)
             }
         else
             { //a dot followed by nothing is valid syntax: clear the unit, if any.
-            postfixExpr->postfixId = Token::Null(tok.sourceIndex);
+            postfixExpr->postfixId = Token::Null(tok.getSourceIndex());
             }
         }
     else if (t.type == TokenType::INC || t.type == TokenType::DEC)
@@ -485,7 +486,7 @@ Node* Parser::parseOnePostFix(Node* node)
         CallExpr* callExpr = nodeFactory.createCall();
         callExpr->arguments = nodeFactory.createList();
         callExpr->arguments->list.push_back(node);
-        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), operToken.pos, tok.sourceIndex);
+        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), operToken.pos, tok.getSourceIndex());
 
         AssignExpr* assignExpr = nodeFactory.createAssign();
         assignExpr->Id = idExpr->Id;
@@ -496,7 +497,7 @@ Node* Parser::parseOnePostFix(Node* node)
         {
         auto operToken = tok.next();
         auto callExpr = nodeFactory.createCall();
-        callExpr->functionName = Token(TokenType::ID, "factorial", operToken.pos, tok.sourceIndex);
+        callExpr->functionName = Token(TokenType::ID, "factorial", operToken.pos, tok.getSourceIndex());
         callExpr->arguments = nodeFactory.createList();
         callExpr->arguments->list.push_back(node);
         return callExpr;
@@ -583,7 +584,7 @@ Node* Parser::parseAbsOperator(const Token& currentToken)
     CallExpr* callExpr = nodeFactory.createCall();
     callExpr->arguments = nodeFactory.createList();
     callExpr->arguments->list.push_back(addExpr);
-    callExpr->functionName = Token(TokenType::ID, "abs", currentToken.pos, tok.sourceIndex);
+    callExpr->functionName = Token(TokenType::ID, "abs", currentToken.pos, tok.getSourceIndex());
     auto t = tok.peek();
     if (!match(TokenType::PIPE))
         {

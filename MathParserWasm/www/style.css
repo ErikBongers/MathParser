@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Basic&family=JetBrains+Mono&display=swap');
+@import url(emscripten.css);
 
 body
 {
@@ -14,83 +14,6 @@ body {
 	padding: 20px;
 	padding-block-start: 5px;
 }
-.emscripten {
-	padding-right: 0;
-	margin-left: auto;
-	margin-right: auto;
-	display: block
-}
-
-textarea.emscripten {
-	font-family: 'JetBrains Mono', monospace;
-	color: #333333;
-	width: 100%;
-}
-
-div.emscripten {
-	text-align: center
-}
-
-div.emscripten_border {
-	border: 1px solid #000
-}
-
-canvas.emscripten {
-	border: 0 none;
-	background-color: #000
-}
-
-.spinner {
-	height: 50px;
-	width: 50px;
-	margin: 0 auto;
-	-webkit-animation: rotation .8s linear infinite;
-	-moz-animation: rotation .8s linear infinite;
-	-o-animation: rotation .8s linear infinite;
-	animation: rotation .8s linear infinite;
-	border-left: 10px solid #0096f0;
-	border-right: 10px solid #0096f0;
-	border-bottom: 10px solid #0096f0;
-	border-top: 10px solid #6400c8;
-	border-radius: 100%;
-	background-color: #c864fa
-}
-
-@-webkit-keyframes rotation {
-	from {
-		-webkit-transform: rotate(0)
-	}
-	to {
-		-webkit-transform: rotate(360deg)
-	}
-}
-
-@-moz-keyframes rotation {
-	from {
-		-moz-transform: rotate(0)
-	}
-	to {
-		-moz-transform: rotate(360deg)
-	}
-}
-
-@-o-keyframes rotation {
-	from {
-		-o-transform: rotate(0)
-	}
-	to {
-		-o-transform: rotate(360deg)
-	}
-}
-
-@keyframes rotation {
-	from {
-		transform: rotate(0)
-	}
-	to {
-		transform: rotate(360deg)
-	}
-}
 
 h1 {
 	font-family: 'Basic', sans-serif;
@@ -100,83 +23,48 @@ h1 {
     margin-block-end: 0;
 }
 
-h2 {
-	font-family: 'Basic', sans-serif;
-	font-size: 1.3em;
-	color: #666666;
-	margin-block-start: 0;
-    margin-block-end: 0;
-}
-
-button {
-	margin-left: 20px;
-}
-
-
-/* layout grid*/
-.header
+header
 {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-/*flex-wrap: wrap;*/
 }
-.header .title
-{
-}
-.header .help
-{
-align-self: flex-end;
-text-align: right;
-}
-.layout-grid
-{
+
+header .help {
+	align-self: flex-end;
+	text-align: right;
+	}
+
+
+/* layout grid*/
+
+.layout-grid {
 	display: grid;
 	grid-gap: 5px;
 	grid-template-columns: 1fr 2fr 1fr;
 	grid-template-rows: 1fr 1fr 1fr;
 }
+#result, #input, #output {
+	border-style: solid;
+	border-color: #999;
+	border-width: 1px;
+	overflow-x: scroll;
+}
 
 #result {
 	grid-column: 1;
 	grid-row: 1 / 3;
-	border-style: solid;
-	border-color: #999;
-	border-width: 1px;
-	overflow-x: scroll;
-	/*position: relative;*/
 }
 #input {
 	grid-column: 2;
 	grid-row: 1 / 3;
-	border-style: solid;
-	border-color: #999;
-	border-width: 1px;
-	overflow-x: scroll;
-	/*position: relative;*/
 }
 #output {
 	grid-column: 3;
-	grid-row: 1 / 4;
-	border-style: solid;
-	border-color: #999;
-	border-width: 1px;
-	overflow-x: scroll;
+	grid-row: 1 / 3;
 }
-#txtResult{
-	/*position: relative;*/
+#txtResult, #txtInput, #txtOutput{
 	width:inherit;
-	height: 100%;
-}
-
-#txtInput{
-	/*position: relative;*/
-	width:inherit;
-	height: 100%;
-}
-#txtOutput {
-	width:inherit;
-	/*width: 100%;*/
 	height: 100%;
 }
 
@@ -187,17 +75,13 @@ text-align: right;
 	height: inherit;
 }
 
-#calculator {
-	grid-column: 1;
-	grid-row: 3;
-}
-
 /* calculator grid */
 #calculator {
     display: grid;
     grid-gap: 5px;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-	margin:10px;
+	visibility: collapse;
+	display:none;
 	}
 
 #calculator .grid-item {
@@ -220,7 +104,7 @@ text-align: right;
 
 @media only screen and (max-width: 30em) {
 	.layout-grid {
-		height: 80vh;
+		height: 90vh;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr min-content 1fr 0fr;
 	}
@@ -231,7 +115,7 @@ text-align: right;
 		margin-top: 0px;
 	}
 	#input, #txtOutput{
-		height: 28vh;
+		height: 40vh;
 	}
 	#result{
 		visibility: collapse;
@@ -254,6 +138,8 @@ text-align: right;
 	#calculator {
 		grid-column: 1;
 		grid-row: 2;
+		visibility: visible;
+		display: grid;
 	}
 }
   

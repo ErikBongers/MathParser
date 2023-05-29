@@ -1,11 +1,8 @@
-﻿* fix phone layout and typing.
-  > Only show a line of operator chars, as these aren't present on the default keyboard.
-  > Put this line right below the input field.
-
-* www: https://www.youtube.com/watch?v=veEqYQlfNx8
-  height: 100vh; // have BOTH lines, in this order, for browser support!
-  height: 100svh; //vh=view height, dvh=dynamic, s=smallest as in, without the urlbar. (also lvh=largest, like vh)
-  height=x%; based on parent, so not possible at heighest level.
+﻿* Implement electronic components notation
+  > R103 = 10000 Ohm;
+* Implement combined units for V, A, R.
+  > V * A = Watt !!!
+  > Also create units for powers: 24V^2
 
 
 * replace strings with string_view, which are slices of existing strings.
@@ -20,9 +17,7 @@
     3m; //TODO: should give warning: ambiguous: m is both a variable and a unit.
     > UNDEF a single unit to get rid of the warning.
 
-* www: make errors clickable.
-
-* use MOD operator for hours and date calculations = less checking to do than with REM!
+* use modulo operator for hours and date calculations = less checking to do than with remainder!
   > Duration::normalize()
 
 * DateFunc::execute: use explodeArgs()
@@ -70,16 +65,6 @@
     > current dateformat: put in scope?
        > and use it in the date() function.
 
-* list is interpreted based on units
-  > duration units? -> convert to duration.
-  > else: assume date and try to parse it.
-  > but what if we just want numbers?
-    > even if the values accidently are date values,
-* Implement electronic components notation
-  > R103 = 10000 Ohm;
-* Implement combined units for V, A, R.
-  > V * A = Watt !!!
-  > Also create units for powers: 24V^2
 * Date: operator + and - : make generic
   > Adding a duration may contain negative values in the duration!
   > Fix this for the +operator
@@ -275,3 +260,10 @@ Vectors
 Extra operators
 ---------------
 https://www.statmethods.net/management/operators.html
+
+
+* www: https://www.youtube.com/watch?v=veEqYQlfNx8
+  height: 100vh; // have BOTH lines, in this order, for browser support!
+  height: 100svh; //vh=view height, dvh=dynamic, s=smallest as in, without the urlbar. (also lvh=largest, like vh)
+  height=x%; based on parent, so not possible at heighest level.
+

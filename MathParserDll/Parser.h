@@ -12,7 +12,7 @@ class Parser
         bool muteBlock = false;
         bool echoBlock = false;
         bool echoTrailingComment = false;
-        unsigned int statementStartPos = 0;
+        TokenPos statementStartPos;
     public:
         CodeBlock codeBlock;
         Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& scope);

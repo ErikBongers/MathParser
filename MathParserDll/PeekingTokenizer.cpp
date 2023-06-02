@@ -55,12 +55,12 @@ std::string PeekingTokenizer::getText(unsigned int start, unsigned end)
 
 const Token& PeekingTokenizer::getCurrentToken() const
     {
-    return tok.getCurrentToken();
+    return currentState.token;
     }
 
-unsigned int PeekingTokenizer::getPos() const
+TokenPos PeekingTokenizer::getPos() const
     {
-    return currentState.nextPos.cursorPos;
+    return currentState.nextPos;
     }
 
 unsigned int PeekingTokenizer::getSourceIndex() const

@@ -284,6 +284,11 @@ a;
 
             }
 
+        TEST_METHOD(TestEchoText)
+            {
+            assertText("! \n  x=5; \n \n \n", "x=5");
+            }
+
         struct Error
             {
             std::string message;
@@ -431,6 +436,17 @@ a;
             msg = std::format("\"{0}\" has incorrect format {1}, which should be {2}", stmt, (const std::string)number["fmt"], expectedFormat);
             Assert::AreEqual(expectedFormat, (const std::string)number["fmt"], toWstring(msg).c_str());
             return result;
+            }
+
+        void assertText(const char* stmt, const char* text)
+            {
+            std::string msg;
+
+            auto result = parseSingleResult(stmt);
+            logJson(result);
+            assertErrors(result, stmt, "");
+            //text
+            Assert::AreEqual(std::string(text), result.j["text"].get<std::string>(), toWstring("Text of echo statement is incorrect.").c_str());
             }
 
         void assertErrorRange(const char* stmt, unsigned int startLine, unsigned int startPos, unsigned int endLine, unsigned int endPos)

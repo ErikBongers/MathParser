@@ -151,7 +151,7 @@ class Statement : public Node
     {
     public:
         Node* node = nullptr;
-        std::string text;
+        Range text;
         Range comment_line;
         bool mute = false; //mute output
         bool echo = false; //echo statement

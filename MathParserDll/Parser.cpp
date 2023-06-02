@@ -101,7 +101,7 @@ Statement* Parser::parseStatement()
     stmt = parseStatementHeader(stmt);
     stmt->mute |= this->muteBlock;
     if(stmt->echo)
-        stmt->text = tok.getText(statementStartPos, tok.getCurrentToken().range.start.cursorPos);
+        stmt->text = Range(statementStartPos, tok.getCurrentToken().range.start);
     return stmt;
     }
 
@@ -215,7 +215,7 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         this->echoBlock = false;
         return parseStatementHeader(stmt);
         }
-    statementStartPos = tok.getPos();
+    statementStartPos = tok.peek().range.start;
     return parseExprStatement(stmt);
     }
 
@@ -231,11 +231,7 @@ Statement* Parser::parseExprStatement(Statement* stmt)
         tok.next(); //consume
         if(stmt->echo)
             {
-            stmt->text = tok.getText(t.range);
-            if(stmt->text.starts_with("\r\n"))
-                stmt->text.erase(0, 2);
-            else if(stmt->text.starts_with("\n"))
-                stmt->text.erase(0, 1);
+            stmt->text = t.range;
             }
         }
     else if (t.type == TokenType::EOT)

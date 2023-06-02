@@ -108,7 +108,7 @@ Module.onRuntimeInitialized = async _ => {
 		}
 		let strComment = "";
 		if (line.comment != "")
-			strComment = line.comment + " ";
+			strComment = line.comment + ": ";
 		let strLine = "";
 		strLine += strComment;
 		strLine += (line.id === "_" ? "" : line.id + "=") + Module.formatResult(line);

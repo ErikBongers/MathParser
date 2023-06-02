@@ -152,7 +152,7 @@ class Statement : public Node
     public:
         Node* node = nullptr;
         std::string text;
-        Token comment_line;
+        Range comment_line;
         bool mute = false; //mute output
         bool echo = false; //echo statement
         Range range() const;

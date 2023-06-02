@@ -44,12 +44,17 @@ Value::Value(List list)
     data = list;
     }
 
+std::string getText(const Range& range, const char* stream)
+    {
+    return std::string(&stream[range.start.cursorPos], &stream[range.end.cursorPos]);
+    }
+
 void Value::to_json(std::ostringstream& sstr, const char* stream) const
     {
     sstr << "{";
     sstr << "\"line\":" << this->stmtRange.start.line << "";
     if (id.type != TokenType::NULLPTR)
-        sstr << ",\"id\":\"" << std::string(&stream[id.range.start.cursorPos], &stream[id.range.end.cursorPos]) << "\"";
+        sstr << ",\"id\":\"" << getText(id.range, stream) << "\"";
     else
         sstr << ",\"id\":\"_\"";
     sstr << ",\"type\":\"" << to_string(type) << "\"";
@@ -99,7 +104,7 @@ void Value::to_json(std::ostringstream& sstr, const char* stream) const
         << escape_json(text)
         << "\"";
     sstr << ",\"comment\":";
-    sstr <<  "\"" << escape_json(make_one_line(comment_line)) << "\"";
+    sstr <<  "\"" << escape_json(make_one_line(getText(comment_line, stream))) << "\"";
     sstr << ",\"onlyComment\": " << (onlyComment?"true":"false");
     sstr << ",\"mute\":" << (mute?"true":"false");
     sstr <<  ",\"range\":";

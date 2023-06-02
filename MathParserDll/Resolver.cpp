@@ -151,8 +151,8 @@ Value Resolver::resolveStatement(const Statement& stmt)
     else
         result.onlyComment = true;
     result.text = stmt.text;
-    if(!stmt.comment_line.isNull())
-        result.comment_line = codeBlock.getText(stmt.comment_line.range);
+    if(!stmt.comment_line.isEmpty())
+        result.comment_line = stmt.comment_line;
     result.mute = stmt.mute;
     if (stmt.error.id != ErrorId::NONE)
         result.errors.push_back(stmt.error);

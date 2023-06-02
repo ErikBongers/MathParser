@@ -76,7 +76,7 @@ Range Statement::range() const
     {
     if(node != nullptr)
         return node->range();
-    return comment_line.range;
+    return comment_line;
     }
 
 Range FunctionDefExpr::range() const

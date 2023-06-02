@@ -32,12 +32,12 @@ void Parser::parseEchosBetweenStatements(Statement* lastStmt)
         if (t.isFirstOnLine)
             {
             auto stmt = nodeFactory.createStatement();
-            stmt->comment_line = t;
+            stmt->comment_line = t.range;
             codeBlock.statements.push_back(stmt);
             }
         else
             {
-            lastStmt->comment_line = t;
+            lastStmt->comment_line = t.range;
             }
         }
     echoTrailingComment = false;
@@ -53,7 +53,7 @@ void Parser::parseEchoLines()
         if(t.type == TokenType::ECHO_COMMENT_LINE)
             {
             auto stmt = nodeFactory.createStatement();
-            stmt->comment_line = t;
+            stmt->comment_line = t.range;
             codeBlock.statements.push_back(stmt);
             }
         }
@@ -187,7 +187,7 @@ Statement* Parser::parseStatementHeader(Statement* stmt)
         {
         auto t = tok.next(); //consume ECHO
         stmt = nodeFactory.createStatement();
-        stmt->comment_line = t;
+        stmt->comment_line = t.range;
         return stmt;
         }
     if(match(TokenType::MUTE_LINE))

@@ -21,7 +21,7 @@ class Value
     public:
         std::vector<Error> errors;
         std::string text;
-        std::string comment_line;
+        Range comment_line;
         bool onlyComment = false;
         bool mute = false;
         bool constant = false;

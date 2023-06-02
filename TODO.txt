@@ -1,4 +1,7 @@
-﻿* www: double horizontal scrollbars in text fields.
+﻿* www: comment on line: separate with colon
+* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
+
+* www: double horizontal scrollbars in text fields.
 
 * replace codeBlock.getText(range) with
   : sources.getText(range)
@@ -14,9 +17,6 @@
 
 * parseExprStatement already formats text when echo=true.
   > move this to output code (to_json()? )
-
-* Statement.commentLine is a string.
-  > should be a range. Get the string during output.
 
 * resolveAssign() uses lots of existXXX() functions that take a string.
   > replace string param with a range.

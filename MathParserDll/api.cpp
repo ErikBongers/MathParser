@@ -15,7 +15,7 @@ std::string result = "";
 int C_DECL parse(const char* str)
     {
     Globals globals;
-    auto scope = std::make_unique<Scope>(globals);
+    auto scope = std::make_unique<Scope>(globals, str);
     Parser parser(str, 1, std::move(scope));
     parser.parse();
     std::map<std::string, Value> nada;

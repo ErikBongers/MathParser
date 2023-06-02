@@ -8,7 +8,7 @@
 Parser::Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& scope)
     : tok(stream, sourceIndex), codeBlock(std::move(scope))
     {
-    codeBlock._stream = stream;
+    codeBlock.scope->_stream = stream;
     }
 
 void Parser::parse()
@@ -166,7 +166,7 @@ Node* Parser::parseFunctionDef()
     for(auto& stmt : functionStmts)
         funcDef->r += stmt->range();
 
-    codeBlock.scope->AddLocalFunction(*funcDef, CodeBlock(std::move(newScope), std::move(functionStmts), codeBlock._stream));
+    codeBlock.scope->AddLocalFunction(*funcDef, CodeBlock(std::move(newScope), std::move(functionStmts)));
     return funcDef;
     }
 

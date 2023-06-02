@@ -26,13 +26,13 @@ std::string Resolver::resolve()
             {
             if(stmt->node->type != NodeType::DEFINE || result.errors.size() != 0)
                 {
-                result.to_json(sstr, codeBlock._stream);
+                result.to_json(sstr, codeBlock.scope->_stream);
                 sstr << ",";
                 }
             }
         else
             {
-            result.to_json(sstr, codeBlock._stream);
+            result.to_json(sstr, codeBlock.scope->_stream);
             sstr << ",";
             }
         }
@@ -82,7 +82,7 @@ Value Resolver::resolveDefine(const Define& define)
         {
         for(auto& t: define.defs) 
             {
-            switch(hash(codeBlock.getText(t.range).c_str()))
+            switch(hash(codeBlock.scope->getText(t.range).c_str()))
                 {
                 case hash("date_units"):
                     codeBlock.scope->units.addLongDateUnits(); 
@@ -103,13 +103,13 @@ Value Resolver::resolveDefine(const Define& define)
                 case hash("arithm"):
                 case hash("date"):
                 case hash("all"):
-                    codeBlock.scope->functions.addFunctions(toFunctionType(hash(codeBlock.getText(t.range).c_str())));
+                    codeBlock.scope->functions.addFunctions(toFunctionType(hash(codeBlock.scope->getText(t.range).c_str())));
                     break;
                 case hash("electric"):
                     codeBlock.scope->units.addElectic();
                     break;
                 default:
-                    result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, t.range, codeBlock.getText(t.range).c_str()));
+                    result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, t.range, codeBlock.scope->getText(t.range).c_str()));
                 }
             }
         }
@@ -117,7 +117,7 @@ Value Resolver::resolveDefine(const Define& define)
         {
         for(auto& t: define.defs) 
             {
-            switch(hash(codeBlock.getText(t.range).c_str()))
+            switch(hash(codeBlock.scope->getText(t.range).c_str()))
                 {
                 case hash("date_units"):
                     codeBlock.scope->units.removeLongDateUnits(); 
@@ -129,13 +129,13 @@ Value Resolver::resolveDefine(const Define& define)
                 case hash("arithm"):
                 case hash("date"):
                 case hash("all"):
-                    codeBlock.scope->functions.removeFunctions(toFunctionType(hash(codeBlock.getText(t.range).c_str())));
+                    codeBlock.scope->functions.removeFunctions(toFunctionType(hash(codeBlock.scope->getText(t.range).c_str())));
                     break;
                 case hash("electric"):
                     codeBlock.scope->units.removeElectric();
                     break;
                 default:
-                    result.errors.push_back(Error(ErrorId::UNDEF_NOT_OK, t.range, codeBlock.getText(t.range).c_str()));
+                    result.errors.push_back(Error(ErrorId::UNDEF_NOT_OK, t.range, codeBlock.scope->getText(t.range).c_str()));
                 }
             }
 
@@ -218,7 +218,7 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
     Operator op = codeBlock.scope->globals.operatorDefs.get(OperatorId(a1.type, opType, a2.type, a1.type));
     if (op == nullptr)
         {
-        result.errors.push_back(Error(ErrorId::NO_OP, expr.op.range, codeBlock.getText(expr.op.range), to_string(a1.type), to_string(a2.type)));
+        result.errors.push_back(Error(ErrorId::NO_OP, expr.op.range, codeBlock.scope->getText(expr.op.range), to_string(a1.type), to_string(a2.type)));
         return result;
         }
     std::vector<Value> args;
@@ -248,7 +248,7 @@ Value Resolver::resolveUnaryOp(const UnaryOpExpr& expr)
 Value Resolver::resolveAssign(const AssignExpr& assign)
     {
     auto result = resolveNode(*assign.expr);
-    std::string strId = codeBlock.getText(assign.Id.range);
+    std::string strId = codeBlock.scope->getText(assign.Id.range);
     if (!codeBlock.scope->varExists(strId))
         {
         if (codeBlock.scope->units.exists(strId))
@@ -341,7 +341,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
     if(pfix.postfixId.isNull() && val.type == ValueType::NUMBER)
         val.getNumber().unit = Unit::NONE();
     else 
-        switch(hash(codeBlock.getText(pfix.postfixId.range).c_str()))
+        switch(hash(codeBlock.scope->getText(pfix.postfixId.range).c_str()))
             {
             case hash("bin"):
                 val.getNumber().numFormat = NumFormat::BIN; break;
@@ -366,7 +366,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                 [[fallthrough]];
             default:
                 if(val.type == ValueType::NUMBER)
-                    val.getNumber() = val.getNumber().convertToUnit(Unit(codeBlock.getText(pfix.postfixId.range), pfix.postfixId.range), codeBlock.scope->units);
+                    val.getNumber() = val.getNumber().convertToUnit(Unit(codeBlock.scope->getText(pfix.postfixId.range), pfix.postfixId.range), codeBlock.scope->units);
                 else
                     ; //TODO: error: unknown postfix
                 break;
@@ -378,7 +378,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
 Value Resolver::resolveIdExpr(const IdExpr& idExpr)
     {
     Value val;
-    std::string strId = codeBlock.getText(idExpr.Id.range);
+    std::string strId = codeBlock.scope->getText(idExpr.Id.range);
     if (codeBlock.scope->varExists(strId))
         {
         val = getVar(strId);
@@ -456,7 +456,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
         {
         DateParser parser;
         parser.dateFormat = this->dateFormat;
-        return Value(parser.parse(codeBlock.getText(constExpr.value.range), constExpr.range()));
+        return Value(parser.parse(codeBlock.scope->getText(constExpr.value.range), constExpr.range()));
         }
     }
 
@@ -464,9 +464,9 @@ Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)
     {
     Value newValue;
     if(val.type != ValueType::TIMEPOINT)
-        return Value(Error(ErrorId::DATE_FRAG_NO_DATE, fragmentId.range, codeBlock.getText(fragmentId.range)));
+        return Value(Error(ErrorId::DATE_FRAG_NO_DATE, fragmentId.range, codeBlock.scope->getText(fragmentId.range)));
     const Date date = val.getDate();
-    switch (hash(codeBlock.getText(fragmentId.range).c_str()))
+    switch (hash(codeBlock.scope->getText(fragmentId.range).c_str()))
         {
         case hash("day"):
             newValue = Value(Number(date.day, 0, fragmentId.range)); break;
@@ -475,7 +475,7 @@ Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)
         case hash("year"):
             newValue = Value(Number(date.year, 0, fragmentId.range)); break;
         default:
-            return Value(Error(ErrorId::DATE_INV_FRAG, fragmentId.range, codeBlock.getText(fragmentId.range)));
+            return Value(Error(ErrorId::DATE_INV_FRAG, fragmentId.range, codeBlock.scope->getText(fragmentId.range)));
         }
     return newValue;
     }
@@ -484,9 +484,9 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
     {
     Value newValue;
     if(val.type != ValueType::DURATION)
-        return Value(Error(ErrorId::DATE_FRAG_NO_DURATION, fragmentId.range, codeBlock.getText(fragmentId.range)));
+        return Value(Error(ErrorId::DATE_FRAG_NO_DURATION, fragmentId.range, codeBlock.scope->getText(fragmentId.range)));
     const auto dur = val.getDuration();
-    switch (hash(codeBlock.getText(fragmentId.range).c_str()))
+    switch (hash(codeBlock.scope->getText(fragmentId.range).c_str()))
         {
         case hash("to_days"):
             newValue = Value(Number(dur.to_days(), 0, fragmentId.range)); break;//TODO: set unit to "days" ? But what if days has been #undef-ed?
@@ -497,7 +497,7 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
         case hash("years"):
             newValue = Value(Number(dur.years, 0, fragmentId.range)); break;
         default:
-            return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId.range, codeBlock.getText(fragmentId.range)));
+            return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId.range, codeBlock.scope->getText(fragmentId.range)));
         }
     return newValue;
     }

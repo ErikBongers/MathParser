@@ -1,5 +1,4 @@
-﻿* www: comment on line: separate with colon
-* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
+﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
 * www: double horizontal scrollbars in text fields.
 
@@ -12,19 +11,8 @@
 
 * to_json() function should take sources[] instead of _stream.
 
-* varDefExists and functionExists use getText for comparison.
-  > use a partial strcmp based on range instead of first creating an intermediate string
-
 * parseExprStatement already formats text when echo=true.
   > move this to output code (to_json()? )
-
-* resolveAssign() uses lots of existXXX() functions that take a string.
-  > replace string param with a range.
-
-* Resolver.getVar(string0 -> getVar(range)
-
-* CodeBlock contains the _stream and getText functions.
-  > should this be here?
 
 * Allow underscores in IDs?
 

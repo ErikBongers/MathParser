@@ -5,8 +5,8 @@
 #include "Function.h"
 #include "Parser.h"
 
-Scope::Scope(Globals& globals) 
-    : globals(globals), units(globals), functions(globals), constants(globals)
+Scope::Scope(Globals& globals, const char* stream) 
+    : globals(globals), _stream(stream), units(globals), functions(globals), constants(globals)
     {
     }
 
@@ -18,14 +18,14 @@ Scope::~Scope()
 
 std::unique_ptr<Scope> Scope::copyForScript()
     {
-    auto newScope = std::make_unique<Scope>(globals);
+    auto newScope = std::make_unique<Scope>(globals, _stream);
     newScope->parentScope = this;
     return newScope; 
     }
 
 std::unique_ptr<Scope> Scope::copyForFunction()
     {
-    auto newScope = std::make_unique<Scope>(globals);
+    auto newScope = std::make_unique<Scope>(globals, _stream);
     newScope->parentScope = this;
     newScope->units.setDefs(units);
     //settings;
@@ -95,7 +95,7 @@ void Scope::setVariables(const std::map<std::string, Value>& variables)
 
 void Scope::AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock) 
     { 
-    localFunctions.emplace(codeBlock.getText(f.idRange), new CustomFunction(f, std::move(codeBlock)));
+    localFunctions.emplace(codeBlock.scope->getText(f.idRange), new CustomFunction(f, std::move(codeBlock)));
     }
 
 ConstantsView::ConstantsView(Globals& globals)

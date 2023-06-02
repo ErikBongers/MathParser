@@ -32,8 +32,9 @@ class Scope
         //settings
         DateFormat dateFormat = DateFormat::UNDEFINED;
         std::map<std::string, CustomFunction*> localFunctions;
+        const char* _stream;
 
-        Scope(Globals& globals);
+        Scope(Globals& globals, const char* stream);
         ~Scope();
         std::unique_ptr<Scope> copyForScript();
         std::unique_ptr<Scope> copyForFunction();
@@ -46,6 +47,9 @@ class Scope
         void setVariables(const std::map<std::string, Value>& variables);
         void emplaceVarDef(const std::string& id, Variable&& variable) { varDefs.emplace(id, std::move(variable)); }
         void emplaceVariable(const std::string& id, Value&& value) { variables.emplace(id, std::move(value)); }
+        std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
+        std::string getText(const Range& range) { return std::string(&_stream[range.start.cursorPos], &_stream[range.end.cursorPos]); }
+
     private:
         CustomFunction* getLocalFunction(const std::string& name);
         Scope(const Scope& scope) = delete;

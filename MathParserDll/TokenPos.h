@@ -2,8 +2,9 @@
 
 struct TokenPos
     {
-    int line = 0;
-    int linePos = 0;
-    int cursorPos = 0;
-    TokenPos operator-(int n) const { return {line, linePos - n, cursorPos - n}; }
+    unsigned int line = 0;
+    unsigned int linePos = 0;
+    unsigned long cursorPos = 0;
+    char sourceIndex;
+    TokenPos operator-(int n) const { return {line, linePos - n, cursorPos - n, sourceIndex}; }
     };

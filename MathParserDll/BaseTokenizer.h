@@ -116,31 +116,35 @@ class BaseTokenizer
                 }
             }
 
-        void skipToWithinLine(char c)
+        TokenPos getToWithinLine(char c)
             {
             char cc;
-            while ((cc = nextChar()))
+            while ((cc = peekChar()))
                 {
                 if(cc == '\n')
                     break;
                 if(c == cc)
                     break;
+                nextChar();
                 }
+            TokenPos pos = state.nextPos;
+            match(c);
+            return pos;
             }
 
-        std::string getToEOL()
+        TokenPos getToEOL()
             {
-            std::string buf;
             char c;
             while ((c = peekChar())) 
                 {
-                if(c == '\n')
-                    break; //don't eat newLine yet. The nextToken should be marked as firstOnNewLine.
+                if(c == '\r' || c == '\n')
+                    break; //don't eat NL yet. NL could be a token!
                 nextChar();
-                if(c != '\r')
-                    buf += c;
                 }
-            return buf;
+            //currently at \r or \n
+            TokenPos pos = state.nextPos;
+            match('\r'); //ignore \r. It's not part of the string and never a token.
+            return pos;
             }
 
 

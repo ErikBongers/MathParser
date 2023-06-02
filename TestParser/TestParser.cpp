@@ -274,6 +274,16 @@ a;
             assertError("   a=1; a b;               ", "UNIT_NOT_DEF");
             }
 
+        TEST_METHOD(TestRanges)
+            {
+            assertErrorRange("a;", 0, 0, 0, 1);
+            assertErrorRange(" a ;", 0, 1, 0, 2);
+            //assertErrorRange(" _a_ ;", 0, 1, 0, 4);
+
+            assertErrorRange(" sinx() ;", 0, 1, 0, 5);
+
+            }
+
         struct Error
             {
             std::string message;
@@ -291,6 +301,12 @@ a;
             double value;
             };
 
+        struct JsonAndString
+            {
+            json j;
+            std::string str;
+            };
+
         void assertExponent(const char* stmt, double expectedNumber, int expectedExponent, const std::string expectedUnit = "")
             {
             assertResult(stmt, expectedNumber, expectedUnit, "", "DEC", expectedExponent);
@@ -300,23 +316,23 @@ a;
             {
             std::string msg;
 
-            json result = assertResult(stmt, expectedResult);
+            auto result = assertResult(stmt, expectedResult);
             //text
-            msg = std::format("\"{0}\" has incorrect comment\"{1}\", which should be \"{2}\"", stmt, (const std::string)result["text"], (const std::string)result["text"]);
-            Assert::AreEqual(text, (const std::string)result["text"], toWstring(msg).c_str());
+            msg = std::format("\"{0}\" has incorrect comment\"{1}\", which should be \"{2}\"", stmt, (const std::string)result.j["text"], (const std::string)result.j["text"]);
+            Assert::AreEqual(text, (const std::string)result.j["text"], toWstring(msg).c_str());
             //comment
-            msg = std::format("\"{0}\" has incorrect comment\"{1}\", which should be \"{2}\"", stmt, (const std::string)result["comment"], (const std::string)result["comment"]);
-            Assert::AreEqual(comment, (const std::string)result["comment"], toWstring(msg).c_str());
+            msg = std::format("\"{0}\" has incorrect comment\"{1}\", which should be \"{2}\"", stmt, (const std::string)result.j["comment"], (const std::string)result.j["comment"]);
+            Assert::AreEqual(comment, (const std::string)result.j["comment"], toWstring(msg).c_str());
             }
 
-        void assertErrors(const json& result, const char* stmt, const std::string errorId = "")
+        void assertErrors(JsonAndString& result, const char* stmt, const std::string errorId = "")
             {
             std::string msg;
             if(hasErrors(result))
                 {
                 if (errorId == "")
                     {
-                    msg = std::format("\"{0}\" has errors: {1}", stmt, (const std::string)(result["errors"][0]["id"]));
+                    msg = std::format("\"{0}\" has errors: {1}", stmt, (const std::string)(result.j["errors"][0]["id"]));
                     Assert::Fail(toWstring(msg).c_str());
                     }
                 else
@@ -342,13 +358,13 @@ a;
             auto result = parseSingleResult(stmt);
             logJson(result);
             assertErrors(result, stmt, errorId);
-            if(result["type"] != "TIMEPOINT")
+            if(result.j["type"] != "TIMEPOINT")
                 {
-                std::string strType = result["type"];
+                std::string strType = result.j["type"];
                 msg = std::format("Expected TIMEPOINT, found {0}", strType);
                 Assert::Fail(toWstring(msg).c_str());
                 }
-            json date = result["date"];
+            json date = result.j["date"];
             std::string strDay = date["day"]; int d = std::stoi(strDay);
             std::string strMonth = date["month"]; int m = std::stoi(strMonth);
             std::string strYear = date["year"]; long y = std::stol(strYear);
@@ -364,7 +380,7 @@ a;
             auto result = parseSingleResult(stmt);
             logJson(result);
             assertErrors(result, stmt, errorId);
-            json date = result["duration"];
+            json date = result.j["duration"];
             int d = 0;
             int m = 0;
             long y = 0;
@@ -382,14 +398,14 @@ a;
             Assert::AreEqual(y, years);
             }
 
-        json assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
+        JsonAndString assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
             {
             std::string msg;
 
             auto result = parseSingleResult(stmt);
             logJson(result);
             assertErrors(result, stmt, errorId);
-            json number = result["number"];
+            json number = result.j["number"];
             if(number["exp"] == 0)
                 {
                 //value
@@ -417,6 +433,31 @@ a;
             return result;
             }
 
+        void assertErrorRange(const char* stmt, unsigned int startLine, unsigned int startPos, unsigned int endLine, unsigned int endPos)
+            {
+            std::string msg;
+            auto result = parseSingleResult(stmt);
+            logJson(result);
+            if (hasErrors(result))
+                {
+                auto errors = result.j["errors"];
+                auto range = errors[0]["range"];
+                double sLine = range["startLine"].get<double>();
+                double sPos = range["startPos"].get<double>();
+                double eLine = range["endLine"].get<double>();
+                double ePos= range["endPos"].get<double>();
+                if(startLine != sLine || startPos != sPos || endLine != eLine || endPos != ePos)
+                    {
+                    msg = std::format("\"{0}\" did not report a correct range", stmt);
+                    Assert::Fail(toWstring(msg).c_str());
+                    }
+
+                return;
+                }                    
+            msg = std::format("\"{0}\" did not report any errors", stmt);
+            Assert::Fail(toWstring(msg).c_str());
+            }
+
         void assertError(const char* stmt, const std::string errorId)
             {
             std::string msg;
@@ -430,15 +471,15 @@ a;
             Assert::Fail(toWstring(msg).c_str());
             }
 
-        bool hasErrors(json result)
+        bool hasErrors(JsonAndString& result)
             {
-            auto errors = result["errors"];
+            auto errors = result.j["errors"];
             return errors.size() > 0;
             }
 
-        bool hasError(json result, const std::string& errorId)
+        bool hasError(JsonAndString& result, const std::string& errorId)
             {
-            auto errors = result["errors"];
+            auto errors = result.j["errors"];
             for (auto& error : errors)
                 {
                 if(error["id"] == errorId)
@@ -447,21 +488,22 @@ a;
             return false;
             }
 
-        void logJson(json result)
+        void logJson(JsonAndString& result)
             {
             std::ostringstream oss;
-            oss << result.dump(2) << std::endl;
+            oss << result.j.dump(2) << std::endl;
             Logger::WriteMessage(oss.str().c_str());
             }
 
-        json parseSingleResult(const char* stmt)
+        JsonAndString  parseSingleResult(const char* stmt)
             {
             int resLen = parse(stmt);
             char* result = new char[resLen];
             getResult(result, resLen);
             json j = json::parse(result);
+            std::string strResult = result;
             delete[] result;
-            return j["result"].back(); //back = last element, as opposed to front()
+            return {j["result"].back(), strResult}; //back = last element, as opposed to front()
             }
 
         std::wstring toWstring(const std::string& s)

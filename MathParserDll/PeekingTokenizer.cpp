@@ -43,6 +43,11 @@ void PeekingTokenizer::tokenizeNewlines(bool set)
     tok.next();
     }
 
+std::string PeekingTokenizer::getText(const Range& range)
+    {
+    return getText(range.start.cursorPos, range.end.cursorPos);
+    }
+
 std::string PeekingTokenizer::getText(unsigned int start, unsigned end)
     {
     return tok.getText(start, end);

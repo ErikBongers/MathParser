@@ -8,6 +8,7 @@
 Parser::Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& scope)
     : tok(stream, sourceIndex), codeBlock(std::move(scope))
     {
+    codeBlock._stream = stream;
     }
 
 void Parser::parse()
@@ -100,7 +101,7 @@ Statement* Parser::parseStatement()
     stmt = parseStatementHeader(stmt);
     stmt->mute |= this->muteBlock;
     if(stmt->echo)
-        stmt->text = tok.getText(statementStartPos, tok.getCurrentToken().pos.cursorPos);
+        stmt->text = tok.getText(statementStartPos, tok.getCurrentToken().range.start.cursorPos);
     return stmt;
     }
 
@@ -119,28 +120,28 @@ Node* Parser::parseFunctionDef()
         return nullptr;
     
     if (!peek(TokenType::ID))
-        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED_ID, tok.peek()));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED_ID, tok.peek().range));
     auto id = tok.next();
 
     if (!match(TokenType::PAR_OPEN))
-        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "("));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, "("));
 
-    std::vector<Token> paramDefs;
+    std::vector<std::string> paramDefs;
     while (tok.peek().type == TokenType::ID)
         {
-        paramDefs.push_back(tok.next());
+        paramDefs.push_back(tok.getText(tok.next().range));
         if (match(TokenType::COMMA))
             continue;
         if(peek(TokenType::PAR_CLOSE))
            break;
-        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ",' or ')"));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, ",' or ')"));
         }
 
     if (!match(TokenType::PAR_CLOSE))
-        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), ")"));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, ")"));
 
     if (!match(TokenType::CURL_OPEN))
-        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "{"));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, "{"));
 
     std::vector<Statement*> functionStmts;
     auto newScope = codeBlock.scope->copyForFunction();
@@ -156,15 +157,16 @@ Node* Parser::parseFunctionDef()
     std::swap(codeBlock.scope, newScope);
 
     if (!match(TokenType::CURL_CLOSE))
-        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek(), "}"));
+        return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, "}"));
     auto funcDef = nodeFactory.createFunctionDef();
-    funcDef->id = id;
+    funcDef->id = tok.getText(id.range);
+    funcDef->idRange = id.range;
     funcDef->params = paramDefs;
-    funcDef->r = id;
+    funcDef->r = id.range;
     for(auto& stmt : functionStmts)
         funcDef->r += stmt->range();
 
-    codeBlock.scope->AddLocalFunction(*funcDef, CodeBlock(std::move(newScope), std::move(functionStmts)));
+    codeBlock.scope->AddLocalFunction(*funcDef, CodeBlock(std::move(newScope), std::move(functionStmts), codeBlock._stream));
     return funcDef;
     }
 
@@ -229,7 +231,7 @@ Statement* Parser::parseExprStatement(Statement* stmt)
         tok.next(); //consume
         if(stmt->echo)
             {
-            stmt->text = t.stringValue;
+            stmt->text = tok.getText(t.range);
             if(stmt->text.starts_with("\r\n"))
                 stmt->text.erase(0, 2);
             else if(stmt->text.starts_with("\n"))
@@ -243,7 +245,7 @@ Statement* Parser::parseExprStatement(Statement* stmt)
     else
         {
         tok.next();
-        stmt->error = Error(ErrorId::EXPECTED, Range(t), ";");
+        stmt->error = Error(ErrorId::EXPECTED, t.range, ";");
         }
     if(echoBlock)
         stmt->echo = true;
@@ -265,7 +267,7 @@ Node* Parser::parseAssignExpr()
             assign->Id = id;
             assign->expr = reduceList(parseListExpr());
 
-            codeBlock.scope->emplaceVarDef(assign->Id.stringValue, Variable{ assign->Id, assign->expr });
+            codeBlock.scope->emplaceVarDef(tok.getText(assign->Id.range), Variable{ assign->Id, assign->expr });
             return assign;
             }
         else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
@@ -292,7 +294,7 @@ Node* Parser::parseAssignExpr()
                 {
                 BinaryOpExpr* binOpExpr = nodeFactory.createBinaryOp();
                 binOpExpr->n1 = idExpr;
-                binOpExpr->op = Token(oper, operToken.pos, tok.getSourceIndex());
+                binOpExpr->op = Token(oper, operToken.range.start, operToken.range.end);
                 binOpExpr->n2 = parseAddExpr();
                 assign->expr = binOpExpr;
                 }
@@ -310,7 +312,7 @@ Node* Parser::parseAssignExpr()
                     }
                 else
                     { //valid syntax: clear the unit, if any.
-                    pfix->postfixId = Token::Null(tok.getSourceIndex());
+                    pfix->postfixId = Token::Null();
                     }
                 }
             return assign;
@@ -412,7 +414,7 @@ Node* Parser::parseImplicitMult()
         //don't consume the token yet...
         auto m = nodeFactory.createBinaryOp();
         m->n1 = n1;
-        m->op = Token(TokenType::MULT, '*', tok.peek().pos, tok.getSourceIndex());
+        m->op = Token(TokenType::MULT, 0, tok.peek().range.start);
         if(t.type == TokenType::PAR_OPEN)
             {
             m->n2 = reduceList(parseListExpr());
@@ -469,7 +471,7 @@ Node* Parser::parseOnePostFix(Node* node)
             }
         else
             { //a dot followed by nothing is valid syntax: clear the unit, if any.
-            postfixExpr->postfixId = Token(TokenType::NULLPTR, t.pos, tok.getSourceIndex());
+            postfixExpr->postfixId = Token(TokenType::NULLPTR, 0, t.range.end);
             }
         }
     else if (t.type == TokenType::INC || t.type == TokenType::DEC)
@@ -485,7 +487,8 @@ Node* Parser::parseOnePostFix(Node* node)
         CallExpr* callExpr = nodeFactory.createCall();
         callExpr->arguments = nodeFactory.createList();
         callExpr->arguments->list.push_back(node);
-        callExpr->functionName = Token(TokenType::ID, (t.type == TokenType::INC ? "_ inc" : "_ dec"), operToken.pos, tok.getSourceIndex());
+        callExpr->functionName = t.type == TokenType::INC ? "_ inc" : "_ dec";
+        callExpr->functionNameRange = operToken.range;
 
         AssignExpr* assignExpr = nodeFactory.createAssign();
         assignExpr->Id = idExpr->Id;
@@ -496,7 +499,8 @@ Node* Parser::parseOnePostFix(Node* node)
         {
         auto operToken = tok.next();
         auto callExpr = nodeFactory.createCall();
-        callExpr->functionName = Token(TokenType::ID, "factorial", operToken.pos, tok.getSourceIndex());
+        callExpr->functionName = "factorial";
+        callExpr->functionNameRange = operToken.range;
         callExpr->arguments = nodeFactory.createList();
         callExpr->arguments->list.push_back(node);
         return callExpr;
@@ -508,10 +512,10 @@ Node* Parser::parseUnitExpr()
     {
     Node* node = parsePrimaryExpr();
     auto t = tok.peek();
-    if (t.type == TokenType::ID && !codeBlock.scope->varDefExists(t.stringValue))
+    if (t.type == TokenType::ID && !codeBlock.scope->varDefExists(tok.getText(t.range)))
         {
         tok.next();
-        node->unit = t; //no known id: assuming a unit.
+        node->unit = Unit(tok.getText(t.range), t.range); //no known id: assuming a unit.
         }
     return node;
     }
@@ -533,7 +537,7 @@ Node* Parser::parsePrimaryExpr()
             break;
         case TokenType::ID:
             tok.next();
-            if (codeBlock.scope->functionExists(t.stringValue))
+            if (codeBlock.scope->functionExists(tok.getText(t.range)))
                 {
                 return parseCallExpr(t);
                 }
@@ -583,7 +587,8 @@ Node* Parser::parseAbsOperator(const Token& currentToken)
     CallExpr* callExpr = nodeFactory.createCall();
     callExpr->arguments = nodeFactory.createList();
     callExpr->arguments->list.push_back(addExpr);
-    callExpr->functionName = Token(TokenType::ID, "abs", currentToken.pos, tok.getSourceIndex());
+    callExpr->functionName = "abs";
+    callExpr->functionNameRange = currentToken.range;
     auto t = tok.peek();
     if (!match(TokenType::PIPE))
         {
@@ -604,11 +609,12 @@ ConstExpr* Parser::parseNumber(Token currentToken, bool negative)
 CallExpr* Parser::parseCallExpr(Token functionName)
     {
     CallExpr* callExpr = nodeFactory.createCall();
-    callExpr->functionName = functionName;
+    callExpr->functionName = tok.getText(functionName.range);
+    callExpr->functionNameRange = functionName.range;
     auto t = tok.peek();
     if (t.type != TokenType::PAR_OPEN)
         {
-        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, Range(t), functionName.stringValue.c_str());
+        callExpr->error = Error(ErrorId::FUNC_NO_OPEN_PAR, t.range, tok.getText(functionName.range).c_str());
         return callExpr;
         }
     tok.next();
@@ -623,7 +629,7 @@ CallExpr* Parser::parseCallExpr(Token functionName)
 
 ListExpr* Parser::parseListExpr()
     {
-    Range range = tok.getCurrentToken();
+    Range range = tok.getCurrentToken().range;
     std::vector<Node*> list;
     while (true)
         {
@@ -644,94 +650,3 @@ ListExpr* Parser::parseListExpr()
     return listExpr;
     }
 
-Range ConstExpr::range() const
-    {
-    TokenPos end = value.pos;
-    end.cursorPos += (int)value.stringValue.size();
-    end.linePos += (int)value.stringValue.size();
-    return Range(value.pos, end, this->value.sourceIndex);
-    }
-
-Range IdExpr::range() const
-    {
-    TokenPos end = Id.pos;
-    end.cursorPos += (int)Id.stringValue.size();
-    end.linePos += (int)Id.stringValue.size();
-    return Range(Id.pos, end, Id.sourceIndex);
-    }
-
-Range PostfixExpr::range() const
-    {
-    TokenPos end = postfixId.pos;
-    end.cursorPos += (int)postfixId.stringValue.size();
-    end.linePos += (int)postfixId.stringValue.size();
-    Range r = Range(postfixId.pos, end, postfixId.sourceIndex);
-    if(expr != nullptr)
-        r += expr->range();
-    return r;
-    }
-
-Range CallExpr::range() const
-    {
-    Range r = Range(functionName);
-    if(arguments != nullptr && !arguments->list.empty())
-        r += arguments->list.back()->range();
-    return r;
-    }
-
-Range BinaryOpExpr::range() const
-    {
-    Range r = Range(n1->range());
-    r += Range(n2->range());
-    return r;
-    }
-
-Range UnaryOpExpr::range() const
-    {
-    Range r = Range(n->range());
-    r += Range(op);
-    return r;
-    }
-
-Range AssignExpr::range() const
-    {
-    Range r = Range(Id);
-    if(expr != nullptr)
-        r += expr->range();
-    return r;
-    }
-
-Range ListExpr::range() const
-    {
-    if(!list.empty())
-        {
-        Range r = Range(list.front()->range());
-        r += list.back()->range();
-        return r;
-        }
-    return Range();
-    }
-
-Range Define::range() const
-    {
-    Range r = def_undef;
-    
-    if(defs.size() == 0)
-        return r;
-
-    r += defs.front();
-    r += defs.back();
-    return r;
-    }
-
-Range Statement::range() const
-    {
-    if(node != nullptr)
-        return node->range();
-    return Range(comment_line);
-    }
-
-Range FunctionDefExpr::range() const
-    {
-    return r;
-    }

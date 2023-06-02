@@ -13,7 +13,7 @@
 class Value
     {
     public:
-        Token id = Token::Null(-1); //optional, in case of a variable.
+        Token id = Token::Null(); //optional, in case of a variable.
         ValueType type = ValueType::NONE;
         
     private:
@@ -35,7 +35,7 @@ class Value
         Value(const Date date);
         Value(Duration duration);
         Value(List list);
-        void to_json(std::ostringstream& sstr) const;
+        void to_json(std::ostringstream& sstr, const char* stream) const;
         Number& getNumber() { return std::get<Number>(data); }
         bool isNumber() { return std::get_if<Number>(&data) != nullptr; }
         Date& getDate() { return std::get<Date>(data); }

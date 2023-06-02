@@ -95,7 +95,7 @@ void Scope::setVariables(const std::map<std::string, Value>& variables)
 
 void Scope::AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock) 
     { 
-    localFunctions.emplace(f.id.stringValue, new CustomFunction(f, std::move(codeBlock)));
+    localFunctions.emplace(codeBlock.getText(f.idRange), new CustomFunction(f, std::move(codeBlock)));
     }
 
 ConstantsView::ConstantsView(Globals& globals)

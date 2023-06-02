@@ -1,15 +1,67 @@
-﻿* Implement electronic components notation
+﻿* www: double horizontal scrollbars in text fields.
+
+* replace codeBlock.getText(range) with
+  : sources.getText(range)
+  > sources is a list of source streams
+  > range contains all the info needed to get text
+  > put sources as high as possible. Hopefully outside codeBlock?
+  > sources is part of a TranslationUnit. Or is Scope the TranslationUnit?
+
+* to_json() function should take sources[] instead of _stream.
+
+* varDefExists and functionExists use getText for comparison.
+  > use a partial strcmp based on range instead of first creating an intermediate string
+
+* parseExprStatement already formats text when echo=true.
+  > move this to output code (to_json()? )
+
+* Statement.commentLine is a string.
+  > should be a range. Get the string during output.
+
+* resolveAssign() uses lots of existXXX() functions that take a string.
+  > replace string param with a range.
+
+* Resolver.getVar(string0 -> getVar(range)
+
+* CodeBlock contains the _stream and getText functions.
+  > should this be here?
+
+* Allow underscores in IDs?
+
+* Rename TokenPos to SourcePos
+ 
+* TokenPos should be immutable because line, linePos and cursorPos are related.
+
+* Implement electronic components notation
   > R103 = 10000 Ohm;
+  > C472
+  > ...?
+  > implement as numberic notation like HEX,...
+  > RES and CAP
+  > only works when activated #define electric
+  > add extra units.
+  > Resistors have more versions of notations
+    R47	    0.47 ohm
+    4R7	    4.7 ohm
+    470R	470 ohm
+    4K7	    4.7 kilohm
+    47K	    47 kilohm
+    47K3	47.3 kilohm
+    470K	470 kilohm
+    4M7	    4.7 megohm
+  > Resistors also have 3 digit notation
+  > require them to always start with an R_ or a C_?
+    > this solves the 3 digit problem.
+    > only required for 3-digit notaton as the above R-notations are probably non ambiguous.
+
+  > a setting for Tokenizer
+  > generalize usage of K and M ?
+    > no
+
 * Implement combined units for V, A, R.
   > V * A = Watt !!!
   > Also create units for powers: 24V^2
 
-
-* replace strings with string_view, which are slices of existing strings.
-  > worth it? How may string copies are made?
-  > Use Range?
-
-* sourceIndex is part of Pos and Range.
 
 * expanded functionNames like ++ --> "_inc" or ! --> "factorial" will likely not have the correct range as it's based on the length of the functionName.
 * variable = unit

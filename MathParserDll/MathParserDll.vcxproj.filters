@@ -188,6 +188,9 @@
     <ClCompile Include="PeekingTokenizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Nodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="updateBuildNo.ps1" />

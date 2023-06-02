@@ -44,12 +44,12 @@ Value::Value(List list)
     data = list;
     }
 
-void Value::to_json(std::ostringstream& sstr) const
+void Value::to_json(std::ostringstream& sstr, const char* stream) const
     {
     sstr << "{";
     sstr << "\"line\":" << this->stmtRange.start.line << "";
     if (id.type != TokenType::NULLPTR)
-        sstr << ",\"id\":\"" << id.stringValue << "\"";
+        sstr << ",\"id\":\"" << std::string(&stream[id.range.start.cursorPos], &stream[id.range.end.cursorPos]) << "\"";
     else
         sstr << ",\"id\":\"_\"";
     sstr << ",\"type\":\"" << to_string(type) << "\"";

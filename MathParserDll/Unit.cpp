@@ -161,15 +161,14 @@ UnitsView::UnitsView(Globals& globals)
     removeShortDateUnits();
     }
 
-Unit::Unit(const Token& idToken)
+Unit::Unit(const std::string& id, const Range& range)
+    : id(id), range(range)
     {
-    this->id = idToken.stringValue;
-    this->range = idToken;
     }
 
 Unit Unit::NONE() 
     { 
-    return Unit(Token::Null(-1)); 
+    return Unit("", Range());
     }
 
 void UnitsView::addClass(UnitProperty unitClass)

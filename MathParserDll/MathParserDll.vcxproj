@@ -213,6 +213,7 @@
     <ClCompile Include="json.cpp" />
     <ClCompile Include="List.cpp" />
     <ClCompile Include="NodeFactory.cpp" />
+    <ClCompile Include="Nodes.cpp" />
     <ClCompile Include="Number.cpp" />
     <ClCompile Include="OperatorDef.cpp" />
     <ClCompile Include="Parser.cpp" />

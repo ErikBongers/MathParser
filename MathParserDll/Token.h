@@ -56,25 +56,19 @@ enum class TokenType
 class Token
     {
     public:
-        static Token Null(char sourceIndex) { return Token(TokenType::NULLPTR, {0, 0, 0}, sourceIndex); }
+        static Token Null() { return Token(TokenType::NULLPTR, 0, {0, 0, 0, -1}); }
         bool isNull() const { return type == TokenType::NULLPTR;}
         TokenType type;
-        std::string stringValue;
-        char sourceIndex = -1;
-
+        Range range;
         ValueType valueType = ValueType::NONE;
         Number numberValue = Number(0.0,0, Range());
-        //Timepoint
-        //Duration
-        //Calendar
 
-        TokenPos pos;
         bool isFirstOnLine = false;
-        Token() : Token(TokenType::NULLPTR, {0, 0, 0}, -1) {}
-        Token(TokenType type, char c, TokenPos pos, char sourceIndex);
-        Token(TokenType type, Number n, TokenPos pos, char sourceIndex);
-        Token(TokenType type, std::string str, TokenPos pos, char sourceIndex);
-        Token(TokenType type, TokenPos pos, char sourceIndex);
+        Token() : Token(TokenType::NULLPTR, -1, {0, 0, 0}) {}
+        Token(TokenType type, unsigned int len, TokenPos end);
+        Token(TokenType type, Number n, unsigned int len, TokenPos end);
+        Token(TokenType type, Number n, TokenPos pos, TokenPos end);
+        Token(TokenType type, TokenPos pos, TokenPos end);
     };
 
 

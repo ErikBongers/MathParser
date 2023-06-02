@@ -16,7 +16,7 @@ class Unit
         Unit* subUnit2 = nullptr;
 
         //Unit(const std::string& id) :id(id) {}
-        Unit(const Token& idToken);
+        Unit(const std::string& id, const Range& range);
         Unit() {}
         const char* to_string() const;
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);

@@ -68,7 +68,7 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     }
 
 CustomFunction::CustomFunction(FunctionDefExpr& functionDefExpr, CodeBlock&& codeBlock)
-    : FunctionDef(codeBlock.scope->globals, functionDefExpr.id.stringValue, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), codeBlock(std::move(codeBlock))
+    : FunctionDef(codeBlock.scope->globals, functionDefExpr.id, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), codeBlock(std::move(codeBlock))
     {
     }
 
@@ -80,11 +80,11 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     //args.size and params.size should be equal.
     for (size_t i = 0; i < args.size(); i++)
         {
-        paramVariables.emplace(functionDefExpr.params[i].stringValue, args[i]);
+        paramVariables.emplace(functionDefExpr.params[i], args[i]);
         }
     codeBlock.scope->setVariables(paramVariables);
     Resolver resolver(codeBlock);
-    return resolver.resolveBlock(range,functionDefExpr.id.stringValue);
+    return resolver.resolveBlock(range,functionDefExpr.id);
     }
 
 std::vector<std::string> FunctionKeys::trig = { "sin", "cos", "tan", "asin", "acos", "atan", "arcsin", "arccos", "arctan"};

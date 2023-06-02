@@ -30,7 +30,7 @@ class NoneExpr : public Node
     {
     public:
         Token token;
-        Range range() const { return Range(token); }
+        Range range() const { return token.range; }
     private:
         ~NoneExpr() {}
         NoneExpr() : Node(NodeType::NONE) {};
@@ -86,7 +86,8 @@ class ListExpr : public Node
 class CallExpr : public Node
     {
     public:
-        Token functionName;
+        std::string functionName; //this may not be a stream range, but a translated function name: e.g. x++ -> _inc(x)
+        Range functionNameRange; // original range in the stream
         ListExpr* arguments = nullptr;
         Range range() const;
     private:
@@ -169,7 +170,8 @@ class FunctionDefExpr : public Node
         friend class NodeFactory;
     public:
         Range r;
-        Token id;
-        std::vector<Token> params;
+        std::string id; //id may be a decorated name in case of polymorphism.
+        Range idRange; //original range in stream.
+        std::vector<std::string> params;
         Range range() const;
     };

@@ -29,15 +29,6 @@ Range& Range::operator+=(const Range& r)
     return *this;
     }
 
-Range::Range(const Token& t)
-    {
-    start = t.pos;
-    end = t.pos;
-    this->sourceIndex = t.sourceIndex;
-    end.cursorPos += (unsigned)t.stringValue.size();
-    end.linePos += (unsigned)t.stringValue.size();
-    }
-
 void Range::to_json(std::ostringstream& sstr) const
     {
     sstr << "{";
@@ -45,6 +36,6 @@ void Range::to_json(std::ostringstream& sstr) const
     sstr << ",\"startPos\":" << start.linePos;
     sstr << ",\"endLine\":" << end.line;
     sstr << ",\"endPos\":" << end.linePos;
-    sstr << ",\"sourceIndex\":" << (int)sourceIndex;
+    sstr << ",\"sourceIndex\":" << (int)start.sourceIndex;
     sstr << "}";
     }

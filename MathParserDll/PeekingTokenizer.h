@@ -14,6 +14,7 @@ class PeekingTokenizer
         Token peekSecond();
         void tokenizeComments(bool comments);
         void tokenizeNewlines(bool set);
+        std::string getText(const Range&range);
         std::string getText(unsigned int start, unsigned end);
         const Token& getCurrentToken() const;
         unsigned int getPos() const; //TODO: return a Pos object instead of int. Also see getSourceIndex()

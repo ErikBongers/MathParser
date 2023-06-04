@@ -53,34 +53,3 @@ class CustomFunction: public FunctionDef
         CustomFunction(FunctionDefExpr& functionDefExpr, CodeBlock&& codeBlock);
         Value execute(std::vector<Value>& args, const Range& range) override;
     };
-
-
-class FunctionKeys
-    {
-    public:
-        static std::vector<std::string> trig;
-        static std::vector<std::string> arithm;
-        static std::vector<std::string> date;
-        std::vector<std::string> all;
-        FunctionKeys();
-    };
-
-struct Globals;
-enum class FunctionType { DATE, TRIG, ARITHM, ALL };
-
-class FunctionsView
-    {
-    private:
-        Globals& globals;
-        std::set<std::string> defs;
-        static FunctionKeys functionKeys;
-        const std::vector<std::string>& getFuncKeyList(FunctionType type);
-    public:
-        FunctionsView(const FunctionsView&) = default;
-        FunctionsView(Globals& globals);
-        FunctionDef* get(const std::string& key);
-        bool exists(const std::string& key) { return defs.count(key) != 0; }
-        void addFunctions(FunctionType type);
-        void removeFunctions(FunctionType type);
-        void setDefs(const FunctionsView& uv) { this->defs = uv.defs; }
-    };

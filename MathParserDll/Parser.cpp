@@ -5,10 +5,9 @@
 #include "Variable.h"
 #include "Scope.h"
 
-Parser::Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& scope)
-    : tok(stream, sourceIndex), codeBlock(std::move(scope))
+Parser::Parser(std::unique_ptr<Scope>&& scope, char sourceIndex)
+    : tok(scope->sources[sourceIndex], sourceIndex), codeBlock(std::move(scope))
     {
-    codeBlock.scope->_stream = stream;
     }
 
 void Parser::parse()

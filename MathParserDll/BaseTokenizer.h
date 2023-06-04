@@ -28,10 +28,11 @@ class BaseTokenizer
         unsigned int getPos() const { return state.nextPos.cursorPos;}
         const Token& getCurrentToken() const { return state.token; }
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
-        BaseTokenizer(const char* stream) 
+        BaseTokenizer(const char* stream, char sourceIndex) 
             : _stream(stream) 
             { 
             size = strlen(stream); 
+            state.nextPos.sourceIndex = sourceIndex;
             }
 
         void skipWhiteSpace()

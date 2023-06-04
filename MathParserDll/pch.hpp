@@ -15,4 +15,5 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <cassert>
 #endif //PCH_H

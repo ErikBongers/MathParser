@@ -6,9 +6,13 @@
 #include "Variable.h"
 #include <memory>
 #include "Function.h"
+#include "FunctionsView.h"
 
 struct Globals;
 struct CodeBlock;
+class Scope;
+class Value;
+class CustomFunction;
 
 class ConstantsView
     {
@@ -32,9 +36,9 @@ class Scope
         //settings
         DateFormat dateFormat = DateFormat::UNDEFINED;
         std::map<std::string, CustomFunction*> localFunctions;
-        const char* _stream;
+        std::vector<const char*> sources;
 
-        Scope(Globals& globals, const char* stream);
+        Scope(Globals& globals);
         ~Scope();
         std::unique_ptr<Scope> copyForScript();
         std::unique_ptr<Scope> copyForFunction();
@@ -47,8 +51,8 @@ class Scope
         void setVariables(const std::map<std::string, Value>& variables);
         void emplaceVarDef(const std::string& id, Variable&& variable) { varDefs.emplace(id, std::move(variable)); }
         void emplaceVariable(const std::string& id, Value&& value) { variables.emplace(id, std::move(value)); }
-        std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
-        std::string getText(const Range& range) { return std::string(&_stream[range.start.cursorPos], &_stream[range.end.cursorPos]); }
+        std::string getText(char sourceIndex, unsigned int start, unsigned end) { return std::string(&sources[sourceIndex][start], &sources[sourceIndex][end]); }
+        std::string getText(const Range& range) { return std::string(&sources[range.start.sourceIndex][range.start.cursorPos], &sources[range.end.sourceIndex][range.end.cursorPos]); }
 
     private:
         CustomFunction* getLocalFunction(const std::string& name);

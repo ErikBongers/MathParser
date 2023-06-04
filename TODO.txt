@@ -1,5 +1,7 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
+* Result.text: convert to Range.
+
 * to_json() function should take sources[] instead of _stream.
 
 * www: double horizontal scrollbars in text fields.
@@ -8,6 +10,7 @@
   > move this to output code (to_json()? )
 
 * Allow underscores in IDs?
+  > and in numbers?
 
 * TokenPos should be immutable because line, linePos and cursorPos are related.
 

@@ -10,6 +10,8 @@
 #include <vector>
 #include <variant>
 
+class Scope;
+
 class Value
     {
     public:
@@ -35,7 +37,7 @@ class Value
         Value(const Date date);
         Value(Duration duration);
         Value(List list);
-        void to_json(std::ostringstream& sstr, const char* stream) const;
+        void to_json(std::ostringstream& sstr, const Scope& scope) const;
         Number& getNumber() { return std::get<Number>(data); }
         bool isNumber() { return std::get_if<Number>(&data) != nullptr; }
         Date& getDate() { return std::get<Date>(data); }

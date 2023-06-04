@@ -3,7 +3,7 @@
 #include <algorithm>
 
 Tokenizer::Tokenizer(const char* stream, char sourceIndex) 
-    : BaseTokenizer(stream), sourceIndex(sourceIndex)
+    : BaseTokenizer(stream, sourceIndex), sourceIndex(sourceIndex)
     { 
     }
 

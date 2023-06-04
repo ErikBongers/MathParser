@@ -15,7 +15,7 @@ class Parser
         TokenPos statementStartPos;
     public:
         CodeBlock codeBlock;
-        Parser(const char* stream, char sourceIndex, std::unique_ptr<Scope>&& scope);
+        Parser(std::unique_ptr<Scope>&& scope, char sourceIndex);
         void parse();
     private:
         Statement* parseStatement();

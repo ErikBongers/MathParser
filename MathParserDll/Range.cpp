@@ -29,6 +29,12 @@ Range& Range::operator+=(const Range& r)
     return *this;
     }
 
+Range::Range(TokenPos start, TokenPos end)
+    : start(start), end(end)
+    {
+    assert(start.sourceIndex == end.sourceIndex);
+    }
+
 void Range::to_json(std::ostringstream& sstr) const
     {
     sstr << "{";

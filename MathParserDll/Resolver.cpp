@@ -26,13 +26,13 @@ std::string Resolver::resolve()
             {
             if(stmt->node->type != NodeType::DEFINE || result.errors.size() != 0)
                 {
-                result.to_json(sstr, codeBlock.scope->_stream);
+                result.to_json(sstr, *codeBlock.scope);
                 sstr << ",";
                 }
             }
         else
             {
-            result.to_json(sstr, codeBlock.scope->_stream);
+            result.to_json(sstr, *codeBlock.scope);
             sstr << ",";
             }
         }
@@ -150,7 +150,8 @@ Value Resolver::resolveStatement(const Statement& stmt)
         result = resolveNode(*stmt.node);
     else
         result.onlyComment = true;
-    result.text = codeBlock.scope->getText(stmt.text);
+    if(!stmt.text.isEmpty())
+        result.text = codeBlock.scope->getText(stmt.text);
     if(!stmt.comment_line.isEmpty())
         result.comment_line = stmt.comment_line;
     result.mute = stmt.mute;

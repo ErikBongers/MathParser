@@ -5,8 +5,8 @@
 #include "Function.h"
 #include "Parser.h"
 
-Scope::Scope(Globals& globals, const char* stream) 
-    : globals(globals), _stream(stream), units(globals), functions(globals), constants(globals)
+Scope::Scope(Globals& globals) 
+    : globals(globals), units(globals), functions(globals), constants(globals)
     {
     }
 
@@ -18,19 +18,20 @@ Scope::~Scope()
 
 std::unique_ptr<Scope> Scope::copyForScript()
     {
-    auto newScope = std::make_unique<Scope>(globals, _stream);
+    auto newScope = std::make_unique<Scope>(globals);
     newScope->parentScope = this;
     return newScope; 
     }
 
 std::unique_ptr<Scope> Scope::copyForFunction()
     {
-    auto newScope = std::make_unique<Scope>(globals, _stream);
+    auto newScope = std::make_unique<Scope>(globals);
     newScope->parentScope = this;
     newScope->units.setDefs(units);
+    newScope->sources = sources;
     //settings;
     newScope->dateFormat = dateFormat;
-    //don't copy variables
+    //don't copy the variables!
 
     return newScope;
     }

@@ -6,6 +6,7 @@
 #include "Resolver.h"
 #include "Date.h"
 #include "GlobalFunctions.h"
+#include "FunctionsView.h"
 
 void FunctionDefs::init()
     {

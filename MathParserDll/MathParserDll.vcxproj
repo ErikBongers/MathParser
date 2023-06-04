@@ -176,6 +176,7 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="FunctionsView.h" />
     <ClInclude Include="GlobalFunctions.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="json.h" />
@@ -203,11 +204,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="api.cpp" />
+    <ClCompile Include="CodeBlock.cpp" />
     <ClCompile Include="Date.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Duration.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="Function.cpp" />
+    <ClCompile Include="FunctionsView.cpp" />
     <ClCompile Include="GlobalFunctions.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="json.cpp" />

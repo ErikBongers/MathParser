@@ -3,6 +3,7 @@
 #include "json.h"
 #include <sstream>
 #include <bitset>
+#include "Scope.h"
 
 Value::Value(Number n)
     : type(ValueType::NUMBER)
@@ -44,17 +45,19 @@ Value::Value(List list)
     data = list;
     }
 
-std::string getText(const Range& range, const char* stream)
+std::string getText(const Range& range, const Scope& scope)
     {
-    return std::string(&stream[range.start.cursorPos], &stream[range.end.cursorPos]);
+    if(range.isEmpty())
+        return "";
+    return std::string(&scope.sources[range.start.sourceIndex][range.start.cursorPos], &scope.sources[range.start.sourceIndex][range.end.cursorPos]);
     }
 
-void Value::to_json(std::ostringstream& sstr, const char* stream) const
+void Value::to_json(std::ostringstream& sstr, const Scope& scope) const
     {
     sstr << "{";
     sstr << "\"line\":" << this->stmtRange.start.line << "";
     if (id.type != TokenType::NULLPTR)
-        sstr << ",\"id\":\"" << getText(id.range, stream) << "\"";
+        sstr << ",\"id\":\"" << getText(id.range, scope) << "\"";
     else
         sstr << ",\"id\":\"_\"";
     sstr << ",\"type\":\"" << to_string(type) << "\"";
@@ -104,7 +107,7 @@ void Value::to_json(std::ostringstream& sstr, const char* stream) const
         << escape_json(text)
         << "\"";
     sstr << ",\"comment\":";
-    sstr <<  "\"" << escape_json(make_one_line(getText(comment_line, stream))) << "\"";
+    sstr <<  "\"" << escape_json(make_one_line(getText(comment_line, scope))) << "\"";
     sstr << ",\"onlyComment\": " << (onlyComment?"true":"false");
     sstr << ",\"mute\":" << (mute?"true":"false");
     sstr <<  ",\"range\":";

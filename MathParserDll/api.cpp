@@ -15,8 +15,9 @@ std::string result = "";
 int C_DECL parse(const char* str)
     {
     Globals globals;
-    auto scope = std::make_unique<Scope>(globals, str);
-    Parser parser(str, 1, std::move(scope));
+    auto scope = std::make_unique<Scope>(globals);
+    scope->sources.push_back(str);
+    Parser parser(std::move(scope), 0);
     parser.parse();
     std::map<std::string, Value> nada;
     Resolver resolver(parser.codeBlock);

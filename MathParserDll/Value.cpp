@@ -104,7 +104,7 @@ void Value::to_json(std::ostringstream& sstr, const Scope& scope) const
         }
     sstr << "]";
     sstr << ",\"text\":\""
-        << escape_json(text)
+        << escape_json(getText(text, scope))
         << "\"";
     sstr << ",\"comment\":";
     sstr <<  "\"" << escape_json(make_one_line(getText(comment_line, scope))) << "\"";

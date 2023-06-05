@@ -1,8 +1,8 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* Result.text: convert to Range.
+* Fix functions
 
-* to_json() function should take sources[] instead of _stream.
+* Fix durations
 
 * www: double horizontal scrollbars in text fields.
 
@@ -11,8 +11,6 @@
 
 * Allow underscores in IDs?
   > and in numbers?
-
-* TokenPos should be immutable because line, linePos and cursorPos are related.
 
 * Implement electronic components notation
   > R103 = 10000 Ohm;

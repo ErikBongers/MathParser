@@ -150,8 +150,7 @@ Value Resolver::resolveStatement(const Statement& stmt)
         result = resolveNode(*stmt.node);
     else
         result.onlyComment = true;
-    if(!stmt.text.isEmpty())
-        result.text = codeBlock.scope->getText(stmt.text);
+    result.text = stmt.text;
     if(!stmt.comment_line.isEmpty())
         result.comment_line = stmt.comment_line;
     result.mute = stmt.mute;

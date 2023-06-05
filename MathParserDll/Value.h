@@ -22,7 +22,7 @@ class Value
         std::variant<Number, Date, Duration, List> data;
     public:
         std::vector<Error> errors;
-        std::string text;
+        Range text;
         Range comment_line;
         bool onlyComment = false;
         bool mute = false;

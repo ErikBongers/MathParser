@@ -1,7 +1,5 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* Fix functions
-
 * Fix durations
 
 * www: double horizontal scrollbars in text fields.

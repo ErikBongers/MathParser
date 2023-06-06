@@ -3,6 +3,8 @@
 
 std::string to_string(ValueType type)
     {
+    return std::string(1, (char)type);
+#ifdef VERBOSE
     switch (type)
         {
         case ValueType::NUMBER: return "NUMBER";
@@ -13,4 +15,5 @@ std::string to_string(ValueType type)
         case ValueType::NONE: return "NONE";
         default: return "?VALUETYPE?";
         }
+#endif
     }

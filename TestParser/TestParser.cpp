@@ -6,6 +6,23 @@
 #include "../MathParserDll/Function.h"
 #include "../MathParserDll/Scope.h"
 
+#ifdef VERBOSE
+const std::string VALTYPE_NUMBER = "NUMBER";
+const std::string VALTYPE_TIMEPOINT = "TIMEPOINT";
+const std::string VALTYPE_CALENDAR = "CALENDAR";
+const std::string VALTYPE_DURATION = "DURATION";
+const std::string VALTYPE_LIST = "LIST";
+const std::string VALTYPE_NONE = "NONE";
+#else
+const std::string VALTYPE_NUMBER = "N";
+const std::string VALTYPE_TIMEPOINT = "T";
+const std::string VALTYPE_CALENDAR = "C";
+const std::string VALTYPE_DURATION = "D";
+const std::string VALTYPE_LIST = "L";
+const std::string VALTYPE_NONE = "_";
+#endif
+
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace nlohmann;
 namespace TestParser
@@ -75,14 +92,14 @@ hundred(a);
             assertDate("'01 jan 2022'+2days", 3, 1, 2022);
             assertError("'01 jan 2022'+2", "DUR_INV_FRAG");
             assertDate(R"CODE(
-date='Jan 12, 2022'; 
+dat='Jan 12, 2022'; 
 duur=2 days, 3 months;
-date+duur;
+dat+duur;
                     )CODE", 14, 4, 2022);
         assertDate(R"CODE(
-date='Jan 12, 2022'; 
+dat='Jan 12, 2022'; 
 duur=360 days, 0 months; //calculated year of 30*12 days
-date+duur;
+dat+duur;
                     )CODE", 12, 1, 2023);
             assertDuration("duur=2 days, 3 months; duur + 2 days", 4, 3);
             }
@@ -363,7 +380,7 @@ a;
             auto result = parseSingleResult(stmt);
             logJson(result);
             assertErrors(result, stmt, errorId);
-            if(result.j["type"] != "TIMEPOINT")
+            if(result.j["type"] !=  VALTYPE_TIMEPOINT)
                 {
                 std::string strType = result.j["type"];
                 msg = std::format("Expected TIMEPOINT, found {0}", strType);

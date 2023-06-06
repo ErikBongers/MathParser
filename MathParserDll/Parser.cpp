@@ -250,77 +250,73 @@ Statement* Parser::parseExprStatement(Statement* stmt)
 Node* Parser::parseAssignExpr()
     {
     auto t = tok.peek();
-    if (t.type == TokenType::ID)
-        {
-        auto id = t;
-        t = tok.peekSecond();
-        if (t.type == TokenType::EQ)
-            {
-            tok.next();//consume ID
-            tok.next();//consume EQ
-            AssignExpr* assign = nodeFactory.createAssign();
-            assign->Id = id;
-            assign->expr = reduceList(parseListExpr());
-
-            codeBlock.scope->emplaceVarDef(tok.getText(assign->Id.range), Variable{ assign->Id, assign->expr });
-            return assign;
-            }
-        else if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
-            {
-            tok.next(); //consume ID
-            auto operToken = tok.next();//consume EQ
-            AssignExpr* assign = nodeFactory.createAssign();
-            assign->Id = id;
-            //prepare components to fabricate the new add or mult expression.
-            IdExpr* idExpr = nodeFactory.createIdExpr();
-            idExpr->Id = id;
-            TokenType oper;
-            switch (t.type)
-                {
-                case TokenType::EQ_PLUS: oper = TokenType::PLUS; break;
-                case TokenType::EQ_MIN: oper = TokenType::MIN; break;
-                case TokenType::EQ_MULT: oper = TokenType::MULT; break;
-                case TokenType::EQ_DIV: oper = TokenType::DIV; break;
-                default:break;
-                }
-
-            //build expression
-            if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV)
-                {
-                BinaryOpExpr* binOpExpr = nodeFactory.createBinaryOp();
-                binOpExpr->n1 = idExpr;
-                binOpExpr->op = Token(oper, operToken.range.start, operToken.range.end);
-                binOpExpr->n2 = parseAddExpr();
-                assign->expr = binOpExpr;
-                }
-            else if (t.type == TokenType::EQ_UNIT)
-                {
-                PostfixExpr* pfix = nodeFactory.createPostfix();
-                pfix->expr = idExpr;
-                assign->Id = id;
-                assign->expr = pfix;
-                auto t = tok.peek();
-                if (t.type == TokenType::ID)
-                    {
-                    tok.next();
-                    pfix->postfixId = t;
-                    }
-                else
-                    { //valid syntax: clear the unit, if any.
-                    pfix->postfixId = Token::Null();
-                    }
-                }
-            return assign;
-            }
-        else
-            {
-            return nullptr;
-            }
-        }
-    else
-        {
+    if (t.type != TokenType::ID)
         return nullptr;
+    auto id = t;
+    t = tok.peekSecond();
+    if(t.type < TokenType::EQ || t.type > TokenType::EQ_UNIT)
+        return nullptr;
+    
+    if (t.type == TokenType::EQ)
+        {
+        tok.next();//consume ID
+        tok.next();//consume EQ
+        AssignExpr* assign = nodeFactory.createAssign();
+        assign->Id = id;
+        assign->expr = reduceList(parseListExpr());
+
+        codeBlock.scope->emplaceVarDef(tok.getText(assign->Id.range), Variable{ assign->Id, assign->expr });
+        return assign;
         }
+    
+    if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV || t.type == TokenType::EQ_UNIT)
+        {
+        tok.next(); //consume ID
+        auto operToken = tok.next();//consume EQ
+        AssignExpr* assign = nodeFactory.createAssign();
+        assign->Id = id;
+        //prepare components to fabricate the new add or mult expression.
+        IdExpr* idExpr = nodeFactory.createIdExpr();
+        idExpr->Id = id;
+        TokenType oper;
+        switch (t.type)
+            {
+            case TokenType::EQ_PLUS: oper = TokenType::PLUS; break;
+            case TokenType::EQ_MIN: oper = TokenType::MIN; break;
+            case TokenType::EQ_MULT: oper = TokenType::MULT; break;
+            case TokenType::EQ_DIV: oper = TokenType::DIV; break;
+            default:break;
+            }
+
+        //build expression
+        if (t.type == TokenType::EQ_PLUS || t.type == TokenType::EQ_MIN || t.type == TokenType::EQ_MULT || t.type == TokenType::EQ_DIV)
+            {
+            BinaryOpExpr* binOpExpr = nodeFactory.createBinaryOp();
+            binOpExpr->n1 = idExpr;
+            binOpExpr->op = Token(oper, operToken.range.start, operToken.range.end);
+            binOpExpr->n2 = parseAddExpr();
+            assign->expr = binOpExpr;
+            }
+        else if (t.type == TokenType::EQ_UNIT)
+            {
+            PostfixExpr* pfix = nodeFactory.createPostfix();
+            pfix->expr = idExpr;
+            assign->Id = id;
+            assign->expr = pfix;
+            auto t = tok.peek();
+            if (t.type == TokenType::ID)
+                {
+                tok.next();
+                pfix->postfixId = t;
+                }
+            else
+                { //valid syntax: clear the unit, if any.
+                pfix->postfixId = Token::Null();
+                }
+            }
+        return assign;
+        }
+    return nullptr;
     }
 
 Node* Parser::parseAddExpr()

@@ -192,7 +192,7 @@ Token Tokenizer::nextUnfiltered()
                 return parseId(c);
                 }
             else
-                return Token(UNKNOWN, c, state.nextPos-1);
+                return Token(UNKNOWN, 1, state.nextPos);
         }
     }
 

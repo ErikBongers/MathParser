@@ -84,6 +84,10 @@ void Value::to_json(std::ostringstream& sstr, const Scope& scope) const
         sstr << ",\"values\":";
         std::get<List>(data).to_json(sstr);
         }
+    else if (type == ValueType::FUNCTION)
+        {
+        //don't do nothin'
+        }
 
     sstr << ",\"errors\":[";
     std::string comma = "";

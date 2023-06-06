@@ -17,12 +17,16 @@ enum class TokenType
     MULT,
     INC,
     DEC,
+
+    //keep these together!
     EQ,
     EQ_PLUS,
     EQ_MIN,
     EQ_MULT,
     EQ_DIV,
     EQ_UNIT,
+    //keep above together!
+
     NUMBER,
     POWER,
     ID,

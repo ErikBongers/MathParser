@@ -21,6 +21,7 @@ class FunctionDef
 
         bool isCorrectArgCount(size_t argCnt);
         Value call(std::vector<Value>& args, const Range& range);
+        virtual std::vector<Error> getErrors() { return std::vector<Error>(); }
     private:
         virtual Value execute(std::vector<Value>& args, const Range& range) = 0;
     };
@@ -52,4 +53,5 @@ class CustomFunction: public FunctionDef
         CodeBlock codeBlock;
         CustomFunction(FunctionDefExpr& functionDefExpr, CodeBlock&& codeBlock);
         Value execute(std::vector<Value>& args, const Range& range) override;
+        virtual std::vector<Error> getErrors() override;
     };

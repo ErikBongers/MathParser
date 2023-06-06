@@ -88,6 +88,17 @@ Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
     return resolver.resolveBlock(range,functionDefExpr.id);
     }
 
+std::vector<Error> CustomFunction::getErrors()
+    {
+    std::vector<Error> errors;
+    for (auto& stmt : codeBlock.statements)
+        {    
+        if (stmt->error.id != ErrorId::NONE)
+            errors.push_back(stmt->error);
+        }
+    return errors;
+    }
+
 std::vector<std::string> FunctionKeys::trig = { "sin", "cos", "tan", "asin", "acos", "atan", "arcsin", "arccos", "arctan"};
 std::vector<std::string> FunctionKeys::arithm = { "round", "trunc", "floor", "ceil", "abs", "max", "min"};
 std::vector<std::string> FunctionKeys::date = { "now", "date"};

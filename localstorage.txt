@@ -1,3 +1,8 @@
+function xxx() 
+{
+brol=a;
+} 
+xxx(); 
 d = date(2022, 12, 13);
 !;
 max(sort(4,5,1,199, 300, 3));
@@ -17,8 +22,8 @@ lst=factors(52);
 test='31/03/2015';
 list = 2015, 1, 13;
 aDate= date(list);
-anotherDate= date(2015, 1, 14);
-x=now().year;
+anotherDate= date(2015, 1, 14); 
+x=now().year; 
 function ageThisYear(bday)
   {
   #define ymd

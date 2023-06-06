@@ -182,7 +182,15 @@ Value Resolver::resolveNode(const Node& node)
 
 Value Resolver::resolveFunctionDef(const FunctionDefExpr& expr)
     {
-    return Value(); //none
+    Value v;
+    v.type = ValueType::FUNCTION;
+    v.id =  Token(TokenType::ID, expr.idRange.start, expr.idRange.end);
+    auto fd = codeBlock.scope->getFunction(expr.id);
+    if (fd == nullptr)
+        return v;
+
+    v.errors = fd->getErrors();
+    return v;
     }
 
 Value Resolver::resolveNone(const NoneExpr& expr)

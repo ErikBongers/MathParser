@@ -1,5 +1,9 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
+* Implicit mult: add warning.
+  m=p/PI;
+  3m; //should give warning: ambiguous: m is both a variable and a unit.
+
 * Report errors in function bodies.
   > Move NOT_EXIST checks for IDs from Resolver to Parser.
 * Add warning for explicit mult.

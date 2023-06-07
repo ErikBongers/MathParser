@@ -237,6 +237,15 @@ Value Resolver::resolveBinaryOp(const BinaryOpExpr& expr)
         result.errors.push_back(expr.error);
     if(result.type ==ValueType::NUMBER && !expr.unit.isClear())
         result.setNumber(result.getNumber().convertToUnit(expr.unit, codeBlock.scope->units));
+    if(expr.implicitMult)
+        {
+        if(expr.n2->is(NodeType::IDEXPR))
+            {
+            if( codeBlock.scope->units.exists(codeBlock.scope->getText(expr.n2->range())))
+                result.errors.push_back(Error(ErrorId::W_UNIT_IS_VAR, expr.n2->range(), codeBlock.scope->getText(expr.n2->range())));
+            }
+        }
+
     return result;
     }
 

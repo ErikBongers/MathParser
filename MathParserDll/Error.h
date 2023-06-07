@@ -39,6 +39,7 @@ enum class ErrorId
     W_POW_IMPL_MULT,
     W_ASSUMING_UNIT,
     W_VAR_IS_UNIT,
+    W_UNIT_IS_VAR,
     W_VAR_IS_FUNCTION,
     };
 

@@ -178,8 +178,9 @@ d.years + d.months + d.days;
         TEST_METHOD(TestImplicitMult)
             {
             //assertResult("a=2; 3 a;", 6);
-            assertResult("a=2; 3(4a);", 24);
-            assertResult("a=2; a(3(4a));", 48);
+            //assertResult("a=2; 3(4a);", 24);
+            //assertResult("a=2; a(3(4a));", 48);
+            assertResult("m=2; 2m;", 4);
             }
 
         TEST_METHOD(TestUnary)

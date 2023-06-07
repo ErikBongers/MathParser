@@ -127,6 +127,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::W_ASSUMING_UNIT, {ErrorId::W_ASSUMING_UNIT, "W_ASSUMING_UNIT", "Warning: not all values have a unit. Assuming same unit as the other values."}},
         {ErrorId::W_VAR_IS_UNIT, {ErrorId::W_VAR_IS_UNIT, "W_VAR_IS_UNIT", "Warning; variable {0} overrides unit with same name."}},
         {ErrorId::W_VAR_IS_FUNCTION, {ErrorId::W_VAR_IS_FUNCTION, "W_VAR_IS_FUNCTION", "Warning; variable {0} overrides function with same name."}},
+        {ErrorId::W_UNIT_IS_VAR, {ErrorId::W_UNIT_IS_VAR, "W_UNIT_IS_VAR", "Warning: ambiguous implicit multiplication: {0} is both a variable and a unit."}},
 
         {ErrorId::UNIT_PROP_DIFF, {ErrorId::UNIT_PROP_DIFF, "UNIT_PROP_DIFF", "The units are not for the same property (lenght, temperature,...)."}},
         {ErrorId::CONST_REDEF, {ErrorId::CONST_REDEF, "CONST_REDEF", "Warning: redefinition of constant {0}."}},

@@ -56,15 +56,15 @@ Module.onRuntimeInitialized = async _ => {
 
 	Module.formatResult = function (line) {
 		let strFormatted = "";
-		if (line.type == "NUMBER") {
+		if (line.type == "NUMBER" || line.type == "N") {
 			strFormatted = Module.formatNumber(line.number);
 		}
-		else if (line.type == "TIMEPOINT")
+		else if (line.type == "TIMEPOINT" || line.type == "T")
 			strFormatted = line.date.formatted;
-		else if (line.type == "DURATION") {
+		else if (line.type == "DURATION" || line.type == "D") {
 			strFormatted = line.duration.years + " years, " + line.duration.months + " months, " + line.duration.days + " days";
 		}
-		else if (line.type == "LIST") {
+		else if (line.type == "LIST" || line.type == "L") {
 			strFormatted = Module.formatList(line.values);
 		}
 		return strFormatted;

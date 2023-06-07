@@ -1,17 +1,12 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
 * Report errors in function bodies.
-  > blocks are not part of the result list.
-  > errors in functions are only detected when the codeBlock is executed.
-    > how to phantom-execute a codeBlock?
-    > dummy values won't work.
-    > just scan for undefined IDs?
-    > If parser was to check for existing IDs, that would help
-      > otherwise the Resolver would have to crawl through the code to find non-existing vars.
-      > problem is that parser doesn't create a var list, but Resolver does.
-        > resolveAssign does a Scope.emplaceVar() !!!
-
-* Value.id ; replace Token by Range?
+  > Move NOT_EXIST checks for IDs from Resolver to Parser.
+* Add warning for explicit mult.
+  > 123 456 --> very unlikely to be a mult!
+  > a 2 --> same here
+  > 2 a --> meh...probably ok?
+  > a b --> warning
 
 * www: double horizontal scrollbars in text fields.
 

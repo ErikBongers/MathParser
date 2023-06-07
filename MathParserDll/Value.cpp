@@ -21,7 +21,7 @@ Value::Value(const std::vector<Error>& errors)
     this->errors.insert(this->errors.begin(), errors.begin(), errors.end());
     }
 
-Value::Value(Token id, Number n)
+Value::Value(Range id, Number n)
     : id(id), type(ValueType::NUMBER)
     {
     data = n;
@@ -56,8 +56,8 @@ void Value::to_json(std::ostringstream& sstr, const Scope& scope) const
     {
     sstr << "{";
     sstr << "\"line\":" << this->stmtRange.start.line << "";
-    if (id.type != TokenType::NULLPTR)
-        sstr << ",\"id\":\"" << getText(id.range, scope) << "\"";
+    if (!id.isEmpty())
+        sstr << ",\"id\":\"" << getText(id, scope) << "\"";
     else
         sstr << ",\"id\":\"_\"";
     sstr << ",\"type\":\"" << to_string(type) << "\"";

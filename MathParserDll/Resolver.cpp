@@ -184,7 +184,7 @@ Value Resolver::resolveFunctionDef(const FunctionDefExpr& expr)
     {
     Value v;
     v.type = ValueType::FUNCTION;
-    v.id =  Token(TokenType::ID, expr.idRange.start, expr.idRange.end);
+    v.id =  expr.idRange;
     auto fd = codeBlock.scope->getFunction(expr.id);
     if (fd == nullptr)
         return v;
@@ -274,7 +274,7 @@ Value Resolver::resolveAssign(const AssignExpr& assign)
         result.errors.push_back(Error(ErrorId::CONST_REDEF, assign.Id.range, strId));
     var = result; //do not store the value with the id. The value of a variable is just the value.
     var.errors.clear(); //don't keep the errors with the variables, but only keep thew with the statement's result.
-    result.id = assign.Id;
+    result.id = assign.Id.range;
     if (assign.error.id != ErrorId::NONE)
         result.errors.push_back(assign.error);
     return result;

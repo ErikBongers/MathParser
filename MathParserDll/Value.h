@@ -15,7 +15,7 @@ class Scope;
 class Value
     {
     public:
-        Token id = Token::Null(); //optional, in case of a variable.
+        Range id;
         ValueType type = ValueType::NONE;
         
     private:
@@ -31,7 +31,7 @@ class Value
 
         Value() {}
         Value(Number n);
-        Value(Token id, Number n);
+        Value(Range id, Number n);
         Value(const Error& error);
         Value(const std::vector<Error>& errors);
         Value(const Date date);

@@ -11,6 +11,7 @@
 
 * sin(x) -> x MUST have a unit of DEG/RAD
   > if 'strict' is defined?
+  > what about sin(PI)? PI doesn't have a rad unit.
 
 * allow #define spanning multiple lines, ended by an empty line.
 

@@ -41,6 +41,7 @@ enum class ErrorId
     W_VAR_IS_UNIT,
     W_UNIT_IS_VAR,
     W_VAR_IS_FUNCTION,
+    W_EXPLICIT_UNITS_EXPEDTED,
     };
 
 

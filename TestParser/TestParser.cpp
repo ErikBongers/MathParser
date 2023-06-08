@@ -166,6 +166,11 @@ d.years + d.months + d.days;
 
                         )CODE"
                          , 0);
+            assertError(R"CODE(
+#define strict
+sin(3);
+                        )CODE"
+                        , "W_EXPLICIT_UNITS_EXPEDTED");
             }
 
         TEST_METHOD(TestPrecedence)

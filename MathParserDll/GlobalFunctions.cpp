@@ -108,9 +108,10 @@ Value Sin::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
         arg = scope.globals.unitsView.get("deg").toSI(arg);
-    else if (scope.strict && args[0].getNumber().unit.id != "rad")
-        ; //TODO: error strict
-    return Value(Number(sin(arg), 0, range));
+    auto val = Value(Number(sin(arg), 0, range));
+    if (scope.strict && args[0].getNumber().unit.id != "rad" && args[0].getNumber().unit.id != "deg")
+        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPEDTED, range, "rad, deg"));
+    return val;
     }
 
 Value Cos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
@@ -118,7 +119,10 @@ Value Cos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
         arg = scope.globals.unitsView.get("deg").toSI(arg);
-    return Value(Number(cos(arg), 0, range));
+    auto val = Value(Number(cos(arg), 0, range));
+    if (scope.strict && args[0].getNumber().unit.id != "rad" && args[0].getNumber().unit.id != "deg")
+        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPEDTED, range, "rad, deg"));
+    return val;
     }
 
 Value Tan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
@@ -126,7 +130,10 @@ Value Tan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
         arg = scope.globals.unitsView.get("deg").toSI(arg);
-    return Value(Number(tan(arg), 0, range));
+    auto val = Value(Number(tan(arg), 0, range));
+    if (scope.strict && args[0].getNumber().unit.id != "rad" && args[0].getNumber().unit.id != "deg")
+        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPEDTED, range, "rad, deg"));
+    return val;
     }
 
 Value ArcSin::execute(Scope& scope, std::vector<Value>& args, const Range& range)

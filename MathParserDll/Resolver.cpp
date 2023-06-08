@@ -108,6 +108,9 @@ Value Resolver::resolveDefine(const Define& define)
                 case hash("electric"):
                     codeBlock.scope->units.addElectic();
                     break;
+                case hash("strict"):
+                    codeBlock.scope->strict = true;
+                    break;
                 default:
                     result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, t.range, codeBlock.scope->getText(t.range).c_str()));
                 }
@@ -133,6 +136,9 @@ Value Resolver::resolveDefine(const Define& define)
                     break;
                 case hash("electric"):
                     codeBlock.scope->units.removeElectric();
+                    break;
+                case hash("strict"):
+                    codeBlock.scope->strict = false;
                     break;
                 default:
                     result.errors.push_back(Error(ErrorId::UNDEF_NOT_OK, t.range, codeBlock.scope->getText(t.range).c_str()));

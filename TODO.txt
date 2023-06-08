@@ -1,5 +1,9 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
+* make standalone blocks
+  > allows local settings and local vars.
+  > allow a block to be a return value (an expression)?
+
 * Add this to TestNumberFormats()
     hx1=0x0001;
     hx2=0x10;

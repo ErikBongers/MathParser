@@ -143,7 +143,7 @@ Node* Parser::parseFunctionDef()
         return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, "{"));
 
     std::vector<Statement*> functionStmts;
-    auto newScope = codeBlock.scope->copyForFunction();
+    auto newScope = codeBlock.scope->copyForBlock();
 
     std::swap(newScope, codeBlock.scope);
     while (!peek(TokenType::CURL_CLOSE) && !peek(TokenType::EOT))

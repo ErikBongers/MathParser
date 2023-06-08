@@ -5,7 +5,7 @@
 # define M_PIl          3.141592653589793238462643383279502884L
 
 Globals::Globals()
-    : unitDefs(), functionDefs(*this), operatorDefs(*this), unitsView(*this)
+    : unitDefs(), functionDefs(), operatorDefs(*this), unitsView(*this)
     {
     auto PI = Value(Number(M_PI, 0, Range()));
     PI.constant = true;

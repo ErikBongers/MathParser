@@ -10,35 +10,35 @@
 
 void FunctionDefs::init()
     {
-    Add(new Now(globals));
-    Add(new Abs(globals));
-    Add(new Max(globals));
-    Add(new Min(globals));
-    Add(new Sin(globals));
-    Add(new Cos(globals));
-    Add(new Tan(globals));
-    Add(new ArcSin(globals));
-    Add(new ArcCos(globals));
-    Add(new ArcTan(globals));
-    Add(new ASin(globals));
-    Add(new ACos(globals));
-    Add(new ATan(globals));
-    Add(new Sqrt(globals));
-    Add(new Inc(globals));
-    Add(new Dec(globals));
-    Add(new Round(globals));
-    Add(new Floor(globals));
-    Add(new Ceil(globals));
-    Add(new Trunc(globals));
-    Add(new Factors(globals));
-    Add(new DateFunc(globals));
-    Add(new Sort(globals));
-    Add(new Reverse(globals));
-    Add(new Factorial(globals));
+    Add(new Now());
+    Add(new Abs());
+    Add(new Max());
+    Add(new Min());
+    Add(new Sin());
+    Add(new Cos());
+    Add(new Tan());
+    Add(new ArcSin());
+    Add(new ArcCos());
+    Add(new ArcTan());
+    Add(new ASin());
+    Add(new ACos());
+    Add(new ATan());
+    Add(new Sqrt());
+    Add(new Inc());
+    Add(new Dec());
+    Add(new Round());
+    Add(new Floor());
+    Add(new Ceil());
+    Add(new Trunc());
+    Add(new Factors());
+    Add(new DateFunc());
+    Add(new Sort());
+    Add(new Reverse());
+    Add(new Factorial());
     };
 
-FunctionDef::FunctionDef(Globals& globals, const std::string& name, size_t minArgs, size_t maxArgs)
-    : globals(globals), name(name), minArgs(minArgs), maxArgs(maxArgs)
+FunctionDef::FunctionDef(const std::string& name, size_t minArgs, size_t maxArgs)
+    : name(name), minArgs(minArgs), maxArgs(maxArgs)
     {}
 
 bool FunctionDef::isCorrectArgCount(size_t argCnt)
@@ -46,12 +46,12 @@ bool FunctionDef::isCorrectArgCount(size_t argCnt)
     return argCnt >= minArgs && argCnt <= maxArgs;
     }
 
-Value FunctionDef::call(std::vector<Value>& args, const Range& range)
+Value FunctionDef::call(Scope& scope, std::vector<Value>& args, const Range& range)
     { 
     if (!isCorrectArgCount(args.size()))
         return Value(Number(std::numeric_limits<double>::quiet_NaN(), 0, range));
 
-    return execute(args, range); 
+    return execute(scope, args, range); 
     }
 
 bool FunctionDefs::exists(const std::string& functionName)
@@ -69,12 +69,12 @@ FunctionDef* FunctionDefs::get(const std::string& name)
     }
 
 CustomFunction::CustomFunction(FunctionDefExpr& functionDefExpr, CodeBlock&& codeBlock)
-    : FunctionDef(codeBlock.scope->globals, functionDefExpr.id, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), codeBlock(std::move(codeBlock))
+    : FunctionDef(functionDefExpr.id, functionDefExpr.params.size(), functionDefExpr.params.size()), functionDefExpr(functionDefExpr), codeBlock(std::move(codeBlock))
     {
     }
 
 
-Value CustomFunction::execute(std::vector<Value>& args, const Range& range)
+Value CustomFunction::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     std::map<std::string, Value> paramVariables;
 

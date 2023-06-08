@@ -9,7 +9,7 @@ using time_point = c::system_clock::time_point;
 using year_month_day = c::year_month_day;
 using namespace std::chrono_literals;
 
-Value Now::execute(std::vector<Value>& args, const Range& range)
+Value Now::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     Value now;
     time_point tpNow = c::system_clock::now();
@@ -36,7 +36,7 @@ std::vector<Value>* explodeArgs(std::vector<Value>& args, std::vector<Value>& em
     return argsPtr;
     }
 
-Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, bool max)
+Value minMax(Scope& scope, std::vector<Value>& args, const Range& range, bool max)
     {
     bool diffUnits = false;
     Number val0;
@@ -46,8 +46,8 @@ Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, boo
     auto unit = argList[0].getNumber().unit;
     for(int i = 1; i < argList.size(); i++)
         {
-        val0 = ret.getNumber().toSI(globals.unitsView);
-        Number val1 = argList[i].getNumber().toSI(globals.unitsView);
+        val0 = ret.getNumber().toSI(scope.globals.unitsView);
+        Number val1 = argList[i].getNumber().toSI(scope.globals.unitsView);
         auto otherErrs = &ret.errors;
         if (max? (val0 > val1) : (val0 < val1))
             {
@@ -57,7 +57,7 @@ Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, boo
             {
             ret = argList[i];
             }
-        if(!globals.unitsView.isSameProperty(unit, argList[i].getNumber().unit))
+        if(!scope.globals.unitsView.isSameProperty(unit, argList[i].getNumber().unit))
             diffUnits = true;
         }
     std::vector<Error> errors;
@@ -71,24 +71,24 @@ Value minMax(Globals& globals, std::vector<Value>& args, const Range& range, boo
     return ret;
     }
 
-Value Max::execute(std::vector<Value>& args, const Range& range)
+Value Max::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
-    return minMax(globals, args, range, true);
+    return minMax(scope, args, range, true);
     }
 
-Value Min::execute(std::vector<Value>& args, const Range& range)
+Value Min::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
-    return minMax(globals, args, range, false);
+    return minMax(scope, args, range, false);
     }
 
-Value Inc::execute(std::vector<Value>& args, const Range& range)
+Value Inc::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     Value arg = args[0];
     arg.getNumber()++;
     return arg;
     }
 
-Value Dec::execute(std::vector<Value>& args, const Range& range)
+Value Dec::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     Value arg = args[0];
     arg.getNumber()--;
@@ -96,99 +96,101 @@ Value Dec::execute(std::vector<Value>& args, const Range& range)
     }
 
 
-Value Abs::execute(std::vector<Value>& args, const Range& range)
+Value Abs::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     Value arg = args[0];
     arg.getNumber ()= {abs(arg.getNumber().to_double()), 0, range};
     return arg;
     }
 
-Value Sin::execute(std::vector<Value>& args, const Range& range)
+Value Sin::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitsView.get("deg").toSI(arg);;
+        arg = scope.globals.unitsView.get("deg").toSI(arg);
+    else if (scope.strict && args[0].getNumber().unit.id != "rad")
+        ; //TODO: error strict
     return Value(Number(sin(arg), 0, range));
     }
 
-Value Cos::execute(std::vector<Value>& args, const Range& range)
+Value Cos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitsView.get("deg").toSI(arg);
+        arg = scope.globals.unitsView.get("deg").toSI(arg);
     return Value(Number(cos(arg), 0, range));
     }
 
-Value Tan::execute(std::vector<Value>& args, const Range& range)
+Value Tan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     if (args[0].getNumber().unit.id == "deg")
-        arg = globals.unitsView.get("deg").toSI(arg);
+        arg = scope.globals.unitsView.get("deg").toSI(arg);
     return Value(Number(tan(arg), 0, range));
     }
 
-Value ArcSin::execute(std::vector<Value>& args, const Range& range)
+Value ArcSin::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     return Value(Number(asin(arg), 0, range));
     }
 
-Value ArcCos::execute(std::vector<Value>& args, const Range& range)
+Value ArcCos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     return Value(Number(acos(arg), 0, range));
     }
 
-Value ATan::execute(std::vector<Value>& args, const Range& range)
+Value ATan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     return Value(Number(atan(arg), 0, range));
     }
 
-Value ASin::execute(std::vector<Value>& args, const Range& range)
+Value ASin::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     return Value(Number(asin(arg), 0, range));
     }
 
-Value ACos::execute(std::vector<Value>& args, const Range& range)
+Value ACos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     return Value(Number(acos(arg), 0, range));
     }
 
-Value ArcTan::execute(std::vector<Value>& args, const Range& range)
+Value ArcTan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
     return Value(Number(atan(arg), 0, range));
     }
 
-Value Sqrt::execute(std::vector<Value>& args, const Range& range)
+Value Sqrt::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     return Value(Number(sqrt(args[0].getNumber().to_double()), 0, range));
     }
 
-Value Round::execute(std::vector<Value>& args, const Range& range)
+Value Round::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     return Value(Number(round(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
-Value Floor::execute(std::vector<Value>& args, const Range& range)
+Value Floor::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     return Value(Number(floor(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
-Value Ceil::execute(std::vector<Value>& args, const Range& range)
+Value Ceil::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     return Value(Number(ceil(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
-Value Trunc::execute(std::vector<Value>& args, const Range& range)
+Value Trunc::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     return Value(Number(trunc(args[0].getNumber().to_double()), 0, args[0].getNumber().unit, args[0].getNumber().numFormat, range));
     }
 
-Value Factors::execute(std::vector<Value>& args, const Range& range)
+Value Factors::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
 
     long long number = (long long) args[0].getNumber().to_double();
@@ -205,7 +207,7 @@ Value Factors::execute(std::vector<Value>& args, const Range& range)
     return Value(numberList);
     }
 
-Value DateFunc::execute(std::vector<Value>& args, const Range& range)
+Value DateFunc::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     //first get indexes for the current date format.
     int iDay = 0, iMonth = 0, iYear = 0;
@@ -263,7 +265,7 @@ bool compareNumber(Number n1, Number n2)
     return (n1.to_double() < n2.to_double());
     }
 
-Value Sort::execute(std::vector<Value>& args, const Range& range)
+Value Sort::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     std::vector<Value> explodedList;
     auto& argList = *explodeArgs(args, explodedList);
@@ -277,7 +279,7 @@ Value Sort::execute(std::vector<Value>& args, const Range& range)
     return Value(sortedList);
     }
 
-Value Reverse::execute(std::vector<Value>& args, const Range& range)
+Value Reverse::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     std::vector<Value> explodedList;
     auto& argList = *explodeArgs(args, explodedList);
@@ -291,7 +293,7 @@ Value Reverse::execute(std::vector<Value>& args, const Range& range)
     return Value(reverseList);
     }
 
-Value Factorial::execute(std::vector<Value>& args, const Range& range)
+Value Factorial::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     if(!args[0].isNumber())
         return Value(Error(ErrorId::EXPECTED_NUMERIC_VALUE, range));

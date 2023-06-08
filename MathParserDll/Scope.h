@@ -37,11 +37,12 @@ class Scope
         DateFormat dateFormat = DateFormat::UNDEFINED;
         std::map<std::string, CustomFunction*> localFunctions;
         std::vector<const char*> sources;
+        bool strict = false;
 
         Scope(Globals& globals);
         ~Scope();
         std::unique_ptr<Scope> copyForScript();
-        std::unique_ptr<Scope> copyForFunction();
+        std::unique_ptr<Scope> copyForBlock();
         void AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock);
         bool functionExists(const std::string name);
         FunctionDef* getFunction(const std::string& name);

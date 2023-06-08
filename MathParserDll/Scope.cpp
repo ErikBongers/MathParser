@@ -23,7 +23,7 @@ std::unique_ptr<Scope> Scope::copyForScript()
     return newScope; 
     }
 
-std::unique_ptr<Scope> Scope::copyForFunction()
+std::unique_ptr<Scope> Scope::copyForBlock()
     {
     auto newScope = std::make_unique<Scope>(globals);
     newScope->parentScope = this;
@@ -31,6 +31,7 @@ std::unique_ptr<Scope> Scope::copyForFunction()
     newScope->sources = sources;
     //settings;
     newScope->dateFormat = dateFormat;
+    newScope->strict = strict;
     //don't copy the variables!
 
     return newScope;

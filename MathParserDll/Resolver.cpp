@@ -446,7 +446,7 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
     if (hasRealErrors(errors))
         return Value(errors);
 
-    auto val = fd->call(args, callExpr.functionNameRange);
+    auto val = fd->call(*codeBlock.scope, args, callExpr.functionNameRange);
     return applyUnit(callExpr, val);
     }
 

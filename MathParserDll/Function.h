@@ -12,28 +12,26 @@ class FunctionsView;
 class FunctionDef
     {
     public:
-        Globals& globals;
         std::string name;
         size_t minArgs;
         size_t maxArgs;
 
-        FunctionDef(Globals& globals, const std::string& name, size_t minArgs, size_t maxArgs);
+        FunctionDef(const std::string& name, size_t minArgs, size_t maxArgs);
 
         bool isCorrectArgCount(size_t argCnt);
-        Value call(std::vector<Value>& args, const Range& range);
+        Value call(Scope& scope, std::vector<Value>& args, const Range& range);
         virtual std::vector<Error> getErrors() { return std::vector<Error>(); }
     private:
-        virtual Value execute(std::vector<Value>& args, const Range& range) = 0;
+        virtual Value execute(Scope& scope, std::vector<Value>& args, const Range& range) = 0;
     };
 
 class FunctionDefs
     {
     protected:
         std::map<std::string, FunctionDef*> functions;
-        Globals& globals;
 
     public:
-        FunctionDefs(Globals& globals) : globals(globals) { init(); }
+        FunctionDefs() { init(); }
         void init();
         bool exists(const std::string& functionName);
         void Add(FunctionDef* f);
@@ -52,6 +50,6 @@ class CustomFunction: public FunctionDef
     public:
         CodeBlock codeBlock;
         CustomFunction(FunctionDefExpr& functionDefExpr, CodeBlock&& codeBlock);
-        Value execute(std::vector<Value>& args, const Range& range) override;
+        Value execute(Scope& scope, std::vector<Value>& args, const Range& range) override;
         virtual std::vector<Error> getErrors() override;
     };

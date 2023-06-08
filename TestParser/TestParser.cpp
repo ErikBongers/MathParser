@@ -177,10 +177,11 @@ d.years + d.months + d.days;
 
         TEST_METHOD(TestImplicitMult)
             {
-            //assertResult("a=2; 3 a;", 6);
-            //assertResult("a=2; 3(4a);", 24);
-            //assertResult("a=2; a(3(4a));", 48);
+            assertResult("a=2; 3 a;", 6);
+            assertResult("a=2; 3(4a);", 24);
+            assertResult("a=2; a(3(4a));", 48);
             assertResult("m=2; 2m;", 4);
+            assertError("m=2; 2m;", "W_UNIT_IS_VAR");
             }
 
         TEST_METHOD(TestUnary)
@@ -266,6 +267,13 @@ a;
             assertResult("  a=3km; a+=2;            ", 5, "km", "W_ASSUMING_UNIT");
             assertResult("  a=3; a+=2km;            ", 5, "km", "W_ASSUMING_UNIT");
             assertResult("  dec=123;                ", 123, ""); // dec should not conflict with the dec() function.
+            }
+
+        TEST_METHOD(TestIdNames)
+            {
+            assertResult("  a=3;                    ", 3, "");
+            assertResult("  a_b=3;                  ", 3, "");
+            assertResult("  _a_b=3;                 ", 3, "");
             }
 
         TEST_METHOD(TestUnits)
@@ -355,8 +363,11 @@ a;
                 {
                 if (errorId == "")
                     {
-                    msg = std::format("\"{0}\" has errors: {1}", stmt, (const std::string)(result.j["errors"][0]["id"]));
-                    Assert::Fail(toWstring(msg).c_str());
+                    if(hasRealErrors(result))
+                        {
+                        msg = std::format("\"{0}\" has errors: {1}", stmt, (const std::string)(result.j["errors"][0]["id"]));
+                        Assert::Fail(toWstring(msg).c_str());
+                        }
                     }
                 else
                     {
@@ -509,6 +520,18 @@ a;
             {
             auto errors = result.j["errors"];
             return errors.size() > 0;
+            }
+
+        bool hasRealErrors(JsonAndString& result)
+            {
+            auto errors = result.j["errors"];
+            for (auto& error : errors)
+                {
+                auto strId = error["id"].get<std::string>();
+                if(strId[0] != 'W')
+                    return true;
+                }
+            return false;
             }
 
         bool hasError(JsonAndString& result, const std::string& errorId)

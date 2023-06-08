@@ -1,8 +1,17 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* Implicit mult: add warning.
-  m=p/PI;
-  3m; //should give warning: ambiguous: m is both a variable and a unit.
+* Add this to TestNumberFormats()
+    hx1=0x0001;
+    hx2=0x10;
+    hx3=hx1+hx2;  --> should keep BIN notation.
+
+* sin(x) -> x MUST have a unit of DEG/RAD
+  > if 'strict' is defined?
+
+* allow #define spanning multiple lines, ended by an empty line.
+
+* abs(), round() in combination with units.
+  > keep resolution of the unit.
 
 * Report errors in function bodies.
   > Move NOT_EXIST checks for IDs from Resolver to Parser.
@@ -13,12 +22,6 @@
   > a b --> warning
 
 * www: double horizontal scrollbars in text fields.
-
-* parseExprStatement already formats text when echo=true.
-  > move this to output code (to_json()? )
-
-* Allow underscores in IDs?
-  > and in numbers?
 
 * Implement electronic components notation
   #define eletro

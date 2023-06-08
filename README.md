@@ -15,7 +15,6 @@ b=2a+3; //implicit multiplication is allowed: same as (2*a)+3;
 a+=2; b=a*10; //a statement always ends with a semi-colon, not a new line, so these are two statements.
 randomNumbers = 1, 234, 567; // a list of numbers (array)
 ```
-Values can either be numbers or lists of numbers.
 
 ### Numeric notation
 ```
@@ -23,6 +22,9 @@ Values can either be numbers or lists of numbers.
 0b101; //binary notation for decimal 5
 123e4; //scientific notation for decimal 1230000
 ```
+
+The type of notation for a variable is remembered for as long as possible.
+
 ### Operators
 In addition to the usual `+ - * /` operators, there are:
 ```
@@ -77,7 +79,7 @@ Hot.=C; //Does the same as the above line.
 ```
 #### Implemented units:
 * Angle: `rad, deg`
-* Length: `km, m, cm, mm, um (micron), in, ft, mi, thou, yd` [TODO] complete this list
+* Length: `km, m, cm, mm, um (micron), in, ft, mi, thou, yd`
 * Temperature: `C, F, K`
 * Mass (weight): `kg, g, mg, t, lb (lbs), oz, N` (note that for convenience no distinction is made between weight and mass)
 * Volume: `L, ml, gal, pt`
@@ -89,9 +91,8 @@ Hot.=C; //Does the same as the above line.
 * `|x|` is the same as `abs(x)`
 * Dates: `now(), date(year, month, day)`
 * Lists: `sort(), reverse(), max(), min()`
-* [TODO]: abs() in combination with units.
 
-### Define functions
+### Custom functions
 Statements can be grouped in functions as well.
 ```
 x = 100;
@@ -156,6 +157,22 @@ A typical duration would be my age:
 birthday=1968, 7, 30;
 age=now()-birthday;
 ```
+
+### Settings
+Some settings define how the parser behaves.
+These can be changed with ```#define``` and ```#undef```
+```
+#define dmy // date formats can be dmy, mdy or ymd
+        trig //activate trigonometry functions,
+        date_units //day, month, year
+        short_date_units // d, M, y
+        arythm //abs(), round(),...
+        date  //date(), now()
+        all // all functions
+        electric //numeric notations for resistors and capacitors
+        strict //trig functions will require params to have the units deg or rad where applicable.
+```
+
 ## Technical
 The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser with 2 look-aheads. Advantages of this parser type are that it's intuitive to read and mimicks the grammar definition (EBNF).
 
@@ -166,7 +183,7 @@ The main parser project is **MathParserDll** and is written in C++. It is a home
 * **MathParserLib** C# version. [![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
 * **MathParserLibTests** C# tests. [![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
 
-Those who are into parser development may want to take a look at the `.ebnf` file (which stands for *Erik's BNF* :) )
+Those who are into parser development may want to take a look at the `.ebnf` file (which stands for *Erik's BNF* :))
 
 ## Build stack
 All projects in **Visual Studio**, except for the WASM project, which is build in **VS Code**.

@@ -11,7 +11,7 @@ class NodeFactory
         FunctionDefExpr* createFunctionDef();
         NoneExpr* createErrorExpr(Error error);
         NoneExpr* createNoneExpr();
-        ConstExpr* createConst(ValueType type);
+        ConstExpr* createConst(ConstType type);
         BinaryOpExpr* createBinaryOp();
         UnaryOpExpr* createUnaryOp();
         IdExpr* createIdExpr();

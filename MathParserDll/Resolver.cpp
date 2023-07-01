@@ -458,28 +458,31 @@ Value Resolver::resolveCall(const CallExpr& callExpr)
 
 Value Resolver::resolveConst(const ConstExpr& constExpr)
     {
-    if(constExpr.type == ValueType::NUMBER)
+    switch(constExpr.type)
         {
-        auto v = Value(constExpr.value.numberValue);
-        v.getNumber().unit = constExpr.unit;
-        if (constExpr.unit.isClear())
-            v.getNumber().unit = Unit();
-        else
+        case ConstType::NUMBER:
             {
-            if (codeBlock.scope->units.exists(v.getNumber().unit.id) == false)
+            auto v = Value(constExpr.value.numberValue);
+            v.getNumber().unit = constExpr.unit;
+            if (constExpr.unit.isClear())
+                v.getNumber().unit = Unit();
+            else
                 {
-                v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.range, v.getNumber().unit.id.c_str()));
+                if (codeBlock.scope->units.exists(v.getNumber().unit.id) == false)
+                    {
+                    v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.range, v.getNumber().unit.id.c_str()));
+                    }
                 }
+            if (constExpr.error.id != ErrorId::NONE)
+                v.errors.push_back(constExpr.error);
+            return v;
             }
-        if (constExpr.error.id != ErrorId::NONE)
-            v.errors.push_back(constExpr.error);
-        return v;
-        }
-    else
-        {
-        DateParser parser;
-        parser.dateFormat = this->dateFormat;
-        return Value(parser.parse(codeBlock.scope->getText(constExpr.value.range), constExpr.range()));
+        case ConstType::FORMATTED_STRING:
+            {
+            DateParser parser;
+            parser.dateFormat = this->dateFormat;
+            return Value(parser.parse(codeBlock.scope->getText(constExpr.value.range), constExpr.range()));
+            }
         }
     }
 

@@ -13,7 +13,7 @@ NodeFactory::~NodeFactory() { for (auto node : nodes) delete node; }
 
 FunctionDefExpr* NodeFactory::createFunctionDef() { FunctionDefExpr* p = new FunctionDefExpr(); nodes.push_back(p); return p; }
 NoneExpr* NodeFactory::createNoneExpr() { NoneExpr* p = new NoneExpr(); nodes.push_back(p); return p; }
-ConstExpr* NodeFactory::createConst(ValueType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
+ConstExpr* NodeFactory::createConst(ConstType type) { ConstExpr* p = new ConstExpr(type); nodes.push_back(p); return p; }
 BinaryOpExpr* NodeFactory::createBinaryOp() { BinaryOpExpr* p = new BinaryOpExpr; nodes.push_back(p); return p; }
 UnaryOpExpr* NodeFactory::createUnaryOp() { UnaryOpExpr* p = new UnaryOpExpr; nodes.push_back(p); return p; }
 IdExpr* NodeFactory::createIdExpr() { IdExpr* p = new IdExpr; nodes.push_back(p); return p; }

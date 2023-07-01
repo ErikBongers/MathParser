@@ -37,15 +37,17 @@ class NoneExpr : public Node
         friend class NodeFactory;
     };
 
+enum class ConstType : char { NUMBER = 'N', FORMATTED_STRING = 'S' };
+
 class ConstExpr : public Node
     {
     public:
-        ValueType type;
+        ConstType type;
         Token value;
         Range range() const;
     private:
         ~ConstExpr() {}
-        ConstExpr(ValueType type) : Node(NodeType::CONSTEXPR), type(type) {};
+        ConstExpr(ConstType type) : Node(NodeType::CONSTEXPR), type(type) {};
         friend class NodeFactory;
     };
 

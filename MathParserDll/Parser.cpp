@@ -560,7 +560,7 @@ Node* Parser::parsePrimaryExpr()
         case TokenType::QUOTED_STR:
             {
             tok.next();
-            auto constExpr = nodeFactory.createConst(ValueType::TIMEPOINT);
+            auto constExpr = nodeFactory.createConst(ConstType::FORMATTED_STRING);
             constExpr->value = t;
             return constExpr;
             }
@@ -591,7 +591,7 @@ Node* Parser::parseAbsOperator(const Token& currentToken)
 
 ConstExpr* Parser::parseNumber(Token currentToken, bool negative)
     {
-    auto constExpr = nodeFactory.createConst(ValueType::NUMBER);
+    auto constExpr = nodeFactory.createConst(ConstType::NUMBER);
     currentToken.numberValue.significand = (negative ? -1 : 1) * currentToken.numberValue.significand;
     constExpr->value = currentToken;
     return constExpr;

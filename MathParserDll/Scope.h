@@ -38,6 +38,8 @@ class Scope
         std::map<std::string, CustomFunction*> localFunctions;
         std::vector<const char*> sources;
         bool strict = false;
+        char decimal_char = '.';
+        char thou_char = ',';
 
         Scope(Globals& globals);
         ~Scope();

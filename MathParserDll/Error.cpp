@@ -145,6 +145,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::INV_DATE_STR, {ErrorId::INV_DATE_STR, "INV_DATE_STR", "Invalid date string: '{0}'"}},
         {ErrorId::INV_DATE_VALUE, {ErrorId::INV_DATE_VALUE, "INV_DATE_VALUE", "Invalid date value '{0}' for {1}."}},
         {ErrorId::INV_LIST, {ErrorId::INV_LIST, "INV_LIST", "Cannot convert value list. {0}"}},
+        {ErrorId::INV_NUMBER_STR, {ErrorId::INV_NUMBER_STR, "INV_NUMBER_STR", "Invalid number string: '{0}'"}},
     };
 
 bool hasRealErrors(std::vector<Error>& errors)

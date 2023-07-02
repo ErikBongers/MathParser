@@ -174,6 +174,8 @@
     <ClInclude Include="Date.h" />
     <ClInclude Include="Duration.h" />
     <ClInclude Include="Error.h" />
+    <ClInclude Include="FormattedDateParser.h" />
+    <ClInclude Include="FormattedNumberParser.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="FunctionsView.h" />
@@ -209,6 +211,8 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Duration.cpp" />
     <ClCompile Include="Error.cpp" />
+    <ClCompile Include="FormattedDateParser.cpp" />
+    <ClCompile Include="FormattedNumberParser.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="FunctionsView.cpp" />
     <ClCompile Include="GlobalFunctions.cpp" />

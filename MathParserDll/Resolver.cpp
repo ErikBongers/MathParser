@@ -9,6 +9,8 @@
 #include "Globals.h"
 #include "Scope.h"
 #include "NodeFactory.h"
+#include "FormattedNumberParser.h"
+#include "FormattedDateParser.h"
 
 Resolver::Resolver(CodeBlock& codeBlock) 
     : codeBlock(codeBlock)
@@ -110,6 +112,18 @@ Value Resolver::resolveDefine(const Define& define)
                     break;
                 case hash("strict"):
                     codeBlock.scope->strict = true;
+                    break;
+                case hash("decimal_dot"):
+                case hash("dec_dot"):
+                case hash("dot"):
+                    codeBlock.scope->decimal_char = '.';
+                    codeBlock.scope->thou_char = ',';
+                    break;
+                case hash("decimal_comma"):
+                case hash("dec_comma"):
+                case hash("comma"):
+                    codeBlock.scope->decimal_char = ',';
+                    codeBlock.scope->thou_char = '.';
                     break;
                 default:
                     result.errors.push_back(Error(ErrorId::DEFINE_NOT_DEF, t.range, codeBlock.scope->getText(t.range).c_str()));
@@ -479,11 +493,22 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
             }
         case ConstType::FORMATTED_STRING:
             {
-            DateParser parser;
-            parser.dateFormat = this->dateFormat;
-            return Value(parser.parse(codeBlock.scope->getText(constExpr.value.range), constExpr.range()));
+            FormattedNumberParser numberParser;
+            auto number = numberParser.parse(*codeBlock.scope, codeBlock.scope->getText(constExpr.value.range), constExpr.range());
+            if (number.errors.empty())
+                {
+                return number;
+                }
+
+            FormattedDateParser dateParser;
+            dateParser.dateFormat = this->dateFormat;
+            auto date = dateParser.parse(codeBlock.scope->getText(constExpr.value.range), constExpr.range());
+            if(!date.errors.empty())
+                date.errors.insert(date.errors.begin(), number.errors.begin(), number.errors.end());
+            return Value(date);
             }
         }
+    return Value();// just to get rid of the warning
     }
 
 Value Resolver::resolveDateFragment(const Value& val, const Token& fragmentId)

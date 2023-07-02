@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "../MathParserDll/api.h"
-#include "../MathParserDll/Date.h"
+#include "../MathParserDll/FormattedDateParser.h"
 #include "../MathParserDll/Parser.h"
 #include "../MathParserDll/Function.h"
 #include "../MathParserDll/Scope.h"
@@ -229,7 +229,8 @@ a;
             {
             assertResult(".123", 0.123);
             assertResult("123.456", 123.456);
-            assertResult("1,234.56", 1234.56);
+            assertResult("'1,234.56'", 1234.56);
+            assertResult("#define decimal_comma \n '1.234,56'", 1234.56);
             assertResult("123_456", 123456);
             assertResult("-123_456", -123456);
             assertResult("0b111_1011", 123, "", "", "BIN");
@@ -579,7 +580,7 @@ a;
 
         void testDateString(const char* txtDate, int day = 0, int month = 0, long year = 0)
             {
-            DateParser parser;
+            FormattedDateParser parser;
             Date date = parser.parse(txtDate, Range());
             int mon = (char)date.month;
             std::string msg = std::format("\"{0}\" does not match {1}/{2}/{3}.", txtDate, (int)date.day, mon, date.year);

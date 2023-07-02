@@ -34,6 +34,7 @@ enum class ErrorId
     INV_DATE_STR,
     INV_DATE_VALUE,
     INV_LIST,
+    INV_NUMBER_STR,
 
     W_DIV_IMPL_MULT,
     W_POW_IMPL_MULT,

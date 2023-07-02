@@ -120,6 +120,20 @@ date - date ==> duration
 date + duration ==> date
 duration * x ==> duration // or any other arithmetic
 ```
+#### Formatted values
+Formatted values are values between single quotes that are guessed what they may mean and allow for different locales.
+```
+a='01/jan/2022'; //interpreted as a date.
+#define decimal_comma //use a comma as a decimal point and a dot as a thousands separator
+european_value = '123.456,78';
+#define decimal_dot 
+american_value = '123,456.78';
+```
+For more examples of valid and invalid dates, see the section below.
+
+Since these values are guessed, there is no guarantee that they are interpreted the way you intended too, so use with care.
+However, if a value is clearly ambiguous, that is, if it can be interpreted in multiple ways, an error will be reported.
+
 #### Dates (points in time)
 Date values can be written between single quotes.
 Math Parser will try to parse any date format, as long as it's not ambiguous.
@@ -140,7 +154,7 @@ Or, dates can be created by assigning a comma-separated list of values:
 #define dmy; // or ymd or mdy
 day = 23;
 month = 12;
-date=day, month/2, now().year;
+date=day, month/2, now().year; // june 23, of this year
 ```
 The parts of a date can be referenced, but not assigned to:
 ```
@@ -171,6 +185,12 @@ These can be changed with ```#define``` and ```#undef```
         all // all functions
         electric //numeric notations for resistors and capacitors
         strict //trig functions will require params to have the units deg or rad where applicable.
+        decimal_dot // set decimal charater and thousands separaterd in a formatted string: american_value = '123.456,67';
+        dec_dot  //short form
+        dot  //shorter
+        decimal_comma //same as above, other locale: european_value = '123.456,78';
+        dec_comma
+        comma
 ```
 
 ## Technical

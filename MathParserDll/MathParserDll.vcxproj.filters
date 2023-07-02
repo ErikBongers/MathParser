@@ -114,6 +114,12 @@
     <ClInclude Include="FunctionsView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FormattedDateParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FormattedNumberParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -198,6 +204,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CodeBlock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FormattedDateParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FormattedNumberParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,10 +1,9 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* define decimal_comma and decimal_dot (dec_comma, dec_dot, comma, dot)
- > a comma cannot be used since it may is used in lists to separate values!
- > put formatted numbers between single quotes?
-   > currently only date values are put between single quotes.
-   > can we distinguish between date and number values?
+* formatted dates: make date format stricter
+  > still compile all unabiguous dates
+  > if a date format is set (dmy) use this in case of ambiguous values
+  > allow #undef dmy (or mdy, doesn't matter)
 
 * make standalone blocks
   > allows local settings and local vars.

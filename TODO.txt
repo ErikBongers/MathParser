@@ -34,7 +34,9 @@
 * www: double horizontal scrollbars in text fields.
 
 * Implement electronic components notation
-  #define eletro
+  #define eletro OR use formatted values?
+  > formatted numbers always work, but when electro is defined, these notations can be used directly.
+    > can that principle be aplied to formatted dates and numbers as well?
   > R103 = 10000 Ohm;
   > C472
   > ...?

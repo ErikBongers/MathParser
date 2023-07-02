@@ -18,6 +18,7 @@ randomNumbers = 1, 234, 567; // a list of numbers (array)
 
 ### Numeric notation
 ```
+123.456; // a dot is the decimal separator, but in the section [Formatted values](#formatted-values) there's an alternative.
 0xFF; //hexadecimal notation for decimal 255
 0b101; //binary notation for decimal 5
 123e4; //scientific notation for decimal 1230000
@@ -109,6 +110,18 @@ function hundred(a)
 Currently only PI. (also in lower case)
 [TODO]: G, C, e...
 
+### Formatted values
+Formatted values are values between single quotes that are guessed what they may mean and allow for different locales.
+```
+a='01/jan/2022'; //interpreted as a date.
+#define decimal_comma //use a comma as a decimal point and a dot as a thousands separator
+european_value = '123.456,78';
+#define decimal_dot 
+american_value = '123,456.78';
+```
+Since these values are guessed, there is no guarantee that they are interpreted the way you intended too, so use with care.
+However, if a value is clearly ambiguous, that is, if it can be interpreted in multiple ways, an error will be reported.
+
 ### Dates
 #### Concepts
 Math Parser follows to some extend the chrono library concepts.
@@ -120,22 +133,8 @@ date - date ==> duration
 date + duration ==> date
 duration * x ==> duration // or any other arithmetic
 ```
-#### Formatted values
-Formatted values are values between single quotes that are guessed what they may mean and allow for different locales.
-```
-a='01/jan/2022'; //interpreted as a date.
-#define decimal_comma //use a comma as a decimal point and a dot as a thousands separator
-european_value = '123.456,78';
-#define decimal_dot 
-american_value = '123,456.78';
-```
-For more examples of valid and invalid dates, see the section below.
-
-Since these values are guessed, there is no guarantee that they are interpreted the way you intended too, so use with care.
-However, if a value is clearly ambiguous, that is, if it can be interpreted in multiple ways, an error will be reported.
-
 #### Dates (points in time)
-Date values can be written between single quotes.
+Date values can be written as formatted values.
 Math Parser will try to parse any date format, as long as it's not ambiguous.
 ```
 a='01/jan/2022'; 
@@ -154,7 +153,7 @@ Or, dates can be created by assigning a comma-separated list of values:
 #define dmy; // or ymd or mdy
 day = 23;
 month = 12;
-date=day, month/2, now().year; // june 23, of this year
+a_day = date(day, month/2, now().year); // june 23, of this year
 ```
 The parts of a date can be referenced, but not assigned to:
 ```

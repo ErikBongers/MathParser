@@ -1,18 +1,15 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* make standalone blocks
-  > refactor Parser to recurse
-    > use the same nodeFactory
-    > use the same tokenizer
-    > create a new scope
+* block does not report EOS when no '}'
+* parseBlock: use for both function body and anonymous block?
     
-  > allows local settings and local vars.
-  > allow a block to be a return value (an expression)?
-
 * formatted dates: make date format stricter
   > still compile all unabiguous dates
   > if a date format is set (dmy) use this in case of ambiguous values
   > allow #undef dmy (or mdy, doesn't matter)
+
+* allow boolean tests.
+  >...and thus a boolean value.
 
 * Add this to TestNumberFormats()
     hx1=0x0001;

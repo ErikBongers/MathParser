@@ -225,6 +225,30 @@ a;
 
             }
 
+        TEST_METHOD(TestBlocks)
+            {
+            assertResult(R"CODE(
+#define decimal_dot
+theDot = '1,234.56';
+{
+#define decimal_comma
+theDot = '1.234,56';
+}
+theDot = '1,234.56';
+                         )CODE"
+                         , 1234.56);
+
+            assertError(R"CODE(
+a = 1;
+{
+b = a;
+c=3;
+}
+d=c;
+                         )CODE"
+                        , "VAR_NOT_DEF");
+
+            }
         TEST_METHOD(TestNumberFormats)
             {
             assertResult(".123", 0.123);
@@ -269,7 +293,7 @@ a;
             {
             assertError("   a=12/             ", "EOS");
             assertError("   a=             ", "EOS");
-            assertError("   {             ", "EOS");
+            assertError("   {             ", "EXPECTED");
             }
 
         TEST_METHOD(TestAssignStatements)

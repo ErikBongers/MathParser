@@ -18,8 +18,8 @@ class Parser
         Parser(CodeBlock& codeBlock, NodeFactory& nodeFactory, PeekingTokenizer& tok);
         void parse();
     private:
-        void parseScope();
         Statement* parseStatement();
+        CodeBlock parseBlock();
         Define* parseDefine();
         Statement* parseStatementHeader(Statement* stmt);
         Statement* parseExprStatement(Statement* stmt);

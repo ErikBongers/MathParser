@@ -5,7 +5,6 @@
 #include "OperatorDef.h"
 #include "trim.h"
 #include "tools.h"
-#include <sstream>
 #include "Globals.h"
 #include "Scope.h"
 #include "NodeFactory.h"
@@ -19,8 +18,18 @@ Resolver::Resolver(CodeBlock& codeBlock)
 
 std::string Resolver::resolve()
     {
-    std::vector<std::string> jsonRes;
-    std::ostringstream sstr;
+    resolve(output);
+
+    std::string result = output.str();
+    if(result.size() > 0)
+        result.resize(result.size()-1); //remove last comma;
+    result = "{\"result\" : [" + result + "]}";
+    
+    return result;
+    }
+
+void Resolver::resolve(std::ostringstream& sstr)
+    {
     for (auto& stmt : codeBlock.statements)
         {
         auto result = resolveStatement(*stmt);
@@ -38,14 +47,9 @@ std::string Resolver::resolve()
             sstr << ",";
             }
         }
-    std::string result = sstr.str();
-    if(result.size() > 0)
-        result.resize(result.size()-1); //remove last comma;
-    result = "{\"result\" : [" + result + "]}";
-    return result;
     }
 
-Value Resolver::resolveBlock(const Range& range, const std::string& functionName)
+Value Resolver::resolveFunctionBlock(const Range& range, const std::string& functionName)
     {
     Value result;
     std::vector<Error> errors;
@@ -163,21 +167,34 @@ Value Resolver::resolveDefine(const Define& define)
     return result;
     }
 
-Value Resolver::resolveStatement(const Statement& stmt)
+Value Resolver::resolveStatement(Statement& stmt)
     {
     Value result;
-    if (stmt.node != nullptr)
-        result = resolveNode(*stmt.node);
-    else
-        result.onlyComment = true;
-    result.text = stmt.text;
-    if(!stmt.comment_line.isEmpty())
-        result.comment_line = stmt.comment_line;
-    result.mute = stmt.mute;
-    if (stmt.error.id != ErrorId::NONE)
-        result.errors.push_back(stmt.error);
-    result.stmtRange = stmt.range();
-    return result;
+    if (stmt.codeBlock != nullptr)
+        {
+        Resolver resolver(*stmt.codeBlock);
+        resolver.resolve(output);
+        if(!stmt.comment_line.isEmpty())
+            result.comment_line = stmt.comment_line;
+        if (stmt.error.id != ErrorId::NONE)
+            result.errors.push_back(stmt.error);
+        return result;//block has no output (for now)
+        }
+    else 
+        {
+        if (stmt.node != nullptr)
+            result = resolveNode(*stmt.node);
+        else
+            result.onlyComment = true;
+        result.text = stmt.text;
+        if(!stmt.comment_line.isEmpty())
+            result.comment_line = stmt.comment_line;
+        result.mute = stmt.mute;
+        if (stmt.error.id != ErrorId::NONE)
+            result.errors.push_back(stmt.error);
+        result.stmtRange = stmt.range();
+        return result;
+        }
     }
 
 Value Resolver::resolveNode(const Node& node)
@@ -186,7 +203,7 @@ Value Resolver::resolveNode(const Node& node)
         {
         case NodeType::BINARYOPEXPR: return resolveBinaryOp((const BinaryOpExpr&)node);
         case NodeType::UNARYOPEXPR: return resolveUnaryOp((const UnaryOpExpr&)node);
-        case NodeType::STATEMENT: return resolveStatement((const Statement&)node);
+        case NodeType::STATEMENT: return resolveStatement((Statement&)node);
         case NodeType::ASSIGNMENT: return resolveAssign((const AssignExpr&)node);
         case NodeType::LIST: return resolveList((const ListExpr&)node);
         case NodeType::IDEXPR: return resolveIdExpr((const IdExpr&)node);

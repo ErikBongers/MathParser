@@ -1,5 +1,7 @@
 #include "pch.hpp"
 #include "Nodes.h"
+#include "CodeBlock.h"
+#include "Scope.h"
 
 Range ConstExpr::range() const
     {
@@ -82,4 +84,10 @@ Range Statement::range() const
 Range FunctionDefExpr::range() const
     {
     return r;
+    }
+
+Statement::~Statement()
+    { 
+    if(codeBlock != nullptr) 
+        delete codeBlock; 
     }

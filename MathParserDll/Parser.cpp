@@ -12,16 +12,8 @@ Parser::Parser(CodeBlock& codeBlock, NodeFactory& nodeFactory, PeekingTokenizer&
 
 void Parser::parse()
     {
-    while (!peek(TokenType::EOT))
-        {
-        parseScope();
-        }
-    }
-
-void Parser::parseScope()
-    {
     parseEchoLines();
-    while (!peek(TokenType::EOT))
+        while (!peek(TokenType::CURL_CLOSE) && !peek(TokenType::EOT))
         {
         auto stmt = parseStatement();
         codeBlock.statements.push_back(stmt);
@@ -97,6 +89,16 @@ Statement* Parser::parseStatement()
     {
     Statement* stmt = nodeFactory.createStatement();
 
+    if (match(TokenType::CURL_OPEN))
+        {
+        stmt->codeBlock = new CodeBlock(parseBlock());
+
+        if (!match(TokenType::CURL_CLOSE))
+            stmt->error = Error(ErrorId::EXPECTED, tok.peek().range, "}");
+
+        return stmt;
+        }
+
     stmt->node = parseDefine();
     if(stmt->node != nullptr)
         return stmt;
@@ -109,6 +111,7 @@ Statement* Parser::parseStatement()
     stmt->mute |= this->muteBlock;
     if(stmt->echo)
         stmt->text = Range(statementStartPos, tok.getCurrentToken().range.start);
+
     return stmt;
     }
 
@@ -119,6 +122,16 @@ bool Parser::match(TokenType tt)
 
     tok.next();
     return true;
+    }
+
+CodeBlock Parser::parseBlock()
+    {
+    auto newScope = codeBlock.scope->copyForBlock();
+    CodeBlock newCodeBlock(std::move(newScope));
+    Parser parser(newCodeBlock, nodeFactory, tok);
+
+    parser.parse();
+    return newCodeBlock;
     }
 
 Node* Parser::parseFunctionDef()
@@ -150,30 +163,19 @@ Node* Parser::parseFunctionDef()
     if (!match(TokenType::CURL_OPEN))
         return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, "{"));
 
-    std::vector<Statement*> functionStmts;
-    auto newScope = codeBlock.scope->copyForBlock();
-
-    std::swap(newScope, codeBlock.scope);
-    while (!peek(TokenType::CURL_CLOSE) && !peek(TokenType::EOT))
-        {
-        auto stmt = parseStatement();
-        if(stmt == nullptr)
-            break;
-        functionStmts.push_back(stmt);
-        }
-    std::swap(codeBlock.scope, newScope);
-
+    auto newCodeBlock = parseBlock();
     if (!match(TokenType::CURL_CLOSE))
         return nodeFactory.createErrorExpr(Error(ErrorId::EXPECTED, tok.peek().range, "}"));
+    
     auto funcDef = nodeFactory.createFunctionDef();
     funcDef->id = tok.getText(id.range);
     funcDef->idRange = id.range;
     funcDef->params = paramDefs;
     funcDef->r = id.range;
-    for(auto& stmt : functionStmts)
+    for(auto& stmt : newCodeBlock.statements)
         funcDef->r += stmt->range();
-
-    codeBlock.scope->AddLocalFunction(*funcDef, CodeBlock(std::move(newScope), std::move(functionStmts)));
+    
+    codeBlock.scope->AddLocalFunction(*funcDef, std::move(newCodeBlock));
     return funcDef;
     }
 

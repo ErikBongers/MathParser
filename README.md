@@ -193,6 +193,30 @@ These can be changed with ```#define``` and ```#undef```
         comma
 ```
 
+### Scope
+A scope is defined by a code block: ``` { ... }```. Within a scope, the external 'world' is unknown and vice-versa. A code block is thus a completely stand-alone program.
+```
+a=1;
+{
+b=a; //error: 'a' is unknown as it is external to the block.
+c =3;
+}
+d=c; //error: 'c' is unknown outside of the block.
+```
+
+Code blocks allow to have a little program that 'does it's own thing' within a larger file.
+A typical use is to temporarily change some settings:
+```
+#define decimal_dot
+theDot = '1,234.56';
+{
+#define decimal_comma
+theDot = '1.234,56';
+}
+//a dot is still the decimal char in the outer scope:
+theDot = '1,234.56';
+```
+
 ## Technical
 The main parser project is **MathParserDll** and is written in C++. It is a homebrew recursive descent parser with 2 look-aheads. Advantages of this parser type are that it's intuitive to read and mimicks the grammar definition (EBNF).
 

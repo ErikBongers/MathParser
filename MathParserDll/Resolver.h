@@ -3,10 +3,13 @@
 #include "Value.h"
 #include "Unit.h"
 #include "CodeBlock.h"
+#include <sstream>
 
 class Resolver
     {
     private:
+        std::ostringstream output;
+
         CodeBlock& codeBlock;
         Value resolveNone(const NoneExpr& expr);
         Value resolveDefine(const Define& define);
@@ -28,8 +31,9 @@ class Resolver
     public:
         Resolver(CodeBlock& codeBlock);
         std::string resolve();
-        Value resolveBlock(const Range& range, const std::string& functionName);
-        Value resolveStatement(const Statement& stmt);
+        void resolve(std::ostringstream& sstr);
+        Value resolveFunctionBlock(const Range& range, const std::string& functionName);
+        Value resolveStatement(Statement& stmt);
         std::string formatError(const std::string errorMsg, ...);
         DateFormat dateFormat = DateFormat::UNDEFINED;
         Value& getVar(const std::string& id);

@@ -85,7 +85,7 @@ Value CustomFunction::execute(Scope& scope, std::vector<Value>& args, const Rang
         }
     codeBlock.scope->setVariables(paramVariables);
     Resolver resolver(codeBlock);
-    return resolver.resolveBlock(range,functionDefExpr.id);
+    return resolver.resolveFunctionBlock(range,functionDefExpr.id);
     }
 
 std::vector<Error> CustomFunction::getErrors()

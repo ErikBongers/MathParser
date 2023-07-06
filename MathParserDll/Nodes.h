@@ -8,6 +8,7 @@
 
 enum class NodeType {FUNCTIONDEF, CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE};
 class NodeFactory;
+struct CodeBlock;
 
 class Node
     {
@@ -152,6 +153,7 @@ class Define : public Node
 class Statement : public Node
     {
     public:
+        CodeBlock* codeBlock = nullptr;
         Node* node = nullptr;
         Range text;
         Range comment_line;
@@ -159,7 +161,7 @@ class Statement : public Node
         bool echo = false; //echo statement
         Range range() const;
     private:
-        ~Statement() {}
+        ~Statement();
         Statement() : Node(NodeType::STATEMENT) {}
         friend class NodeFactory;
     };

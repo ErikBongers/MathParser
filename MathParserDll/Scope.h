@@ -46,7 +46,7 @@ class Scope
         std::unique_ptr<Scope> copyForScript();
         std::unique_ptr<Scope> copyForBlock();
         void AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock);
-        bool functionExists(const std::string name);
+        bool functionExists(const std::string name) const;
         FunctionDef* getFunction(const std::string& name);
         Value& getVariable(const std::string& id);
         bool varExists(const std::string& id);

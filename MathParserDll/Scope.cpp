@@ -37,7 +37,7 @@ std::unique_ptr<Scope> Scope::copyForBlock()
     return newScope;
     }
 
-bool Scope::functionExists(const std::string name)
+bool Scope::functionExists(const std::string name) const
     {
     if(localFunctions.count(name) != 0)
         return true;

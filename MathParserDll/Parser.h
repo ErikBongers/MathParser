@@ -7,15 +7,15 @@
 class Parser
     {
     private:
-        PeekingTokenizer tok;
+        PeekingTokenizer& tok;
         NodeFactory& nodeFactory;
         bool muteBlock = false;
         bool echoBlock = false;
         bool echoTrailingComment = false;
         TokenPos statementStartPos;
     public:
-        CodeBlock codeBlock;
-        Parser(std::unique_ptr<Scope>&& scope, char sourceIndex, NodeFactory& nodeFactory);
+        CodeBlock& codeBlock;
+        Parser(CodeBlock& codeBlock, NodeFactory& nodeFactory, PeekingTokenizer& tok);
         void parse();
     private:
         void parseScope();

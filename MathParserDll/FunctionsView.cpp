@@ -2,5 +2,8 @@
 #include "FunctionsView.h"
 #include "Function.h"
 
-bool FunctionsView::exists(const std::string& key) { return defs.count(key) != 0; }
+bool FunctionsView::exists(const std::string& key) const
+    { 
+    return defs.count(key) != 0; 
+    }
 

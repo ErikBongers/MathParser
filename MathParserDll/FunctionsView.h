@@ -27,7 +27,7 @@ class FunctionsView
         FunctionsView(const FunctionsView&) = default;
         FunctionsView(Globals& globals);
         FunctionDef* get(const std::string& key);
-        bool exists(const std::string& key);
+        bool exists(const std::string& key) const;
         void addFunctions(FunctionType type);
         void removeFunctions(FunctionType type);
         void setDefs(const FunctionsView& uv) { this->defs = uv.defs; }

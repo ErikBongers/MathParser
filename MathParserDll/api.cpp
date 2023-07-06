@@ -18,7 +18,9 @@ int C_DECL parse(const char* str)
     auto scope = std::make_unique<Scope>(globals);
     scope->sources.push_back(str);
     NodeFactory nodeFactory;
-    Parser parser(std::move(scope), 0, nodeFactory);
+    CodeBlock codeBlock(std::move(scope));
+    PeekingTokenizer tok(codeBlock.scope->sources[0], 0);
+    Parser parser(codeBlock, nodeFactory, tok);
     parser.parse();
     std::map<std::string, Value> nada;
     Resolver resolver(parser.codeBlock);

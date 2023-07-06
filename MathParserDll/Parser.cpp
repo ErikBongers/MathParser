@@ -5,8 +5,8 @@
 #include "Variable.h"
 #include "Scope.h"
 
-Parser::Parser(std::unique_ptr<Scope>&& scope, char sourceIndex, NodeFactory& nodeFactory)
-    : tok(scope->sources[sourceIndex], sourceIndex), codeBlock(std::move(scope)), nodeFactory(nodeFactory)
+Parser::Parser(CodeBlock& codeBlock, NodeFactory& nodeFactory, PeekingTokenizer& tok)
+    : codeBlock(codeBlock), tok(tok), nodeFactory(nodeFactory)
     {
     }
 

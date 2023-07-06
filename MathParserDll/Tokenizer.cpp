@@ -173,7 +173,7 @@ Token Tokenizer::nextUnfiltered()
                     nextChar(); //consume
                     return Token(ECHO_START, 2, state.nextPos);
                 }
-            return Token(DIV, c, state.nextPos-1);
+            return Token(DIV, 1, state.nextPos-1);
             }
         case '\'':
             {

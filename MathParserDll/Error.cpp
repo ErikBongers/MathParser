@@ -110,6 +110,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
     {
         {ErrorId::UNKNOWN_EXPR, {ErrorId::UNKNOWN_EXPR, "UNKNOWN_EXPR", "Unknown expression."}},
         {ErrorId::NO_OP, {ErrorId::NO_OP, "NO_OP", "No operator '{0}' defined for {1} and {2}."}},
+        {ErrorId::EOS, {ErrorId::EOS, "EOS", "Unexpected end of file."}},
 
         {ErrorId::VAR_NOT_DEF, {ErrorId::VAR_NOT_DEF, "VAR_NOT_DEF", "variable {0} is not defined."}},
         {ErrorId::FUNC_NOT_DEF, {ErrorId::FUNC_NOT_DEF, "FUNC_NOT_DEF", "function {0} is not defined."}},

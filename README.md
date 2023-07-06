@@ -17,14 +17,15 @@ randomNumbers = 1, 234, 567; // a list of numbers (array)
 ```
 
 ### Numeric notation
+A dot is the decimal separator, but in the section [Formatted values](#formatted-values) there's an alternative.
 ```
-123.456; // a dot is the decimal separator, but in the section [Formatted values](#formatted-values) there's an alternative.
+123.456; 
 0xFF; //hexadecimal notation for decimal 255
 0b101; //binary notation for decimal 5
 123e4; //scientific notation for decimal 1230000
 ```
 
-The type of notation for a variable is remembered for as long as possible.
+The type of notation for a variable is remembered for as long as possible. That is, MathParser will try to output the value in the initial format.
 
 ### Operators
 In addition to the usual `+ - * /` operators, there are:
@@ -35,13 +36,13 @@ a=|-3|; //absolute value operator
 a++; //increment operator: same as a=a+1 or a+=1;
 a--; //decrement operator.
 a%3; //remainder operator: -15%12 = -3;
-a%%3; //modulus operator: -15%%12 = 9; //very usefull for dates and hours: starting from midnight, -14 hours = 9:00 , not -3:00 !
+a%%3; //modulus operator: -15%%12 = 9; //very usefull for dates and hours: starting from midnight, -15 hours = 9:00 , not -3:00 !
 3!; //factorials.
 ```
 ### Output control
 ```
-a=2*7; //will output only the variable and it's result: a=14
-7*3; //will only output the result: 21
+a=2*7; //will output the variable and it's value: a=14
+7*3; //will output the value: 21
 ```
 
 ##### Echo

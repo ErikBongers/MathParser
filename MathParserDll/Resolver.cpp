@@ -218,6 +218,8 @@ Value Resolver::resolveNone(const NoneExpr& expr)
     Value v;
     if(expr.error.id != ErrorId::NONE)
         v.errors.push_back(expr.error);
+    if(expr.token.type == TokenType::EOT)
+        v.errors.push_back(Error(ErrorId::EOS, expr.range()));
     return v;
     }
 

@@ -7,6 +7,7 @@ enum class ErrorId
     NONE = 0,
     UNKNOWN_EXPR,
     NO_OP,
+    EOS,
 
     VAR_NOT_DEF,
     FUNC_NOT_DEF,

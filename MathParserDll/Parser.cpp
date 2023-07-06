@@ -5,12 +5,20 @@
 #include "Variable.h"
 #include "Scope.h"
 
-Parser::Parser(std::unique_ptr<Scope>&& scope, char sourceIndex)
-    : tok(scope->sources[sourceIndex], sourceIndex), codeBlock(std::move(scope))
+Parser::Parser(std::unique_ptr<Scope>&& scope, char sourceIndex, NodeFactory& nodeFactory)
+    : tok(scope->sources[sourceIndex], sourceIndex), codeBlock(std::move(scope)), nodeFactory(nodeFactory)
     {
     }
 
 void Parser::parse()
+    {
+    while (!peek(TokenType::EOT))
+        {
+        parseScope();
+        }
+    }
+
+void Parser::parseScope()
     {
     parseEchoLines();
     while (!peek(TokenType::EOT))
@@ -264,7 +272,12 @@ Node* Parser::parseAssignExpr()
         AssignExpr* assign = nodeFactory.createAssign();
         assign->Id = id;
         assign->expr = reduceList(parseListExpr());
-
+        if (assign->expr->type == NodeType::NONE)
+            {
+            auto none = static_cast<NoneExpr*>(assign->expr);
+            if(none->token.type == TokenType::EOT)
+                assign->error = Error(ErrorId::EOS, assign->expr->range());
+            }
         codeBlock.scope->emplaceVarDef(tok.getText(assign->Id.range), Variable{ assign->Id, assign->expr });
         return assign;
         }
@@ -609,7 +622,22 @@ CallExpr* Parser::parseCallExpr(Token functionName)
         return callExpr;
         }
     tok.next();
-    callExpr->arguments = parseListExpr();
+    auto args = parseListExpr();
+    //first argument may be NONE, with a token EOT, which is an invalid argument list in this case.
+    if (args->list.size() == 1)
+        {
+        if (args->list[0]->type == NodeType::NONE)
+            {
+            auto none = static_cast<NoneExpr*>(args->list[0]);
+            if(none->token.type == TokenType::EOT)
+                callExpr->error = Error(ErrorId::EOS, callExpr->range());
+            else
+                args->list.clear();
+            }
+        }
+
+    callExpr->arguments = args;
+
     if (!match(TokenType::PAR_CLOSE))
         {
         if(callExpr->error.id == ErrorId::NONE)
@@ -622,22 +650,18 @@ ListExpr* Parser::parseListExpr()
     {
     Range range = tok.getCurrentToken().range;
     std::vector<Node*> list;
+    auto listExpr = nodeFactory.createList();
     while (true)
         {
         auto expr = parseAddExpr();
+        list.push_back(expr);
         if(expr->is(NodeType::NONE))
             break;
-        list.push_back(expr);
         if (tok.peek().type != TokenType::COMMA)
             break;
         tok.next();
         }
-    auto listExpr = nodeFactory.createList();
     listExpr->list = std::move(list);
-    if (listExpr->list.size() == 0)
-        {
-        listExpr->error = Error(ErrorId::UNKNOWN_EXPR, range);
-        }
     return listExpr;
     }
 

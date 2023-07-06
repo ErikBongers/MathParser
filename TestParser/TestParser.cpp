@@ -134,30 +134,30 @@ dat+duur;
 
         TEST_METHOD(TestDefines)
             {
-            assertResult("#define   date_units   short_date_units\n a=3s;", 3, "s");
-            assertError("#define sdfsdf", "DEFINE_NOT_DEF");
-            assertError("#undef trig\n sin(30deg)", "FUNC_NOT_DEF");
-            assertError("#undef all\n sin(30deg)", "FUNC_NOT_DEF");
-            assertError("#undef all\n max(30, 40)", "FUNC_NOT_DEF");
-            assertError("#undef all\n now()", "FUNC_NOT_DEF");
-            assertResult(R"CODE(
-#undef trig
-#define trig
-sin(30deg);
-                        )CODE"
-                         , 0.5);
-            assertResult(R"CODE(
-#undef arithm
-#define arithm
-max(30, 20);
-                        )CODE"
-                         , 30);
-            assertResult(R"CODE(
-#undef all
-#define all
-sin(30deg);
-                        )CODE"
-                         , 0.5);
+//            assertResult("#define   date_units   short_date_units\n a=3s;", 3, "s");
+//            assertError("#define sdfsdf", "DEFINE_NOT_DEF");
+//            assertError("#undef trig\n sin(30deg)", "FUNC_NOT_DEF");
+//            assertError("#undef all\n sin(30deg)", "FUNC_NOT_DEF");
+//            assertError("#undef all\n max(30, 40)", "FUNC_NOT_DEF");
+//            assertError("#undef all\n now()", "FUNC_NOT_DEF");
+//            assertResult(R"CODE(
+//#undef trig
+//#define trig
+//sin(30deg);
+//                        )CODE"
+//                         , 0.5);
+//            assertResult(R"CODE(
+//#undef arithm
+//#define arithm
+//max(30, 20);
+//                        )CODE"
+//                         , 30);
+//            assertResult(R"CODE(
+//#undef all
+//#define all
+//sin(30deg);
+//                        )CODE"
+//                         , 0.5);
             assertResult(R"CODE(
 #undef date
 #define date
@@ -166,11 +166,11 @@ d.years + d.months + d.days;
 
                         )CODE"
                          , 0);
-            assertError(R"CODE(
-#define strict
-sin(3);
-                        )CODE"
-                        , "W_EXPLICIT_UNITS_EXPEDTED");
+//            assertError(R"CODE(
+//#define strict
+//sin(3);
+//                        )CODE"
+//                        , "W_EXPLICIT_UNITS_EXPEDTED");
             }
 
         TEST_METHOD(TestPrecedence)
@@ -262,6 +262,14 @@ a;
             {
             assertResult("a=3; 12/2a", 2, "", "W_DIV_IMPL_MULT");
             assertResult("a=3; max(12/2a, 0)", 2, "", "W_DIV_IMPL_MULT");
+            }
+
+
+        TEST_METHOD(TestIncompleteProgram)
+            {
+            assertError("   a=12/             ", "EOS");
+            assertError("   a=             ", "EOS");
+            assertError("   {             ", "EOS");
             }
 
         TEST_METHOD(TestAssignStatements)

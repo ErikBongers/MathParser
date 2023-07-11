@@ -17,7 +17,7 @@ exports.startScript = async (req, res) => {
 
         let file = storage
             .bucket("mathparser-userdata")
-            .file("startscript-" + session.name + "-" + session.id);
+            .file("startscript-" + session.user.name + "-" + session.user.id);
 
         if (req.method === 'GET') {
 

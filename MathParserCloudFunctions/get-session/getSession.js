@@ -40,7 +40,8 @@ exports.getSession = async (req, res) => {
         }
 
         if (!session) {
-            session = await verify(req.body.credential);
+            session = {};
+            session.user = await verify(req.body.credential);
             session.sessionId = uuid.v1();
         }
         let expirationTime = 2 * 60 * 60 * 1000;

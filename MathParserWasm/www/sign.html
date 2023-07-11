@@ -17,6 +17,7 @@
         <button id="btnDownloadStartScript" onclick="downloadStartScript()">Download start script</button>
         <button id="btnSetCookie" onclick="setTheCookie()">Set cookie</button>
         <button id="btnSetCookie" onclick="getTheCookie()">Get cookie</button>
+        <button id="btnEraseCookie" onclick="eraseCookie('mathparserSession')">Erase cookie</button>
     </div>
     <script>
 
@@ -26,7 +27,7 @@
 
             userSession = JSON.parse(getCookie("mathparserSession"));
             let params = "";
-            if (userSession.sessionId)
+            if (userSession && userSession.sessionId)
                 params = "?sessionId=" + encodeURIComponent(userSession.sessionId);
             fetch("https://europe-west1-ebo-tain.cloudfunctions.net/get-session"+params, {
                 method: "POST",
@@ -36,7 +37,7 @@
             }).then(res => res.json())
                 .then(jsonUserSession => {
                     console.log("Request complete! response:", jsonUserSession);
-                    document.getElementById("obey").innerHTML = jsonUserSession.name;
+                    document.getElementById("obey").innerHTML = jsonUserSession.user.name;
                     userSession = jsonUserSession;
                     setCookie("mathparserSession", JSON.stringify(userSession), 1);
                 });

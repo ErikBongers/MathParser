@@ -8,14 +8,29 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
+      <div id="g_id_onload"
+           data-client_id="595809100273-9vvaauhe57ovk2s67g6buuqptsiamfrg.apps.googleusercontent.com"
+           data-context="use"
+           data-callback="onSignedIn"
+           data-auto_select="true">
+      </div>
       <header class="header">
           <div class="title">
               <h1 class="hide-on-phone">
                   Math Parser
               </h1>
           </div>
-          <div class="help">
-              <a href="https://github.com/ErikBongers/MathParser#readme" target="_blank">Help</a>
+          <div id="script-selector">
+              <select name="script" id="scriptSelector" onchange="onScriptSwitch()">
+                  <option value="start">Startup script</option>
+                  <option value="script1" selected>Script 1</option>
+              </select>
+          </div>
+          <div class="right">
+              <div id="userName">Not logged in...</div>
+              <div class="help">
+                  <a href="https://github.com/ErikBongers/MathParser#readme" target="_blank">Help</a>
+              </div>
           </div>
       </header>
 
@@ -95,12 +110,25 @@
               };
           };
 
+          function onSignedIn(googleUserToken) {
+              import("./lib.js").then((mp) => {
+                  mp.onSignedIn(googleUserToken);
+              });
+          }
+
+          import("./lib.js").then((mp) => {
+              window.onSignedIn = mp.onSignedIn;
+              window.onScriptSwitch = mp.onScriptSwitch;
+          });
+
       </script>
       <script src="editor.bundle.js"></script>
       <script async type="text/javascript" src="mathparser.wasm.js"></script>
-      <script async type="text/javascript" src="api.js"></script>
+      <script type="module" src="./lib.js"></script>
+      <script type="module" async src="api.js"></script>
       <script defer type="text/javascript" src="keyboard.js"></script>
-  </body>
-</html>
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </body >
+</html >
 
 

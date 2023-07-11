@@ -262,6 +262,12 @@ d=c;
             assertResult("0b111_1011C.dec", 123, "C", "", "DEC");
             assertResult("(0b111_1011.)", 123, "", "", "BIN");
             assertResult("(0b111_1011C.).dec", 123, "", "", "DEC");
+            assertResult(R"CODE(
+hx1=0x0001;
+hx2=0x7a;
+hx3=hx1+hx2;
+                        )CODE"
+                        , 123, "", "", "HEX");
             }
 
         TEST_METHOD(TestExponents)

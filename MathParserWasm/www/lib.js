@@ -3,7 +3,7 @@ export function clearErrorList() {
 	errorsForLint = [];
 }
 
-export function convertErrorToCodeMirror(e, doc) {
+function convertErrorToCodeMirror(e, doc) {
 	try {
 		let start = doc.line(e.range.startLine + 1).from + e.range.startPos;
 		let end = doc.line(e.range.endLine + 1).from + e.range.endPos;
@@ -23,7 +23,7 @@ export function convertErrorToCodeMirror(e, doc) {
 	}
 }
 
-export function addErrorsToLint (errors) {
+function addErrorsToLint (errors) {
 	for (let e of errors) {
 		errorsForLint.push(convertErrorToCodeMirror(e, cm.editor.state.doc));
 		if (e.stackTrace)
@@ -31,7 +31,7 @@ export function addErrorsToLint (errors) {
 	}
 }
 
-export function formatNumber (numb) {
+function formatNumber (numb) {
 	let strFormatted = "";
 	if (numb.fmt == "DEC")
 		strFormatted = formatFloatString(numb.sig, numb.exp);
@@ -41,7 +41,7 @@ export function formatNumber (numb) {
 	return strFormatted;
 }
 
-export function formatList (values) {
+function formatList (values) {
 	let strFormatted = "";
 	let strComma = "";
 	values.forEach(value => {
@@ -51,7 +51,7 @@ export function formatList (values) {
 	return strFormatted;
 }
 
-export function formatResult (line) {
+function formatResult (line) {
 	let strFormatted = "";
 	if (line.type == "NUMBER" || line.type == "N") {
 		strFormatted = formatNumber(line.number);
@@ -67,7 +67,7 @@ export function formatResult (line) {
 	return strFormatted;
 }
 
-export function lineToString (line) {
+function lineToString (line) {
 	if (line.onlyComment == true) {
 		return "//" + line.comment;
 	}

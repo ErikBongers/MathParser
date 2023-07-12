@@ -369,3 +369,4 @@ FodyWeavers.xsd
 package-lock.json
 /MathParserWasm/src/lang-mathparser/src/parser.js
 /MathParserWasm/src/lang-mathparser/src/parser.terms.js
+!/MathParserWasm/www/api.wasm.js

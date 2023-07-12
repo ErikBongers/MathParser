@@ -1,4 +1,4 @@
-var statusElement = document.getElementById('status');
+var statusElement = document.getElementById('status'); 
 var progressElement = document.getElementById('progress');
 var spinnerElement = document.getElementById('spinner');
 

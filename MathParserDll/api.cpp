@@ -11,15 +11,37 @@
 
 std::string version = "1.0." + std::to_string(VERSION_BUILD);
 std::string result = "";
+std::vector<Source> sources;
 
-int C_DECL parse(const char* str)
+void C_DECL setSource(const char* scriptId, const char* text)
     {
-    Globals globals;
+    auto found = std::find_if(sources.begin(), sources.end(), [&scriptId] (Source& source) {
+        return source.name == scriptId;
+                              });
+    if (found != std::end(sources))
+        (*found).text = text;
+    else
+        sources.push_back(Source((char)sources.size(), scriptId, text));
+    }
+
+char getSourceIndex(const char* scriptId)
+    {
+    auto found = std::find_if(sources.begin(), sources.end(), [&scriptId] (Source& source) {
+        return source.name == scriptId;
+                              });
+    if (found != std::end(sources))
+        return (*found).index;
+    return -1; //TODO: sentinel value
+    }
+
+int C_DECL parse(const char* scriptId)
+    {
+    Globals globals(sources);
+    auto sourceIndex = getSourceIndex(scriptId);//TODO: this could fail!!
     auto scope = std::make_unique<Scope>(globals);
-    globals.sources.push_back(Source("script1", str));
     NodeFactory nodeFactory;
     CodeBlock codeBlock(std::move(scope));
-    PeekingTokenizer tok(codeBlock.scope->globals.sources[0].text.c_str(), 0);
+    PeekingTokenizer tok(globals.sources[sourceIndex].text.c_str(), 0);
     Parser parser(codeBlock, nodeFactory, tok);
     parser.parse();
     std::map<std::string, Value> nada;

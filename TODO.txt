@@ -2,14 +2,32 @@
 
 * bug: javascript: if userSession is nada: don't comunicate with cloud.
 
+* allow a block to be created from another block (copy ctor)
+  > ALL is copied.
+  > a parser just adds statements to it.
+
 * sources array should be above Scope and CodeBlock.
   > assume that a codeblock may import a source.
   > Sources should be a class and codeBlock may request a source to be added (and the index number returned)
 * start script:
   > how to run 2 scripts in the same parser/resolver?
     - a CodeBlock has a unique scope and statements.
-    - a Scope has a sourse list
-    > this doesn't make sense...
+    - a Scope has link to the Globals containing the sources.
+    - Parser parses ONE CodeBlock, using a Tokenizer and a NodeFactory.
+    - Resolver resolves the parsed CodeBlock.
+
+    > A scope can have a parent (from a parent codeBlock).
+      > The child scope/block can only have one parent.
+      > Thus a child cannot use parent to import multiple files.
+      > can multiple blocks share one scope?
+        > currently not: unique_pointer.
+      > can a block have statements from multiple sources?
+        > looks like a better idea...
+        > what is the difference between 2 sources and one big source?
+          > if variables are kept...none.
+          > a (start) script CANNOT be shared, it's not a dll.
+            > statements are just commands, they do not store state. State is stored in variables...and these are always copied!
+
 
   > output to output but...
   > error list only for the displayed file!

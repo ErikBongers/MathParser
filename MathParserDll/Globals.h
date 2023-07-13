@@ -9,6 +9,7 @@ class OperatorDefs;
 
 struct Source
     {
+    char index = -1;
     std::string name;
     std::string text;
     };
@@ -20,9 +21,9 @@ struct Globals
     OperatorDefs operatorDefs;
     UnitsView unitsView;
     std::map<std::string, Value> constants;
-    std::vector<Source> sources;
+    std::vector<Source>& sources;
 
-    Globals();
+    Globals(std::vector<Source>& sources);
     Globals(const Globals&) = default;
 
     };

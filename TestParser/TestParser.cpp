@@ -600,7 +600,9 @@ hx3=hx1+hx2;
 
         JsonAndString  parseSingleResult(const char* stmt)
             {
-            int resLen = parse(stmt);
+            const auto scriptId = "script1";
+            setSource(scriptId, stmt);
+            int resLen = parse(scriptId);
             char* result = new char[resLen];
             getResult(result, resLen);
             json j = json::parse(result);

@@ -56,19 +56,20 @@
 
       <script type='text/javascript'>
           //make module functions global for event listeners.
-          import("./lib.js").then((mp) => {
-              window.onSignedIn = mp.onSignedIn;
-              window.onScriptSwitch = mp.onScriptSwitch;
+          import("./cloud.js").then((cloud) => {
+              window.onSignedIn = cloud.onSignedIn;
+              window.onScriptSwitch = cloud.onScriptSwitch;
           });
 
       </script>
       <script src="editor.bundle.js"></script>
-      <script type="module" src="./lib.js"></script>
       <script type="text/javascript" async src="api.wasm.js"></script>
+      <script type="module" src="./lib.js"></script>
+      <script type="module" src="./cloud.js"></script>
       <script async type="text/javascript" src="mathparser.wasm.js"></script>
       <script defer type="text/javascript" src="keyboard.js"></script>
       <script src="https://accounts.google.com/gsi/client" async defer></script>
-  </body >
+  </body>
 </html >
 
 

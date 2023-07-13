@@ -1,6 +1,6 @@
 const { Storage } = require('@google-cloud/storage');
 
-exports.startScript = async (req, res) => {
+exports.cloudScript = async (req, res) => {
 
     res.set('Access-Control-Allow-Origin', '*');
 
@@ -14,19 +14,26 @@ exports.startScript = async (req, res) => {
         const storage = new Storage();
 
         let session = await getSession(storage, req.query.sessionId);
+        let scriptId = req.query.scriptId;
 
         let file = storage
             .bucket("mathparser-userdata")
-            .file("startscript-" + session.user.name + "-" + session.user.id);
+            .file("script-" + scriptId + "-" + session.user.name + "-" + session.user.id);
 
         if (req.method === 'GET') {
-
-            let readStream = file.createReadStream();
-            readStream.on('data', (data) => {
-                res.write(data);
-            });
-            readStream.on('end', (data) => {
-                res.status(200).send();
+            file.exists().then(function (data) {
+                const exists = data[0];
+                if (exists) {
+                    let readStream = file.createReadStream();
+                    readStream.on('data', (data) => {
+                        res.write(data);
+                    });
+                    readStream.on('end', (data) => {
+                        res.status(200).send();
+                    });
+                } else {
+                    res.status(200).send();
+                }
             });
 
         } else if (req.method === 'POST') {

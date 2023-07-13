@@ -1,18 +1,8 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* script storage: local backup.
-  - keep store date with script.
-    > Date ser/deser: toISOString() and Date.parse()
-  > if not logged in:
-    - take local storage.
-    - store local storage.
-  > if logged in:
-    - take online storage but:
-      > check if localstorage is more recent and then prompt which one to use.
-    - store online and also a local backup.
+* bug: javascript: if userSession is nada: don't comunicate with cloud.
 
 * start script:
-  > save scripts based on google user account.
   > limits of these start statements?
     > none: why bother having restrictions.
     > start script does NOT generate output.

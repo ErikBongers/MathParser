@@ -1,4 +1,5 @@
 export let errorsForLint = [];
+
 export function clearErrorList() {
 	errorsForLint = [];
 }
@@ -18,7 +19,7 @@ function convertErrorToCodeMirror(e, doc) {
 		return hint;
 	}
 	catch (err) {
-		console.log(e);
+		console.error(e);
 		throw err;
 	}
 }
@@ -79,8 +80,8 @@ function lineToString (line) {
 		addErrorsToLint(line.errors);
 	}
 	catch (err) {
-		console.log(err);
-		console.log(line);
+		console.error(err);
+		console.error(line);
 	}
 	//just for top level errors in the output window:
 	let strErrors = "";
@@ -136,29 +137,6 @@ function formatFloatString (floatString, exponent) {
 	return sResult;
 }
 
-export function log (text) {
-	console.log(text);
-}
-export function onSignedIn (googleUserToken) {
-
-	let userSession = JSON.parse(getCookie("mathparserSession"));
-	let params = "";
-	if (userSession && userSession.sessionId)
-		params = "?sessionId=" + encodeURIComponent(userSession.sessionId);
-	fetch("https://europe-west1-ebo-tain.cloudfunctions.net/get-session" + params, {
-		method: "POST",
-		mode: "cors",
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(googleUserToken)
-	}).then(res => res.json())
-		.then(jsonUserSession => {
-			console.log("Request complete! response:", jsonUserSession);
-			document.getElementById("userName").innerHTML = jsonUserSession.user.name;
-			userSession = jsonUserSession;
-			setCookie("mathparserSession", JSON.stringify(userSession), 1);
-		});
-
-}
 export function setCookie(name, value, days) {
 	var expires = "";
 	if (days) {
@@ -179,37 +157,10 @@ export function getCookie (name) {
 	return null;
 }
 
-export function loadScript(scriptId) {
-	let txt = "";
-	if (scriptId == "start")
-		txt = localStorage.savedStartCode;
-	else
-		txt = localStorage.savedCode;
-
-	if (localStorage.savedCode) {
-		let transaction = cm.editor.state.update({ changes: { from: 0, to: cm.editor.state.doc.length, insert: txt } });
-		cm.editor.update([transaction]);
-	}
-}
-
-export function saveScript(scriptId) {
-	if (scriptId == "start") {
-		localStorage.savedStartCode = cm.editor.state.doc.toString();
-	} else {
-		localStorage.savedCode = cm.editor.state.doc.toString();
-	}
-}
-
-export function afterEditorChange () {
-	let scriptId = document.getElementById("scriptSelector").value
-	saveScript(scriptId);
-	parseAfterChange();
-}
-
 export function parseAfterChange () {
 	clearErrorList();
 	var result = Module.api.parseMath(cm.editor.state.doc.toString());
-	log(result);
+	console.debug(result);
 	result = JSON.parse(result);
 	var strOutput = "";
 	var strResult = "";
@@ -238,26 +189,3 @@ export function parseAfterChange () {
 	transaction = cm.cmResult.state.update({ changes: { from: 0, to: cm.cmResult.state.doc.length, insert: strResult } });
 	cm.cmResult.update([transaction]);
 }
-
-export function onScriptSwitch () {
-	let scriptId = document.getElementById("scriptSelector").value
-	if (scriptId == "start") {
-		saveScript("script1");
-		loadScript("start");
-	} else {
-		saveScript("start");
-		loadScript("script1");
-	}
-}
-
-export function startUp () {
-	window.document.title = "Math Parser " + Module.api.getMathVersion();
-
-	cm.setLintSource((view) => {
-		afterEditorChange();
-		return errorsForLint;
-	});
-
-	loadScript("script1");
-}
-

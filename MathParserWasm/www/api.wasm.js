@@ -58,7 +58,7 @@ Module.onRuntimeInitialized = async _ => {
 		getMathVersion: Module.cwrap('getMathVersion', 'string', []),
 	};
 
-	import("./lib.js").then((mp) => {
-		mp.startUp();
+	import("./cloud.js").then((cloud) => {
+		cloud.startUp();
 	});
 };

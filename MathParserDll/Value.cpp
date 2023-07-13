@@ -4,6 +4,7 @@
 #include <sstream>
 #include <bitset>
 #include "Scope.h"
+#include "Globals.h"
 
 Value::Value(Number n)
     : type(ValueType::NUMBER)
@@ -49,7 +50,7 @@ std::string getText(const Range& range, const Scope& scope)
     {
     if(range.isEmpty())
         return "";
-    return std::string(&scope.sources[range.start.sourceIndex][range.start.cursorPos], &scope.sources[range.start.sourceIndex][range.end.cursorPos]);
+    return std::string(&scope.globals.sources[range.start.sourceIndex].text[range.start.cursorPos], &scope.globals.sources[range.start.sourceIndex].text[range.end.cursorPos]);
     }
 
 void Value::to_json(std::ostringstream& sstr, const Scope& scope) const

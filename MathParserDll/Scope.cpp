@@ -28,7 +28,6 @@ std::unique_ptr<Scope> Scope::copyForBlock()
     auto newScope = std::make_unique<Scope>(globals);
     newScope->parentScope = this;
     newScope->units.setDefs(units);
-    newScope->sources = sources;
     //settings;
     newScope->dateFormat = dateFormat;
     newScope->strict = strict;
@@ -93,6 +92,16 @@ bool Scope::varDefExists(const std::string& id)
 void Scope::setVariables(const std::map<std::string, Value>& variables)
     {
     this->variables = variables;
+    }
+
+std::string Scope::getText(char sourceIndex, unsigned int start, unsigned end) 
+    { 
+    return std::string(&globals.sources[sourceIndex].text[start], &globals.sources[sourceIndex].text[end]); 
+    }
+
+std::string Scope::getText(const Range& range) 
+    { 
+    return std::string(&globals.sources[range.start.sourceIndex].text[range.start.cursorPos], &globals.sources[range.end.sourceIndex].text[range.end.cursorPos]); 
     }
 
 void Scope::AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock) 

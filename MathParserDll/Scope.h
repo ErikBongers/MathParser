@@ -36,7 +36,6 @@ class Scope
         //settings
         DateFormat dateFormat = DateFormat::UNDEFINED;
         std::map<std::string, CustomFunction*> localFunctions;
-        std::vector<const char*> sources;
         bool strict = false;
         char decimal_char = '.';
         char thou_char = ',';
@@ -54,8 +53,8 @@ class Scope
         void setVariables(const std::map<std::string, Value>& variables);
         void emplaceVarDef(const std::string& id, Variable&& variable) { varDefs.emplace(id, std::move(variable)); }
         void emplaceVariable(const std::string& id, Value&& value) { variables.emplace(id, std::move(value)); }
-        std::string getText(char sourceIndex, unsigned int start, unsigned end) { return std::string(&sources[sourceIndex][start], &sources[sourceIndex][end]); }
-        std::string getText(const Range& range) { return std::string(&sources[range.start.sourceIndex][range.start.cursorPos], &sources[range.end.sourceIndex][range.end.cursorPos]); }
+        std::string getText(char sourceIndex, unsigned int start, unsigned end);
+        std::string getText(const Range& range);
 
     private:
         CustomFunction* getLocalFunction(const std::string& name);

@@ -16,10 +16,10 @@ int C_DECL parse(const char* str)
     {
     Globals globals;
     auto scope = std::make_unique<Scope>(globals);
-    scope->sources.push_back(str);
+    globals.sources.push_back(Source("script1", str));
     NodeFactory nodeFactory;
     CodeBlock codeBlock(std::move(scope));
-    PeekingTokenizer tok(codeBlock.scope->sources[0], 0);
+    PeekingTokenizer tok(codeBlock.scope->globals.sources[0].text.c_str(), 0);
     Parser parser(codeBlock, nodeFactory, tok);
     parser.parse();
     std::map<std::string, Value> nada;

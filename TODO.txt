@@ -2,16 +2,20 @@
 
 * bug: javascript: if userSession is nada: don't comunicate with cloud.
 
+* sources array should be above Scope and CodeBlock.
+  > assume that a codeblock may import a source.
+  > Sources should be a class and codeBlock may request a source to be added (and the index number returned)
 * start script:
-  > limits of these start statements?
-    > none: why bother having restrictions.
-    > start script does NOT generate output.
-      > also no echo?
-  > has sourceIndex = 0
+  > how to run 2 scripts in the same parser/resolver?
+    - a CodeBlock has a unique scope and statements.
+    - a Scope has a sourse list
+    > this doesn't make sense...
+
+  > output to output but...
+  > error list only for the displayed file!
+    > keep an array of 2 errorLists.
+      > perhaps add a fake error at the top of the main script that inidcates that there are errors in the start script.
   > precompile into statements that can be passed to resolver (see globals)
-  > GUI:
-    - title bar has a drop-down with: "startup script" and "script 1"
-  > firestore works OFFLINE !
 
 * Save to cloud (via functions?)
   > cloud architecture: https://www.youtube.com/watch?v=JbEiek3MNWw

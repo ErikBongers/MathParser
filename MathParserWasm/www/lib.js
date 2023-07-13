@@ -157,10 +157,9 @@ export function getCookie (name) {
 	return null;
 }
 
-export function parseAfterChange () {
-	clearErrorList();
-	var result = Module.api.parseMath(cm.editor.state.doc.toString());
+export function outputResult(result, sourceIndex) {
 	console.debug(result);
+	clearErrorList();
 	result = JSON.parse(result);
 	var strOutput = "";
 	var strResult = "";
@@ -172,6 +171,8 @@ export function parseAfterChange () {
 	let lineCnt = 0;
 	let lineAlreadyFilled = false;
 	for (let line of result.result) {
+		if (line.src != sourceIndex)
+			continue;
 		//goto the next line in output
 		while (lineCnt < line.line) {
 			strResult += "\n";

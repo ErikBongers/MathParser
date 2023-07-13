@@ -13,15 +13,21 @@ std::string version = "1.0." + std::to_string(VERSION_BUILD);
 std::string result = "";
 std::vector<Source> sources;
 
-void C_DECL setSource(const char* scriptId, const char* text)
+int C_DECL setSource(const char* scriptId, const char* text)
     {
     auto found = std::find_if(sources.begin(), sources.end(), [&scriptId] (Source& source) {
         return source.name == scriptId;
                               });
     if (found != std::end(sources))
-        (*found).text = text;
+        {
+        found->text = text;
+        return found->index;
+        }
     else
-        sources.push_back(Source((char)sources.size(), scriptId, text));
+        {
+        sources.push_back(Source{(char)sources.size(), scriptId, text});
+        return sources.size()-1;
+        }
     }
 
 char getSourceIndex(const char* scriptId)

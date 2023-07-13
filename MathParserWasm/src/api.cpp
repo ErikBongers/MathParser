@@ -11,20 +11,26 @@ extern "C" {
 #endif
 
 EMSCRIPTEN_KEEPALIVE 
-const char* parseMath(const char* str)
-	{
-	parse(str);
-	getResult(_result, BUFLEN);
-	return _result;
-	}
+int uploadSource(const char* scriptId, const char* str)
+    {
+    return setSource(scriptId, str);
+    }
+
+EMSCRIPTEN_KEEPALIVE 
+const char* parseMath(const char* startScriptId, const char* mainScriptId)
+    {
+    parse(startScriptId, mainScriptId);
+    getResult(_result, BUFLEN);
+    return _result;
+    }
 
 
 EMSCRIPTEN_KEEPALIVE 
 const char* getMathVersion(void)
-	{
-	getVersion(_version, 10);
-	return _version;
-	}
+    {
+    getVersion(_version, 10);
+    return _version;
+    }
 
 #ifdef __cplusplus
 }
@@ -33,6 +39,6 @@ const char* getMathVersion(void)
 
 int main() {
     printf("MathParser webassembly module");
-	printf("%s\n", getMathVersion());
+    printf("%s\n", getMathVersion());
 }
 

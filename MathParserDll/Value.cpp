@@ -56,7 +56,8 @@ std::string getText(const Range& range, const Scope& scope)
 void Value::to_json(std::ostringstream& sstr, const Scope& scope) const
     {
     sstr << "{";
-    sstr << "\"line\":" << this->stmtRange.start.line << "";
+    sstr << "\"src\":" << (int)this->stmtRange.start.sourceIndex << "";
+    sstr << ",\"line\":" << this->stmtRange.start.line << "";
     if (!id.isEmpty())
         sstr << ",\"id\":\"" << getText(id, scope) << "\"";
     else

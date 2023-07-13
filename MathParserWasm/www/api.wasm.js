@@ -54,7 +54,8 @@ window.onerror = function () {
 
 Module.onRuntimeInitialized = async _ => {
 	Module.api = {
-		parseMath: Module.cwrap('parseMath', 'string', ["string"]),
+        uploadSource: Module.cwrap('uploadSource', 'number', ["string", "string"]),
+        parseMath: Module.cwrap('parseMath', 'string', ["string", "string"]),
 		getMathVersion: Module.cwrap('getMathVersion', 'string', []),
 	};
 

@@ -12,7 +12,7 @@
 #endif
 
 //Parses the string and returns the length of resulting json.
-C_IMP_EXP void C_DECL setSource(const char* scriptId, const char* text);
+C_IMP_EXP int C_DECL setSource(const char* scriptId, const char* text);
 
 C_IMP_EXP int C_DECL parse(const char* startScriptId, const char* mainScriptId);
 

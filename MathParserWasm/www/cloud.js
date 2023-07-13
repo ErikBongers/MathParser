@@ -137,6 +137,19 @@ export function startUp() {
 export function afterEditorChange() {
 	let scriptId = document.getElementById("scriptSelector").value
 	saveScript(scriptId);
-	mp.parseAfterChange();
+	parseAfterChange(scriptId);
 }
 
+function parseAfterChange(scriptId) {
+	let result = {};
+	let sourceIndex = -1;
+	if (scriptId != "start") {
+		Module.api.uploadSource("start", localStorage.savedStartCode);
+		sourceIndex = Module.api.uploadSource(scriptId, cm.editor.state.doc.toString());
+		result = Module.api.parseMath("start", scriptId);
+	} else {
+		sourceIndex = Module.api.uploadSource(scriptId, cm.editor.state.doc.toString());
+		result = Module.api.parseMath("", scriptId);
+	}
+	mp.outputResult(result, sourceIndex);
+}

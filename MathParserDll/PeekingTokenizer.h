@@ -8,7 +8,7 @@ class PeekingTokenizer
         BaseTokenizer<Token>::State currentState;
 
     public:
-        PeekingTokenizer(const char* stream, char sourceIndex);
+        PeekingTokenizer(const Source& source);
         Token next();
         Token peek();
         Token peekSecond();

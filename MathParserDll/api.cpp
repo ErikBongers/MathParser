@@ -34,18 +34,29 @@ char getSourceIndex(const char* scriptId)
     return -1; //TODO: sentinel value
     }
 
-int C_DECL parse(const char* scriptId)
+int C_DECL parse(const char* startScriptId, const char* mainScriptId)
     {
+    auto mainIndex = getSourceIndex(mainScriptId); //TODO: test if script is actually found
+    auto startIndex = getSourceIndex(startScriptId); //TODO: if not "", test if script is actually found
+    auto firstIndex = startIndex != -1 ? startIndex : mainIndex;
+    auto secondIndex = startIndex != -1 ? mainIndex : -1;
+
     Globals globals(sources);
-    auto sourceIndex = getSourceIndex(scriptId);//TODO: this could fail!!
     auto scope = std::make_unique<Scope>(globals);
     NodeFactory nodeFactory;
     CodeBlock codeBlock(std::move(scope));
-    PeekingTokenizer tok(globals.sources[sourceIndex].text.c_str(), 0);
+
+    PeekingTokenizer tok(sources[firstIndex]);
     Parser parser(codeBlock, nodeFactory, tok);
     parser.parse();
-    std::map<std::string, Value> nada;
-    Resolver resolver(parser.codeBlock);
+    
+    if(secondIndex != -1)
+        {
+        PeekingTokenizer tok2(globals.sources[secondIndex]);
+        Parser parser(codeBlock, nodeFactory, tok2);
+        parser.parse();
+        }
+    Resolver resolver(codeBlock);
     result = resolver.resolve();
     return getResultLen();
     }

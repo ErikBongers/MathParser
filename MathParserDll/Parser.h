@@ -16,6 +16,7 @@ class Parser
     public:
         CodeBlock& codeBlock;
         Parser(CodeBlock& codeBlock, NodeFactory& nodeFactory, PeekingTokenizer& tok);
+        Parser(const Parser& parser, PeekingTokenizer& tok);
         void parse();
     private:
         Statement* parseStatement();

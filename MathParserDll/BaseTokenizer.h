@@ -1,5 +1,7 @@
 #pragma once
 #include "TokenPos.h"
+#include "Source.h"
+
 /*
 Token is a class that must implement following functions:
     static Token Null();
@@ -19,6 +21,7 @@ class BaseTokenizer
             };
 
     protected:
+        const Source& source;
         const char* _stream;
         size_t size = -1;
         State state;
@@ -28,11 +31,11 @@ class BaseTokenizer
         unsigned int getPos() const { return state.nextPos.cursorPos;}
         const Token& getCurrentToken() const { return state.token; }
         std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
-        BaseTokenizer(const char* stream, char sourceIndex) 
-            : _stream(stream) 
+        BaseTokenizer(const Source& source)
+            : source(source), _stream(source.text.c_str())
             { 
-            size = strlen(stream); 
-            state.nextPos.sourceIndex = sourceIndex;
+            size = strlen(_stream); 
+            state.nextPos.sourceIndex = source.index;
             }
 
         void skipWhiteSpace()

@@ -11,7 +11,7 @@
 class Tokenizer : public BaseTokenizer<Token>
     {
     public:
-        Tokenizer(const char* stream, char sourceIndex);
+        Tokenizer(const Source& source);
         Token next();
         void tokenizeComments(bool comments);
         void tokenizeNewlines(bool set);

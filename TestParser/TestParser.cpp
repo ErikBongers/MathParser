@@ -302,6 +302,25 @@ hx3=hx1+hx2;
             assertError("   {             ", "EXPECTED");
             }
 
+        TEST_METHOD(TestStartScript)
+            {
+            assertResultWithStartScript("a=3;", "2a", 6);
+            assertResultWithStartScript(R"CODE(
+function ageThisYear(bday)
+  {
+  #define ymd
+  resistor = 1R;
+  lastDay=date(now().year, 12, 31);
+  lastDay-bday;
+  }
+            )CODE", 
+            R"CODE(
+#define dmy
+age= ageThisYear('31/03/2015');
+age.years*age.months;
+            )CODE", 72);
+            }
+
         TEST_METHOD(TestAssignStatements)
             {
             assertResult("  a=3;a.=km               ", 3, "km");
@@ -480,9 +499,19 @@ hx3=hx1+hx2;
 
         JsonAndString assertResult(const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
             {
-            std::string msg;
-
             auto result = parseSingleResult(stmt);
+            return doAssertResult(result, stmt, expectedResult, expectedUnit, errorId, expectedFormat, expectedExponent);
+            }
+            
+        JsonAndString assertResultWithStartScript(const char* startScript, const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
+            {
+            auto result = parseSingleResult(startScript, stmt);
+            return doAssertResult(result, stmt, expectedResult, expectedUnit, errorId, expectedFormat, expectedExponent);
+            }
+
+        JsonAndString doAssertResult(JsonAndString& result, const char* stmt, double expectedResult, const std::string expectedUnit = "", const std::string errorId = "", const std::string expectedFormat = "DEC", int expectedExponent = 0)
+            {
+            std::string msg;
             logJson(result);
             assertErrors(result, stmt, errorId);
             json number = result.j["number"];
@@ -598,17 +627,28 @@ hx3=hx1+hx2;
             Logger::WriteMessage(oss.str().c_str());
             }
 
-        JsonAndString  parseSingleResult(const char* stmt)
+        JsonAndString parseSingleResult(const char* startScript, const char* mainScript)
             {
+            auto startScriptId = "";
             const auto scriptId = "script1";
-            setSource(scriptId, stmt);
-            int resLen = parse(scriptId);
+            if(std::strlen(startScript) != 0)
+                {
+                startScriptId = "start";
+                setSource(startScriptId, startScript);
+                }
+            setSource(scriptId, mainScript);
+            int resLen = parse(startScriptId, scriptId);
             char* result = new char[resLen];
             getResult(result, resLen);
             json j = json::parse(result);
             std::string strResult = result;
             delete[] result;
             return {j["result"].back(), strResult}; //back = last element, as opposed to front()
+            }
+
+        JsonAndString parseSingleResult(const char* stmt)
+            {
+            return parseSingleResult("", stmt);
             }
 
         std::wstring toWstring(const std::string& s)
@@ -627,7 +667,6 @@ hx3=hx1+hx2;
             if(date.day != day || ((int)date.month != month) || date.year != year)
                 Assert::Fail(toWstring(msg).c_str());
             }
-
 
     };
 }

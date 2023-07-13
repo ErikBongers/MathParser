@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "PeekingTokenizer.h"
 
-PeekingTokenizer::PeekingTokenizer(const char* stream, char sourceIndex)
-    : tok(stream, sourceIndex)
+PeekingTokenizer::PeekingTokenizer(const Source& source)
+    : tok(source)
     {
     next();
     }

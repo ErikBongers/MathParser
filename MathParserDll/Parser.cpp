@@ -10,6 +10,11 @@ Parser::Parser(CodeBlock& codeBlock, NodeFactory& nodeFactory, PeekingTokenizer&
     {
     }
 
+Parser::Parser(const Parser& parser, PeekingTokenizer& tok)
+    : codeBlock(parser.codeBlock), tok(tok), nodeFactory(parser.nodeFactory)
+    {
+    }
+
 void Parser::parse()
     {
     parseEchoLines();

@@ -193,6 +193,7 @@
     <ClInclude Include="Range.h" />
     <ClInclude Include="Resolver.h" />
     <ClInclude Include="Scope.h" />
+    <ClInclude Include="Source.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="Tokenizer.h" />
     <ClInclude Include="TokenPos.h" />

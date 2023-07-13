@@ -1,5 +1,7 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
+* Tokenizer() ctor: pass Source object instead of txt + idx
+
 * bug: javascript: if userSession is nada: don't comunicate with cloud.
 
 * allow a block to be created from another block (copy ctor)

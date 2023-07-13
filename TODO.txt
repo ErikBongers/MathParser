@@ -1,41 +1,28 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* Tokenizer() ctor: pass Source object instead of txt + idx
-
 * bug: javascript: if userSession is nada: don't comunicate with cloud.
 
-* allow a block to be created from another block (copy ctor)
-  > ALL is copied.
-  > a parser just adds statements to it.
-
-* sources array should be above Scope and CodeBlock.
-  > assume that a codeblock may import a source.
-  > Sources should be a class and codeBlock may request a source to be added (and the index number returned)
 * start script:
-  > how to run 2 scripts in the same parser/resolver?
-    - a CodeBlock has a unique scope and statements.
-    - a Scope has link to the Globals containing the sources.
-    - Parser parses ONE CodeBlock, using a Tokenizer and a NodeFactory.
-    - Resolver resolves the parsed CodeBlock.
+  > list the errors of start script at the top of main script.
 
-    > A scope can have a parent (from a parent codeBlock).
-      > The child scope/block can only have one parent.
-      > Thus a child cannot use parent to import multiple files.
-      > can multiple blocks share one scope?
-        > currently not: unique_pointer.
-      > can a block have statements from multiple sources?
-        > looks like a better idea...
-        > what is the difference between 2 sources and one big source?
-          > if variables are kept...none.
-          > a (start) script CANNOT be shared, it's not a dll.
-            > statements are just commands, they do not store state. State is stored in variables...and these are always copied!
+* functions:
+  > allow last ';' to be elimited.
+  > fix all the TODO's, because quick-and-dirty code.
+  > when re-defined, give warning of override.
 
+* abs(), round() in combination with units.
+  > keep resolution of the unit.
 
-  > output to output but...
-  > error list only for the displayed file!
-    > keep an array of 2 errorLists.
-      > perhaps add a fake error at the top of the main script that inidcates that there are errors in the start script.
-  > precompile into statements that can be passed to resolver (see globals)
+* create prime() function -> prime factorisation.
+  > Can MathParser solve : https://www.youtube.com/watch?v=vhc4FceGjC8
+
+* Move project from WPF folder to C++ folder.
+* var.fragment=x; --> gives error: unexpected ';'. Should be "can't assign to..."
+
+* date fragment as hls should give error
+    : today.year = 2022; //error!
+* Date parsing;
+  - return warnings if assumptions (ymd?) are being made.
 
 * Save to cloud (via functions?)
   > cloud architecture: https://www.youtube.com/watch?v=JbEiek3MNWw
@@ -52,7 +39,6 @@
     > perhaps for session data?
   > free hosting + domain: https://www.youtube.com/watch?v=cG9kv5-5bPI
 
-
 * formatted dates: make date format stricter
   > still compile all unabiguous dates
   > if a date format is set (dmy) use this in case of ambiguous values
@@ -62,9 +48,6 @@
   >...and thus a boolean value.
 
 * allow #define spanning multiple lines, ended by an empty line.
-
-* abs(), round() in combination with units.
-  > keep resolution of the unit.
 
 * Report errors in function bodies.
   > Move NOT_EXIST checks for IDs from Resolver to Parser.
@@ -195,63 +178,15 @@ window.onbeforeunload = closeIt;
 
 WWW
 ---
-* mathparser page
-  > show logged in user in upper right corner.
-  > load start script into localStorage (sessionStorage!)
-  > precompile startscript into resolver?
-    > means resolver has to be statefull.
-
-
 * Syntax highlighting is done with Mark Decorations
   > CodeMirror 6: Decorations or HighlightingStyle?
   > Wrap the decoration in a Range. RangeSet -> EditorView?
   > Or…create a parser for the output and hide the “special codes”?
 
 * Tests: include more complex tests with multi-line code, like function defs.
-* functions:
-  > allow last ';' to be elimited.
-  > fix all the TODO's, because quick-and-dirty code.
-* startup script
-  > runs before every other run.
-  > could contain functions and defs of vars,...
-
-* create prime() function -> prime factorisation.
-  > Can MathParser solve : https://www.youtube.com/watch?v=vhc4FceGjC8
-
-* Move project from WPF folder to C++ folder.
-* var.fragment=x; --> gives error: unexpected ';'. Should be "can't assign to..."
-
-* date fragment as hls should give error
-    : today.year = 2022; //error!
-* Date parsing;
-  - return warnings if assumptions (ymd?) are being made.
 
 * npm scripts that start with a dot:
 https://stackoverflow.com/questions/50998089/running-npm-script-on-windows-starting-with-a-period
-
-* implicit mult with power: precedence changes depending on order?
-  > 2^3b  =  2^(3b) >> mult has prio
-  > 2b^3  =  2(b^3) >> power has prio
-
-GUI
----
-3 possible GUIs:
-
-1. Current one (code left, output right or bottom) --> desktop + mobile.
-2. Code right, output left --> desktop only?
-  > the output could be really small column if echo (!) is ignored.
-  > align output with input
-    * Output to left of input
-      > #txtOutput .CodeMirror {  text-align: right!important;  }
-      > option to 'mirror' the lines or to collapse (remove) empty output lines
-      > what if output is more lines than input? 
-        > Shift input?
-        > Collapse output?
-
-3. Command line.  --> desktop + mobile.
-   > like mathlab.
-   > actually perhaps preferred for mobile...
-   > ignore echo?
 
 
 Nice to have

@@ -61,7 +61,7 @@ Duration::Duration(const Number& num, const Range& range)
         this->years = (long)num.to_double();
         }
     else
-        error = Error(ErrorId::DUR_INV_FRAG, range, num.unit.id); //TODO: unit id can be empty.
+        error = Error(ErrorId::E_EXPLICIT_UNITS_EXPECTED, num.range, "days, months, years");
     }
 
 Duration Duration::operator+(const Number& num) const
@@ -80,7 +80,7 @@ Duration Duration::operator+(const Number& num) const
         dur.years += (long)num.to_double();
         }
     else
-        dur.error = Error(ErrorId::DUR_INV_FRAG, range, num.unit.id); //TODO: unit id can be empty.
+        dur.error = Error(ErrorId::E_EXPLICIT_UNITS_EXPECTED, num.range, "days, months, years");
     return dur;
     }
 
@@ -100,6 +100,6 @@ Duration Duration::operator-(const Number& num) const
         dur.years -= (long)num.to_double();
         }
     else
-        dur.error = Error(ErrorId::DUR_INV_FRAG, range, num.unit.id); //TODO: unit id can be empty.
+        dur.error = Error(ErrorId::E_EXPLICIT_UNITS_EXPECTED, num.range, "days, months, years");
     return dur;
     }

@@ -110,7 +110,7 @@ Value Sin::execute(Scope& scope, std::vector<Value>& args, const Range& range)
         arg = scope.globals.unitsView.get("deg").toSI(arg);
     auto val = Value(Number(sin(arg), 0, range));
     if (scope.strict && args[0].getNumber().unit.id != "rad" && args[0].getNumber().unit.id != "deg")
-        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPEDTED, range, "rad, deg"));
+        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPECTED, range, "rad, deg"));
     return val;
     }
 
@@ -121,7 +121,7 @@ Value Cos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
         arg = scope.globals.unitsView.get("deg").toSI(arg);
     auto val = Value(Number(cos(arg), 0, range));
     if (scope.strict && args[0].getNumber().unit.id != "rad" && args[0].getNumber().unit.id != "deg")
-        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPEDTED, range, "rad, deg"));
+        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPECTED, range, "rad, deg"));
     return val;
     }
 
@@ -132,7 +132,7 @@ Value Tan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
         arg = scope.globals.unitsView.get("deg").toSI(arg);
     auto val = Value(Number(tan(arg), 0, range));
     if (scope.strict && args[0].getNumber().unit.id != "rad" && args[0].getNumber().unit.id != "deg")
-        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPEDTED, range, "rad, deg"));
+        val.errors.push_back(Error(ErrorId::W_EXPLICIT_UNITS_EXPECTED, range, "rad, deg"));
     return val;
     }
 

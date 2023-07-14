@@ -90,7 +90,7 @@ hundred(a);
             assertDuration("duur=2 days, 3 months", 2, 3);
             assertDuration("'Jan 12, 2022'-'Jan 11, 2022';", 1);
             assertDate("'01 jan 2022'+2days", 3, 1, 2022);
-            assertError("'01 jan 2022'+2", "DUR_INV_FRAG");
+            assertError("'01 jan 2022'+2", "E_EXPLICIT_UNITS_EXPECTED");
             assertDate(R"CODE(
 dat='Jan 12, 2022'; 
 duur=2 days, 3 months;
@@ -103,6 +103,10 @@ dat+duur;
                     )CODE", 12, 1, 2023);
             assertDuration("duur=2 days, 3 months", 2, 3);
             assertError("duur=2 days, 3 months; duur.xxx", "UNKNOWN_EXPR");
+            assertError("dat = now() + 5;", "E_EXPLICIT_UNITS_EXPECTED");
+            assertResult("duur=2 days, 3 months; duur.days;", 2, "days");
+            assertResult("duur=2 days, 3 months; duur.months;", 3, "months");
+            assertResult("duur=2 days, 3 months, 5years; duur.years;", 5, "years");
             }
 
         TEST_METHOD(TestDates)

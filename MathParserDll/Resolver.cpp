@@ -382,7 +382,7 @@ Value Resolver::resolveDurationList(const std::vector<Number>& numberList)
             if(hasYears)
                 return Error(ErrorId::INV_LIST, number.range, "Unit 'years' used more than once.");
             hasYears = true;
-            duration.days = (long)number.to_double();
+            duration.years = (long)number.to_double();
             }
         }
     return duration;

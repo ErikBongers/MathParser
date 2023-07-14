@@ -129,7 +129,8 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::W_VAR_IS_UNIT, {ErrorId::W_VAR_IS_UNIT, "W_VAR_IS_UNIT", "Warning; variable {0} overrides unit with same name."}},
         {ErrorId::W_VAR_IS_FUNCTION, {ErrorId::W_VAR_IS_FUNCTION, "W_VAR_IS_FUNCTION", "Warning; variable {0} overrides function with same name."}},
         {ErrorId::W_UNIT_IS_VAR, {ErrorId::W_UNIT_IS_VAR, "W_UNIT_IS_VAR", "Warning: ambiguous implicit multiplication: {0} is both a variable and a unit."}},
-        {ErrorId::W_EXPLICIT_UNITS_EXPEDTED, {ErrorId::W_EXPLICIT_UNITS_EXPEDTED, "W_EXPLICIT_UNITS_EXPEDTED", "Warning: explicit unit expected: {0}"}},
+        {ErrorId::W_EXPLICIT_UNITS_EXPECTED, {ErrorId::W_EXPLICIT_UNITS_EXPECTED, "W_EXPLICIT_UNITS_EXPEDTED", "Warning: explicit unit expected: {0}"}},
+        {ErrorId::E_EXPLICIT_UNITS_EXPECTED, {ErrorId::E_EXPLICIT_UNITS_EXPECTED, "E_EXPLICIT_UNITS_EXPECTED", "Explicit unit expected: {0}"}},
 
         {ErrorId::UNIT_PROP_DIFF, {ErrorId::UNIT_PROP_DIFF, "UNIT_PROP_DIFF", "The units are not for the same property (lenght, temperature,...)."}},
         {ErrorId::CONST_REDEF, {ErrorId::CONST_REDEF, "CONST_REDEF", "Warning: redefinition of constant {0}."}},

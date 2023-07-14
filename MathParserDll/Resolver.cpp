@@ -424,7 +424,7 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                 if(val.type == ValueType::NUMBER)
                     val.getNumber() = val.getNumber().convertToUnit(Unit(codeBlock.scope->getText(pfix.postfixId.range), pfix.postfixId.range), codeBlock.scope->units);
                 else
-                    ; //TODO: error: unknown postfix
+                    return Value(Error(ErrorId::UNKNOWN_EXPR, pfix.postfixId.range, "Postfix expression not valid here."));
                 break;
             }
     //in case of (x.km)m, both postfixId (km) and unit (m) are filled.

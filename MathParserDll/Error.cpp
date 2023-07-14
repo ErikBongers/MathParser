@@ -108,7 +108,7 @@ bool Error::isWarning() const
 
 std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
     {
-        {ErrorId::UNKNOWN_EXPR, {ErrorId::UNKNOWN_EXPR, "UNKNOWN_EXPR", "Unknown expression."}},
+        {ErrorId::UNKNOWN_EXPR, {ErrorId::UNKNOWN_EXPR, "UNKNOWN_EXPR", "Unknown expression.{0}"}},
         {ErrorId::NO_OP, {ErrorId::NO_OP, "NO_OP", "No operator '{0}' defined for {1} and {2}."}},
         {ErrorId::EOS, {ErrorId::EOS, "EOS", "Unexpected end of file."}},
 

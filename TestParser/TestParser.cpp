@@ -101,7 +101,8 @@ dat='Jan 12, 2022';
 duur=360 days, 0 months; //calculated year of 30*12 days
 dat+duur;
                     )CODE", 12, 1, 2023);
-            assertDuration("duur=2 days, 3 months; duur + 2 days", 4, 3);
+            assertDuration("duur=2 days, 3 months", 2, 3);
+            assertError("duur=2 days, 3 months; duur.xxx", "UNKNOWN_EXPR");
             }
 
         TEST_METHOD(TestDates)
@@ -162,7 +163,7 @@ dat+duur;
 #undef date
 #define date
 d=now() - now();
-d.years + d.months + d.days;
+(d.years). + (d.months). + (d.days).;
 
                         )CODE"
                          , 0);
@@ -317,7 +318,7 @@ function ageThisYear(bday)
             R"CODE(
 #define dmy
 age= ageThisYear('31/03/2015');
-age.years*age.months;
+age.years.*age.months.;
             )CODE", 72);
             }
 

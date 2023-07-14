@@ -111,7 +111,6 @@ const char* shortDateKeys[] = { "s", "min", "h", "d", "w", "mon", "y", "ms",  };
 
 const char* electric[] = { "A", "mA", "R", "mR", "kR", "MR", "V", "mV"};
 
-//TODO: make these generic
 void UnitsView::addLongDateUnits()
     {
     for(auto key: longDateKeys)

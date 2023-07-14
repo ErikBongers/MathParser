@@ -12,6 +12,7 @@
 std::string version = "1.0." + std::to_string(VERSION_BUILD);
 std::string result = "";
 std::vector<Source> sources;
+const auto ERROR_SOURCE = "ERROR: parse failed to find the specified source files.";
 
 int C_DECL setSource(const char* scriptId, const char* text)
     {
@@ -32,18 +33,30 @@ int C_DECL setSource(const char* scriptId, const char* text)
 
 char getSourceIndex(const char* scriptId)
     {
-    auto found = std::find_if(sources.begin(), sources.end(), [&scriptId] (Source& source) {
-        return source.name == scriptId;
-                              });
+    auto found = std::find_if(sources.begin(), sources.end(), 
+        [&scriptId] (Source& source) {
+            return source.name == scriptId;
+        });
     if (found != std::end(sources))
         return (*found).index;
-    return -1; //TODO: sentinel value
+    return -1;
     }
+
 
 int C_DECL parse(const char* startScriptId, const char* mainScriptId)
     {
-    auto mainIndex = getSourceIndex(mainScriptId); //TODO: test if script is actually found
-    auto startIndex = getSourceIndex(startScriptId); //TODO: if not "", test if script is actually found
+    auto mainIndex = getSourceIndex(mainScriptId);
+    if (mainIndex == -1)
+        {
+        result = ERROR_SOURCE;
+        return -1;
+        }
+    auto startIndex = getSourceIndex(startScriptId);
+    if(startIndex == -1 && strlen(startScriptId) != 0)
+        {
+        result = ERROR_SOURCE;
+        return -1;
+        }
     auto firstIndex = startIndex != -1 ? startIndex : mainIndex;
     auto secondIndex = startIndex != -1 ? mainIndex : -1;
 

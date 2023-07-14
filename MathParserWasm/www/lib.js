@@ -160,30 +160,37 @@ export function getCookie (name) {
 export function outputResult(result, sourceIndex) {
 	console.debug(result);
 	clearErrorList();
-	result = JSON.parse(result);
 	var strOutput = "";
 	var strResult = "";
-	for (let line of result.result) {
-		let strLine = lineToString(line);
-		if (strLine.length > 0)
-			strOutput += strLine + "\n";
-	}
-	let lineCnt = 0;
-	let lineAlreadyFilled = false;
-	for (let line of result.result) {
-		if (line.src != sourceIndex)
-			continue;
-		//goto the next line in output
-		while (lineCnt < line.line) {
-			strResult += "\n";
-			lineCnt++;
-			lineAlreadyFilled = false;
+	try {
+		result = JSON.parse(result); //may throw...
+		for (let line of result.result) {
+			let strLine = lineToString(line);
+			if (strLine.length > 0)
+				strOutput += strLine + "\n";
 		}
-		let strValue = ResultToString(line);
-		if (lineAlreadyFilled)
-			strResult += " | ";
-		strResult += strValue;
-		lineAlreadyFilled = true;
+		let lineCnt = 0;
+		let lineAlreadyFilled = false;
+		for (let line of result.result) {
+			if (line.src != sourceIndex)
+				continue;
+			//goto the next line in output
+			while (lineCnt < line.line) {
+				strResult += "\n";
+				lineCnt++;
+				lineAlreadyFilled = false;
+			}
+			let strValue = ResultToString(line);
+			if (lineAlreadyFilled)
+				strResult += " | ";
+			strResult += strValue;
+			lineAlreadyFilled = true;
+		}
+	} catch (e) {
+		strOutput = e.message + "\n";
+		strOutput += e.name + "\n";
+		strOutput += e.stack+ "\n";
+		strResult = e.message + "\n";
 	}
 	let transaction = cm.cmOutput.state.update({ changes: { from: 0, to: cm.cmOutput.state.doc.length, insert: strOutput } });
 	cm.cmOutput.update([transaction]);

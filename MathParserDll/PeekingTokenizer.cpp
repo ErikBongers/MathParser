@@ -57,13 +57,3 @@ const Token& PeekingTokenizer::getCurrentToken() const
     {
     return currentState.token;
     }
-
-TokenPos PeekingTokenizer::getPos() const
-    {
-    return currentState.nextPos;
-    }
-
-unsigned int PeekingTokenizer::getSourceIndex() const
-    {
-    return tok.sourceIndex;
-    }

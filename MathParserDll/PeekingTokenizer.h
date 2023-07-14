@@ -17,6 +17,4 @@ class PeekingTokenizer
         std::string getText(const Range&range);
         std::string getText(unsigned int start, unsigned end);
         const Token& getCurrentToken() const;
-        TokenPos getPos() const; //TODO: return a Pos object instead of int. Also see getSourceIndex()
-        unsigned int getSourceIndex() const; //TODO: try to get rid of this function by including SourceIndex into Pos and Range
     };

@@ -165,6 +165,8 @@ export function outputResult(result, sourceIndex) {
 	try {
 		result = JSON.parse(result); //may throw...
 		for (let line of result.result) {
+			if (line.src != sourceIndex)
+				continue;
 			let strLine = lineToString(line);
 			if (strLine.length > 0)
 				strOutput += strLine + "\n";

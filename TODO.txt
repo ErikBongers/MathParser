@@ -1,7 +1,5 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
-* bug: javascript: if userSession is nada: don't comunicate with cloud.
-
 * start script:
   > list the errors of start script at the top of main script.
 

@@ -24,25 +24,31 @@ export function onSignedIn(googleUserToken) {
 }
 
 async function promptAndUseServerFile(scriptId) {
-	let cloudText = await downloadScript(scriptId);
 	let localText = getLocalScript(scriptId);
 	let txt = localText;
-	if (cloudText !== localText) {
-		if (cloudText !== undefined) {
-			if (confirm("Use server file : " + scriptId + "?")) {
-				txt = cloudText;
+	if (userSession.sessionId) {
+		let cloudText = await downloadScript(scriptId);
+		if (cloudText !== localText) {
+			if (cloudText !== undefined) {
+				if (confirm("Use server file : " + scriptId + "?")) {
+					txt = cloudText;
+				}
+			} else {
+				console.log("cloud text undefined. New file?");
 			}
 		} else {
-			console.log("cloud text undefined. New file?");
+			console.log("Server file is da same...");
 		}
-	} else {
-		console.log("Server file is da same...");
 	}
 	let transaction = cm.editor.state.update({ changes: { from: 0, to: cm.editor.state.doc.length, insert: txt } });
 	cm.editor.update([transaction]);
 }
 
 function uploadScript(scriptId, text) {
+	if (!userSession.sessionId) {
+		console.log("Not uploading: no session.");
+		return;
+	}
 	let url = new URL("https://europe-west1-ebo-tain.cloudfunctions.net/cloud-script");
 	url.searchParams.append("sessionId", userSession.sessionId);
 	url.searchParams.append("scriptId", scriptId);
@@ -60,6 +66,9 @@ function uploadScript(scriptId, text) {
 }
 
 async function downloadScript(scriptId) {
+	if (!userSession.sessionId)
+		throw new Error("Can't upload: no session.");
+
 	let url = new URL("https://europe-west1-ebo-tain.cloudfunctions.net/cloud-script");
 	url.searchParams.append("sessionId", userSession.sessionId);
 	url.searchParams.append("scriptId", scriptId);
@@ -76,20 +85,6 @@ async function downloadScript(scriptId) {
 	return text;
 }
 
-export async function loadScript(scriptId) {
-	let txt = "";
-
-	if (userSession.sessionId) {
-		txt = await downloadScript(scriptId);
-	} else {
-		txt = getLocalScript(scriptId);
-	}
-	if (txt !== undefined) {
-		let transaction = cm.editor.state.update({ changes: { from: 0, to: cm.editor.state.doc.length, insert: txt } });
-		cm.editor.update([transaction]);
-	}
-}
-
 function getLocalScript(scriptId) {
 	let txt = "";
     if (scriptId == "start")
@@ -102,9 +97,7 @@ function getLocalScript(scriptId) {
 
 
 export function saveScript(scriptId) {
-	if (userSession.sessionId) {
-		uploadScript(scriptId, cm.editor.state.doc.toString());
-	}
+	uploadScript(scriptId, cm.editor.state.doc.toString());
 	if (scriptId == "start") {
 		localStorage.savedStartCode = cm.editor.state.doc.toString();
 	} else {
@@ -131,7 +124,9 @@ export function startUp() {
 		return mp.errorsForLint;
 	});
 
-	loadScript("script1");
+	let txt = getLocalScript("script1");
+	let transaction = cm.editor.state.update({ changes: { from: 0, to: cm.editor.state.doc.length, insert: txt } });
+	cm.editor.update([transaction]);
 }
 
 export function afterEditorChange() {
@@ -144,6 +139,8 @@ function parseAfterChange(scriptId) {
 	let result = {};
 	let sourceIndex = -1;
 	if (scriptId != "start") {
+		if (!localStorage.savedStartCode)
+			localStorage.savedStartCode = "";
 		Module.api.uploadSource("start", localStorage.savedStartCode);
 		sourceIndex = Module.api.uploadSource(scriptId, cm.editor.state.doc.toString());
 		result = Module.api.parseMath("start", scriptId);

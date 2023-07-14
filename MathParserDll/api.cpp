@@ -26,7 +26,7 @@ int C_DECL setSource(const char* scriptId, const char* text)
     else
         {
         sources.push_back(Source{(char)sources.size(), scriptId, text});
-        return sources.size()-1;
+        return (int)sources.size()-1;
         }
     }
 

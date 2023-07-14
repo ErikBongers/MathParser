@@ -1,10 +1,12 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
+* make distinction between setting the text and typing text.
+  > https://codemirror.net/examples/collab/
+
 * start script:
   > list the errors of start script at the top of main script.
 
 * functions:
-  > allow last ';' to be elimited.
   > fix all the TODO's, because quick-and-dirty code.
   > when re-defined, give warning of override.
 

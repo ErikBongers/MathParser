@@ -42,7 +42,7 @@ a=3;
 function hundred(a)
   {
   a*100;
-  }
+  }; //semi-colon should be ignored.
 hundred(a);
                          )CODE"
                          , 300);

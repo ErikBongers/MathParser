@@ -559,13 +559,13 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
     switch (hash(codeBlock.scope->getText(fragmentId.range).c_str()))
         {
         case hash("to_days"):
-            newValue = Value(Number(dur.to_days(), 0, fragmentId.range)); break;//TODO: set unit to "days" ? But what if days has been #undef-ed?
+            newValue = Value(Number(dur.to_days(), Unit("days", Range()), NumFormat::DEC, fragmentId.range)); break;
         case hash("days"):
-            newValue = Value(Number(dur.days, 0, fragmentId.range)); break;
+            newValue = Value(Number(dur.days, Unit("days", Range()), NumFormat::DEC, fragmentId.range)); break;
         case hash("months"):
-            newValue = Value(Number((double)dur.months, 0, fragmentId.range)); break;
+            newValue = Value(Number((double)dur.months, Unit("months", Range()), NumFormat::DEC, fragmentId.range)); break;
         case hash("years"):
-            newValue = Value(Number(dur.years, 0, fragmentId.range)); break;
+            newValue = Value(Number(dur.years, Unit("years", Range()), NumFormat::DEC, fragmentId.range)); break;
         default:
             return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId.range, codeBlock.scope->getText(fragmentId.range)));
         }

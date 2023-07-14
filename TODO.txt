@@ -2,6 +2,12 @@
 
 * fix some TODOs...
 
+* Unit has a range. This doesn't make sense as units are not Tokens from a sourceCode and location.
+
+* Units: can be turned on an off...
+  > but what about vars that already use them?
+    > duration.days,...
+
 * minus unary operator: range doesn't include the minus sign.
   > see factorial(-1);
 

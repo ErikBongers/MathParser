@@ -3,7 +3,7 @@ CXX=emcc
 
 BUILDDIR=build
 SRC_DIR=src
-SRC_LIB_DIR=D:\Documents\Programming\WPFandXNA\MathParser\MathParserDll
+SRC_LIB_DIR=D:\Documents\Programming\MathParser\MathParserDll
 DESTDIR=www
 
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
@@ -13,7 +13,7 @@ SRCS_LIB := $(filter-out $(SRC_LIB_DIR)/pch.cpp, $(SRCS_LIB))
 DEPFLAGS=-MMD -MP
 CFLAGS=-I "$(SRC_LIB_DIR)" -D__WASM__ -std=c++2b
 DEBUG_FLAGS = -g -fdebug-compilation-dir='..'
-INCLUDE_PCH = $(CFLAGS) -Winvalid-pch -include-pch "D:\Documents\Programming\WPFandXNA\MathParser\MathParserDll\pch.hpp.pch"
+INCLUDE_PCH = $(CFLAGS) -Winvalid-pch -include-pch "D:\Documents\Programming\MathParser\MathParserDll\pch.hpp.pch"
 
 # local source compiled to build/
 OBS = $(notdir $(SRCS))

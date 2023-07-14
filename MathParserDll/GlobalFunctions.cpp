@@ -303,11 +303,15 @@ Value Reverse::execute(Scope& scope, std::vector<Value>& args, const Range& rang
 Value Factorial::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     if(!args[0].isNumber())
-        return Value(Error(ErrorId::EXPECTED_NUMERIC_VALUE, range));
+        return Value(Error(ErrorId::EXPECTED_NUMERIC_VALUE, args[0].getNumber().range));
+    auto number = args[0].getNumber();
+    auto size = number.to_double();
+    if(size < 0)
+        return Value(Error(ErrorId::EXPECTED, number.range, "factorial argument should be a non-negative integer."));
+    if(size != (int) size)
+        return Value(Error(ErrorId::EXPECTED, number.range, "factorial argument should be an integer value."));
 
-    auto size = args[0].getNumber().to_double();
     double val = 1;
-    //TODO: check if size is int, positive and not larger than....10?
     for (int i = 1; i <= size; i++)
         {
         val *= i;

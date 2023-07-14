@@ -1,5 +1,10 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
+* minus unary operator: range doesn't include the minus sign.
+  > see factorial(-1);
+
+* screen refresh: remember current script.
+
 * make distinction between setting the text and typing text.
   > https://codemirror.net/examples/collab/
 

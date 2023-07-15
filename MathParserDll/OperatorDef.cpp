@@ -77,10 +77,7 @@ Value OpNumMultNum(Globals& globals, std::vector<Value>& args, const Range& rang
     {
     Value result = args[0];
     result.constant = false;
-    //TODO: if both units set: unit changes to unit*unit!
     result.setNumber(result.getNumber() * args[1].getNumber());
-    if (args[0].getNumber().unit.isClear())
-        result.getNumber().unit = args[1].getNumber().unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }
@@ -89,10 +86,7 @@ Value OpNumDivNum(Globals& globals, std::vector<Value>& args, const Range& range
     {
     Value result = args[0];
     result.constant = false;
-    //TODO: if both units set: unit changes to unit/unit!
     result.setNumber(result.getNumber() / args[1].getNumber());
-    if (args[0].getNumber().unit.isClear())
-        result.getNumber().unit = args[1].getNumber().unit;
     result.errors.insert(result.errors.end(), args[1].errors.begin(), args[1].errors.end());
     return result;
     }

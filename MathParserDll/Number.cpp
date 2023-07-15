@@ -50,14 +50,19 @@ Number Number::operator-(const Number& number2) const
 Number Number::operator*(const Number& n2) const
     {
     Number n = Number(significand*n2.significand, exponent+n2.exponent, n2.range);
-    n.unit = this->unit;
+    if(n2.unit.isClear())
+        n.unit = this->unit;
+    else if(this->unit.isClear())
+        n.unit = n2.unit;
+
     return n;
     }
 
 Number Number::operator/(const Number& n2) const
     {
     Number n = Number(significand/n2.significand, exponent-n2.exponent, n2.range);
-    n.unit = this->unit;
+    if(n2.unit.isClear())
+        n.unit = this->unit;
     return n;
     }
 

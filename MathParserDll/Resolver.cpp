@@ -343,7 +343,7 @@ Value Resolver::resolveList(const ListExpr& listExpr)
     for (auto& number : numberList)
         {
         if(!codeBlock.scope->units.exists(number.unit.id))
-            return Error(ErrorId::UNIT_NOT_DEF, number.unit.range, number.unit.id);
+            return Error(ErrorId::UNIT_NOT_DEF, number.unit.getRange(number.range), number.unit.id);
         hasDuration |= codeBlock.scope->units.isUnit(number.unit.id, UnitProperty::DURATION);
         hasOther |= !codeBlock.scope->units.isUnit(number.unit.id, UnitProperty::DURATION);
         }
@@ -458,7 +458,7 @@ Value& Resolver::applyUnit(const Node& node, Value& val)
         if (codeBlock.scope->units.exists(node.unit.id))
             val.getNumber().unit = node.unit;
         else
-            val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.range, node.unit.id.c_str()));
+            val.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, node.unit.getRange(node.range()), node.unit.id.c_str()));
         }
     return val;
     }
@@ -503,7 +503,7 @@ Value Resolver::resolveConst(const ConstExpr& constExpr)
                 {
                 if (codeBlock.scope->units.exists(v.getNumber().unit.id) == false)
                     {
-                    v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.range, v.getNumber().unit.id.c_str()));
+                    v.getNumber().errors.push_back(Error(ErrorId::UNIT_NOT_DEF, v.getNumber().unit.getRange(v.getNumber().range), v.getNumber().unit.id.c_str()));
                     }
                 }
             if (constExpr.error.id != ErrorId::NONE)
@@ -559,13 +559,13 @@ Value Resolver::resolveDurationFragment(const Value& val, const Token& fragmentI
     switch (hash(codeBlock.scope->getText(fragmentId.range).c_str()))
         {
         case hash("to_days"):
-            newValue = Value(Number(dur.to_days(), Unit("days", Range()), NumFormat::DEC, fragmentId.range)); break;
+            newValue = Value(Number(dur.to_days(), Unit("days", fragmentId.range), NumFormat::DEC, fragmentId.range)); break;
         case hash("days"):
-            newValue = Value(Number(dur.days, Unit("days", Range()), NumFormat::DEC, fragmentId.range)); break;
+            newValue = Value(Number(dur.days, Unit("days", fragmentId.range), NumFormat::DEC, fragmentId.range)); break;
         case hash("months"):
-            newValue = Value(Number((double)dur.months, Unit("months", Range()), NumFormat::DEC, fragmentId.range)); break;
+            newValue = Value(Number((double)dur.months, Unit("months", fragmentId.range), NumFormat::DEC, fragmentId.range)); break;
         case hash("years"):
-            newValue = Value(Number(dur.years, Unit("years", Range()), NumFormat::DEC, fragmentId.range)); break;
+            newValue = Value(Number(dur.years, Unit("years", fragmentId.range), NumFormat::DEC, fragmentId.range)); break;
         default:
             return Value(Error(ErrorId::DUR_INV_FRAG, fragmentId.range, codeBlock.scope->getText(fragmentId.range)));
         }

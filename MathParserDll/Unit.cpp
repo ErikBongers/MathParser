@@ -170,6 +170,13 @@ Unit Unit::NONE()
     return Unit("", Range());
     }
 
+Range Unit::getRange(const Range& backupRange) const
+    {
+    if(range.isNone())
+        return backupRange;
+    return range;
+    }
+
 void UnitsView::addClass(UnitProperty unitClass)
     {
     for (auto& unit : globals.unitDefs.defs)

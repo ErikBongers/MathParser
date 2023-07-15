@@ -9,6 +9,7 @@ struct Range
     Range() : start({ 0, 0, 0, -1}), end({ 0, 0, 0, -1}) {}
     Range(TokenPos start, TokenPos end);
     bool isEmpty() const { return start.cursorPos == end.cursorPos; }
+    bool isNone() const { return start.sourceIndex == -1; }
     void to_json(std::ostringstream& sstr) const;
     };
 

@@ -118,7 +118,7 @@ Number Number::convertToUnit(const Unit& to, UnitsView& units)
         num.unit = to;
         if (units.exists(num.unit.id) == false)
             {
-            num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, num.unit.range, num.unit.id.c_str()));
+            num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, num.unit.getRange(num.range), num.unit.id.c_str()));
             }
         return num;
         }
@@ -129,12 +129,12 @@ Number Number::convertToUnit(const Unit& to, UnitsView& units)
         }
     if (units.exists(to.id) == false)
         {
-        num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.range, to.id.c_str()));
+        num.errors.push_back(Error(ErrorId::UNIT_NOT_DEF, to.getRange(num.range), to.id.c_str()));
         return num;
         }
     if (units.get(unit.id).property != units.get(to.id).property)
         {
-        num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, to.range));
+        num.errors.push_back(Error(ErrorId::UNIT_PROP_DIFF, to.getRange(num.range)));
         return num;
         }
     num = Number(units.get(this->unit.id).toSI(this->to_double()), 0, range); //from -> SI

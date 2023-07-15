@@ -6,9 +6,10 @@
 class Token;
 class Unit
     {
+    private:
+        Range range;
     public:
         std::string id; //same ID may be used as a variable.
-        Range range;
 
         //optional:
         Unit* subUnit1 = nullptr;
@@ -22,6 +23,7 @@ class Unit
         friend std::ostream& operator<<(std::ostream& os, const Unit& u);
         static Unit NONE();
         bool isClear() const { return id.empty(); }
+        Range getRange(const Range& backupRange) const;
     };
 
 enum class UnitProperty { ANGLE, LENGTH, TEMP, MASS_WEIGHT, DURATION, VOLUME, CURRENT, VOLTAGE, RESISTANCE, UNDEFINED};
@@ -60,7 +62,6 @@ class UnitDefs
     public:
         UnitDefs() { init(); }
         void init();
-        void set(UnitDef def);
         friend class UnitsView;
     };
 

@@ -6,8 +6,6 @@
   > but what about vars that already use them?
     > duration.days,...
 
-* screen refresh: remember current script.
-
 * make distinction between setting the text and typing text.
   > https://codemirror.net/examples/collab/
 
@@ -15,7 +13,6 @@
   > list the errors of start script at the top of main script.
 
 * functions:
-  > fix all the TODO's, because quick-and-dirty code.
   > when re-defined, give warning of override.
 
 * abs(), round() in combination with units.

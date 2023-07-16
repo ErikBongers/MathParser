@@ -108,11 +108,11 @@ export function saveScript(scriptId) {
 export function onScriptSwitch() {
     let scriptId = document.getElementById("scriptSelector").value
     if (scriptId == "start") {
-        //saveScript("script1");
         promptAndUseServerFile("start");
+        localStorage.lastScript = "start";
     } else {
-        //saveScript("start");
         promptAndUseServerFile("script1");
+        localStorage.lastScript = "script1";
     }
 }
 
@@ -124,7 +124,11 @@ export function startUp() {
         return mp.errorsForLint;
     });
 
-    let txt = getLocalScript("script1");
+    let startScript = "script1";
+    if (localStorage.lastScript)
+        startScript = localStorage.lastScript;
+    document.getElementById("scriptSelector").value = startScript;
+    let txt = getLocalScript(startScript);
     let transaction = cm.editor.state.update({ changes: { from: 0, to: cm.editor.state.doc.length, insert: txt } });
     cm.editor.update([transaction]);
 }

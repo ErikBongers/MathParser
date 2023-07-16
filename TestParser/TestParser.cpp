@@ -37,6 +37,8 @@ namespace TestParser
         TEST_METHOD(TestFunctions)
             {
             //basic function call
+            assertError("factorial(-1);", "EXPECTED");
+                //basic function call
             assertResult(R"CODE(
 a=3;
 function hundred(a)
@@ -45,7 +47,7 @@ function hundred(a)
   }; //semi-colon should be ignored.
 hundred(a);
                          )CODE"
-                         , 300);
+                             , 300);
 
             //outer scope var not changed
             assertResult(R"CODE(

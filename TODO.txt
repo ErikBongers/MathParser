@@ -6,9 +6,6 @@
   > but what about vars that already use them?
     > duration.days,...
 
-* minus unary operator: range doesn't include the minus sign.
-  > see factorial(-1);
-
 * screen refresh: remember current script.
 
 * make distinction between setting the text and typing text.

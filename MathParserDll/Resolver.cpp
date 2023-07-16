@@ -296,6 +296,7 @@ Value Resolver::resolveUnaryOp(const UnaryOpExpr& expr)
         if (a1.type == ValueType::NUMBER)
             {
             a1.getNumber().significand = -a1.getNumber().significand;
+            a1.getNumber().range += expr.op.range;
             }
         }
     return a1;

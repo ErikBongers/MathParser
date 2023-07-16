@@ -180,6 +180,8 @@ Node* Parser::parseFunctionDef()
     for(auto& stmt : newCodeBlock.statements)
         funcDef->r += stmt->range();
     
+    if(codeBlock.scope->functionExists(funcDef->id))
+        funcDef->error = Error(ErrorId::W_FUNCTION_OVERRIDE, funcDef->idRange, funcDef->id);
     codeBlock.scope->AddLocalFunction(*funcDef, std::move(newCodeBlock));
     return funcDef;
     }

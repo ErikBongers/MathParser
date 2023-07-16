@@ -12,9 +12,6 @@
 * start script:
   > list the errors of start script at the top of main script.
 
-* functions:
-  > when re-defined, give warning of override.
-
 * abs(), round() in combination with units.
   > keep resolution of the unit.
 

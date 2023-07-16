@@ -107,7 +107,15 @@ std::string Scope::getText(const Range& range)
 void Scope::AddLocalFunction(FunctionDefExpr& f, CodeBlock&& codeBlock) 
     {
     std::string id = codeBlock.scope->getText(f.idRange);
-    localFunctions.emplace(id, new CustomFunction(f, std::move(codeBlock)));
+    auto localF = new CustomFunction(f, std::move(codeBlock));
+    if(localFunctions.count(id) != 0)
+        {
+        auto oldF = localFunctions[id];
+        localFunctions[id] = localF;
+        delete oldF;
+        }
+    else
+        localFunctions.emplace(id, localF);
     }
 
 ConstantsView::ConstantsView(Globals& globals)

@@ -96,6 +96,8 @@ std::vector<Error> CustomFunction::getErrors()
         if (stmt->error.id != ErrorId::NONE)
             errors.push_back(stmt->error);
         }
+    if(!functionDefExpr.error.isNone())
+        errors.push_back(functionDefExpr.error);
     return errors;
     }
 

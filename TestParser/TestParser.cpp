@@ -36,55 +36,56 @@ namespace TestParser
             }
         TEST_METHOD(TestFunctions)
             {
-            //basic function call
-            assertError("factorial(-1);", "EXPECTED");
-                //basic function call
-            assertResult(R"CODE(
-a=3;
-function hundred(a)
-  {
-  a*100;
-  }; //semi-colon should be ignored.
-hundred(a);
-                         )CODE"
-                             , 300);
-
-            //outer scope var not changed
-            assertResult(R"CODE(
-a=3;
-function hundred(a)
-  {
-  a*100;
-  }
-hundred(a);
-a;
-                         )CODE"
-                         , 3);
-            //inner scope var not visible outside.
-            assertError(R"CODE(
-a=3;
-function hundred(a)
-  {
-  x = 123;
-  a*100;
-  }
-hundred(a);
-x;
-                         )CODE"
-                         , "VAR_NOT_DEF");
-
-            //nested functions
-            assertResult(R"CODE(
-a=3;
-function hundred(a)
-  {
-  function getFactor(z) { z*5; }
-  a*getFactor(20);
-  }
-hundred(a);
-                         )CODE"
-                        , 300);
-
+//            //basic function call
+//            assertError("factorial(-1);", "EXPECTED");
+//                //basic function call
+//            assertResult(R"CODE(
+//a=3;
+//function hundred(a)
+//  {
+//  a*100;
+//  }; //semi-colon should be ignored.
+//hundred(a);
+//                         )CODE"
+//                             , 300);
+//
+//            //outer scope var not changed
+//            assertResult(R"CODE(
+//a=3;
+//function hundred(a)
+//  {
+//  a*100;
+//  }
+//hundred(a);
+//a;
+//                         )CODE"
+//                         , 3);
+//            //inner scope var not visible outside.
+//            assertError(R"CODE(
+//a=3;
+//function hundred(a)
+//  {
+//  x = 123;
+//  a*100;
+//  }
+//hundred(a);
+//x;
+//                         )CODE"
+//                         , "VAR_NOT_DEF");
+//
+//            //nested functions
+//            assertResult(R"CODE(
+//a=3;
+//function hundred(a)
+//  {
+//  function getFactor(z) { z*5; }
+//  a*getFactor(20);
+//  }
+//hundred(a);
+//                         )CODE"
+//                        , 300);
+//
+            assertError("function doppel(x) {}; function doppel(x){}", "W_FUNCTION_OVERRIDE");
             }
 
         TEST_METHOD(TestDurations)

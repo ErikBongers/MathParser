@@ -128,6 +128,7 @@ std::map<ErrorId, ErrorDef> ErrorDefs::errorDefs =
         {ErrorId::W_ASSUMING_UNIT, {ErrorId::W_ASSUMING_UNIT, "W_ASSUMING_UNIT", "Warning: not all values have a unit. Assuming same unit as the other values."}},
         {ErrorId::W_VAR_IS_UNIT, {ErrorId::W_VAR_IS_UNIT, "W_VAR_IS_UNIT", "Warning; variable {0} overrides unit with same name."}},
         {ErrorId::W_VAR_IS_FUNCTION, {ErrorId::W_VAR_IS_FUNCTION, "W_VAR_IS_FUNCTION", "Warning; variable {0} overrides function with same name."}},
+        {ErrorId::W_FUNCTION_OVERRIDE, {ErrorId::W_FUNCTION_OVERRIDE, "W_FUNCTION_OVERRIDE", "Warning; function {0} overrides an existing function."}},
         {ErrorId::W_UNIT_IS_VAR, {ErrorId::W_UNIT_IS_VAR, "W_UNIT_IS_VAR", "Warning: ambiguous implicit multiplication: {0} is both a variable and a unit."}},
         {ErrorId::W_EXPLICIT_UNITS_EXPECTED, {ErrorId::W_EXPLICIT_UNITS_EXPECTED, "W_EXPLICIT_UNITS_EXPEDTED", "Warning: explicit unit expected: {0}"}},
         {ErrorId::E_EXPLICIT_UNITS_EXPECTED, {ErrorId::E_EXPLICIT_UNITS_EXPECTED, "E_EXPLICIT_UNITS_EXPECTED", "Explicit unit expected: {0}"}},

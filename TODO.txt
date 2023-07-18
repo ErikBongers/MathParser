@@ -12,9 +12,6 @@
 * start script:
   > list the errors of start script at the top of main script.
 
-* abs(), round() in combination with units.
-  > keep resolution of the unit.
-
 * create prime() function -> prime factorisation.
   > Can MathParser solve : https://www.youtube.com/watch?v=vhc4FceGjC8
 

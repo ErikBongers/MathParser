@@ -3,7 +3,7 @@ import * as mp from "./lib.js"
 let userSession = {};
 
 export function onSignedIn(googleUserToken) {
-    userSession = JSON.parse(mp.getCookie("mathparserSession"));
+    userSession = JSON.parse(getCookie("mathparserSession"));
     let params = "";
     if (userSession && userSession.sessionId)
         params = "?sessionId=" + encodeURIComponent(userSession.sessionId);
@@ -17,7 +17,7 @@ export function onSignedIn(googleUserToken) {
             console.debug("Request complete! response:", jsonUserSession);
             document.getElementById("userName").innerHTML = jsonUserSession.user.name;
             userSession = jsonUserSession;
-            mp.setCookie("mathparserSession", JSON.stringify(userSession), 1);
+            setCookie("mathparserSession", JSON.stringify(userSession), 1);
             let scriptId = document.getElementById("scriptSelector").value;
             promptAndUseServerFile(scriptId);
         });
@@ -154,3 +154,24 @@ function parseAfterChange(scriptId) {
     }
     mp.outputResult(result, sourceIndex);
 }
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+

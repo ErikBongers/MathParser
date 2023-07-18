@@ -1,4 +1,4 @@
-import * as mp from "./lib.js"
+import * as mp from "./mathparser.js"
 
 let userSession = {};
 

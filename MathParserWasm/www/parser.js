@@ -1,16 +1,24 @@
 export let errorsForLint = [];
-
+export let activeDocumentIndex = -1;
+export let sources = [];
 export function clearErrorList() {
 	errorsForLint = [];
 }
 
 function convertErrorToCodeMirror(e, doc) {
+	let start, end = 0;
+	let sourcePrefix = "";
 	try {
-		let start = doc.line(e.range.startLine + 1).from + e.range.startPos;
-		let end = doc.line(e.range.endLine + 1).from + e.range.endPos;
+		if (e.range.sourceIndex == activeDocumentIndex) {
+			start = doc.line(e.range.startLine + 1).from + e.range.startPos;
+			end = doc.line(e.range.endLine + 1).from + e.range.endPos;
+		} else {
+			start = doc.line(1).from;
+			end = doc.line(1).from;
+		}
 		let hint = {
-			message: e.message,
-			severity: "error", //"warning"
+			message: prefixErrorMessage(e),
+			severity: "error",
 			from: start,
 			to: end
 		}
@@ -68,7 +76,15 @@ function formatResult (line) {
 	return strFormatted;
 }
 
-function lineToString (line) {
+function prefixErrorMessage(e) {
+	let sourcePrefix = "";
+	if (e.range.sourceIndex != activeDocumentIndex) {
+		sourcePrefix = "[" + sources[e.range.sourceIndex] + "]: ";
+	}
+	return sourcePrefix + e.message;
+}
+
+function lineToOutputString (line) {
 	if (line.onlyComment == true) {
 		return "//" + line.comment;
 	}
@@ -86,7 +102,7 @@ function lineToString (line) {
 	//just for top level errors in the output window:
 	let strErrors = "";
 	for (let e of line.errors) {
-		strErrors += "  " + e.message;
+		strErrors += "  " + prefixErrorMessage(e);
 	}
 	let strText = "";
 	if (line.text != "")
@@ -101,7 +117,7 @@ function lineToString (line) {
 	return strLine;
 }
 
-export function ResultToString (line) {
+export function linetoResultString (line) {
 	if (line.onlyComment == true) {
 		return line.comment;
 	}
@@ -138,6 +154,7 @@ function formatFloatString (floatString, exponent) {
 }
 
 export function outputResult(result, sourceIndex) {
+	activeDocumentIndex = sourceIndex;
 	console.debug(result);
 	clearErrorList();
 	var strOutput = "";
@@ -145,9 +162,7 @@ export function outputResult(result, sourceIndex) {
 	try {
 		result = JSON.parse(result); //may throw...
 		for (let line of result.result) {
-			if (line.src != sourceIndex)
-				continue;
-			let strLine = lineToString(line);
+			let strLine = lineToOutputString(line);
 			if (strLine.length > 0)
 				strOutput += strLine + "\n";
 		}
@@ -162,7 +177,7 @@ export function outputResult(result, sourceIndex) {
 				lineCnt++;
 				lineAlreadyFilled = false;
 			}
-			let strValue = ResultToString(line);
+			let strValue = linetoResultString(line);
 			if (lineAlreadyFilled)
 				strResult += " | ";
 			strResult += strValue;

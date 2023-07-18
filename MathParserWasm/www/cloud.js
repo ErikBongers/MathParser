@@ -1,4 +1,4 @@
-import * as mp from "./mathparser.js"
+import * as mp from "./parser.js"
 
 let userSession = {};
 
@@ -118,6 +118,8 @@ export function onScriptSwitch() {
 
 export function startUp() {
     window.document.title = "Math Parser " + Module.api.getMathVersion();
+    mp.sources[0] = "start";
+    mp.sources[1] = "script1";
 
     cm.setLintSource((view) => {
         afterEditorChange();

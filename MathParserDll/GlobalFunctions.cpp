@@ -139,37 +139,37 @@ Value Tan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
 Value ArcSin::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(asin(arg), 0, range));
+    return Value(Number(asin(arg), 0, Unit("rad", range), NumFormat::DEC, range));
     }
 
 Value ArcCos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(acos(arg), 0, range));
+    return Value(Number(acos(arg), 0, Unit("rad", range), NumFormat::DEC, range));
     }
 
 Value ATan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(atan(arg), 0, range));
+    return Value(Number(atan(arg), 0, Unit("rad", range), NumFormat::DEC, range));
     }
 
 Value ASin::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(asin(arg), 0, range));
+    return Value(Number(asin(arg), 0, Unit("rad", range), NumFormat::DEC, range));
     }
 
 Value ACos::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(acos(arg), 0, range));
+    return Value(Number(acos(arg), 0, Unit("rad", range), NumFormat::DEC, range));
     }
 
 Value ArcTan::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double arg = args[0].getNumber().to_double();
-    return Value(Number(atan(arg), 0, range));
+    return Value(Number(atan(arg), 0, Unit("rad", range), NumFormat::DEC, range));
     }
 
 Value Sqrt::execute(Scope& scope, std::vector<Value>& args, const Range& range)

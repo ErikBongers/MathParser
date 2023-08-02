@@ -1,6 +1,6 @@
-﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
+﻿* bug www: when typing before server/session, uploadScript fails on session=null/undefined
 
-* fix some TODOs...
+* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
 * Units: can be turned on an off...
   > but what about vars that already use them?
@@ -9,13 +9,9 @@
 * make distinction between setting the text and typing text.
   > https://codemirror.net/examples/collab/
 
-* start script:
-  > list the errors of start script at the top of main script.
-
 * create prime() function -> prime factorisation.
   > Can MathParser solve : https://www.youtube.com/watch?v=vhc4FceGjC8
 
-* Move project from WPF folder to C++ folder.
 * var.fragment=x; --> gives error: unexpected ';'. Should be "can't assign to..."
 
 * date fragment as hls should give error

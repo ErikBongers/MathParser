@@ -423,7 +423,16 @@ Value Resolver::resolvePostfix(const PostfixExpr& pfix)
                 [[fallthrough]];
             default:
                 if(val.type == ValueType::NUMBER)
-                    val.getNumber() = val.getNumber().convertToUnit(Unit(codeBlock.scope->getText(pfix.postfixId.range), pfix.postfixId.range), codeBlock.scope->units);
+                    {
+                    auto postFixId = codeBlock.scope->getText(pfix.postfixId.range);
+                    Unit unit;
+                    if (codeBlock.scope->varExists(postFixId)) //TODO: what if both a unit and a var with the same name exists? Currently the var gets precendence.
+                        unit = Unit(codeBlock.scope->getVariable(postFixId).getNumber().unit.id, pfix.postfixId.range);
+                    else
+                        unit = Unit(codeBlock.scope->getText(pfix.postfixId.range), pfix.postfixId.range);
+
+                    val.getNumber() = val.getNumber().convertToUnit(unit, codeBlock.scope->units);
+                    }
                 else
                     return Value(Error(ErrorId::UNKNOWN_EXPR, pfix.postfixId.range, "Postfix expression not valid here."));
                 break;

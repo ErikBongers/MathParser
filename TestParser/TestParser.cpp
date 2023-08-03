@@ -371,6 +371,7 @@ age.years.*age.months.;
             assertResult("  1*2m                    ", 2, "m");
             assertResult("  a=2; a.=m;              ", 2, "m");
             assertError("   a=1; a b;               ", "UNIT_NOT_DEF");
+            assertResult("  a=2000mm; meter = 1m; a.=meter;              ", 2, "m");
             }
 
         TEST_METHOD(TestRanges)

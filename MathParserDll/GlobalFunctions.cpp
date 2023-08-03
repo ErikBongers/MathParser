@@ -3,6 +3,7 @@
 #include <chrono>
 #include "Globals.h"
 #include "Scope.h"
+#include <algorithm>
 
 namespace c = std::chrono;
 using time_point = c::system_clock::time_point;

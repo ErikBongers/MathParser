@@ -1,12 +1,4 @@
-﻿* store and reuse unit.
-  angle to lenght calculations loose the original unit.
-  > store it and re-apply it.
-  > how? unit to var?
-  > or assign unit of one var to another var?
-  > allow the .= operator to have a var as the 2nd operand!
-  > use it in angleCorrection();
-
-* bug www: when typing before server/session, uploadScript fails on session=null/undefined
+﻿* bug www: when typing before server/session, uploadScript fails on session=null/undefined
 
 * Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 

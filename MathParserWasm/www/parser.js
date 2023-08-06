@@ -125,8 +125,13 @@ export function linetoResultString (line) {
 	if (line.comment != "")
 		strComment = line.comment + ": ";
 	let strLine = "";
-	strLine += strComment;
-	strLine += (line.id === "_" ? "" : line.id + "=") + formatResult(line);
+	if (window.innerWidth > 880) {
+		strLine += strComment;
+		strLine += (line.id === "_" ? "" : line.id + "=") + formatResult(line);
+	}
+	else
+		strLine += formatResult(line);
+
 	return strLine;
 }
 

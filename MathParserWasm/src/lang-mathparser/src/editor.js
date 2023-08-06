@@ -1,6 +1,6 @@
 import {HighlightStyle, tags} from "@codemirror/highlight"
 import { EditorView, highlightSpecialChars, drawSelection, dropCursor, highlightActiveLine, keymap } from '@codemirror/view';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Compartment } from '@codemirror/state';
 import { history, historyKeymap } from '@codemirror/history';
 import { foldGutter, foldKeymap } from '@codemirror/fold';
 import { lineNumbers, highlightActiveLineGutter } from '@codemirror/gutter';
@@ -67,22 +67,39 @@ const fontTheme = EditorView.theme({
     }
 });
 
+export let gutter = new Compartment;
+
+
 export let editor = new EditorView({
   state: EditorState.create({
     extensions: [
       basicSetup, 
-      lineNumbers(),
+      gutter.of([lineNumbers(),
+            foldGutter(),
+            lintGutter(),]),
       history(),
-      foldGutter(),
       autocompletion(),
       mathparser(),   
       linter( mathparserLint(), {delay: 200}),
-      lintGutter(),
       fontTheme
     ]
   }),
   parent: document.getElementById("txtInput")
 })
+
+export function hideGutter() {
+    editor.dispatch({
+        effects: cm.gutter.reconfigure([])
+    });
+}
+
+export function showGutter() {
+    editor.dispatch({
+        effects: cm.gutter.reconfigure([lineNumbers(),
+        foldGutter(),
+        lintGutter(),])
+    });
+}
 
 export let cmOutput = new EditorView({
   state: EditorState.create({

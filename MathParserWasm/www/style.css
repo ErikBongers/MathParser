@@ -53,11 +53,11 @@ header .help {
 
 /* layout grid*/
 
-.layout-grid {
+#layoutGrid {
 	display: grid;
 	grid-gap: 5px;
-	grid-template-columns: 1fr 2fr 1fr;
-	grid-template-rows: 1fr 1fr 1fr;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr 1fr;
 }
 #result, #input, #output {
 	border-style: solid;
@@ -66,17 +66,29 @@ header .help {
 	overflow-x: scroll;
 }
 
+#scrollWrapper {
+	grid-column: 1;
+	grid-row: 1;
+
+}
+#textWrapper {
+	display: grid;
+	grid-gap: 5px;
+	grid-template-columns: 1fr 2fr 1fr;
+	grid-template-rows: 1fr;
+}
+
 #result {
 	grid-column: 1;
-	grid-row: 1 / 3;
+	grid-row: 1;
 }
 #input {
 	grid-column: 2;
-	grid-row: 1 / 3;
+	grid-row: 1;
 }
 #output {
 	grid-column: 3;
-	grid-row: 1 / 3;
+	grid-row: 1;
 }
 #txtResult, #txtInput, #txtOutput{
 	width:inherit;
@@ -118,10 +130,23 @@ header .help {
 }
 
 @media only screen and (max-width: 30em) {
-	.layout-grid {
-		height: 90vh;
+	#layoutGrid {
+		height: 85vh;
 		grid-template-columns: 1fr;
-		grid-template-rows: 1fr min-content 1fr 0fr;
+		grid-template-rows: 1fr min-content 1fr;
+	}
+	#scrollWrapper{
+		overflow-y: scroll;
+	}
+
+	#input {
+		grid-column: 2/ span 2;
+		grid-row: 1;
+	}
+	#result, #input, #output,
+	#txtResult, #txtInput, #txtOutput
+	 {
+		overflow-y: visible;
 	}
 	.hide-on-phone {
 	  display: none;
@@ -129,30 +154,15 @@ header .help {
 	#calculator {
 		margin-top: 0px;
 	}
-	#input, #txtOutput{
-		height: 40vh;
-	}
-	#result{
-		visibility: collapse;
-		grid-row: 4;
-	}
-	#input {
-		grid-column: 1;
-		grid-row: 1;
-	}
 	
 	#output {
-		grid-column: 1;
-		grid-row: 3;
-	}
-	
-	#txtOutput {
-		width: 100%;
+		display: none;
+		visibility: collapse;
 	}
 	
 	#calculator {
 		grid-column: 1;
-		grid-row: 2;
+		grid-row: 3;
 		visibility: visible;
 		display: grid;
 	}

@@ -126,6 +126,11 @@ export function startUp() {
         return mp.errorsForLint;
     });
 
+    if (window.innerWidth > 480)
+        cm.showGutter();
+    else
+        cm.hideGutter();
+
     let startScript = "script1";
     if (localStorage.lastScript)
         startScript = localStorage.lastScript;

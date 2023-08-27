@@ -1,6 +1,4 @@
-﻿* bug www: when typing before server/session, uploadScript fails on session=null/undefined
-
-* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
+﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
 * Units: can be turned on an off...
   > but what about vars that already use them?

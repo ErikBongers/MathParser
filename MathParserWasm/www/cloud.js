@@ -45,10 +45,16 @@ async function promptAndUseServerFile(scriptId) {
 }
 
 function uploadScript(scriptId, text) {
-    if (!userSession.sessionId) {
+    if (!userSession) {
         console.log("Not uploading: no session.");
         return;
     }
+
+    if (!userSession.sessionId) {
+        console.log("Not uploading: no sessionId.");
+        return;
+    }
+
     let url = new URL("https://europe-west1-ebo-tain.cloudfunctions.net/cloud-script");
     url.searchParams.append("sessionId", userSession.sessionId);
     url.searchParams.append("scriptId", scriptId);

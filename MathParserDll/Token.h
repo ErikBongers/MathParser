@@ -33,6 +33,7 @@ enum class TokenType
     SEMI_COLON,
     COMMA,
     DOT, //except for the decimal dot.
+    ELLIPSIS, //...
     PIPE,
     EXCLAM,
     ECHO_COMMENT_LINE,

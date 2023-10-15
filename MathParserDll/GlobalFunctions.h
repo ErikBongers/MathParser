@@ -1,6 +1,7 @@
 #pragma once
 #include "Function.h"
 
+
 class Now: public FunctionDef
     {
     public:
@@ -173,6 +174,13 @@ class Factorial: public FunctionDef
     {
     public:
         Factorial() : FunctionDef("factorial", 1, 1) {}
+        Value execute(Scope& scope, std::vector<Value>& args, const Range& range) override;
+    };
+
+class Primes: public FunctionDef
+    {
+    public:
+        Primes() : FunctionDef("primes", 1, 1) {}
         Value execute(Scope& scope, std::vector<Value>& args, const Range& range) override;
     };
 

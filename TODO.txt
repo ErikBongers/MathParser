@@ -1,5 +1,10 @@
 ﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
+* Wildchart operations.
+  > Atot = a1 + a2 + a3
+    : aTot = a# +;
+    : aTot = a# + ...;
+
 * Units: can be turned on an off...
   > but what about vars that already use them?
     > duration.days,...

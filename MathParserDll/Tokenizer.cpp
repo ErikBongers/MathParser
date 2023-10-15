@@ -95,7 +95,13 @@ Token Tokenizer::nextUnfiltered()
             return Token(EXCLAM, 1, state.nextPos);
             }
         case '.': 
-            if (match('='))
+            if (peekChar() == '.' && peekSecondChar() == '.')
+                {
+                nextChar(); //consume
+                nextChar(); //consume
+                return Token(ELLIPSIS, 3, state.nextPos);
+                }
+            else if (match('='))
                 return Token(EQ_UNIT, 2, state.nextPos);
             if (peekChar() >= '0' && peekChar() <= '9')
                 {

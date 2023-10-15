@@ -35,6 +35,7 @@ void FunctionDefs::init()
     Add(new Sort());
     Add(new Reverse());
     Add(new Factorial());
+    Add(new Primes());
     };
 
 FunctionDef::FunctionDef(const std::string& name, size_t minArgs, size_t maxArgs)

@@ -23,26 +23,37 @@ Value Now::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     return now;
     }
 
-std::vector<Value>* explodeArgs(std::vector<Value>& args, std::vector<Value>& emptyExplodedList)
+void appendToList(Value arg, std::vector<Value>& explodedList)
     {
-    std::vector<Value>* argsPtr = &args;
-
-    if (args[0].type == ValueType::LIST)
+    if (arg.type == ValueType::LIST)
         {
-        //explode args[0]
-        for (auto &arg : args[0].getList().numberList)
-            emptyExplodedList.push_back(arg);
-        argsPtr = &emptyExplodedList;
+        for (auto &a : arg.getList().numberList)
+            explodedList.push_back(a);
         }
-    return argsPtr;
+    else
+        explodedList.push_back(arg);
     }
+
+std::vector<Value>& explodeArgs(std::vector<Value>& args, std::vector<Value>& explodedList)
+    {
+    if(args.size() == 1 && args[0].type != ValueType::LIST)
+        return args;
+    
+    for(auto& arg: args)
+        {
+        appendToList(arg, explodedList);
+        }
+    return explodedList;
+    }
+
+
 
 Value minMax(Scope& scope, std::vector<Value>& args, const Range& range, bool max)
     {
     bool diffUnits = false;
     Number val0;
     std::vector<Value> explodedList;
-    auto& argList = *explodeArgs(args, explodedList);
+    auto& argList = explodeArgs(args, explodedList);
     Value ret = argList[0];
     auto unit = argList[0].getNumber().unit;
     for(int i = 1; i < argList.size(); i++)
@@ -222,7 +233,7 @@ Value DateFunc::execute(Scope& scope, std::vector<Value>& args, const Range& ran
     Range rDay;
     
     std::vector<Value> explodedList;
-    auto& argList = *explodeArgs(args, explodedList);
+    auto& argList = explodeArgs(args, explodedList);
 
     //just a minimal implementation for now...
     if(argList.size() != 3)
@@ -259,7 +270,7 @@ bool compareNumber(Number n1, Number n2)
 Value Sort::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     std::vector<Value> explodedList;
-    auto& argList = *explodeArgs(args, explodedList);
+    auto& argList = explodeArgs(args, explodedList);
     std::vector<Number> sortedList;
     for (auto &val : argList)
         {
@@ -273,7 +284,7 @@ Value Sort::execute(Scope& scope, std::vector<Value>& args, const Range& range)
 Value Reverse::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     std::vector<Value> explodedList;
-    auto& argList = *explodeArgs(args, explodedList);
+    auto& argList = explodeArgs(args, explodedList);
     std::vector<Number> reverseList;
     for (auto &val : argList)
         {
@@ -372,7 +383,7 @@ Value Sum::execute(Scope& scope, std::vector<Value>& args, const Range& range)
     {
     double sum = 0;
     std::vector<Value> explodedList;
-    auto nums = *explodeArgs(args, explodedList);
+    auto& nums = explodeArgs(args, explodedList);
     for (auto& n : nums)
         {
         if(!n.isNumber())

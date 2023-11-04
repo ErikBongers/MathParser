@@ -87,6 +87,7 @@ hundred(a);
 
             assertError("function doppel(x) {}; function doppel(x){}", "W_FUNCTION_OVERRIDE");
             assertResult("sum(1,2,3,4);", 10);
+            assertResult("lizt=1,2,3; sum(lizt,4);", 10);
             assertError("sum(1, now());", "EXPECTED_NUMERIC_VALUE");
             }
 

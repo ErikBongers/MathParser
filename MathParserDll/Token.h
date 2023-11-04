@@ -1,7 +1,7 @@
 #pragma once
 #include "ValueType.h"
 #include "Number.h"
-#include "TokenPos.h"
+#include "SourcePos.h"
 
 enum class TokenType
     {
@@ -70,10 +70,10 @@ class Token
 
         bool isFirstOnLine = false;
         Token() : Token(TokenType::NULLPTR, -1, {0, 0, 0}) {}
-        Token(TokenType type, unsigned int len, TokenPos end);
-        Token(TokenType type, Number n, unsigned int len, TokenPos end);
-        Token(TokenType type, Number n, TokenPos pos, TokenPos end);
-        Token(TokenType type, TokenPos pos, TokenPos end);
+        Token(TokenType type, unsigned int len, SourcePos end);
+        Token(TokenType type, Number n, unsigned int len, SourcePos end);
+        Token(TokenType type, Number n, SourcePos pos, SourcePos end);
+        Token(TokenType type, SourcePos pos, SourcePos end);
     };
 
 

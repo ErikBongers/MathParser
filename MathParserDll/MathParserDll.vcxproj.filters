@@ -81,7 +81,7 @@
     <ClInclude Include="BaseTokenizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TokenPos.h">
+    <ClInclude Include="SourcePos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
@@ -121,6 +121,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCharStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

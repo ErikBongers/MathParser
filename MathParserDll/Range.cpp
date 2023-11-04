@@ -29,7 +29,7 @@ Range& Range::operator+=(const Range& r)
     return *this;
     }
 
-Range::Range(TokenPos start, TokenPos end)
+Range::Range(SourcePos start, SourcePos end)
     : start(start), end(end)
     {
     assert(start.sourceIndex == end.sourceIndex);

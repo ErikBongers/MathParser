@@ -12,7 +12,7 @@ class Parser
         bool muteBlock = false;
         bool echoBlock = false;
         bool echoTrailingComment = false;
-        TokenPos statementStartPos;
+        SourcePos statementStartPos;
     public:
         CodeBlock& codeBlock;
         Parser(CodeBlock& codeBlock, NodeFactory& nodeFactory, PeekingTokenizer& tok);

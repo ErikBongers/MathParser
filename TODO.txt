@@ -1,4 +1,10 @@
-﻿* load script from server?
+﻿* isFirstOnLine/newLineStarted: try to get rid of this, as it is only used in a comments situation.
+  > calculate this where it's needed?
+    > reverse search in the text?
+  > or is this value usefull for other situations?
+    > I have no idea which...
+
+* load script from server?
   of NO: don't reload local script if it has already been loaded!
 
 * Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer

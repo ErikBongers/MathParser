@@ -1,7 +1,7 @@
 #pragma once
-#include "TokenPos.h"
+#include "SourcePos.h"
 #include "Source.h"
-
+#include "SourceCharStream.h"
 /*
 Token is a class that must implement following functions:
     static Token Null();
@@ -14,95 +14,75 @@ class BaseTokenizer
     public:
         struct State{
             Token token;
-            TokenPos nextPos;
-            bool newLineStarted = true;
+            StreamState streamState;
             void clear() { token = Token::Null(); }
             bool isNull() { return token.isNull(); }
             };
 
     protected:
-        const Source& source;
-        const char* _stream;
-        size_t size = -1;
+        SourceCharStream stream;
         State state;
         bool newlineIsToken = false;
     public:
         const State& getState() const {return state; }
+        void setState(const State& newState)
+            {
+            this->state = newState;
+            stream.state = this->state.streamState;
+            }
+
         unsigned int getPos() const { return state.nextPos.cursorPos;}
         const Token& getCurrentToken() const { return state.token; }
-        std::string getText(unsigned int start, unsigned end) { return std::string(&_stream[start], &_stream[end]); }
+        std::string getText(unsigned int start, unsigned end) { return stream.getText(start, end); }
         BaseTokenizer(const Source& source)
-            : source(source), _stream(source.text.c_str())
+            : stream(source)
             { 
-            size = strlen(_stream); 
-            state.nextPos.sourceIndex = source.index;
+            state.streamState.pos.sourceIndex = stream.source.index;
+            }
+
+        char nextChar()
+            {
+            char c = stream.nextChar();
+            state.streamState = stream.state;
+            return c;
+            }
+
+        bool match(char c)
+            {
+            bool b= stream.match(c);
+            state.streamState = stream.state;
+            return b;
             }
 
         void skipWhiteSpace()
             {
             char c;
-            while ((c = peekChar()))
+            while ((c = stream.peekChar()))
                 {
                 if(c == '\n')
                     {
-                    state.newLineStarted = true;
+                    state.streamState.newLineStarted = true;
                     if(newlineIsToken)
                         break;
                     }
                 if (c != ' ' && c != '\t' && c != '\n' && c != '\r')
                     break;
-                nextChar(); //consume
+                stream.nextChar();
                 }
+            //Do not set: state.streamState.newLineStarted = stream.state.newLineStarted;
+            //that would override the set in the while loop!
+            state.streamState.pos = stream.state.pos;
             }
 
         void skipWhiteSpaceNoNL()
             {
             char c;
-            while ((c = peekChar()))
+            while ((c = stream.peekChar()))
                 {
                 if (c != ' ' && c != '\t')
                     break;
                 nextChar(); //consume
                 }
-            }
-
-        char peekChar()
-            {
-            if(state.nextPos.cursorPos >= size)
-                return 0; //EOF
-            return _stream[state.nextPos.cursorPos];
-            }
-
-        char peekSecondChar()
-            {
-            if((state.nextPos.cursorPos+1) >= size)
-                return 0; //EOF
-            return _stream[state.nextPos.cursorPos+1];
-            }
-
-        char nextChar()
-            {
-            if(state.nextPos.cursorPos >= size)
-                return 0; //EOF
-            if(_stream[state.nextPos.cursorPos] == '\n')
-                {
-                state.nextPos.line++;
-                state.nextPos.linePos = 0;
-                state.newLineStarted = true;
-                }
-            else
-                state.nextPos.linePos++;
-            return _stream[state.nextPos.cursorPos++];
-            }
-
-        bool match(char c)
-            {
-            if (peekChar() == c)
-                {
-                nextChar();
-                return true;
-                }
-            return false;
             }
 
         Token peek()
@@ -120,10 +100,10 @@ class BaseTokenizer
                 }
             }
 
-        TokenPos getToWithinLine(char c)
+        SourcePos getToWithinLine(char c)
             {
             char cc;
-            while ((cc = peekChar()))
+            while ((cc = stream.peekChar()))
                 {
                 if(cc == '\n')
                     break;
@@ -131,22 +111,22 @@ class BaseTokenizer
                     break;
                 nextChar();
                 }
-            TokenPos pos = state.nextPos;
+            SourcePos pos = state.streamState.pos;
             match(c);
             return pos;
             }
 
-        TokenPos getToEOL()
+        SourcePos getToEOL()
             {
             char c;
-            while ((c = peekChar())) 
+            while ((c = stream.peekChar())) 
                 {
                 if(c == '\r' || c == '\n')
                     break; //don't eat NL yet. NL could be a token!
                 nextChar();
                 }
             //currently at \r or \n
-            TokenPos pos = state.nextPos;
+            SourcePos pos = state.streamState.pos;
             match('\r'); //ignore \r. It's not part of the string and never a token.
             return pos;
             }

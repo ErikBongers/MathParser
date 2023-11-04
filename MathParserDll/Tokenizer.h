@@ -16,7 +16,6 @@ class Tokenizer : public BaseTokenizer<Token>
         void tokenizeComments(bool comments);
         void tokenizeNewlines(bool set);
         char sourceIndex;
-        void setState(const State& newState);
 
     private:
         bool peekComments = false;

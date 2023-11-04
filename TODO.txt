@@ -1,9 +1,20 @@
-﻿* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
+﻿* explodeArgs: return reference instead of ptr?
+* explodeArgs: explode ALL args in case there's a combo of values and lists.
+* load script from server?
+  of NO: don't reload local script if it has already been loaded!
+
+* Rust: see https://www.youtube.com/watch?v=4TxOD2GmWU4 for a Lexer/Tokenizer
 
 * Wildchart operations.
   > Atot = a1 + a2 + a3
-    : aTot = a# +;
-    : aTot = a# + ...;
+    : aTot = a# + ...; /numbers only
+
+  > aTot = a... + ...; //any character.
+  > aTot = a... +; //second ellipsis optional?
+
+  > or...turn variables into lists.
+    : aTot = sum(a#);
+    : aTot = (a#).sum;
 
 * Units: can be turned on an off...
   > but what about vars that already use them?

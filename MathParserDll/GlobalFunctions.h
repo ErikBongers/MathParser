@@ -184,3 +184,10 @@ class Primes: public FunctionDef
         Value execute(Scope& scope, std::vector<Value>& args, const Range& range) override;
     };
 
+class Sum: public FunctionDef
+    {
+    public:
+        Sum() : FunctionDef("sum", 1, 99) {}
+        Value execute(Scope& scope, std::vector<Value>& args, const Range& range) override;
+    };
+

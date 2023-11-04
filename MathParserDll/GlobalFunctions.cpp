@@ -326,7 +326,7 @@ Value Factors::execute(Scope& scope, std::vector<Value>& args, const Range& rang
     std::vector<Number> numbers;
     for (auto n : numberList)
         {
-        numbers.push_back(Number(n,0, range));
+        numbers.push_back(Number((double)n,0, range));
         }
     return Value(numbers);
     }
@@ -363,7 +363,22 @@ Value Primes::execute(Scope& scope, std::vector<Value>& args, const Range& range
         auto lower = std::lower_bound(primes.begin(), primes.end(), n);
         if(lower != primes.end())
             if(*lower == n)
-                numbers.push_back(Number(n,0, range));
+                numbers.push_back(Number((double)n,0, range));
         }
     return Value(numbers);
+    }
+
+Value Sum::execute(Scope& scope, std::vector<Value>& args, const Range& range)
+    {
+    double sum = 0;
+    std::vector<Value> explodedList;
+    auto nums = *explodeArgs(args, explodedList);
+    for (auto& n : nums)
+        {
+        if(!n.isNumber())
+            return Value(Error(ErrorId::EXPECTED_NUMERIC_VALUE, args[0].getNumber().range));
+        sum += n.getNumber().to_double();
+        }
+    auto num = Number(sum, 0, range);
+    return num;
     }
